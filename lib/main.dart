@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'pages/drives_page.dart';
 import 'pages/home_page.dart';
 import 'pages/rides_page.dart';
 import 'pages/settings_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_BASE_URL'),
+    anonKey: dotenv.get('SUPABASE_BASE_KEY'),
+  );
+
   runApp(const MotisApp());
 }
 
