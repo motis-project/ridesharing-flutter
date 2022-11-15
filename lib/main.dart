@@ -1,12 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/user.dart' as models;
+import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'pages/drives_page.dart';
 import 'pages/home_page.dart';
 import 'pages/rides_page.dart';
 import 'pages/settings_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_BASE_URL'),
+    anonKey: dotenv.get('SUPABASE_BASE_KEY'),
+  );
+
+  exampleCalls();
+
   runApp(const MotisApp());
+}
+
+void exampleCalls() async {
+  final List<Map<String, dynamic>> usersJson =
+      await supabaseClient.from('users').select();
+  List<models.User> users = models.User.fromJsonList(usersJson);
+  print(users.map((e) => e.name));
+
+  await supabaseClient.from('users').update({'name': 'Fynn2'}).eq('id', 1);
+  final Map<String, dynamic> data = await supabaseClient
+      .from('users')
+      .select()
+      .order('id', ascending: true)
+      .limit(1)
+      .single();
+  models.User user = models.User.fromJson(data);
+  assert(user.name == 'Fynn2');
 }
 
 class MotisApp extends StatefulWidget {
