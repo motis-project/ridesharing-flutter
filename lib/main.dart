@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/user.dart' as models;
+import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,6 +17,11 @@ void main() async {
     url: dotenv.get('SUPABASE_BASE_URL'),
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
+
+  final List<Map<String, dynamic>> data =
+      await supabaseClient.from('users').select();
+  List<models.User> users = models.User.fromJsonList(data);
+  print(users.map((e) => e.name));
 
   runApp(const MotisApp());
 }
