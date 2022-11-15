@@ -18,12 +18,26 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
 
-  final List<Map<String, dynamic>> data =
-      await supabaseClient.from('users').select();
-  List<models.User> users = models.User.fromJsonList(data);
-  print(users.map((e) => e.name));
+  exampleCalls();
 
   runApp(const MotisApp());
+}
+
+void exampleCalls() async {
+  final List<Map<String, dynamic>> usersJson =
+      await supabaseClient.from('users').select();
+  List<models.User> users = models.User.fromJsonList(usersJson);
+  print(users.map((e) => e.name));
+
+  await supabaseClient.from('users').update({'name': 'Fynn2'}).eq('id', 1);
+  final Map<String, dynamic> data = await supabaseClient
+      .from('users')
+      .select()
+      .order('id', ascending: true)
+      .limit(1)
+      .single();
+  models.User user = models.User.fromJson(data);
+  assert(user.name == 'Fynn2');
 }
 
 class MotisApp extends StatefulWidget {

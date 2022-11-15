@@ -29,4 +29,13 @@ class User extends Model {
       'created_at': createdAt,
     };
   }
+
+  List<Map<String, dynamic>> toJsonList(List<User> users) {
+    return users.map((user) => user.toJson()).toList();
+  }
+
+  @override
+  String toString() {
+    return 'User{id: $id, name: $name, createdAt: $createdAt}';
+  }
 }
