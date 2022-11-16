@@ -12,6 +12,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool _validEmail = true;
+  bool _validPassword = true;
+  bool _correctPasswordRepeat = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,11 +28,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           child: Column(
             children: <Widget>[
-              const TextField(
+              TextField(
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     labelText: 'Email',
-                    hintText: 'Enter valid email'),
+                    hintText: 'Enter valid email',
+                    errorText:
+                        _validEmail ? null : "Not a valid e-mail address!"),
               ),
               const SizedBox(height: 15),
               const TextField(
@@ -38,14 +44,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'We recommend you choose your real name'),
               ),
               const SizedBox(height: 15),
-              const PasswordField(
+              PasswordField(
                 labelText: "Password",
                 hintText: "Enter your password",
+                helperText: "Must contain at least 8 characters",
+                errorText: _validPassword
+                    ? null
+                    : "Must contain at least 8 characters",
               ),
               const SizedBox(height: 15),
-              const PasswordField(
+              PasswordField(
                 labelText: "Confirm password",
                 hintText: "Re-enter your password",
+                errorText: _correctPasswordRepeat
+                    ? null
+                    : "Failed to confirm your password",
               ),
               const SizedBox(height: 15),
               SubmitButton(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/user.dart' as models;
 import 'package:flutter_app/util/supabase.dart';
@@ -67,7 +68,7 @@ class _MotisAppState extends State<MotisApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: _showLogin
+        home: _showLogin //&& !kDebugMode
             ? const LoginScreen()
             : Scaffold(
                 appBar: AppBar(

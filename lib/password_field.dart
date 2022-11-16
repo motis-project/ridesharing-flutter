@@ -5,8 +5,15 @@ import 'package:flutter/src/widgets/framework.dart';
 class PasswordField extends StatelessWidget {
   final String labelText;
   final String hintText;
+  final String? errorText;
+  final String helperText;
 
-  const PasswordField({key, required this.labelText, this.hintText = ""})
+  const PasswordField(
+      {key,
+      required this.labelText,
+      this.hintText = "",
+      this.errorText,
+      this.helperText = ""})
       : super(key: key);
 
   @override
@@ -15,7 +22,9 @@ class PasswordField extends StatelessWidget {
         decoration: InputDecoration(
             border: const OutlineInputBorder(),
             labelText: labelText,
-            hintText: hintText),
+            hintText: hintText,
+            errorText: errorText,
+            helperText: helperText),
         obscureText: true,
         enableSuggestions: false,
         autocorrect: false);
