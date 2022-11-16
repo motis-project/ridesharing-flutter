@@ -1,8 +1,11 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app/password_field.dart';
+import 'package:flutter_app/register.dart';
 import 'package:flutter_app/submit_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,6 +16,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _userExists = true;
+  bool _passwordCorrect = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +31,18 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
         child: Column(
           children: <Widget>[
-            const TextField(
+            TextField(
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   labelText: 'Email',
-                  hintText: 'Enter valid email'),
+                  hintText: 'Enter valid email',
+                  errorText: _userExists ? null : "User does not exist!"),
             ),
             const SizedBox(height: 15),
-            const PasswordField(
-                labelText: "Password", hintText: "Enter your password"),
+            PasswordField(
+                labelText: "Password",
+                hintText: "Enter your password",
+                errorText: _passwordCorrect ? null : "Incorrect password!"),
             TextButton(
                 onPressed: () {
                   print("Forgot password");
@@ -51,7 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: <Widget>[
               TextButton(
                   onPressed: () {
-                    print("Register");
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()));
                   },
                   child: const Text("No account yet? Register"))
             ],
