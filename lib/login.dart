@@ -1,14 +1,19 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/register.dart';
 import 'package:flutter_app/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+extension EmailValidator on String {
+  bool isValidEmail() {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(this);
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,15 +68,20 @@ class _LoginFormState extends State<LoginForm> {
   void onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        AuthResponse response = await supabaseClient.auth.signInWithPassword(
+        await supabaseClient.auth.signInWithPassword(
           email: emailController.text,
           password: passwordController.text,
         );
       } on AuthException catch (e) {
+        // looks weird but needed later for i18n
+        String text = e.statusCode == '400'
+            ? (e.message.contains("credentials")
+                ? "Invalid credentials"
+                : "Please confirm your email address")
+            : "Something went wrong";
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(e.statusCode == '400'
-              ? "Invalid login credentials"
-              : "Something went wrong"),
+          content: Text(text),
         ));
       }
     }
@@ -101,6 +111,8 @@ class _LoginFormState extends State<LoginForm> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
+              } else if (!value.isValidEmail()) {
+                return 'Please enter a valid email';
               }
               return null;
             },
