@@ -50,7 +50,7 @@ class MotisApp extends StatefulWidget {
 }
 
 class _MotisAppState extends State<MotisApp> {
-  final bool _showLogin = true;
+  bool _isLoggedIn = false;
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = [
@@ -61,6 +61,19 @@ class _MotisAppState extends State<MotisApp> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    supabaseClient.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+
+      setState(() {
+        _isLoggedIn = event == AuthChangeEvent.signedIn ||
+            event == AuthChangeEvent.passwordRecovery;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Motis Mitfahr-App',
@@ -68,9 +81,8 @@ class _MotisAppState extends State<MotisApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: _showLogin //&& !kDebugMode
-            ? const LoginScreen()
-            : Scaffold(
+        home: _isLoggedIn //&& !kDebugMode
+            ? Scaffold(
                 appBar: AppBar(
                   title: const Text('Motis Mitfahr-App'),
                 ),
@@ -106,6 +118,7 @@ class _MotisAppState extends State<MotisApp> {
                     });
                   },
                 ),
-              ));
+              )
+            : const LoginScreen());
   }
 }

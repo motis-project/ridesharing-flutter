@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class PasswordField extends StatelessWidget {
   final String labelText;
   final String hintText;
   final String? errorText;
   final String helperText;
+  final String? Function(String?)? validator;
+  final TextEditingController? controller;
 
   const PasswordField(
       {key,
       required this.labelText,
       this.hintText = "",
       this.errorText,
-      this.helperText = ""})
+      this.helperText = "",
+      this.controller,
+      this.validator})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
         decoration: InputDecoration(
             border: const OutlineInputBorder(),
             labelText: labelText,
@@ -27,6 +29,9 @@ class PasswordField extends StatelessWidget {
             helperText: helperText),
         obscureText: true,
         enableSuggestions: false,
-        autocorrect: false);
+        autocorrect: false,
+        keyboardType: TextInputType.visiblePassword,
+        controller: controller,
+        validator: validator);
   }
 }

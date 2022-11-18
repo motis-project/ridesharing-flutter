@@ -35,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintText: 'Enter valid email',
                     errorText:
                         _validEmail ? null : "Not a valid e-mail address!"),
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 15),
               const TextField(
