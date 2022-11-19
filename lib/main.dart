@@ -18,26 +18,7 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
 
-  exampleCalls();
-
   runApp(const MotisApp());
-}
-
-void exampleCalls() async {
-  final List<Map<String, dynamic>> profilesJson =
-      await supabaseClient.from('users').select();
-  List<Profile> profiles = Profile.fromJsonList(profilesJson);
-  print(profiles);
-
-  await supabaseClient.from('users').update({'name': 'Fynn2'}).eq('id', 1);
-  final Map<String, dynamic> data = await supabaseClient
-      .from('profiles')
-      .select()
-      .order('id', ascending: true)
-      .limit(1)
-      .single();
-  Profile profile = Profile.fromJson(data);
-  assert(profile.name == 'Fynn2');
 }
 
 class MotisApp extends StatefulWidget {
