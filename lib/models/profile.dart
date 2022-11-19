@@ -1,11 +1,13 @@
 import 'model.dart';
 
 class Profile extends Model {
-  final String name;
+  final String username;
+  final String email;
 
   Profile({
     required super.id,
-    required this.name,
+    required this.username,
+    required this.email,
     super.createdAt,
   });
 
@@ -13,7 +15,8 @@ class Profile extends Model {
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json['id'],
-      name: json['name'],
+      username: json['username'],
+      email: json['email'],
       createdAt: json['created_at'],
     );
   }
@@ -25,17 +28,18 @@ class Profile extends Model {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'username': username,
+      'email': email,
       'created_at': createdAt,
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Profile> Profiles) {
-    return Profiles.map((Profile) => Profile.toJson()).toList();
+  List<Map<String, dynamic>> toJsonList(List<Profile> profiles) {
+    return profiles.map((profile) => profile.toJson()).toList();
   }
 
   @override
   String toString() {
-    return 'Profile{id: $id, name: $name, createdAt: $createdAt}';
+    return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
   }
 }
