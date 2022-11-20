@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/email_field.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/submit_button.dart';
@@ -89,21 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            TextFormField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Email',
-                hintText: 'Enter valid email',
-              ),
-              keyboardType: TextInputType.emailAddress,
-              controller: emailController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your email';
-                }
-                return null;
-              },
-            ),
+            EmailField(controller: emailController),
             const SizedBox(height: 15),
             TextFormField(
               decoration: const InputDecoration(

@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/email_field.dart';
 import 'package:flutter_app/own_theme_fields.dart';
+import 'package:flutter_app/submit_button.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
+import 'package:flutter_app/util/supabase.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String? initialEmail;
@@ -53,8 +57,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       setState(() {
         _state = ButtonState.loading;
       });
-      //TODO
-      await Future.delayed(const Duration(seconds: 2));
+      supabaseClient.auth.resetPasswordForEmail(emailController.text,
+          redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/');
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         _state = ButtonState.success;
       });
@@ -90,43 +95,39 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             key: _formKey,
             child: Column(
               children: <Widget>[
-                TextFormField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
-                    hintText: 'Enter your email address',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
+                EmailField(
                   controller: emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 15),
-                ProgressButton.icon(iconedButtons: {
-                  ButtonState.idle: IconedButton(
-                      text: "Recovery mail",
-                      icon: Icon(Icons.send,
-                          color: Theme.of(context).colorScheme.onPrimary),
-                      color: Theme.of(context).colorScheme.primary),
-                  ButtonState.loading: IconedButton(
-                      color: Theme.of(context).colorScheme.primary),
-                  ButtonState.fail: IconedButton(
-                      text: "Failed",
-                      icon: Icon(Icons.cancel,
-                          color: Theme.of(context).colorScheme.onError),
-                      color: Theme.of(context).colorScheme.error),
-                  ButtonState.success: IconedButton(
-                      text: "Sent",
-                      icon: Icon(
-                        Icons.check_circle,
-                        color: Theme.of(context).own().onSuccess,
-                      ),
-                      color: Theme.of(context).own().success)
-                }, onPressed: onSubmit, state: _state)
+                ProgressButton.icon(
+                  iconedButtons: {
+                    ButtonState.idle: IconedButton(
+                        text: "SEND RECOVERY",
+                        icon: Icon(Icons.send,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        color: Theme.of(context).colorScheme.primary),
+                    ButtonState.loading: IconedButton(
+                        color: Theme.of(context).colorScheme.primary),
+                    ButtonState.fail: IconedButton(
+                        text: "FAILED",
+                        icon: Icon(Icons.cancel,
+                            color: Theme.of(context).colorScheme.onError),
+                        color: Theme.of(context).colorScheme.error),
+                    ButtonState.success: IconedButton(
+                        text: "SENT",
+                        icon: Icon(
+                          Icons.check_circle,
+                          color: Theme.of(context).own().onSuccess,
+                        ),
+                        color: Theme.of(context).own().success)
+                  },
+                  onPressed: onSubmit,
+                  state: _state,
+                  textStyle: submitButtonTextStyle(context),
+                  radius: submitButtonBorderRadius,
+                  height: submitButtonHeight,
+                  maxWidth: 600.0,
+                ),
               ],
             )));
   }

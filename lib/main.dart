@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -57,6 +58,20 @@ class _MotisAppState extends State<MotisApp> {
         _isLoggedIn = event == AuthChangeEvent.signedIn ||
             event == AuthChangeEvent.passwordRecovery;
       });
+
+      if (event == AuthChangeEvent.passwordRecovery) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+        );
+      }
+
+      if (event == AuthChangeEvent.signedOut) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        );
+      }
     });
   }
 

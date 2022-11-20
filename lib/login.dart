@@ -1,20 +1,13 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/email_field.dart';
 import 'package:flutter_app/forgot_password.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/register.dart';
 import 'package:flutter_app/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-extension EmailValidator on String {
-  bool isValidEmail() {
-    return RegExp(
-            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-        .hasMatch(this);
-  }
-}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -92,23 +85,7 @@ class _LoginFormState extends State<LoginForm> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Expanded(child: Container()),
-          TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Email',
-              hintText: 'Enter valid email',
-            ),
-            keyboardType: TextInputType.emailAddress,
-            controller: emailController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              } else if (!value.isValidEmail()) {
-                return 'Please enter a valid email';
-              }
-              return null;
-            },
-          ),
+          EmailField(controller: emailController),
           const SizedBox(height: 15),
           PasswordField(
             labelText: "Password",
