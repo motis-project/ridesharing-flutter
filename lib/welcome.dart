@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app/login.dart';
 import 'package:flutter_app/register.dart';
 import 'package:flutter_app/submit_button.dart';
@@ -14,21 +11,22 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  List<String> images = [
+  static const double indicatorSize = 10;
+  static const double indicatorMargin = 3;
+  static const List<String> images = [
     'assets/welcome1.png',
     'assets/welcome2.png',
     'assets/welcome3.png'
   ];
+
   int activePage = 0;
-  double _indicatorSize = 10;
-  double _indicatorMargin = 3;
 
   List<Widget> indicators(imagesLength, currentIndex) {
     return List<Widget>.generate(imagesLength, (index) {
       return Container(
-        margin: EdgeInsets.all(_indicatorMargin),
-        width: _indicatorSize,
-        height: _indicatorSize,
+        margin: const EdgeInsets.all(indicatorMargin),
+        width: indicatorSize,
+        height: indicatorSize,
         decoration: BoxDecoration(
             color: currentIndex == index ? Colors.black : Colors.black26,
             shape: BoxShape.circle),
@@ -62,7 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     ));
     Widget carousel = Column(children: [
       SizedBox(
-          height: height / 2 - _indicatorSize - _indicatorMargin * 2,
+          height: height / 2 - indicatorSize - indicatorMargin * 2,
           child: PageView.builder(
             itemCount: images.length,
             pageSnapping: true,

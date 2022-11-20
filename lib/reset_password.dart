@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/submit_button.dart';
 
@@ -48,7 +46,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   void onPasswordReset() {
     //Navigator.of(context).pop();
-    print("Successful");
+    // TODO
   }
 
   @override

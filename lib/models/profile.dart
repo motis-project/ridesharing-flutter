@@ -30,8 +30,8 @@ class Profile extends Model {
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Profile> Profiles) {
-    return Profiles.map((Profile) => Profile.toJson()).toList();
+  List<Map<String, dynamic>> toJsonList(List<Profile> profiles) {
+    return profiles.map((profile) => profile.toJson()).toList();
   }
 
   @override
