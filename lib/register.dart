@@ -122,7 +122,6 @@ class _RegisterFormState extends State<RegisterForm> {
             PasswordField(
               labelText: "Password",
               hintText: "Enter your password",
-              helperText: "Must contain at least 8 characters",
               controller: passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -156,10 +155,13 @@ class _RegisterFormState extends State<RegisterForm> {
               },
             ),
             const SizedBox(height: 15),
-            SubmitButton(
-              text: "Create account",
-              onPressed: onSubmit,
-            )
+            Hero(
+                tag: "RegisterButton",
+                transitionOnUserGestures: true,
+                child: SubmitButton(
+                  text: "Create account",
+                  onPressed: onSubmit,
+                ))
           ],
         ));
   }

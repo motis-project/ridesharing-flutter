@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/forgot_password.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/register.dart';
 import 'package:flutter_app/submit_button.dart';
@@ -26,16 +27,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-      ),
-      body: const Center(
-          child: SingleChildScrollView(
-              child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-        child: LoginForm(),
-      ))),
-      bottomNavigationBar: BottomAppBar(
+        appBar: AppBar(
+          title: const Text("Login"),
+        ),
+        body: const Center(
+          child: CustomScrollView(physics: ClampingScrollPhysics(), slivers: [
+            SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  child: LoginForm(),
+                ))
+          ]),
+          /*bottomNavigationBar: BottomAppBar(
           color: Colors.transparent,
           elevation: 0,
           child: Row(
@@ -48,8 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text("No account yet? Register"))
             ],
-          )),
-    );
+          )),*/
+        ));
   }
 }
 
@@ -99,7 +103,9 @@ class _LoginFormState extends State<LoginForm> {
     return Form(
       key: _formKey,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Expanded(child: Container()),
           TextFormField(
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -131,10 +137,27 @@ class _LoginFormState extends State<LoginForm> {
           ),
           TextButton(
               onPressed: () {
-                print("Forgot password");
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ForgotPasswordScreen(
+                        initialEmail: emailController.text)));
               },
               child: const Text("Forgot password?")),
-          SubmitButton(text: "Submit", onPressed: onSubmit),
+          Hero(
+              tag: "LoginButton",
+              transitionOnUserGestures: true,
+              child: SubmitButton(text: "Submit", onPressed: onSubmit)),
+          Expanded(
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const RegisterScreen()));
+                      },
+                      child: const Text("No account yet? Register")),
+                )),
+          )
         ],
       ),
     );

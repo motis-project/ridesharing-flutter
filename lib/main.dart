@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/profile.dart';
+import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/models/profile.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_app/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_app/login.dart';
@@ -117,6 +119,6 @@ class _MotisAppState extends State<MotisApp> {
                   },
                 ),
               )
-            : const LoginScreen());
+            : const WelcomeScreen());
   }
 }
