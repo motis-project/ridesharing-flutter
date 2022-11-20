@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/own_theme_fields.dart';
 import 'package:flutter_app/submit_button.dart';
+import 'package:progress_state_button/iconed_button.dart';
+import 'package:progress_state_button/progress_button.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String? initialEmail;
@@ -38,7 +41,7 @@ class ForgotPasswordForm extends StatefulWidget {
 }
 
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
-  bool _loading = false;
+  ButtonState _state = ButtonState.idle;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController emailController;
 
@@ -51,11 +54,23 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   void onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _loading = true;
+        _state = ButtonState.loading;
       });
       //TODO
-      sleep(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        _state = ButtonState.success;
+      });
+      await Future.delayed(const Duration(seconds: 2));
       onMailSent();
+    } else {
+      setState(() {
+        _state = ButtonState.fail;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        _state = ButtonState.idle;
+      });
     }
   }
 
@@ -72,7 +87,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-        absorbing: _loading,
+        absorbing:
+            _state == ButtonState.loading || _state == ButtonState.success,
         child: Form(
             key: _formKey,
             child: Column(
@@ -93,10 +109,27 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                   },
                 ),
                 const SizedBox(height: 15),
-                SubmitButton(
-                  text: "Send recovery mail",
-                  onPressed: onSubmit,
-                )
+                ProgressButton.icon(iconedButtons: {
+                  ButtonState.idle: IconedButton(
+                      text: "Recovery mail",
+                      icon: Icon(Icons.send,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      color: Theme.of(context).colorScheme.primary),
+                  ButtonState.loading: IconedButton(
+                      color: Theme.of(context).colorScheme.primary),
+                  ButtonState.fail: IconedButton(
+                      text: "Failed",
+                      icon: Icon(Icons.cancel,
+                          color: Theme.of(context).colorScheme.onError),
+                      color: Theme.of(context).colorScheme.error),
+                  ButtonState.success: IconedButton(
+                      text: "Sent",
+                      icon: Icon(
+                        Icons.check_circle,
+                        color: Theme.of(context).own().onSuccess,
+                      ),
+                      color: Theme.of(context).own().success)
+                }, onPressed: onSubmit, state: _state)
               ],
             )));
   }

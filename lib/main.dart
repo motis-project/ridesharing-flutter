@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_app/login.dart';
 
+import 'own_theme_fields.dart';
 import 'pages/drives_page.dart';
 import 'pages/home_page.dart';
 import 'pages/rides_page.dart';
@@ -54,6 +55,13 @@ class _MotisAppState extends State<MotisApp> {
   bool _isLoggedIn = false;
   int _selectedIndex = 0;
 
+  final ThemeData lightTheme = ThemeData.light()
+    ..addOwn(
+        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+  final ThemeData darkTheme = ThemeData.dark()
+    ..addOwn(
+        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+
   static const List<Widget> _pages = [
     HomePage(),
     DrivesPage(),
@@ -79,9 +87,8 @@ class _MotisAppState extends State<MotisApp> {
     return MaterialApp(
         title: 'Motis Mitfahr-App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: lightTheme,
+        darkTheme: darkTheme,
         home: _isLoggedIn //&& !kDebugMode
             ? Scaffold(
                 appBar: AppBar(
