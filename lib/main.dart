@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/profile.dart';
-import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_app/login.dart';
 
 import 'own_theme_fields.dart';
 import 'pages/drives_page.dart';
@@ -22,26 +19,7 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
 
-  exampleCalls();
-
   runApp(const MotisApp());
-}
-
-void exampleCalls() async {
-  final List<Map<String, dynamic>> profilesJson =
-      await supabaseClient.from('users').select();
-  List<Profile> profiles = Profile.fromJsonList(profilesJson);
-  print(profiles);
-
-  await supabaseClient.from('users').update({'name': 'Fynn2'}).eq('id', 1);
-  final Map<String, dynamic> data = await supabaseClient
-      .from('profiles')
-      .select()
-      .order('id', ascending: true)
-      .limit(1)
-      .single();
-  Profile profile = Profile.fromJson(data);
-  assert(profile.name == 'Fynn2');
 }
 
 class MotisApp extends StatefulWidget {

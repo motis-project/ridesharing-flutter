@@ -57,7 +57,7 @@ class _RegisterFormState extends State<RegisterForm> {
           });
           onUserCreated();
         }
-      } on AuthException catch (e) {
+      } on AuthException {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Something went wrong"),
         ));

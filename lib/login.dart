@@ -39,20 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: LoginForm(),
                 ))
           ]),
-          /*bottomNavigationBar: BottomAppBar(
-          color: Colors.transparent,
-          elevation: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const RegisterScreen()));
-                  },
-                  child: const Text("No account yet? Register"))
-            ],
-          )),*/
         ));
   }
 }
@@ -148,15 +134,14 @@ class _LoginFormState extends State<LoginForm> {
               child: SubmitButton(text: "Submit", onPressed: onSubmit)),
           Expanded(
             child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const RegisterScreen()));
-                      },
-                      child: const Text("No account yet? Register")),
-                )),
+              alignment: Alignment.bottomCenter,
+              child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()));
+                  },
+                  child: const Text("No account yet? Register")),
+            ),
           )
         ],
       ),
