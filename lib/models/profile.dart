@@ -5,19 +5,19 @@ class Profile extends Model {
   final String email;
 
   Profile({
-    required super.id,
+    super.id,
+    super.createdAt,
     required this.username,
     required this.email,
-    super.createdAt,
   });
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json['id'],
+      createdAt: DateTime.parse(json['created_at']),
       username: json['username'],
       email: json['email'],
-      createdAt: json['created_at'],
     );
   }
 
@@ -27,10 +27,8 @@ class Profile extends Model {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'username': username,
       'email': email,
-      'created_at': createdAt,
     };
   }
 
