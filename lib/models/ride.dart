@@ -7,6 +7,9 @@ class Ride extends Model {
   final DateTime endTime;
 
   final int seats;
+  final double? price;
+  final bool approved;
+
   final int driveId;
   final int riderId;
 
@@ -18,6 +21,8 @@ class Ride extends Model {
     required this.end,
     required this.endTime,
     required this.seats,
+    this.price,
+    required this.approved,
     required this.driveId,
     required this.riderId,
   });
@@ -32,6 +37,8 @@ class Ride extends Model {
       end: json['end'],
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
+      price: json['price'],
+      approved: json['approved'],
       driveId: json['drive_id'],
       riderId: json['rider_id'],
     );
@@ -48,6 +55,8 @@ class Ride extends Model {
       'end': end,
       'end_time': endTime.toString(),
       'seats': seats,
+      'price': price,
+      'approved': approved,
       'drive_id': driveId,
       'rider_id': riderId,
     };
