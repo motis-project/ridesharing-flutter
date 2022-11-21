@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -31,6 +33,8 @@ class MotisApp extends StatefulWidget {
 }
 
 class _MotisAppState extends State<MotisApp> {
+  late final StreamSubscription<AuthState> _authStateSubscription;
+  User? _currentUser;
   bool _isLoggedIn = false;
   int _selectedIndex = 0;
 
@@ -48,15 +52,36 @@ class _MotisAppState extends State<MotisApp> {
     SettingsPage(),
   ];
 
+  Future<void> getInitialAuthState() async {
+    try {
+      Session? initialSession = await SupabaseAuth.instance.initialSession;
+      if (initialSession != null) {
+        setState(() {
+          _currentUser = initialSession.user;
+          _isLoggedIn = true;
+        });
+      }
+    } on Exception {
+      // Do nothing, stay logged out
+    }
+  }
+
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    supabaseClient.auth.onAuthStateChange.listen((data) {
+
+    await getInitialAuthState();
+
+    _authStateSubscription =
+        supabaseClient.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
+
+      print("Auth event: ${event.toString()}");
 
       setState(() {
         _isLoggedIn = event == AuthChangeEvent.signedIn ||
             event == AuthChangeEvent.passwordRecovery;
+        _currentUser = data.session?.user;
       });
 
       if (event == AuthChangeEvent.passwordRecovery) {
@@ -73,6 +98,12 @@ class _MotisAppState extends State<MotisApp> {
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription.cancel();
+    super.dispose();
   }
 
   @override
