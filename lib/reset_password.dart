@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/loading_button.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/password_field.dart';
-import 'package:flutter_app/submit_button.dart';
+import 'package:flutter_app/util/supabase.dart';
+import 'package:progress_state_button/progress_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -36,17 +40,39 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   final passwordConfirmationController = TextEditingController();
+  ButtonState _state = ButtonState.idle;
 
   void onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      //TODO
+      setState(() {
+        _state = ButtonState.loading;
+      });
+      await supabaseClient.auth
+          .updateUser(UserAttributes(password: passwordController.text));
+      setState(() {
+        _state = ButtonState.success;
+      });
+      await Future.delayed(const Duration(seconds: 2));
       onPasswordReset();
+    } else {
+      fail();
     }
   }
 
+  void fail() async {
+    setState(() {
+      _state = ButtonState.fail;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _state = ButtonState.idle;
+    });
+  }
+
   void onPasswordReset() {
-    //Navigator.of(context).pop();
-    // TODO
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => const MotisApp(),
+    ));
   }
 
   @override
@@ -58,51 +84,55 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            PasswordField(
-              labelText: "Password",
-              hintText: "Enter your new password",
-              controller: passwordController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your new password';
-                } else if (value.length < 8) {
-                  return 'Password must be at least 8 characters';
-                } else if (RegExp('[0-9]').hasMatch(value) == false) {
-                  return 'Password must contain at least one number';
-                } else if (RegExp('[A-Z]').hasMatch(value) == false) {
-                  return 'Password must contain at least one uppercase letter';
-                } else if (RegExp('[a-z]').hasMatch(value) == false) {
-                  return 'Password must contain at least one lowercase letter';
-                } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
-                  return 'Password must contain at least one special character';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 15),
-            PasswordField(
-              labelText: "Confirm password",
-              hintText: "Re-enter your new password",
-              controller: passwordConfirmationController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please confirm your new password';
-                } else if (value != passwordController.text) {
-                  return 'Passwords do not match';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 15),
-            SubmitButton(
-              text: "Reset password",
-              onPressed: onSubmit,
-            )
-          ],
-        ));
+    return AbsorbPointer(
+        absorbing:
+            _state == ButtonState.loading || _state == ButtonState.success,
+        child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                PasswordField(
+                  labelText: "Password",
+                  hintText: "Enter your new password",
+                  controller: passwordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your new password';
+                    } else if (value.length < 8) {
+                      return 'Password must be at least 8 characters';
+                    } else if (RegExp('[0-9]').hasMatch(value) == false) {
+                      return 'Password must contain at least one number';
+                    } else if (RegExp('[A-Z]').hasMatch(value) == false) {
+                      return 'Password must contain at least one uppercase letter';
+                    } else if (RegExp('[a-z]').hasMatch(value) == false) {
+                      return 'Password must contain at least one lowercase letter';
+                    } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
+                      return 'Password must contain at least one special character';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                PasswordField(
+                  labelText: "Confirm password",
+                  hintText: "Re-enter your new password",
+                  controller: passwordConfirmationController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your new password';
+                    } else if (value != passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                LoadingButton(
+                  idleText: "Reset password",
+                  onPressed: onSubmit,
+                  state: _state,
+                )
+              ],
+            )));
   }
 }

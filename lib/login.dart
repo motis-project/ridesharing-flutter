@@ -3,10 +3,11 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/email_field.dart';
 import 'package:flutter_app/forgot_password.dart';
+import 'package:flutter_app/loading_button.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/register.dart';
-import 'package:flutter_app/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -47,15 +48,23 @@ class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  ButtonState _state = ButtonState.idle;
 
   void onSubmit() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _state = ButtonState.loading;
+      });
       try {
         await supabaseClient.auth.signInWithPassword(
           email: emailController.text,
           password: passwordController.text,
         );
+        setState(() {
+          _state = ButtonState.success;
+        });
       } on AuthException catch (e) {
+        fail();
         // looks weird but needed later for i18n
         String text = e.statusCode == '400'
             ? (e.message.contains("credentials")
@@ -67,7 +76,19 @@ class _LoginFormState extends State<LoginForm> {
           content: Text(text),
         ));
       }
+    } else {
+      fail();
     }
+  }
+
+  void fail() async {
+    setState(() {
+      _state = ButtonState.fail;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _state = ButtonState.idle;
+    });
   }
 
   @override
@@ -79,49 +100,52 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Expanded(child: Container()),
-          EmailField(controller: emailController),
-          const SizedBox(height: 15),
-          PasswordField(
-            labelText: "Password",
-            hintText: "Enter your password",
-            controller: passwordController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              return null;
-            },
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ForgotPasswordScreen(
-                        initialEmail: emailController.text)));
-              },
-              child: const Text("Forgot password?")),
-          Hero(
-              tag: "LoginButton",
-              transitionOnUserGestures: true,
-              child: SubmitButton(text: "Submit", onPressed: onSubmit)),
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: TextButton(
+    return AbsorbPointer(
+        absorbing:
+            _state == ButtonState.loading || _state == ButtonState.success,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Expanded(child: Container()),
+              EmailField(controller: emailController),
+              const SizedBox(height: 15),
+              PasswordField(
+                labelText: "Password",
+                hintText: "Enter your password",
+                controller: passwordController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+              ),
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const RegisterScreen()));
+                        builder: (context) => ForgotPasswordScreen(
+                            initialEmail: emailController.text)));
                   },
-                  child: const Text("No account yet? Register")),
-            ),
-          )
-        ],
-      ),
-    );
+                  child: const Text("Forgot password?")),
+              Hero(
+                  tag: "LoginButton",
+                  transitionOnUserGestures: true,
+                  child: LoadingButton(onPressed: onSubmit, state: _state)),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const RegisterScreen()));
+                      },
+                      child: const Text("No account yet? Register")),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }

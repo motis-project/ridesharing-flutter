@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/big_button.dart';
 import 'package:flutter_app/login.dart';
 import 'package:flutter_app/register.dart';
-import 'package:flutter_app/submit_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -44,7 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         Hero(
             tag: "LoginButton",
             transitionOnUserGestures: true,
-            child: SubmitButton(
+            child: BigButton(
                 text: "Login",
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const LoginScreen())))),
@@ -52,7 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         Hero(
             tag: "RegisterButton",
             transitionOnUserGestures: true,
-            child: SubmitButton(
+            child: BigButton(
                 text: "Register",
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const RegisterScreen()))))

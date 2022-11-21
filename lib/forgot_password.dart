@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/email_field.dart';
-import 'package:flutter_app/own_theme_fields.dart';
-import 'package:flutter_app/submit_button.dart';
-import 'package:progress_state_button/iconed_button.dart';
+import 'package:flutter_app/loading_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 
@@ -66,14 +64,18 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       await Future.delayed(const Duration(seconds: 2));
       onMailSent();
     } else {
-      setState(() {
-        _state = ButtonState.fail;
-      });
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        _state = ButtonState.idle;
-      });
+      fail();
     }
+  }
+
+  void fail() async {
+    setState(() {
+      _state = ButtonState.fail;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      _state = ButtonState.idle;
+    });
   }
 
   void onMailSent() {
@@ -99,35 +101,12 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                   controller: emailController,
                 ),
                 const SizedBox(height: 15),
-                ProgressButton.icon(
-                  iconedButtons: {
-                    ButtonState.idle: IconedButton(
-                        text: "SEND RECOVERY",
-                        icon: Icon(Icons.send,
-                            color: Theme.of(context).colorScheme.onPrimary),
-                        color: Theme.of(context).colorScheme.primary),
-                    ButtonState.loading: IconedButton(
-                        color: Theme.of(context).colorScheme.primary),
-                    ButtonState.fail: IconedButton(
-                        text: "FAILED",
-                        icon: Icon(Icons.cancel,
-                            color: Theme.of(context).colorScheme.onError),
-                        color: Theme.of(context).colorScheme.error),
-                    ButtonState.success: IconedButton(
-                        text: "SENT",
-                        icon: Icon(
-                          Icons.check_circle,
-                          color: Theme.of(context).own().onSuccess,
-                        ),
-                        color: Theme.of(context).own().success)
-                  },
+                LoadingButton(
                   onPressed: onSubmit,
                   state: _state,
-                  textStyle: submitButtonTextStyle(context),
-                  radius: submitButtonBorderRadius,
-                  height: submitButtonHeight,
-                  maxWidth: 600.0,
-                ),
+                  idleText: "Send recovery",
+                  successText: "Sent",
+                )
               ],
             )));
   }
