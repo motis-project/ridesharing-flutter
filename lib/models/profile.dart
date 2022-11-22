@@ -1,20 +1,23 @@
 import 'model.dart';
 
 class Profile extends Model {
-  final String name;
+  final String username;
+  final String email;
 
   Profile({
-    required super.id,
-    required this.name,
+    super.id,
     super.createdAt,
+    required this.username,
+    required this.email,
   });
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json['id'],
-      name: json['name'],
-      createdAt: json['created_at'],
+      createdAt: DateTime.parse(json['created_at']),
+      username: json['username'],
+      email: json['email'],
     );
   }
 
@@ -24,9 +27,8 @@ class Profile extends Model {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'created_at': createdAt,
+      'username': username,
+      'email': email,
     };
   }
 
@@ -36,6 +38,6 @@ class Profile extends Model {
 
   @override
   String toString() {
-    return 'Profile{id: $id, name: $name, createdAt: $createdAt}';
+    return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
   }
 }

@@ -1,9 +1,9 @@
 abstract class Model {
-  final int id;
-  final String? createdAt;
+  final int? id;
+  final DateTime? createdAt;
 
   Model({
-    required this.id,
+    this.id,
     this.createdAt,
   });
 }
