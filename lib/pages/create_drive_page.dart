@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/drive.dart';
+import 'package:flutter_app/my_scaffold.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,7 +26,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
   late DateTime _selectedDate;
   late int _dropdownValue;
 
-  final List<int> list = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  final List<int> list = List<int>.generate(10, (index) => index + 1);
 
   void _showTimePicker() {
     showTimePicker(
@@ -142,10 +143,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Motis Mitfahr-App'),
-      ),
+    return MyScaffold(
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
