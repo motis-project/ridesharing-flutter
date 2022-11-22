@@ -64,14 +64,16 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
+      //todo: add check if user has no other drive or ride at this time
       try {
         await supabaseClient.from('drives').insert({
           //todo: take real user id not auth_id
+          //todo: add end_time
           'driver_id': 1,
           'start': _startController.text,
           'end': _destinationController.text,
           'seats': _seatController.text,
-          'date': _selectedDate.toIso8601String(),
+          'start_time': _selectedDate.toIso8601String(),
         });
       } on AuthException {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
