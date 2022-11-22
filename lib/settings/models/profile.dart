@@ -1,7 +1,7 @@
 import 'package:flutter_app/util/supabase.dart';
 import 'package:postgrest/src/postgrest_builder.dart';
 
-import 'model.dart';
+import '../../util/model.dart';
 
 class Profile extends Model {
   final String username;

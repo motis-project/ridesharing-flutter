@@ -1,4 +1,4 @@
-import 'model.dart';
+import '../../util/model.dart';
 
 class Drive extends Model {
   final String start;

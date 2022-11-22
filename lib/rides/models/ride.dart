@@ -1,4 +1,4 @@
-import 'model.dart';
+import '../../util/model.dart';
 
 class Ride extends Model {
   final String start;

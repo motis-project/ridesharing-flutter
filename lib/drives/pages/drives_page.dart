@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/pages/create_drive_page.dart';
+import 'package:flutter_app/drives/pages/create_drive_page.dart';
 
 class DrivesPage extends StatefulWidget {
   const DrivesPage({super.key});
