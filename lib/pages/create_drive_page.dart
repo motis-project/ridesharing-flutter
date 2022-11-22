@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/models/drive.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../models/profile.dart';
 
 class CreateDrivePage extends StatefulWidget {
   const CreateDrivePage({super.key});
@@ -66,15 +69,25 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
     if (_formKey.currentState!.validate()) {
       //todo: add check if user has no other drive or ride at this time
       try {
-        await supabaseClient.from('drives').insert({
-          //todo: take real user id not auth_id
+        // User authUser = supabaseClient.auth.currentUser!;
+        //todo: get user from auth when login is implemented
+        const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
+        print('id: $id');
+        final Profile driver =
+            await Profile.getProfileFromAuthId(id) as Profile;
+
+        Drive drive = Drive(
           //todo: add end_time
-          'driver_id': 1,
-          'start': _startController.text,
-          'end': _destinationController.text,
-          'seats': _seatController.text,
-          'start_time': _selectedDate.toIso8601String(),
-        });
+          driverId: driver.id!,
+          start: _startController.text,
+          end: _destinationController.text,
+          seats: int.parse(_seatController.text),
+          startTime: _selectedDate,
+          endTime: DateTime(_selectedDate.year, _selectedDate.month,
+              _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute),
+        );
+        print('drive: ${drive.toJson()}');
+        await supabaseClient.from('drives').insert(drive.toJson());
       } on AuthException {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Something went wrong"),
@@ -189,7 +202,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
                       const SizedBox(width: 50),
                       Expanded(
                         child: SizedBox(
-                          //todo: add dropdown
+                          //todo: add dropdown button
                           child: TextFormField(
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
