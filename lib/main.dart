@@ -6,6 +6,7 @@ import 'pages/drives_page.dart';
 import 'pages/home_page.dart';
 import 'pages/rides_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/create_drive_page.dart';
 
 void main() async {
   await dotenv.load();
@@ -31,7 +32,7 @@ class _MotisAppState extends State<MotisApp> {
 
   static const List<Widget> _pages = [
     HomePage(),
-    DrivesPage(),
+    CreateDrivePage(),
     RidesPage(),
     SettingsPage(),
   ];
