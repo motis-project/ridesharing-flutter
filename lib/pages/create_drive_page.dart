@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_app/models/drive.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/profile.dart';
+import 'drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
   const CreateDrivePage({super.key});
@@ -18,14 +18,15 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
-  final TextEditingController _seatController = TextEditingController();
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   late final DateTime _firstDate;
   late DateTime _selectedDate;
+  late int _dropdownValue;
 
-  // show time picker method
+  final List<int> list = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   void _showTimePicker() {
     showTimePicker(
       context: context,
@@ -47,6 +48,61 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
     });
   }
 
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: _firstDate,
+      lastDate: _firstDate.add(const Duration(days: 30)),
+    ).then((value) {
+      setState(() {
+        if (value != null) {
+          _selectedDate = DateTime(value.year, value.month, value.day,
+              _selectedDate.hour, _selectedDate.minute);
+          _dateController.text = _formatDate(_selectedDate);
+        }
+      });
+    });
+  }
+
+  void _onSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      //todo: add check if user has no other drive or ride at this time
+      try {
+        //todo: get user from auth when login is implemented
+        // User authUser = supabaseClient.auth.currentUser!;
+        const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
+        final Profile driver =
+            await Profile.getProfileFromAuthId(id) as Profile;
+
+        Drive drive = Drive(
+          driverId: driver.id!,
+          start: _startController.text,
+          end: _destinationController.text,
+          seats: _dropdownValue,
+          startTime: _selectedDate,
+          //todo: add right end_time from algorithm
+          endTime: DateTime(_selectedDate.year, _selectedDate.month,
+              _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute),
+        );
+        //add Drive to database an Navigate to DriveDetailPage
+        await supabaseClient
+            .from('drives')
+            .insert(drive.toJson())
+            .then(((value) => Navigator.pushReplacement<void, void>(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const DriveDetailPage(),
+                  ),
+                )));
+      } on AuthException {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Something went wrong"),
+        ));
+      }
+    }
+  }
+
   String _formatDate(DateTime date) {
     return '${date.day}.${date.month}.${date.year}';
   }
@@ -65,54 +121,6 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
     return null;
   }
 
-  void _onSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      //todo: add check if user has no other drive or ride at this time
-      try {
-        // User authUser = supabaseClient.auth.currentUser!;
-        //todo: get user from auth when login is implemented
-        const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
-        print('id: $id');
-        final Profile driver =
-            await Profile.getProfileFromAuthId(id) as Profile;
-
-        Drive drive = Drive(
-          //todo: add end_time
-          driverId: driver.id!,
-          start: _startController.text,
-          end: _destinationController.text,
-          seats: int.parse(_seatController.text),
-          startTime: _selectedDate,
-          endTime: DateTime(_selectedDate.year, _selectedDate.month,
-              _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute),
-        );
-        print('drive: ${drive.toJson()}');
-        await supabaseClient.from('drives').insert(drive.toJson());
-      } on AuthException {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Something went wrong"),
-        ));
-      }
-    }
-  }
-
-  void _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: _firstDate,
-      lastDate: _firstDate.add(const Duration(days: 30)),
-    ).then((value) {
-      setState(() {
-        if (value != null) {
-          _selectedDate = DateTime(value.year, value.month, value.day,
-              _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = _formatDate(_selectedDate);
-        }
-      });
-    });
-  }
-
   @override
   initState() {
     super.initState();
@@ -120,6 +128,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
     _selectedDate = DateTime.now();
     _dateController.text = _formatDate(_selectedDate);
     _timeController.text = _formatTime(_selectedDate);
+    _dropdownValue = list.first;
   }
 
   @override
@@ -128,13 +137,15 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
     _timeController.dispose();
     _startController.dispose();
     _destinationController.dispose();
-    _seatController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Motis Mitfahr-App'),
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -201,29 +212,38 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
                       ),
                       const SizedBox(width: 50),
                       Expanded(
-                        child: SizedBox(
-                          //todo: add dropdown button
-                          child: TextFormField(
+                        child: Container(
+                          //todo: add same height as time&date.
+                          height: 60,
+                          child: DropdownButtonFormField<int>(
+                            value: _dropdownValue,
+                            icon: const Icon(Icons.arrow_downward),
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: "Seats",
-                              hintText: "Enter the number of seats",
                             ),
-                            controller: _seatController,
-                            validator: (value) => value!.isEmpty
-                                ? 'Please enter the number of seats'
-                                : null,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            onChanged: (int? value) {
+                              // This is called when the user selects an item.
+                              setState(() {
+                                _dropdownValue = value!;
+                              });
+                            },
+                            items: list.map<DropdownMenuItem<int>>((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(value.toString()),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SubmitButton(text: "Create", onPressed: _onSubmit),
+                SubmitButton(
+                  text: "Create",
+                  onPressed: _onSubmit,
+                ),
               ],
             ),
           ),
