@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/account_page.dart';
 import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/welcome.dart';
@@ -22,7 +24,33 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
 
-  runApp(const MotisApp());
+  runApp(const App());
+}
+
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  final ThemeData lightTheme = ThemeData.light()
+    ..addOwn(
+        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+  final ThemeData darkTheme = ThemeData.dark()
+    ..addOwn(
+        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Motis Mitfahr-App',
+        debugShowCheckedModeBanner: false,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        home: MotisApp());
+  }
 }
 
 class MotisApp extends StatefulWidget {
@@ -38,18 +66,11 @@ class _MotisAppState extends State<MotisApp> {
   bool _isLoggedIn = false;
   int _selectedIndex = 0;
 
-  final ThemeData lightTheme = ThemeData.light()
-    ..addOwn(
-        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
-  final ThemeData darkTheme = ThemeData.dark()
-    ..addOwn(
-        const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
-
   static const List<Widget> _pages = [
     HomePage(),
     DrivesPage(),
     RidesPage(),
-    SettingsPage(),
+    AccountPage(),
   ];
 
   Future<void> getInitialAuthState() async {
@@ -67,21 +88,28 @@ class _MotisAppState extends State<MotisApp> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
-    await getInitialAuthState();
+    //getInitialAuthState();
 
+    Future.delayed(Duration.zero, _setupAuthStateSubscription);
+  }
+
+  void _setupAuthStateSubscription() {
     _authStateSubscription =
         supabaseClient.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
 
       print("Auth event: ${event.toString()}");
+      print(_isLoggedIn = event == AuthChangeEvent.signedIn ||
+          event == AuthChangeEvent.passwordRecovery);
 
       setState(() {
         _isLoggedIn = event == AuthChangeEvent.signedIn ||
             event == AuthChangeEvent.passwordRecovery;
         _currentUser = data.session?.user;
+        print("setState called");
       });
 
       if (event == AuthChangeEvent.passwordRecovery) {
@@ -94,7 +122,7 @@ class _MotisAppState extends State<MotisApp> {
       if (event == AuthChangeEvent.signedOut) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          MaterialPageRoute(builder: (context) => const MotisApp()),
         );
       }
     });
@@ -108,49 +136,46 @@ class _MotisAppState extends State<MotisApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Motis Mitfahr-App',
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        home: _isLoggedIn //&& !kDebugMode
-            ? Scaffold(
-                appBar: AppBar(
-                  title: const Text('Motis Mitfahr-App'),
+    print("Building MOTIS App");
+    print(_isLoggedIn);
+    return _isLoggedIn // || kDebugMode
+        ? Scaffold(
+            appBar: AppBar(
+              title: const Text('Motis Mitfahr-App'),
+            ),
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: _pages,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
                 ),
-                body: IndexedStack(
-                  index: _selectedIndex,
-                  children: _pages,
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.drive_eta),
+                  label: 'Drives',
                 ),
-                bottomNavigationBar: BottomNavigationBar(
-                  type: BottomNavigationBarType.fixed,
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.drive_eta),
-                      label: 'Drives',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.chair),
-                      label: 'Rides',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.settings),
-                      label: 'Settings',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: Colors.blue,
-                  onTap: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chair),
+                  label: 'Rides',
                 ),
-              )
-            : const WelcomeScreen());
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.account_circle),
+                  label: 'Account',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.blue,
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          )
+        : const WelcomeScreen();
   }
 }
