@@ -4,6 +4,7 @@ import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../rides/models/ride.dart';
 import '../../settings/models/profile.dart';
 import '../pages/drive_detail_page.dart';
 
@@ -67,13 +68,41 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      //todo: add check if user has no other drive or ride at this time
       try {
         //todo: get user from auth when login is implemented
         // User authUser = supabaseClient.auth.currentUser!;
+        //todo: add right end_time from algorithm
+        DateTime endTime = DateTime(_selectedDate.year, _selectedDate.month,
+            _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
         final Profile driver =
             await Profile.getProfileFromAuthId(id) as Profile;
+        //check if the user already has a drive at this time
+        Drive? overlappingDrive =
+            Drive.userAlreadyHasDrive(_selectedDate, endTime, driver.id!)
+                as Drive?;
+        if (overlappingDrive != null && mounted) {
+          //todo: show view with overlapping drive when implemented
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You already have a drive at this time'),
+            ),
+          );
+          return;
+        }
+        //check if the user already has a ride at this time
+        Ride? overlappingRide =
+            Ride.userAlreadyHasRide(_selectedDate, endTime, driver.id!)
+                as Ride?;
+        if (overlappingRide != null && mounted) {
+          //todo: show view with overlapping ride when implemented
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You already have a ride at this time'),
+            ),
+          );
+          return;
+        }
 
         Drive drive = Drive(
           driverId: driver.id!,
@@ -81,9 +110,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           end: _destinationController.text,
           seats: _dropdownValue,
           startTime: _selectedDate,
-          //todo: add right end_time from algorithm
-          endTime: DateTime(_selectedDate.year, _selectedDate.month,
-              _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute),
+          endTime: endTime,
         );
         //add Drive to database an Navigate to DriveDetailPage
         await supabaseClient
@@ -97,6 +124,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   ),
                 )));
       } on AuthException {
+        //todo: change error message when login is implemented
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Something went wrong"),
         ));
@@ -147,6 +175,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       key: _formKey,
       child: Column(
         children: [
+          //todo: add search for start and destination
           TextFormField(
             decoration: const InputDecoration(
               border: OutlineInputBorder(),

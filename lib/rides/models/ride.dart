@@ -1,3 +1,5 @@
+import 'package:flutter_app/util/supabase.dart';
+
 import '../../util/model.dart';
 
 class Ride extends Model {
@@ -69,5 +71,27 @@ class Ride extends Model {
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+  }
+
+  static Future<Ride?> userAlreadyHasRide(
+      DateTime start, DateTime end, int userId) async {
+    final List<Ride> rides = await supabaseClient
+        .from('rides')
+        .select()
+        .eq('rider_id', userId)
+        .then((value) =>
+            Ride.fromJsonList(value.data as List<Map<String, dynamic>>));
+    for (Ride ride in rides) {
+      if (ride.startTime.isBefore(start) && ride.endTime.isAfter(start)) {
+        return ride;
+      }
+      if (ride.startTime.isBefore(end) && ride.endTime.isAfter(end)) {
+        return ride;
+      }
+      if (ride.startTime.isAfter(start) && ride.endTime.isBefore(end)) {
+        return ride;
+      }
+    }
+    return null;
   }
 }
