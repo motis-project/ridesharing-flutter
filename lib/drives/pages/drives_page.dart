@@ -19,7 +19,7 @@ class _DrivesPageState extends State<DrivesPage> {
             MaterialPageRoute(builder: (context) => const CreateDrivePage()),
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
     );

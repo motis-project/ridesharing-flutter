@@ -73,20 +73,14 @@ class Ride extends Model {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
   }
 
-  static Future<Ride?> userAlreadyHasRide(
+  static Future<Ride?> rideOfUserAtTime(
       DateTime start, DateTime end, int userId) async {
     final List<dynamic> ridesList =
         await supabaseClient.from('rides').select().eq('rider_id', userId);
     final List<Ride> rides =
         ridesList.map((ride) => Ride.fromJson(ride)).toList();
     for (Ride ride in rides) {
-      if (ride.startTime.isBefore(start) && ride.endTime.isAfter(start)) {
-        return ride;
-      }
-      if (ride.startTime.isBefore(end) && ride.endTime.isAfter(end)) {
-        return ride;
-      }
-      if (ride.startTime.isAfter(start) && ride.endTime.isBefore(end)) {
+      if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
         return ride;
       }
     }

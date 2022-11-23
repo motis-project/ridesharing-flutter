@@ -79,7 +79,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             await Profile.getProfileFromAuthId(id) as Profile;
         //check if the user already has a drive at this time
         Drive? overlappingDrive =
-            await Drive.userAlreadyHasDrive(_selectedDate, endTime, driver.id!);
+            await Drive.driveOfUserAtTime(_selectedDate, endTime, driver.id!);
         if (overlappingDrive != null && mounted) {
           //todo: show view with overlapping drive when implemented
           ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +92,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         }
         //check if the user already has a ride at this time
         Ride? overlappingRide =
-            await Ride.userAlreadyHasRide(_selectedDate, endTime, driver.id!);
+            await Ride.rideOfUserAtTime(_selectedDate, endTime, driver.id!);
         if (overlappingRide != null && mounted) {
           //todo: show view with overlapping ride when implemented
           ScaffoldMessenger.of(context).showSnackBar(
