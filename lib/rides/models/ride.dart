@@ -46,8 +46,11 @@ class Ride extends Model {
     );
   }
 
-  static List<Ride> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => Ride.fromJson(json)).toList();
+  static List<Ride> fromJsonList(List<dynamic> jsonList) {
+    return jsonList
+        .map((json) => Ride.fromJson(json as Map<String, dynamic>))
+        .toList();
+    ;
   }
 
   Map<String, dynamic> toJson() {
@@ -75,10 +78,10 @@ class Ride extends Model {
 
   static Future<Ride?> rideOfUserAtTime(
       DateTime start, DateTime end, int userId) async {
-    final List<dynamic> ridesList =
-        await supabaseClient.from('rides').select().eq('rider_id', userId);
-    final List<Ride> rides =
-        ridesList.map((ride) => Ride.fromJson(ride)).toList();
+    //get all rides of user
+    final List<Ride> rides = Ride.fromJsonList(
+        await supabaseClient.from('rides').select().eq('rider_id', userId));
+    //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
         return ride;
