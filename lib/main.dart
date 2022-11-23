@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'pages/drives_page.dart';
-import 'pages/home_page.dart';
-import 'pages/rides_page.dart';
-import 'pages/settings_page.dart';
+import 'drives/pages/drives_page.dart';
+import 'home_page.dart';
+import 'rides/pages/rides_page.dart';
+import 'settings/pages/settings_page.dart';
 
 void main() async {
   await dotenv.load();
