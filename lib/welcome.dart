@@ -37,27 +37,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    Widget buttons = Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Hero(
-            tag: "LoginButton",
-            transitionOnUserGestures: true,
-            child: BigButton(
-                text: "Login",
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const LoginScreen())))),
-        const SizedBox(height: 15),
-        Hero(
-            tag: "RegisterButton",
-            transitionOnUserGestures: true,
-            child: BigButton(
-                text: "Register",
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const RegisterScreen()))))
-      ],
-    ));
     Widget carousel = Column(children: [
       SizedBox(
           height: height / 2 - indicatorSize - indicatorMargin * 2,
@@ -81,18 +60,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: indicators(images.length, activePage))
     ]);
+    Widget buttons = Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Hero(
+            tag: "LoginButton",
+            transitionOnUserGestures: true,
+            child: BigButton(
+                text: "Login",
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const LoginScreen())))),
+        const SizedBox(height: 15),
+        Hero(
+            tag: "RegisterButton",
+            transitionOnUserGestures: true,
+            child: BigButton(
+                text: "Register",
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const RegisterScreen()))))
+      ],
+    ));
     return Scaffold(
         body: SafeArea(
-            child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: height > 300
-                    ? Column(children: [
-                        SizedBox(height: height / 2, child: carousel),
-                        Expanded(
-                          child: buttons,
-                        )
-                      ])
-                    : buttons)));
+            child: SingleChildScrollView(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: height > 300
+                        ? Column(children: [
+                            SizedBox(height: height / 2, child: carousel),
+                            SizedBox(height: height / 2, child: buttons),
+                          ])
+                        : buttons))));
   }
 }

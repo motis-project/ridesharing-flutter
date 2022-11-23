@@ -62,9 +62,10 @@ class MotisApp extends StatefulWidget {
 
 class _MotisAppState extends State<MotisApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
-  User? _currentUser;
-  bool _isLoggedIn = false;
+  User? _currentUser = supabaseClient.auth.currentSession?.user;
+  bool _isLoggedIn = supabaseClient.auth.currentSession != null;
   int _selectedIndex = 0;
+  bool _redirecting = false;
 
   static const List<Widget> _pages = [
     HomePage(),
@@ -99,31 +100,38 @@ class _MotisAppState extends State<MotisApp> {
   void _setupAuthStateSubscription() {
     _authStateSubscription =
         supabaseClient.auth.onAuthStateChange.listen((data) {
+      if (_redirecting) return;
+
+      _redirecting = true;
       final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
 
       print("Auth event: ${event.toString()}");
-      print(_isLoggedIn = event == AuthChangeEvent.signedIn ||
-          event == AuthChangeEvent.passwordRecovery);
 
-      setState(() {
-        _isLoggedIn = event == AuthChangeEvent.signedIn ||
-            event == AuthChangeEvent.passwordRecovery;
-        _currentUser = data.session?.user;
-        print("setState called");
-      });
+      print(session != null);
+
+      /*_isLoggedIn = session != null;
+      _currentUser = session?.user;*/
 
       if (event == AuthChangeEvent.passwordRecovery) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
-        );
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) => const ResetPasswordScreen()),
+            (route) => false);
+      } else if (event != AuthChangeEvent.userUpdated &&
+          event != AuthChangeEvent.tokenRefreshed) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const MotisApp()),
+            (route) => false);
       }
-
-      if (event == AuthChangeEvent.signedOut) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MotisApp()),
-        );
+    }, onError: (error) {
+      if (error.runtimeType == AuthException) {
+        error = error as AuthException;
+        if (error.message == 'Email link is invalid or has expired') {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Email link is invalid or has expired"),
+          ));
+        }
       }
     });
   }

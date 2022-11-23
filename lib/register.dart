@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/email_field.dart';
 import 'package:flutter_app/loading_button.dart';
+import 'package:flutter_app/login.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/password_field.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -109,8 +110,13 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void goBack() async {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => const MotisApp(),
+    Navigator.of(context).pushAndRemoveUntil(
+        PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const MotisApp(),
+            transitionDuration: Duration.zero),
+        (route) => false);
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const LoginScreen(),
     ));
   }
 
