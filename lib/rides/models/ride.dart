@@ -75,12 +75,10 @@ class Ride extends Model {
 
   static Future<Ride?> userAlreadyHasRide(
       DateTime start, DateTime end, int userId) async {
-    final List<Ride> rides = await supabaseClient
-        .from('rides')
-        .select()
-        .eq('rider_id', userId)
-        .then((value) =>
-            Ride.fromJsonList(value.data as List<Map<String, dynamic>>));
+    final List<dynamic> ridesList =
+        await supabaseClient.from('rides').select().eq('rider_id', userId);
+    final List<Ride> rides =
+        ridesList.map((ride) => Ride.fromJson(ride)).toList();
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(start) && ride.endTime.isAfter(start)) {
         return ride;

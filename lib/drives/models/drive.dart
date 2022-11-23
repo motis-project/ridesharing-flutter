@@ -62,12 +62,11 @@ class Drive extends Model {
 
   static Future<Drive?> userAlreadyHasDrive(
       DateTime start, DateTime end, int userId) async {
-    final List<Drive> drives = await supabaseClient
-        .from('drives')
-        .select()
-        .eq('driver_id', userId)
-        .then((value) =>
-            Drive.fromJsonList(value.data as List<Map<String, dynamic>>));
+    final List<dynamic> drivesList =
+        await supabaseClient.from('drives').select().eq('driver_id', userId);
+    final List<Drive> drives = drivesList
+        .map((drive) => Drive.fromJson(drive as Map<String, dynamic>))
+        .toList();
     for (Drive drive in drives) {
       if (drive.startTime.isBefore(start) && drive.endTime.isAfter(start)) {
         return drive;
