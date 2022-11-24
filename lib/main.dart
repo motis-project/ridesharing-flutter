@@ -45,85 +45,62 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Motis Mitfahr-App',
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        home: MotisApp());
+      title: 'Motis Mitfahr-App',
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: const AuthApp(),
+    );
   }
 }
 
-class MotisApp extends StatefulWidget {
-  const MotisApp({super.key});
+class AuthApp extends StatefulWidget {
+  const AuthApp({super.key});
 
   @override
-  State<MotisApp> createState() => _MotisAppState();
+  State<AuthApp> createState() => _AuthAppState();
 }
 
-class _MotisAppState extends State<MotisApp> {
+class _AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
   User? _currentUser = supabaseClient.auth.currentSession?.user;
   bool _isLoggedIn = supabaseClient.auth.currentSession != null;
-  int _selectedIndex = 0;
-  bool _redirecting = false;
-
-  static const List<Widget> _pages = [
-    HomePage(),
-    DrivesPage(),
-    RidesPage(),
-    AccountPage(),
-  ];
-
-  Future<void> getInitialAuthState() async {
-    try {
-      Session? initialSession = await SupabaseAuth.instance.initialSession;
-      if (initialSession != null) {
-        setState(() {
-          _currentUser = initialSession.user;
-          _isLoggedIn = true;
-        });
-      }
-    } on Exception {
-      // Do nothing, stay logged out
-    }
-  }
+  bool _resettingPassword = false;
 
   @override
   void initState() {
     super.initState();
 
-    //getInitialAuthState();
-
-    Future.delayed(Duration.zero, _setupAuthStateSubscription);
+    _setupAuthStateSubscription();
   }
 
   void _setupAuthStateSubscription() {
+    print('Setting up auth state subscription');
     _authStateSubscription =
         supabaseClient.auth.onAuthStateChange.listen((data) {
-      if (_redirecting) return;
-
-      _redirecting = true;
       final AuthChangeEvent event = data.event;
       final Session? session = data.session;
 
       print("Auth event: ${event.toString()}");
 
-      print(session != null);
+      setState(() {
+        _currentUser = session?.user;
+        _isLoggedIn = session != null;
 
-      /*_isLoggedIn = session != null;
-      _currentUser = session?.user;*/
+        if (event == AuthChangeEvent.passwordRecovery) {
+          _resettingPassword = true;
+        }
 
-      if (event == AuthChangeEvent.passwordRecovery) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => const ResetPasswordScreen()),
-            (route) => false);
-      } else if (event != AuthChangeEvent.userUpdated &&
-          event != AuthChangeEvent.tokenRefreshed) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const MotisApp()),
-            (route) => false);
-      }
+        if (event == AuthChangeEvent.signedOut ||
+            event == AuthChangeEvent.signedIn ||
+            event == AuthChangeEvent.passwordRecovery) {
+          print('clearing navigator stack');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => widget),
+            (route) => false,
+          );
+        }
+      });
     }, onError: (error) {
       if (error.runtimeType == AuthException) {
         error = error as AuthException;
@@ -136,54 +113,87 @@ class _MotisAppState extends State<MotisApp> {
     });
   }
 
+  Widget getNextPage() {
+    if (_resettingPassword) {
+      return const ResetPasswordScreen();
+    } else if (_isLoggedIn) {
+      return const MotisApp();
+    } else {
+      return const WelcomeScreen();
+    }
+  }
+
   @override
   void dispose() {
+    print('disposing');
     _authStateSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('resetting password $_resettingPassword');
+    print('next Page ${getNextPage().toString()}');
+    return getNextPage();
+  }
+}
+
+class MotisApp extends StatefulWidget {
+  const MotisApp({super.key});
+
+  @override
+  State<MotisApp> createState() => _MotisAppState();
+}
+
+class _MotisAppState extends State<MotisApp> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _pages = [
+    HomePage(),
+    DrivesPage(),
+    RidesPage(),
+    AccountPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     print("Building MOTIS App");
-    print(_isLoggedIn);
-    return _isLoggedIn // || kDebugMode
-        ? Scaffold(
-            appBar: AppBar(
-              title: const Text('Motis Mitfahr-App'),
-            ),
-            body: IndexedStack(
-              index: _selectedIndex,
-              children: _pages,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.drive_eta),
-                  label: 'Drives',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chair),
-                  label: 'Rides',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle),
-                  label: 'Account',
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Colors.blue,
-              onTap: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
-          )
-        : const WelcomeScreen();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Motis Mitfahr-App'),
+      ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.drive_eta),
+            label: 'Drives',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chair),
+            label: 'Rides',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+    );
   }
 }
