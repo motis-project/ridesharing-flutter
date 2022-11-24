@@ -1,33 +1,36 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/email_field.dart';
-import 'package:flutter_app/loading_button.dart';
+import 'package:flutter_app/util/email_field.dart';
+import 'package:flutter_app/util/loading_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;
-  const ForgotPasswordScreen({super.key, this.initialEmail = ""});
+  const ForgotPasswordPage({super.key, this.initialEmail = ""});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Reset password"),
-        ),
-        body: Center(
-            child: SingleChildScrollView(
-                child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          child: ForgotPasswordForm(
-            initialEmail: widget.initialEmail,
+      appBar: AppBar(
+        title: const Text("Reset password"),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            child: ForgotPasswordForm(
+              initialEmail: widget.initialEmail,
+            ),
           ),
-        ))));
+        ),
+      ),
+    );
   }
 }
 
@@ -94,23 +97,24 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-        absorbing:
-            _state == ButtonState.loading || _state == ButtonState.success,
-        child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                EmailField(
-                  controller: emailController,
-                ),
-                const SizedBox(height: 15),
-                LoadingButton(
-                  onPressed: onSubmit,
-                  state: _state,
-                  idleText: "Send recovery",
-                  successText: "Sent",
-                )
-              ],
-            )));
+      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            EmailField(
+              controller: emailController,
+            ),
+            const SizedBox(height: 15),
+            LoadingButton(
+              onPressed: onSubmit,
+              state: _state,
+              idleText: "Send recovery",
+              successText: "Sent",
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

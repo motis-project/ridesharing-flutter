@@ -21,17 +21,19 @@ class PasswordField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: labelText,
-            hintText: hintText,
-            errorText: errorText,
-            helperText: helperText),
-        obscureText: true,
-        enableSuggestions: false,
-        autocorrect: false,
-        keyboardType: TextInputType.visiblePassword,
-        controller: controller,
-        validator: validator);
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: labelText,
+        hintText: hintText,
+        errorText: errorText,
+        helperText: helperText,
+      ),
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+      keyboardType: TextInputType.visiblePassword,
+      controller: controller,
+      validator: validator,
+    );
   }
 }

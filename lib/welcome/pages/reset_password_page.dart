@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/loading_button.dart';
-import 'package:flutter_app/main.dart';
-import 'package:flutter_app/password_field.dart';
+import 'package:flutter_app/util/loading_button.dart';
+import 'package:flutter_app/util/password_field.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key});
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Reset password"),
+      appBar: AppBar(
+        title: const Text("Reset password"),
+      ),
+      body: const Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            child: ResetPasswordForm(),
+          ),
         ),
-        body: const Center(
-            child: SingleChildScrollView(
-                child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          child: ResetPasswordForm(),
-        ))));
+      ),
+    );
   }
 }
 

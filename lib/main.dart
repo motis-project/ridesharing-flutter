@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app.dart';
-import 'package:flutter_app/reset_password.dart';
 import 'package:flutter_app/util/supabase.dart';
-import 'package:flutter_app/welcome.dart';
+import 'package:flutter_app/welcome/pages/reset_password_page.dart';
+import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'own_theme_fields.dart';
+import 'util/own_theme_fields.dart';
 
 void main() async {
   await dotenv.load();
@@ -112,11 +112,11 @@ class _AuthAppState extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     if (_resettingPassword) {
-      return const ResetPasswordScreen();
+      return const ResetPasswordPage();
     } else if (_isLoggedIn) {
       return const MainApp();
     } else {
-      return const WelcomeScreen();
+      return const WelcomePage();
     }
   }
 }
