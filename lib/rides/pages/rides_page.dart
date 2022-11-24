@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/my_scaffold.dart';
 
 class RidesPage extends StatefulWidget {
   const RidesPage({super.key});
@@ -11,8 +10,11 @@ class RidesPage extends StatefulWidget {
 class _RidesPageState extends State<RidesPage> {
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rides'),
+      ),
+      body: const Center(
         child: Text('Rides'),
       ),
     );

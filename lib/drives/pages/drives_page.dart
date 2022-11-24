@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/my_scaffold.dart';
 import 'package:flutter_app/drives/pages/create_drive_page.dart';
 
 class DrivesPage extends StatefulWidget {
@@ -12,8 +11,13 @@ class DrivesPage extends StatefulWidget {
 class _DrivesPageState extends State<DrivesPage> {
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      body: const Center(child: Text('Drives')),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Drives'),
+      ),
+      body: const Center(
+        child: Text('Drives'),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

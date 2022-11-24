@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'pages/drives_page.dart';
-import 'pages/home_page.dart';
-import 'pages/rides_page.dart';
-import 'pages/settings_page.dart';
+import 'package:flutter_app/drives/pages/drives_page.dart';
+import 'package:flutter_app/home_page.dart';
+import 'package:flutter_app/rides/pages/rides_page.dart';
+import 'package:flutter_app/settings/pages/settings_page.dart';
 
 enum TabItem { home, drives, rides, settings }
 
@@ -11,10 +10,10 @@ class App extends StatefulWidget {
   const App({super.key});
 
   @override
-  State<App> createState() => _MotisAppState();
+  State<App> createState() => _AppState();
 }
 
-class _MotisAppState extends State<App> {
+class _AppState extends State<App> {
   TabItem _currentTab = TabItem.home;
   final _navigatorKeys = {
     TabItem.home: GlobalKey<NavigatorState>(),

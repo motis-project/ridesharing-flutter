@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/my_scaffold.dart';
 
 class DriveDetailPage extends StatefulWidget {
   const DriveDetailPage({super.key});
@@ -11,8 +10,13 @@ class DriveDetailPage extends StatefulWidget {
 class _DriveDetailPageState extends State<DriveDetailPage> {
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      body: Center(child: Text('Drive Detail')),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Drive Detail'),
+      ),
+      body: const Center(
+        child: Text('Drive Detail'),
+      ),
     );
   }
 }
