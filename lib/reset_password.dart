@@ -70,9 +70,10 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   }
 
   void onPasswordReset() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => const MotisApp(),
-    ));
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const AuthApp()),
+      (route) => false,
+    );
   }
 
   @override
@@ -84,6 +85,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   @override
   Widget build(BuildContext context) {
+    print("Building ResetPassword");
     return AbsorbPointer(
         absorbing:
             _state == ButtonState.loading || _state == ButtonState.success,

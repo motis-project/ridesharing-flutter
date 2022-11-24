@@ -83,15 +83,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     ));
     return Scaffold(
         body: SafeArea(
-            child: SingleChildScrollView(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: height > 300
-                        ? Column(children: [
-                            SizedBox(height: height / 2, child: carousel),
-                            SizedBox(height: height / 2, child: buttons),
-                          ])
-                        : buttons))));
+            child: CustomScrollView(
+                physics: const ClampingScrollPhysics(),
+                slivers: [
+          SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: height > 300
+                      ? Column(children: [
+                          SizedBox(height: height / 2, child: carousel),
+                          Expanded(child: buttons),
+                        ])
+                      : buttons))
+        ])));
   }
 }

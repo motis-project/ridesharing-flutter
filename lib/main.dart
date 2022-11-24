@@ -86,19 +86,13 @@ class _AuthAppState extends State<AuthApp> {
       setState(() {
         _currentUser = session?.user;
         _isLoggedIn = session != null;
-
-        if (event == AuthChangeEvent.passwordRecovery) {
-          _resettingPassword = true;
-        }
+        _resettingPassword = event == AuthChangeEvent.passwordRecovery;
 
         if (event == AuthChangeEvent.signedOut ||
             event == AuthChangeEvent.signedIn ||
-            event == AuthChangeEvent.passwordRecovery) {
-          print('clearing navigator stack');
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => widget),
-            (route) => false,
-          );
+            event == AuthChangeEvent.passwordRecovery ||
+            event == AuthChangeEvent.userDeleted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
         }
       });
     }, onError: (error) {
@@ -115,10 +109,13 @@ class _AuthAppState extends State<AuthApp> {
 
   Widget getNextPage() {
     if (_resettingPassword) {
+      print("Displaying ResetPasswordScreen");
       return const ResetPasswordScreen();
     } else if (_isLoggedIn) {
+      print("Displaying MotisApp");
       return const MotisApp();
     } else {
+      print("Displaying WelcomeScreen");
       return const WelcomeScreen();
     }
   }
