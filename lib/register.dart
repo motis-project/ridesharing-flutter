@@ -110,11 +110,11 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void goBack() async {
-    Navigator.of(context).pushAndRemoveUntil(
-        PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => const MotisApp(),
-            transitionDuration: Duration.zero),
-        (route) => false);
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     PageRouteBuilder(
+    //         pageBuilder: (context, animation1, animation2) => const MotisApp(),
+    //         transitionDuration: Duration.zero),
+    //     (route) => false);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const LoginScreen(),
     ));

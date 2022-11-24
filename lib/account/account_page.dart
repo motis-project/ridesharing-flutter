@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/pages/settings_page.dart';
+import 'package:flutter_app/account/pages/settings_page.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class AccountPage extends StatefulWidget {
@@ -34,15 +34,20 @@ class _AccountPageState extends State<AccountPage> {
         child: Row(
           children: <Widget>[profilePic, userName],
         ));
-    return ListView(
-      children: [
-        userRow,
-        ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SettingsPage()))),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Account"),
+      ),
+      body: ListView(
+        children: [
+          userRow,
+          ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SettingsPage()))),
+        ],
+      ),
     );
   }
 }
