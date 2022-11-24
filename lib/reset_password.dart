@@ -47,13 +47,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
       setState(() {
         _state = ButtonState.loading;
       });
-      await supabaseClient.auth
-          .updateUser(UserAttributes(password: passwordController.text));
-      setState(() {
-        _state = ButtonState.success;
-      });
-      await Future.delayed(const Duration(seconds: 2));
-      onPasswordReset();
+
+      UserAttributes newAttributes =
+          UserAttributes(password: passwordController.text);
+      await supabaseClient.auth.updateUser(newAttributes);
+      // will be redirected to login screen if successful (onAuthStateChange)
     } else {
       fail();
     }
@@ -69,13 +67,6 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     });
   }
 
-  void onPasswordReset() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const AuthApp()),
-      (route) => false,
-    );
-  }
-
   @override
   void dispose() {
     passwordController.dispose();
@@ -85,56 +76,56 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building ResetPassword");
     return AbsorbPointer(
-        absorbing:
-            _state == ButtonState.loading || _state == ButtonState.success,
-        child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                PasswordField(
-                  labelText: "Password",
-                  hintText: "Enter your new password",
-                  controller: passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your new password';
-                    } else if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    } else if (RegExp('[0-9]').hasMatch(value) == false) {
-                      return 'Password must contain at least one number';
-                    } else if (RegExp('[A-Z]').hasMatch(value) == false) {
-                      return 'Password must contain at least one uppercase letter';
-                    } else if (RegExp('[a-z]').hasMatch(value) == false) {
-                      return 'Password must contain at least one lowercase letter';
-                    } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
-                      return 'Password must contain at least one special character';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 15),
-                PasswordField(
-                  labelText: "Confirm password",
-                  hintText: "Re-enter your new password",
-                  controller: passwordConfirmationController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your new password';
-                    } else if (value != passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 15),
-                LoadingButton(
-                  idleText: "Reset password",
-                  onPressed: onSubmit,
-                  state: _state,
-                )
-              ],
-            )));
+      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            PasswordField(
+              labelText: "Password",
+              hintText: "Enter your new password",
+              controller: passwordController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your new password';
+                } else if (value.length < 8) {
+                  return 'Password must be at least 8 characters';
+                } else if (RegExp('[0-9]').hasMatch(value) == false) {
+                  return 'Password must contain at least one number';
+                } else if (RegExp('[A-Z]').hasMatch(value) == false) {
+                  return 'Password must contain at least one uppercase letter';
+                } else if (RegExp('[a-z]').hasMatch(value) == false) {
+                  return 'Password must contain at least one lowercase letter';
+                } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
+                  return 'Password must contain at least one special character';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            PasswordField(
+              labelText: "Confirm password",
+              hintText: "Re-enter your new password",
+              controller: passwordConfirmationController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please confirm your new password';
+                } else if (value != passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 15),
+            LoadingButton(
+              idleText: "Reset password",
+              onPressed: onSubmit,
+              state: _state,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

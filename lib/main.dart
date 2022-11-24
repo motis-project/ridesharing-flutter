@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/account_page.dart';
 import 'package:flutter_app/reset_password.dart';
@@ -13,7 +12,6 @@ import 'own_theme_fields.dart';
 import 'pages/drives_page.dart';
 import 'pages/home_page.dart';
 import 'pages/rides_page.dart';
-import 'pages/settings_page.dart';
 
 void main() async {
   await dotenv.load();
@@ -75,63 +73,54 @@ class _AuthAppState extends State<AuthApp> {
   }
 
   void _setupAuthStateSubscription() {
-    print('Setting up auth state subscription');
-    _authStateSubscription =
-        supabaseClient.auth.onAuthStateChange.listen((data) {
-      final AuthChangeEvent event = data.event;
-      final Session? session = data.session;
+    _authStateSubscription = supabaseClient.auth.onAuthStateChange.listen(
+      (data) {
+        final AuthChangeEvent event = data.event;
+        final Session? session = data.session;
 
-      print("Auth event: ${event.toString()}");
+        setState(() {
+          _currentUser = session?.user;
+          _isLoggedIn = session != null;
+          _resettingPassword = event == AuthChangeEvent.passwordRecovery;
 
-      setState(() {
-        _currentUser = session?.user;
-        _isLoggedIn = session != null;
-        _resettingPassword = event == AuthChangeEvent.passwordRecovery;
-
-        if (event == AuthChangeEvent.signedOut ||
-            event == AuthChangeEvent.signedIn ||
-            event == AuthChangeEvent.passwordRecovery ||
-            event == AuthChangeEvent.userDeleted) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          if (event == AuthChangeEvent.signedOut ||
+              event == AuthChangeEvent.signedIn ||
+              event == AuthChangeEvent.passwordRecovery ||
+              event == AuthChangeEvent.userDeleted) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        });
+      },
+      onError: (error) {
+        if (error.runtimeType == AuthException) {
+          error = error as AuthException;
+          if (error.message == 'Email link is invalid or has expired') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Email link is invalid or has expired"),
+              ),
+            );
+          }
         }
-      });
-    }, onError: (error) {
-      if (error.runtimeType == AuthException) {
-        error = error as AuthException;
-        if (error.message == 'Email link is invalid or has expired') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Email link is invalid or has expired"),
-          ));
-        }
-      }
-    });
-  }
-
-  Widget getNextPage() {
-    if (_resettingPassword) {
-      print("Displaying ResetPasswordScreen");
-      return const ResetPasswordScreen();
-    } else if (_isLoggedIn) {
-      print("Displaying MotisApp");
-      return const MotisApp();
-    } else {
-      print("Displaying WelcomeScreen");
-      return const WelcomeScreen();
-    }
+      },
+    );
   }
 
   @override
   void dispose() {
-    print('disposing');
     _authStateSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('resetting password $_resettingPassword');
-    print('next Page ${getNextPage().toString()}');
-    return getNextPage();
+    if (_resettingPassword) {
+      return const ResetPasswordScreen();
+    } else if (_isLoggedIn) {
+      return const MotisApp();
+    } else {
+      return const WelcomeScreen();
+    }
   }
 }
 
@@ -154,7 +143,6 @@ class _MotisAppState extends State<MotisApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building MOTIS App");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Motis Mitfahr-App'),
