@@ -77,7 +77,7 @@ class _RegisterFormState extends State<RegisterForm> {
         }
         onSuccess();
         await Future.delayed(const Duration(seconds: 2));
-        goBack();
+        goToLogin();
       }
     } else {
       fail();
@@ -109,15 +109,12 @@ class _RegisterFormState extends State<RegisterForm> {
     });
   }
 
-  void goBack() async {
-    // Navigator.of(context).pushAndRemoveUntil(
-    //     PageRouteBuilder(
-    //         pageBuilder: (context, animation1, animation2) => const MotisApp(),
-    //         transitionDuration: Duration.zero),
-    //     (route) => false);
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => const LoginScreen(),
-    ));
+  void goToLogin() async {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
   }
 
   @override
