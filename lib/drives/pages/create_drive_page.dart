@@ -13,7 +13,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Motis Mitfahr-App'),
+        title: const Text('Create Drive'),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),

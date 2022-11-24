@@ -50,7 +50,6 @@ class Ride extends Model {
     return jsonList
         .map((json) => Ride.fromJson(json as Map<String, dynamic>))
         .toList();
-    ;
   }
 
   Map<String, dynamic> toJson() {

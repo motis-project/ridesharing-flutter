@@ -12,7 +12,12 @@ class _DrivesPageState extends State<DrivesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(child: Text('Drives')),
+      appBar: AppBar(
+        title: const Text('Drives'),
+      ),
+      body: const Center(
+        child: Text('Drives'),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

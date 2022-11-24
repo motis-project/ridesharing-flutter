@@ -12,9 +12,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Motis Mitfahr-App'),
+        title: const Text('Drive Detail'),
       ),
-      body: const Center(child: Text('Drive Detail')),
+      body: const Center(
+        child: Text('Drive Detail'),
+      ),
     );
   }
 }
