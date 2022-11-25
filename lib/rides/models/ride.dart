@@ -1,4 +1,6 @@
-import 'model.dart';
+import 'package:flutter_app/util/supabase.dart';
+
+import '../../util/model.dart';
 
 class Ride extends Model {
   final String start;
@@ -44,8 +46,10 @@ class Ride extends Model {
     );
   }
 
-  static List<Ride> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => Ride.fromJson(json)).toList();
+  static List<Ride> fromJsonList(List<dynamic> jsonList) {
+    return jsonList
+        .map((json) => Ride.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -69,5 +73,19 @@ class Ride extends Model {
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+  }
+
+  static Future<Ride?> rideOfUserAtTime(
+      DateTime start, DateTime end, int userId) async {
+    //get all rides of user
+    final List<Ride> rides = Ride.fromJsonList(
+        await supabaseClient.from('rides').select().eq('rider_id', userId));
+    //check if ride overlaps with start and end
+    for (Ride ride in rides) {
+      if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
+        return ride;
+      }
+    }
+    return null;
   }
 }

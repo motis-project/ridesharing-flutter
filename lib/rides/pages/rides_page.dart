@@ -10,8 +10,13 @@ class RidesPage extends StatefulWidget {
 class _RidesPageState extends State<RidesPage> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Rides'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rides'),
+      ),
+      body: const Center(
+        child: Text('Rides'),
+      ),
     );
   }
 }
