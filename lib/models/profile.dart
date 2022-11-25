@@ -1,6 +1,4 @@
-import 'package:flutter_app/util/supabase.dart';
-
-import '../../util/model.dart';
+import 'model.dart';
 
 class Profile extends Model {
   final String username;
@@ -41,18 +39,5 @@ class Profile extends Model {
   @override
   String toString() {
     return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
-  }
-
-  static Future<Profile?> getProfileFromAuthId(String authId) async {
-    Map<String, dynamic>? query = await supabaseClient
-        .from('profiles')
-        .select()
-        .eq('auth_id', authId)
-        .maybeSingle();
-    if (query == null) {
-      return null;
-    }
-
-    return Profile.fromJson(query);
   }
 }
