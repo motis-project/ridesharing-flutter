@@ -4,6 +4,7 @@ import 'package:flutter_app/util/loading_button.dart';
 import 'package:flutter_app/welcome/pages/login_page.dart';
 import 'package:flutter_app/util/password_field.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -56,7 +57,10 @@ class _RegisterFormState extends State<RegisterForm> {
           _state = ButtonState.loading;
         });
         res = await supabaseClient.auth.signUp(
-            password: passwordController.text, email: emailController.text);
+          password: passwordController.text,
+          email: emailController.text,
+          emailRedirectTo: 'io.supabase.flutter://login-callback/',
+        );
       } on AuthException {
         fail();
         showSnackBar("Something went wrong.");
@@ -78,7 +82,7 @@ class _RegisterFormState extends State<RegisterForm> {
         }
         onSuccess();
         await Future.delayed(const Duration(seconds: 2));
-        goToLogin();
+        goToWelcome();
       }
     } else {
       fail();
@@ -103,17 +107,18 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void onSuccess() async {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Account created. Please log in"),
+      content: Text("Account created. Please check your email."),
+      duration: Duration(seconds: 8),
     ));
     setState(() {
       _state = ButtonState.success;
     });
   }
 
-  void goToLogin() async {
+  void goToWelcome() async {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => const LoginPage(),
+        builder: (context) => const WelcomePage(),
       ),
     );
   }

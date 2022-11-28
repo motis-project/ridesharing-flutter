@@ -30,10 +30,18 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
                 <data
                 android:scheme="io.supabase.flutter"
                 android:host="reset-callback" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                android:scheme="io.supabase.flutter"
+                android:host="login-callback" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
