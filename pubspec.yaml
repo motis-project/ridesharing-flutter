@@ -42,6 +42,9 @@ dependencies:
   # Handling .env files
   flutter_dotenv: ^5.0.2
 
+  # Internationalization
+  intl: ^0.17.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

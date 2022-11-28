@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../rides/models/ride.dart';
@@ -133,11 +134,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}.${date.month}.${date.year}';
+    return DateFormat('dd.MM.yyyy').format(date);
   }
 
   String _formatTime(DateTime time) {
-    return '${time.hour}:${time.minute}';
+    return DateFormat.Hm().format(time);
   }
 
   String? _timeValidator(String? value) {
