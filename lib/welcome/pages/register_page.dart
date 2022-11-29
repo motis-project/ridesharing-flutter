@@ -80,9 +80,17 @@ class _RegisterFormState extends State<RegisterForm> {
           showSnackBar("Something went wrong.");
           return;
         }
-        onSuccess();
         await Future.delayed(const Duration(seconds: 2));
-        goToWelcome();
+        setState(() {
+          _state = ButtonState.success;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text("Account created. Please check your email."),
+            duration: Duration(seconds: double.infinity.toInt()),
+          ));
+        }
       }
     } else {
       fail();
@@ -103,24 +111,6 @@ class _RegisterFormState extends State<RegisterForm> {
     setState(() {
       _state = ButtonState.idle;
     });
-  }
-
-  void onSuccess() async {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Account created. Please check your email."),
-      duration: Duration(seconds: 8),
-    ));
-    setState(() {
-      _state = ButtonState.success;
-    });
-  }
-
-  void goToWelcome() async {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const WelcomePage(),
-      ),
-    );
   }
 
   @override
