@@ -43,6 +43,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   progress_state_button: ^1.0.4
 
+  timelines: ^0.1.0
+
   # Internationalization
   intl: ^0.17.0
 
