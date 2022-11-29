@@ -75,8 +75,10 @@ class _RegisterFormState extends State<RegisterForm> {
             'email': user.email,
             'username': usernameController.text,
           });
-        } on PostgrestException {
+        } on PostgrestException catch (e) {
           fail();
+          // TODO: Show error if user exists already?
+          // if (e.message.contains('duplicate key value violates unique constraint "users_email_key"')) {
           showSnackBar("Something went wrong.");
           return;
         }
