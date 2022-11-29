@@ -68,7 +68,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       });
       await Future.delayed(const Duration(seconds: 2));
 
-      onMailSent();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } else {
       fail();
     }
@@ -82,10 +84,6 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     setState(() {
       _state = ButtonState.idle;
     });
-  }
-
-  void onMailSent() {
-    Navigator.of(context).pop();
   }
 
   @override
