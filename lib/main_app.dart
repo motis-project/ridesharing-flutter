@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/account_page.dart';
+pimport 'package:flutter_app/account/pages/account_page.dart';
 import 'package:flutter_app/drives/pages/drives_page.dart';
 import 'package:flutter_app/home_page.dart';
 import 'package:flutter_app/rides/pages/rides_page.dart';
