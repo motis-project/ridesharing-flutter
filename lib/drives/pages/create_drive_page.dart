@@ -54,18 +54,15 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   void _showTimePicker() {
     showTimePicker(
       context: context,
-      initialTime:
-          TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
+      initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
       builder: (context, childWidget) {
-        return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: childWidget!);
+        return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
     ).then((value) {
       setState(() {
         if (value != null) {
-          _selectedDate = DateTime(_selectedDate.year, _selectedDate.month,
-              _selectedDate.day, value.hour, value.minute);
+          _selectedDate =
+              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
           _timeController.text = _formatTime(_selectedDate);
         }
       });
@@ -81,8 +78,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     ).then((value) {
       setState(() {
         if (value != null) {
-          _selectedDate = DateTime(value.year, value.month, value.day,
-              _selectedDate.hour, _selectedDate.minute);
+          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
           _dateController.text = _formatDate(_selectedDate);
         }
       });
@@ -95,12 +91,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         //todo: get user from auth when login is implemented
         // User authUser = supabaseClient.auth.currentUser!;
         //todo: add right end_time from algorithm
-        DateTime endTime = DateTime(_selectedDate.year, _selectedDate.month,
-            _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
+        DateTime endTime = DateTime(
+            _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         final Profile driver = SupabaseManager.getCurrentProfile()!;
         //check if the user already has a drive at this time
-        Drive? overlappingDrive = await Drive.driveOfUserAtTime(
-            _selectedDate.toUtc(), endTime.toUtc(), driver.id!);
+        Drive? overlappingDrive = await Drive.driveOfUserAtTime(_selectedDate.toUtc(), endTime.toUtc(), driver.id!);
         if (overlappingDrive != null && mounted) {
           //todo: show view with overlapping drive when implemented
           ScaffoldMessenger.of(context).showSnackBar(
@@ -112,8 +107,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
         //check if the user already has a ride at this time
-        Ride? overlappingRide = await Ride.rideOfUserAtTime(
-            _selectedDate.toUtc(), endTime.toUtc(), driver.id!);
+        Ride? overlappingRide = await Ride.rideOfUserAtTime(_selectedDate.toUtc(), endTime.toUtc(), driver.id!);
         if (overlappingRide != null && mounted) {
           //todo: show view with overlapping ride when implemented
           ScaffoldMessenger.of(context).showSnackBar(
