@@ -97,7 +97,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         //todo: add right end_time from algorithm
         DateTime endTime = DateTime(_selectedDate.year, _selectedDate.month,
             _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
-        const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
+        const id = '3b79927e-abd5-40db-af52-c95b0abc2c2a';
         final Profile driver =
             await Profile.getProfileFromAuthId(id) as Profile;
         //check if the user already has a drive at this time
@@ -108,7 +108,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a drive on ${_formatDate(overlappingDrive.startTime)} at ${_formatDate(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}'),
+                  'You already have a drive on ${_formatDate(overlappingDrive.startTime)} at ${_formatTime(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}'),
             ),
           );
           return;
@@ -121,7 +121,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a ride on ${_formatDate(overlappingRide.startTime)} at ${_formatDate(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}'),
+                  'You already have a ride on ${_formatDate(overlappingRide.startTime)} at ${_formatTime(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}'),
             ),
           );
           return;
