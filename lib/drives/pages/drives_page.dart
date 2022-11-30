@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/drives/pages/create_drive_page.dart';
+import 'package:flutter_app/drives/pages/drive_detail_page.dart';
+import 'package:flutter_app/util/supabase.dart';
 
 class DrivesPage extends StatefulWidget {
   const DrivesPage({super.key});
@@ -19,14 +22,22 @@ class _DrivesPageState extends State<DrivesPage> {
         child: Text('Drives'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const CreateDrivePage()),
-          );
-        },
+        onPressed: onPressed,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void onPressed() async {
+    Map<String, dynamic> data =
+        await supabaseClient.from('drives').select().limit(1).single();
+    Drive drive = Drive.fromJson(data);
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => DriveDetailPage.fromDrive(drive)),
+      );
+    }
   }
 }
