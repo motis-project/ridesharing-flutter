@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rides/pages/search_ride_page.dart';
+import 'package:flutter_app/rides/pages/search_deals_page.dart';
+
 
 class RidesPage extends StatefulWidget {
   const RidesPage({super.key});
@@ -16,6 +19,16 @@ class _RidesPageState extends State<RidesPage> {
       ),
       body: const Center(
         child: Text('Rides'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            // direction to SearchRidePage()
+            MaterialPageRoute(builder: (context) => const SearchDealPage()),
+          );
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.search),
       ),
     );
   }
