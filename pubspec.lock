@@ -204,7 +204,8 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      url: "https://pub.dartlang.org"
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      url: "https://pub.dev"
     source: hosted
     version: "0.17.0"
   js:
@@ -363,7 +364,8 @@ packages:
     dependency: "direct main"
     description:
       name: progress_state_button
-      url: "https://pub.dartlang.org"
+      sha256: "8efbe7978995d3e20f3987022d4851d6615b25d227c17c3eb22f4dfc0c08811e"
+      url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
   realtime_client:

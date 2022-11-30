@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/drives/pages/drive_detail_page.dart';
+import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 
+import '../drives/models/drive.dart';
+
 class DriveCard extends StatelessWidget {
-  const DriveCard({super.key});
+  final Drive drive;
+
+  const DriveCard({super.key, required this.drive});
+
+  String _formatTime(DateTime time) {
+    return DateFormat.Hm().format(time);
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd.MM.yyyy').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const DriveDetailPage(),
+          ),
+        ),
         child: FixedTimeline(
           theme: TimelineTheme.of(context).copyWith(
             nodePosition: 0.05,
@@ -19,13 +38,9 @@ class DriveCard extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('12:30 Start'),
-                    Icon(
-                      Icons.chat,
-                      color: Colors.black,
-                      size: 36.0,
-                    ),
+                  children: [
+                    Text('${_formatTime(drive.startTime)}  ${drive.start}'),
+                    Text(_formatDate(drive.startTime)),
                   ],
                 ),
               ),
@@ -39,9 +54,8 @@ class DriveCard extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('14:30 Destination'),
-                    Text('3/4 Seats'),
+                  children: [
+                    Text('${_formatTime(drive.endTime)}  ${drive.end}'),
                   ],
                 ),
               ),

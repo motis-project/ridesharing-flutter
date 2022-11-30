@@ -62,11 +62,15 @@ class Drive extends Model {
     return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
   }
 
+  static Future<List<Drive>> getDrivesOfUser(int userId) async {
+    return Drive.fromJsonList(
+        await supabaseClient.from('drives').select().eq('driver_id', userId));
+  }
+
   static Future<Drive?> driveOfUserAtTime(
       DateTime start, DateTime end, int userId) async {
     //get all drives of user
-    final List<Drive> drives = Drive.fromJsonList(
-        await supabaseClient.from('drives').select().eq('driver_id', userId));
+    final List<Drive> drives = await Drive.getDrivesOfUser(userId);
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
       if (drive.startTime.isBefore(end) && drive.endTime.isAfter(start)) {

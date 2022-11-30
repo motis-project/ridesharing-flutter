@@ -16,12 +16,8 @@ class _RidesPageState extends State<RidesPage> {
         appBar: AppBar(
           title: const Text('Rides'),
         ),
-        body: Column(
-          children: const <Widget>[
-            DriveCard(),
-            DriveCard(),
-            DriveCard(),
-          ],
+        body: const Center(
+          child: Text('Rides'),
         ));
   }
 }
