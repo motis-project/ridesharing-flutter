@@ -24,7 +24,7 @@ class _RidesPageState extends State<RidesPage> {
         onPressed: () {
           Navigator.of(context).push(
             // direction to SearchRidePage()
-            MaterialPageRoute(builder: (context) => const SearchDealPage()),
+            MaterialPageRoute(builder: (context) => const SearchRidePage()),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
