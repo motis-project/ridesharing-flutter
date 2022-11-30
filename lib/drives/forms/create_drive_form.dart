@@ -70,14 +70,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        //todo: get user from auth when login is implemented
-        // User authUser = supabaseClient.auth.currentUser!;
         //todo: add right end_time from algorithm
         DateTime endTime = DateTime(_selectedDate.year, _selectedDate.month,
             _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
-        const id = 'd37cfaef-e8e3-4910-87a4-11e0db78a1b8';
-        final Profile driver =
-            await Profile.getProfileFromAuthId(id) as Profile;
+        final Profile driver = SupabaseManager.getCurrentProfile()!;
+
         //check if the user already has a drive at this time
         Drive? overlappingDrive =
             await Drive.driveOfUserAtTime(_selectedDate, endTime, driver.id!);
