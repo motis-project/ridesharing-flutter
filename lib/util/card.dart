@@ -11,11 +11,11 @@ class DriveCard extends StatelessWidget {
   const DriveCard({super.key, required this.drive});
 
   String _formatTime(DateTime time) {
-    return DateFormat.Hm().format(time);
+    return DateFormat.Hm().format(time.toLocal());
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
+    return DateFormat('dd.MM.yyyy').format(date.toLocal());
   }
 
   @override
