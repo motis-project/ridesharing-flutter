@@ -39,6 +39,7 @@ class Ride extends Trip {
       approved: json['approved'],
       driveId: json['drive_id'],
       riderId: json['rider_id'],
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
     );
   }
 

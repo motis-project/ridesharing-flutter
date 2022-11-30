@@ -117,7 +117,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             Navigator.pushReplacement<void, void>(
               context,
               MaterialPageRoute<void>(
-                builder: (BuildContext context) => DriveDetailPage.fromDrive(drive: drive),
+                builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
               ),
             );
           },
