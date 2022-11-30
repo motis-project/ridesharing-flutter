@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/app.dart';
 import 'package:flutter_app/rides/forms/search_ride_form.dart';
 
 class SearchDealPage extends StatefulWidget {
@@ -15,17 +16,8 @@ class _SearchDealPageState extends State<SearchDealPage> {
       appBar: AppBar(
         title: const Text('Search Ride'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(),
-        child: Column(
-          children: [
-            SearchRideForm(),
-            Divider(),
-            ListView(
-            //todo: RideDealCard
-            ),
-          ]
-        ),
+      body: ListView(
+
       ),
     );
   }
