@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-class SubmitButton extends StatelessWidget {
+class BigButton extends StatelessWidget {
   final String text;
   final Function()? onPressed;
-
-  const SubmitButton({super.key, required this.text, this.onPressed});
+  const BigButton({super.key, required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 170,
+      width: double.infinity,
       height: 53,
       child: MaterialButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),

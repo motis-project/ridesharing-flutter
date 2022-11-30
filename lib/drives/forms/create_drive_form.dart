@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../rides/models/ride.dart';
-import '../../settings/models/profile.dart';
+import '../../account/models/profile.dart';
 import '../pages/drive_detail_page.dart';
 
 class CreateDriveForm extends StatefulWidget {
