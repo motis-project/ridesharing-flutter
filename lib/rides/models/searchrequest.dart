@@ -18,5 +18,4 @@ class SearchRequest extends Model {
     required this.end,
     required this.seats,
   });
-
 }

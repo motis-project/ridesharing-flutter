@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_app/rides/models/searchrequest.dart';
 import 'package:flutter_app/rides/pages/search_deals_page.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_app/rides/forms/search_ride_form.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({Key? key}) : super(key: key);
@@ -89,8 +91,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         );
       }
     }
-
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
