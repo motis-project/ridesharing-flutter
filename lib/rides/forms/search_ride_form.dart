@@ -78,27 +78,17 @@ class _SearchRideFormState extends State<SearchRideForm> {
     //todo: pressing search button
     if (_formKey.currentState!.validate()) {
       try {
-        //todo: get user from auth when login is implemented
-        // User authUser = supabaseClient.auth.currentUser!;
-        //todo:
-        // übernommen aus drive
-
         SearchRequest request = SearchRequest(
             start: _startController.text,
             startTime: _selectedDate,
             end: _destinationController.text,
             seats: _dropdownValue
         );
-        //todo: Supabasecommunikation
-        await supabaseClient
-            .from('drives')
-            //.(request.toJson())
-            .then(((value) => Navigator.pushReplacement<void, void>(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) => const SearchDealPage(),
-          ),
-        )));
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => const SearchDealPage()),
+        );
       } on AuthException {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Something went wrong"),

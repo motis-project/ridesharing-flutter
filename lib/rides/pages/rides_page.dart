@@ -23,7 +23,6 @@ class _RidesPageState extends State<RidesPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            // direction to SearchRidePage()
             MaterialPageRoute(builder: (context) => const SearchRidePage()),
           );
         },
