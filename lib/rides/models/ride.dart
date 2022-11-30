@@ -1,3 +1,4 @@
+import 'package:flutter_app/settings/models/profile.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 import '../../util/model.dart';
@@ -14,6 +15,7 @@ class Ride extends Model {
 
   final int driveId;
   final int riderId;
+  final Profile? rider;
 
   Ride({
     super.id,
@@ -27,6 +29,7 @@ class Ride extends Model {
     required this.approved,
     required this.driveId,
     required this.riderId,
+    this.rider,
   });
 
   @override
@@ -43,6 +46,7 @@ class Ride extends Model {
       approved: json['approved'],
       driveId: json['drive_id'],
       riderId: json['rider_id'],
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
     );
   }
 
