@@ -18,6 +18,7 @@ void main() async {
     url: dotenv.get('SUPABASE_BASE_URL'),
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
+  await SupabaseManager.reloadCurrentProfile();
 
   runApp(const AppWrapper());
 }
@@ -58,7 +59,6 @@ class AuthApp extends StatefulWidget {
 
 class _AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
-  User? _currentUser = supabaseClient.auth.currentSession?.user;
   bool _isLoggedIn = supabaseClient.auth.currentSession != null;
   bool _resettingPassword = false;
 
@@ -71,12 +71,12 @@ class _AuthAppState extends State<AuthApp> {
 
   void _setupAuthStateSubscription() {
     _authStateSubscription = supabaseClient.auth.onAuthStateChange.listen(
-      (data) {
+      (data) async {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
+        await SupabaseManager.reloadCurrentProfile();
 
         setState(() {
-          _currentUser = session?.user;
           _isLoggedIn = session != null;
           _resettingPassword = event == AuthChangeEvent.passwordRecovery;
 
