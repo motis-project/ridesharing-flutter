@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/pages/search_ride_page.dart';
-import 'package:flutter_app/rides/pages/search_deals_page.dart';
 
 
 class RidesPage extends StatefulWidget {

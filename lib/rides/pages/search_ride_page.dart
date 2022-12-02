@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_app/rides/models/searchrequest.dart';
 import 'package:flutter_app/rides/pages/search_deals_page.dart';
 import 'package:flutter_app/util/submit_button.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_app/rides/forms/search_ride_form.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({Key? key}) : super(key: key);
@@ -78,16 +74,9 @@ class _SearchRidePageState extends State<SearchRidePage> {
   void _onSubmit() async {
     //todo: pressing search button
     if (_formKey.currentState!.validate()) {
-        SearchRequest request = SearchRequest(
-            start: _startController.text,
-            startTime: _selectedDate,
-            end: _destinationController.text,
-            seats: _dropdownValue
-        );
-
         Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (context) => SearchDealPage(request)),
+              builder: (context) => SearchDealPage(_startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
         );
       }
     }

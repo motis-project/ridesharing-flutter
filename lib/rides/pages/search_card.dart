@@ -6,7 +6,7 @@ class SearchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      height: 100.0,
+      height: 150.0,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.blue,
