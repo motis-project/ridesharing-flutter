@@ -97,9 +97,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         //todo: add right end_time from algorithm
         DateTime endTime = DateTime(_selectedDate.year, _selectedDate.month,
             _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
-        const id = '3b79927e-abd5-40db-af52-c95b0abc2c2a';
-        final Profile driver =
-            await Profile.getProfileFromAuthId(id) as Profile;
+        final Profile driver = SupabaseManager.getCurrentProfile()!;
         //check if the user already has a drive at this time
         Drive? overlappingDrive = await Drive.driveOfUserAtTime(
             _selectedDate.toUtc(), endTime.toUtc(), driver.id!);
