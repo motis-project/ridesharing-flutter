@@ -14,4 +14,8 @@ class AddressSuggestion {
       json['type'],
     );
   }
+
+  factory AddressSuggestion.empty() {
+    return AddressSuggestion('', Position(0, 0), 'placeholder');
+  }
 }
