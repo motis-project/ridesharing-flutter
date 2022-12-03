@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/motis_handler.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
 
-class AddressSearchDelegate extends SearchDelegate<AddressSuggestion> {
+class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -20,7 +20,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, AddressSuggestion.empty());
+        close(context, null);
       },
     );
   }
@@ -51,8 +51,14 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion> {
     return FutureBuilder(
       future: MotisHandler.getAddressSuggestions(query),
       builder: (context, snapshot) {
+        if (query.length < MotisHandler.searchLengthRequirement) {
+          return const Center(
+            child: Text('Please enter more information to get results'),
+          );
+        }
+
         if (snapshot.hasData) {
-          List<AddressSuggestion> suggestions = snapshot.data!.take(5).toList();
+          List<AddressSuggestion> suggestions = snapshot.data!;
 
           if (suggestions.isNotEmpty) {
             return ListView.separated(
@@ -61,7 +67,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion> {
               physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(suggestions[index].name),
+                  title: Text(suggestions[index].toString()),
                   onTap: () => closeWithResult(context, suggestions[index]),
                 );
               },
