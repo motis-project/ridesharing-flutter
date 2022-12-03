@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
+import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,9 @@ class CreateDriveForm extends StatefulWidget {
 class _CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
+  AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
@@ -71,6 +74,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         DateTime endTime = DateTime(
             _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         final Profile driver = SupabaseManager.getCurrentProfile()!;
+
+        print("$_startSuggestion $_destinationSuggestion");
 
         //check if the user already has a drive at this time
         Drive? overlappingDrive = await Drive.driveOfUserAtTime(_selectedDate, endTime, driver.id!);
@@ -169,9 +174,15 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       child: Column(
         children: [
           //todo: add search for start and destination
-          AddressSearchField.start(controller: _startController),
+          AddressSearchField.start(
+            controller: _startController,
+            onSelected: (suggestion) => _startSuggestion = suggestion,
+          ),
           const SizedBox(height: 15),
-          AddressSearchField.destination(controller: _destinationController),
+          AddressSearchField.destination(
+            controller: _destinationController,
+            onSelected: (suggestion) => _destinationSuggestion = suggestion,
+          ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Row(
