@@ -6,6 +6,8 @@ import 'package:flutter_app/util/search/address_suggestion.dart';
 class MotisHandler {
   static final HttpClient _httpClient = HttpClient();
   static const String _motisHost = 'europe.motis-project.de';
+  static const int searchLengthRequirement = 4;
+  static const List<String> adminLevelsNeeded = ['11', '13', '4'];
 
   // If the search is shorter than this, the server will return an empty list anyways.
   static const int searchLengthRequirement = 4;

@@ -34,8 +34,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   // [bool mounted = true] is a hack to be able to use context
   // (StatelessWidget is always mounted, so this is fine)
   void returnFirstResult(BuildContext context, [bool mounted = true]) async {
-    final List<AddressSuggestion> suggestions =
-        await MotisHandler.getAddressSuggestions(query);
+    final List<AddressSuggestion> suggestions = await MotisHandler.getAddressSuggestions(query);
 
     if (suggestions.isEmpty) return;
 
@@ -64,7 +63,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(suggestions[index].toString()),
-                  onTap: () => close(context, suggestions[index]),
+                  onTap: () => closeWithResult(context, suggestions[index]),
                 );
               },
               separatorBuilder: (context, index) {
