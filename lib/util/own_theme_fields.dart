@@ -4,8 +4,7 @@ class OwnThemeFields {
   final Color success;
   final Color onSuccess;
 
-  const OwnThemeFields(
-      {this.success = Colors.green, this.onSuccess = Colors.white});
+  const OwnThemeFields({this.success = Colors.green, this.onSuccess = Colors.white});
 
   factory OwnThemeFields.empty() {
     return const OwnThemeFields(success: Colors.green, onSuccess: Colors.white);

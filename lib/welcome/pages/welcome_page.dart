@@ -13,11 +13,7 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   static const double indicatorSize = 10;
   static const double indicatorMargin = 3;
-  static const List<String> images = [
-    'assets/welcome1.png',
-    'assets/welcome2.png',
-    'assets/welcome3.png'
-  ];
+  static const List<String> images = ['assets/welcome1.png', 'assets/welcome2.png', 'assets/welcome3.png'];
 
   int activePage = 0;
 

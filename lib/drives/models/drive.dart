@@ -30,9 +30,7 @@ class Drive extends Trip {
   }
 
   static List<Drive> fromJsonList(List<dynamic> jsonList) {
-    return jsonList
-        .map((json) => Drive.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return jsonList.map((json) => Drive.fromJson(json as Map<String, dynamic>)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -56,12 +54,10 @@ class Drive extends Trip {
   }
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
-    return Drive.fromJsonList(
-        await supabaseClient.from('drives').select().eq('driver_id', userId));
+    return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
-  static Future<Drive?> driveOfUserAtTime(
-      DateTime start, DateTime end, int userId) async {
+  static Future<Drive?> driveOfUserAtTime(DateTime start, DateTime end, int userId) async {
     //get all drives of user
     final List<Drive> drives = await Drive.getDrivesOfUser(userId);
     //check if drive overlaps with start and end

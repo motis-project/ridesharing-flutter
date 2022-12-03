@@ -43,9 +43,7 @@ class Ride extends Trip {
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {
-    return jsonList
-        .map((json) => Ride.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return jsonList.map((json) => Ride.fromJson(json as Map<String, dynamic>)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -66,8 +64,7 @@ class Ride extends Trip {
     return rides.map((ride) => ride.toJson()).toList();
   }
 
-  static Future<Ride?> rideOfUserAtTime(
-      DateTime start, DateTime end, int userId) async {
+  static Future<Ride?> rideOfUserAtTime(DateTime start, DateTime end, int userId) async {
     //get all rides of user
     final List<Ride> rides = await getRidesOfUser(userId);
     //check if ride overlaps with start and end
@@ -80,33 +77,20 @@ class Ride extends Trip {
   }
 
   static Future<List<Ride>> getRidesOfUser(int userId) async {
-    return Ride.fromJsonList(
-        await supabaseClient.from('rides').select().eq('rider_id', userId));
+    return Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
   Future<Drive> getDrive() async {
-    return Drive.fromJson(await supabaseClient
-        .from('drives')
-        .select()
-        .eq('id', driveId)
-        .single());
+    return Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
   }
 
   Future<Profile> getDriver() async {
     Drive drive = await getDrive();
-    return Profile.fromJson(await supabaseClient
-        .from('profiles')
-        .select()
-        .eq('id', drive.driverId)
-        .single());
+    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', drive.driverId).single());
   }
 
   Future<Profile> getRider() async {
-    return Profile.fromJson(await supabaseClient
-        .from('profiles')
-        .select()
-        .eq('id', riderId)
-        .single());
+    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
   }
 
   @override

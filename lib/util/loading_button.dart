@@ -11,13 +11,7 @@ class LoadingButton extends StatefulWidget {
   final String? failText;
   final String? successText;
   const LoadingButton(
-      {super.key,
-      this.onPressed,
-      this.state,
-      this.idleIcon,
-      this.idleText,
-      this.failText,
-      this.successText});
+      {super.key, this.onPressed, this.state, this.idleIcon, this.idleText, this.failText, this.successText});
 
   @override
   State<LoadingButton> createState() => _LoadingButtonState();
@@ -37,8 +31,7 @@ class _LoadingButtonState extends State<LoadingButton> {
               ),
           color: Theme.of(context).colorScheme.primary,
         ),
-        ButtonState.loading:
-            IconedButton(color: Theme.of(context).colorScheme.primary),
+        ButtonState.loading: IconedButton(color: Theme.of(context).colorScheme.primary),
         ButtonState.fail: IconedButton(
           text: widget.failText ?? "Failed",
           icon: Icon(
