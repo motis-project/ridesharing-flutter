@@ -173,7 +173,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       key: _formKey,
       child: Column(
         children: [
-          //todo: add search for start and destination
           AddressSearchField.start(
             controller: _startController,
             onSelected: (suggestion) => _startSuggestion = suggestion,
