@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
+import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:intl/intl.dart';
@@ -168,35 +169,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       child: Column(
         children: [
           //todo: add search for start and destination
-          TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Start",
-              hintText: "Enter your starting Location",
-            ),
-            controller: _startController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a starting location';
-              }
-              return null;
-            },
-          ),
+          AddressSearchField.start(controller: _startController),
           const SizedBox(height: 15),
-          TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Destination",
-              hintText: "Enter your destination",
-            ),
-            controller: _destinationController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a destination';
-              }
-              return null;
-            },
-          ),
+          AddressSearchField.destination(controller: _destinationController),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Row(
