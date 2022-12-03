@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter_app/util/motis_handler.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app.dart';
@@ -19,6 +23,9 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
   await SupabaseManager.reloadCurrentProfile();
+
+  print(await MotisHandler.getAddressSuggestions("Mainz")
+      .then((value) => value.first.name));
 
   runApp(const AppWrapper());
 }
