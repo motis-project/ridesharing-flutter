@@ -39,11 +39,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
 
     if (suggestions.isEmpty) return;
 
-    if (mounted) closeWithResult(context, suggestions.first);
-  }
-
-  void closeWithResult(BuildContext context, AddressSuggestion suggestion) {
-    close(context, suggestion);
+    if (mounted) close(context, suggestions.first);
   }
 
   @override
@@ -68,7 +64,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(suggestions[index].toString()),
-                  onTap: () => closeWithResult(context, suggestions[index]),
+                  onTap: () => close(context, suggestions[index]),
                 );
               },
               separatorBuilder: (context, index) {
