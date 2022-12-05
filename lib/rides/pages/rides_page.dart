@@ -7,6 +7,7 @@ import '../../util/trip/ride_card.dart';
 import '../models/ride.dart';
 import 'package:flutter_app/rides/pages/search_ride_page.dart';
 import 'package:flutter_app/util/trip/trip.dart';
+import 'package:flutter_app/util/trip/trip_page_builder.dart';
 
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
