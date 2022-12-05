@@ -24,7 +24,7 @@ class _DrivesPageState extends State<DrivesPage> {
         .from('drives')
         .stream(primaryKey: ['id'])
         .eq('driver_id', userId)
-        .order('start_time')
+        .order('start_time', ascending: true)
         .map((drive) => Drive.fromJsonList(drive));
     super.initState();
   }
@@ -56,19 +56,22 @@ class _DrivesPageState extends State<DrivesPage> {
               stream: _drives,
               emptyMessage: 'No upcoming drives',
               filterDrives: (drives) => drives
-                  .where((drive) => drive.startTime.isAfter(DateTime.now()))
+                  //we could change this to drive.starttime the question is what we are doing with
+                  //drives that are in progress
+                  .where((drive) => drive.endTime.isAfter(DateTime.now()))
                   .toList(),
             ),
             DriveStreamBuilder(
               stream: _drives,
               emptyMessage: 'No past drives',
-              filterDrives: (drives) => drives
+              filterDrives: (drives) => drives.reversed
                   .where((drive) => drive.endTime.isBefore(DateTime.now()))
                   .toList(),
             ),
             DriveStreamBuilder(
               stream: _drives,
               emptyMessage: 'No drives',
+              //we could reorder the stream her somehow, not shure how it's best
               filterDrives: (drives) => drives,
             ),
           ],
