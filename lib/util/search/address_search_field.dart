@@ -49,6 +49,7 @@ class AddressSearchField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
+        border: const OutlineInputBorder(),
         labelText: labelText,
         hintText: hintText,
       ),
