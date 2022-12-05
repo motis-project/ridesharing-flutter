@@ -3,10 +3,9 @@ import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/drives/pages/create_drive_page.dart';
 import 'package:flutter_app/drives/pages/drive_detail_page.dart';
 import 'package:flutter_app/util/supabase.dart';
-
-import '../../account/models/profile.dart';
-import '../../util/card.dart';
+import 'package:flutter_app/util/trip/trip.dart';
 import '../../util/supabase.dart';
+import '../../util/trip/drive_card.dart';
 import '../models/drive.dart';
 
 class DrivesPage extends StatefulWidget {

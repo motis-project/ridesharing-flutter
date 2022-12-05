@@ -1,3 +1,4 @@
+import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -59,7 +60,7 @@ class Ride extends Trip {
       'price': price,
       'approved': approved,
       'drive_id': driveId,
-      'rider_id': riderId,
+      'rider_id': userId,
     };
   }
 
