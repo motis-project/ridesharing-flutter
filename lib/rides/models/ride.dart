@@ -38,7 +38,7 @@ class Ride extends Trip {
       price: json['price'],
       approved: json['approved'],
       driveId: json['drive_id'],
-      riderId: json['rider_id'],
+      userId: json['rider_id'],
     );
   }
 
@@ -56,7 +56,7 @@ class Ride extends Trip {
       'price': price,
       'approved': approved,
       'drive_id': driveId,
-      'rider_id': riderId,
+      'rider_id': userId,
     };
   }
 
