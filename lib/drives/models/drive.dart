@@ -1,25 +1,16 @@
+import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
-import '../../util/model.dart';
-
-class Drive extends Model {
-  final String start;
-  final DateTime startTime;
-  final String end;
-  final DateTime endTime;
-
-  final int seats;
-  final int driverId;
-
+class Drive extends Trip {
   Drive({
     super.id,
     super.createdAt,
-    required this.start,
-    required this.startTime,
-    required this.end,
-    required this.endTime,
-    required this.seats,
-    required this.driverId,
+    required super.start,
+    required super.startTime,
+    required super.end,
+    required super.endTime,
+    required super.seats,
+    required super.userId,
   });
 
   @override
@@ -32,7 +23,7 @@ class Drive extends Model {
       end: json['end'],
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
-      driverId: json['driver_id'],
+      userId: json['driver_id'],
     );
   }
 
@@ -49,7 +40,7 @@ class Drive extends Model {
       'end': end,
       'end_time': endTime.toString(),
       'seats': seats,
-      'driver_id': driverId,
+      'driver_id': userId,
     };
   }
 
@@ -59,7 +50,7 @@ class Drive extends Model {
 
   @override
   String toString() {
-    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
+    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $userId}';
   }
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {

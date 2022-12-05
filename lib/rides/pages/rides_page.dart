@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rides/pages/search_ride_page.dart';
+import 'package:flutter_app/util/trip/trip.dart';
 
-import '../../util/card.dart';
+import '../../util/supabase.dart';
+import '../../util/trip/ride_card.dart';
+import '../../util/trip/trip_stream_builder.dart';
+import '../models/ride.dart';
 
 class RidesPage extends StatefulWidget {
   const RidesPage({super.key});
@@ -10,14 +15,37 @@ class RidesPage extends StatefulWidget {
 }
 
 class _RidesPageState extends State<RidesPage> {
+  late final Stream<List<Ride>> _rides;
+
+  @override
+  void initState() {
+    //todo: method to get userId
+    int userId = SupabaseManager.getCurrentProfile()!.id!;
+    _rides = supabaseClient
+        .from('rides')
+        .stream(primaryKey: ['id'])
+        .eq('rider_id', userId)
+        .order('start_time', ascending: true)
+        .map((ride) => Ride.fromJsonList(ride));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Rides'),
-        ),
-        body: const Center(
-          child: Text('Rides'),
-        ));
+    return Trip.buildTripPage(
+      context,
+      'Rides',
+      _rides,
+      (ride) => RideCard(trip: ride),
+      FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SearchRidePage()),
+          );
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.search),
+      ),
+    );
   }
 }

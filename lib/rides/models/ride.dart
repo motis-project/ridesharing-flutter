@@ -1,32 +1,24 @@
+import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
-import '../../util/model.dart';
-
-class Ride extends Model {
-  final String start;
-  final DateTime startTime;
-  final String end;
-  final DateTime endTime;
-
-  final int seats;
+class Ride extends Trip {
   final double? price;
   final bool approved;
 
   final int driveId;
-  final int riderId;
 
   Ride({
     super.id,
     super.createdAt,
-    required this.start,
-    required this.startTime,
-    required this.end,
-    required this.endTime,
-    required this.seats,
+    required super.start,
+    required super.startTime,
+    required super.end,
+    required super.endTime,
+    required super.seats,
+    required super.userId,
     this.price,
     required this.approved,
     required this.driveId,
-    required this.riderId,
   });
 
   @override
@@ -42,7 +34,7 @@ class Ride extends Model {
       price: json['price'],
       approved: json['approved'],
       driveId: json['drive_id'],
-      riderId: json['rider_id'],
+      userId: json['rider_id'],
     );
   }
 
@@ -62,7 +54,7 @@ class Ride extends Model {
       'price': price,
       'approved': approved,
       'drive_id': driveId,
-      'rider_id': riderId,
+      'rider_id': userId,
     };
   }
 
@@ -72,7 +64,7 @@ class Ride extends Model {
 
   @override
   String toString() {
-    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $userId}';
   }
 
   static Future<Ride?> rideOfUserAtTime(

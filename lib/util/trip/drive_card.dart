@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/drives/pages/drive_detail_page.dart';
-import 'package:intl/intl.dart';
+
+import 'package:flutter_app/util/trip/trip_card.dart';
+import '../../drives/models/drive.dart';
+import '../../drives/pages/drive_detail_page.dart';
 import 'package:timelines/timelines.dart';
 
-import '../drives/models/drive.dart';
-
-class DriveCard extends StatelessWidget {
-  final Drive drive;
-
-  const DriveCard({super.key, required this.drive});
-
-  String _formatTime(DateTime time) {
-    return DateFormat.Hm().format(time.toLocal());
-  }
-
-  String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date.toLocal());
-  }
+class DriveCard extends TripCard<Drive> {
+  const DriveCard({super.key, required super.trip});
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +29,8 @@ class DriveCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${_formatTime(drive.startTime)}  ${drive.start}'),
-                    Text(_formatDate(drive.startTime)),
+                    Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                    Text(formatDate(trip.startTime)),
                   ],
                 ),
               ),
@@ -55,7 +45,7 @@ class DriveCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${_formatTime(drive.endTime)}  ${drive.end}'),
+                    Text('${formatTime(trip.endTime)}  ${trip.end}'),
                   ],
                 ),
               ),
