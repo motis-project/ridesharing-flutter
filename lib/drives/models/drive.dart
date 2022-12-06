@@ -25,7 +25,7 @@ class Drive extends Trip {
       end: json['end'],
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
-      userId: json['driver_id'],
+      driverId: json['driver_id'],
     );
   }
 
@@ -40,7 +40,7 @@ class Drive extends Trip {
       'end': end,
       'end_time': endTime.toString(),
       'seats': seats,
-      'driver_id': userId,
+      'driver_id': driverId,
     };
   }
 
@@ -50,7 +50,7 @@ class Drive extends Trip {
 
   @override
   String toString() {
-    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $userId}';
+    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
   }
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
