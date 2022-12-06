@@ -30,13 +30,11 @@ class _DrivesPageState extends State<DrivesPage> {
   }
 
   void onPressed() async {
-    Map<String, dynamic> data =
-        await supabaseClient.from('drives').select().limit(1).single();
+    Map<String, dynamic> data = await supabaseClient.from('drives').select().eq('id', 33).limit(1).single();
     Drive drive = Drive.fromJson(data);
     if (mounted) {
       Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => DriveDetailPage.fromDrive(drive)),
+        MaterialPageRoute(builder: (context) => DriveDetailPage.fromDrive(drive)),
       );
     }
   }
