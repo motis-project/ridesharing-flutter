@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
-import 'package:flutter_app/settings/models/profile.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:intl/intl.dart';
@@ -36,11 +36,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await supabaseClient
-        .from('drives')
-        .select()
-        .eq('id', widget.id)
-        .single();
+    Map<String, dynamic> data = await supabaseClient.from('drives').select().eq('id', widget.id).single();
 
     List<dynamic> ridesData = await supabaseClient.from('rides').select('''
           *,
@@ -61,8 +57,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-                "${DateFormat.Hm().format(_drive!.startTime)} ${_drive!.start}"),
+            Text("${DateFormat.Hm().format(_drive!.startTime)} ${_drive!.start}"),
           ],
         ),
       ),
@@ -97,11 +92,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     List<Stop> stops = [];
     if (_drive != null) {
       stops.add(Stop(
-        profiles: [],
+        actions: [StopAction(profile: SupabaseManager.getCurrentProfile()!, status: StopStatus.driveStart, seats: 0)],
         place: _drive!.start,
         time: _drive!.startTime,
-        status: StopStatus.driveStart,
-        seats: _drive!.seats,
+      ));
+      stops.add(Stop(
+        actions: [StopAction(profile: SupabaseManager.getCurrentProfile()!, status: StopStatus.driveEnd, seats: 0)],
+        place: _drive!.end,
+        time: _drive!.endTime,
       ));
     }
 
@@ -110,52 +108,32 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bool startSaved = false;
         bool endSaved = false;
         for (Stop stop in stops) {
-          if (ride.start == stop.place && stop.status == StopStatus.rideStart) {
+          if (ride.start == stop.place) {
             startSaved = true;
-            stop.profiles.add(ride.rider!);
-          } else if (ride.end == stop.place &&
-              stop.status == StopStatus.rideEnd) {
+            stop.actions.add(StopAction(profile: ride.rider!, status: StopStatus.rideStart, seats: ride.seats));
+          } else if (ride.end == stop.place) {
             endSaved = true;
-            stop.profiles.add(ride.rider!);
+            stop.actions.add(StopAction(profile: ride.rider!, status: StopStatus.rideEnd, seats: ride.seats));
           }
         }
 
         if (!startSaved) {
           stops.add(Stop(
-            profiles: [ride.rider!],
+            actions: [StopAction(profile: ride.rider!, status: StopStatus.rideStart, seats: ride.seats)],
             place: ride.start,
             time: ride.startTime,
-            status: StopStatus.rideStart,
-            seats: ride.seats,
           ));
         }
 
         if (!endSaved) {
           stops.add(Stop(
-            profiles: [ride.rider!],
+            actions: [StopAction(profile: ride.rider!, status: StopStatus.rideEnd, seats: ride.seats)],
             place: ride.end,
             time: ride.endTime,
-            status: StopStatus.rideEnd,
-            seats: ride.seats,
           ));
         }
       }
-      stops.sort((a, b) {
-        int aBeforeB = a.time.compareTo(b.time);
-        if (aBeforeB != 0) return aBeforeB;
-
-        return a.status.index.compareTo(b.status.index);
-      });
-
-      if (_drive != null) {
-        stops.add(Stop(
-          profiles: [],
-          place: _drive!.end,
-          time: _drive!.endTime,
-          status: StopStatus.driveEnd,
-          seats: _drive!.seats,
-        ));
-      }
+      stops.sort((a, b) => a.time.compareTo(b.time));
     }
 
     Widget timeline = FixedTimeline.tileBuilder(
@@ -165,19 +143,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         indicatorBuilder: (context, index) {
           final stop = stops[index];
           return OutlinedDotIndicator(
-            color: stop.status == StopStatus.rideStart
-                ? Color(0xff6ad192)
-                : Color(0xffe6e7e9),
-            backgroundColor: stop.status == StopStatus.rideStart
-                ? Color(0xffd4f5d6)
-                : Color(0xffc2c5c9),
-            borderWidth: stop.status == StopStatus.rideStart ? 3.0 : 2.5,
+            color: Color(0xff6ad192),
+            backgroundColor: Color(0xffd4f5d6),
+            borderWidth: 3.0,
           );
         },
         connectorBuilder: (context, index, type) {
           final stop = stops[index];
-          final color =
-              stop.status == StopStatus.rideStart ? Color(0xff6ad192) : null;
+          final color = Color(0xff6ad192);
 
           return SolidLineConnector(
             color: color,
@@ -190,7 +163,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(1 + stop.profiles.length, (index) {
+                  children: List.generate(1 + stop.actions.length, (index) {
                     if (index == 0) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 4),
@@ -199,48 +172,33 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                           children: [
                             Text(
                               "${DateFormat.Hm().format(stop.time)} ",
-                              style: DefaultTextStyle.of(context)
-                                  .style
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
                             ),
                             Text(stop.place),
                           ],
                         ),
                       );
                     }
-                    const startIcon =
-                        Icon(Icons.north_east, color: Colors.green);
+                    const startIcon = Icon(Icons.north_east, color: Colors.green);
                     const endIcon = Icon(Icons.south_west, color: Colors.red);
                     return Container(
                         decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(3.0))),
+                            color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(3.0))),
                         child: Material(
                             color: Colors.transparent,
                             child: InkWell(
                                 onTap: () => print("Hey"),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5.0, vertical: 5.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      stop.status == StopStatus.rideStart
-                                          ? startIcon
-                                          : endIcon,
-                                      Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CircleAvatar(
-                                                child: Text(stop
-                                                    .profiles[index - 1]
-                                                    .username[0])),
-                                            SizedBox(width: 5),
-                                            Text(stop
-                                                .profiles[index - 1].username)
-                                          ]),
+                                      stop.actions[index - 1].status == StopStatus.rideStart ? startIcon : endIcon,
+                                      Row(mainAxisSize: MainAxisSize.min, children: [
+                                        CircleAvatar(child: Text(stop.actions[index - 1].profile.username[0])),
+                                        SizedBox(width: 5),
+                                        Text(stop.actions[index - 1].profile.username)
+                                      ]),
                                       const Icon(
                                         Icons.chat,
                                         color: Colors.black,
@@ -252,7 +210,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   })));
         },
         itemExtentBuilder: (context, index) {
-          return (stops[index].profiles.length + 1) * 50.0;
+          return (stops[index].actions.length + 1) * 50.0;
         },
         itemCount: stops.length,
       ),
@@ -278,8 +236,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             (index) => InkWell(
                 onTap: () => print("Hey"),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 5.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -339,18 +296,22 @@ enum StopStatus {
   driveEnd,
 }
 
-class Stop {
-  List<Profile> profiles;
-  final String place;
-  final DateTime time;
+class StopAction {
+  final Profile profile;
   final StopStatus status;
   final int seats;
 
+  StopAction({required this.profile, required this.status, required this.seats});
+}
+
+class Stop {
+  List<StopAction> actions;
+  final String place;
+  final DateTime time;
+
   Stop({
-    required this.profiles,
+    required this.actions,
     required this.place,
     required this.time,
-    required this.status,
-    required this.seats,
   });
 }

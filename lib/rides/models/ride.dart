@@ -1,4 +1,4 @@
-import 'package:flutter_app/settings/models/profile.dart';
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 import '../../util/model.dart';
