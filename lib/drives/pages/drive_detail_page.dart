@@ -89,12 +89,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       ),
     );
 
-    List<Widget> widgets = [
-      FixedTimeline(
-        theme: CustomTimelineTheme.of(context),
-        children: [startTimelineTile, stopTimelineTile],
-      ),
-    ];
+    Widget shortTimeline = FixedTimeline(
+      theme: CustomTimelineTheme.of(context),
+      children: [startTimelineTile, stopTimelineTile],
+    );
 
     List<Stop> stops = [];
     if (_drive != null) {
@@ -149,34 +147,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         return a.status.index.compareTo(b.status.index);
       });
 
-      // nodes.addAll(
-      //   stops.map(
-      //     (stop) => TimelineTile(
-      //       contents: Padding(
-      //         padding: const EdgeInsets.all(16.0),
-      //         child: Row(
-      //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //           children: [
-      //             Text("${DateFormat.Hm().format(stop.time)} ${stop.place}"),
-      //             const Icon(
-      //               Icons.chat,
-      //               color: Colors.black,
-      //               size: 36.0,
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //       node: TimelineNode(
-      //         overlap: true,
-      //         indicator: OutlinedDotIndicator(),
-      //         startConnector: Random().nextBool()
-      //             ? SolidLineConnector()
-      //             : DashedLineConnector(),
-      //         endConnector: SolidLineConnector(),
-      //       ),
-      //     ),
-      //   ),
-      // );
       if (_drive != null) {
         stops.add(Stop(
           profiles: [],
@@ -186,16 +156,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           seats: _drive!.seats,
         ));
       }
-
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
     }
 
-    Timeline timeline = Timeline.tileBuilder(
+    Widget timeline = FixedTimeline.tileBuilder(
       theme: CustomTimelineTheme.of(context),
-      padding: const EdgeInsets.only(top: 20.0),
       builder: TimelineTileBuilder.connected(
+        connectionDirection: ConnectionDirection.after,
         indicatorBuilder: (context, index) {
           final stop = stops[index];
           return OutlinedDotIndicator(
@@ -219,50 +185,149 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         },
         contentsBuilder: (context, index) {
           final stop = stops[index];
-          return SizedBox(
-            height: 60.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("${DateFormat.Hm().format(stop.time)} ${stop.place}"),
-                const Icon(
-                  Icons.chat,
-                  color: Colors.black,
-                  size: 36.0,
-                ),
-              ],
-            ),
-          );
+          return Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(1 + stop.profiles.length, (index) {
+                    if (index == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "${DateFormat.Hm().format(stop.time)} ",
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(fontWeight: FontWeight.w700),
+                            ),
+                            Text(stop.place),
+                          ],
+                        ),
+                      );
+                    }
+                    const startIcon =
+                        Icon(Icons.north_east, color: Colors.green);
+                    const endIcon = Icon(Icons.south_west, color: Colors.red);
+                    return Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(3.0))),
+                        child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                                onTap: () => print("Hey"),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0, vertical: 5.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      stop.status == StopStatus.rideStart
+                                          ? startIcon
+                                          : endIcon,
+                                      Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CircleAvatar(
+                                                child: Text(stop
+                                                    .profiles[index - 1]
+                                                    .username[0])),
+                                            SizedBox(width: 5),
+                                            Text(stop
+                                                .profiles[index - 1].username)
+                                          ]),
+                                      const Icon(
+                                        Icons.chat,
+                                        color: Colors.black,
+                                        size: 36.0,
+                                      ),
+                                    ],
+                                  ),
+                                ))));
+                  })));
+        },
+        itemExtentBuilder: (context, index) {
+          return (stops[index].profiles.length + 1) * 50.0;
         },
         itemCount: stops.length,
       ),
     );
 
+    List<Widget> widgets = [
+      shortTimeline,
+      Divider(thickness: 1),
+      timeline,
+    ];
+
+    Widget ridersColumn = Container();
+    if (_rides != null) {
+      List<Profile> riders = [];
+      for (Ride ride in _rides!) {
+        if (ride.rider != null && !riders.contains(ride.rider)) {
+          riders.add(ride.rider!);
+        }
+      }
+      ridersColumn = Column(
+        children: List.generate(
+            riders.length,
+            (index) => InkWell(
+                onTap: () => print("Hey"),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 5.0, vertical: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        CircleAvatar(child: Text(riders[index].username[0])),
+                        SizedBox(width: 5),
+                        Text(riders[index].username)
+                      ]),
+                      const Icon(
+                        Icons.chat,
+                        color: Colors.black,
+                        size: 36.0,
+                      ),
+                    ],
+                  ),
+                ))),
+      );
+      widgets.add(const Divider(
+        thickness: 1,
+      ));
+      widgets.add(ridersColumn);
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Drive Detail'),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.chat),
-          )
-        ],
-      ),
-      body: _drive == null
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  children: [
-                    startTimelineTile,
-                    Divider(thickness: 1),
-                    Row(children: [timeline]),
-                  ],
+        appBar: AppBar(
+          title: const Text('Drive Detail'),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.chat),
+            )
+          ],
+        ),
+        body: _drive == null
+            ? const Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: loadDrive,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: widgets,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-    );
+              ));
   }
 }
 
