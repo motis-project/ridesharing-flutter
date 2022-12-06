@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timelines/timelines.dart';
 
 class SearchCard extends StatelessWidget {
   const SearchCard({Key? key}) : super(key: key);
