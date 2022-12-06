@@ -19,11 +19,14 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
               List<T> filteredTrips = filterTrips(trips);
               return trips.isEmpty
                   ? Center(child: Text(emptyMessage))
-                  : ListView.builder(
+                  : ListView.separated(
                       itemCount: filteredTrips.length,
                       itemBuilder: (context, index) {
                         final trip = filteredTrips[index];
                         return tripCard(trip);
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 10);
                       },
                     );
             } else {

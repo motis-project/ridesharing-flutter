@@ -49,6 +49,9 @@ dependencies:
   # For the Detailed Views and Cards
   timelines: ^0.1.0
 
+  #For the shimmer effect
+  shimmer: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

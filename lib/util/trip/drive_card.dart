@@ -17,43 +17,52 @@ class DriveCard extends TripCard<Drive> {
             builder: (context) => const DriveDetailPage(),
           ),
         ),
-        child: FixedTimeline(
-          theme: TimelineTheme.of(context).copyWith(
-            nodePosition: 0.05,
-            color: Colors.black,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TimelineTile(
-              contents: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('${formatTime(trip.startTime)}  ${trip.start}'),
-                    Text(formatDate(trip.startTime)),
-                  ],
-                ),
-              ),
-              node: const TimelineNode(
-                indicator: OutlinedDotIndicator(),
-                endConnector: SolidLineConnector(),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(formatDate(trip.startTime)),
             ),
-            TimelineTile(
-              contents: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('${formatTime(trip.endTime)}  ${trip.end}'),
-                  ],
+            const Divider(),
+            FixedTimeline(
+              theme: TimelineTheme.of(context).copyWith(
+                nodePosition: 0.05,
+                color: Colors.black,
+              ),
+              children: [
+                TimelineTile(
+                  contents: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                      ],
+                    ),
+                  ),
+                  node: const TimelineNode(
+                    indicator: OutlinedDotIndicator(),
+                    endConnector: SolidLineConnector(),
+                  ),
                 ),
-              ),
-              node: const TimelineNode(
-                indicator: OutlinedDotIndicator(),
-                startConnector: SolidLineConnector(),
-              ),
-            )
+                TimelineTile(
+                  contents: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('${formatTime(trip.endTime)}  ${trip.end}'),
+                      ],
+                    ),
+                  ),
+                  node: const TimelineNode(
+                    indicator: OutlinedDotIndicator(),
+                    startConnector: SolidLineConnector(),
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),

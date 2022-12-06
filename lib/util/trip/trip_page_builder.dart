@@ -14,7 +14,7 @@ class TripPageBuilder {
       FloatingActionButton floatingActionButton) {
     String name = title.toLowerCase();
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
@@ -25,9 +25,6 @@ class TripPageBuilder {
               ),
               Tab(
                 text: 'Past',
-              ),
-              Tab(
-                text: 'All',
               ),
             ],
           ),
@@ -50,13 +47,6 @@ class TripPageBuilder {
               filterTrips: (trips) => trips.reversed
                   .where((trip) => trip.endTime.isBefore(DateTime.now()))
                   .toList(),
-              tripCard: tripCard,
-            ),
-            TripStreamBuilder<T>(
-              stream: trips,
-              emptyMessage: 'No $name',
-              //we could reorder the stream her somehow, not shure how it's best
-              filterTrips: (trips) => trips,
               tripCard: tripCard,
             ),
           ],

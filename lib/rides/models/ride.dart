@@ -1,10 +1,14 @@
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
+
+import '../../drives/models/drive.dart';
 
 class Ride extends Trip {
   final double? price;
   final bool approved;
 
+  final int riderId;
   final int driveId;
 
   Ride({
@@ -15,7 +19,7 @@ class Ride extends Trip {
     required super.end,
     required super.endTime,
     required super.seats,
-    required super.userId,
+    required this.riderId,
     this.price,
     required this.approved,
     required this.driveId,
@@ -34,7 +38,7 @@ class Ride extends Trip {
       price: json['price'],
       approved: json['approved'],
       driveId: json['drive_id'],
-      userId: json['rider_id'],
+      riderId: json['rider_id'],
     );
   }
 
@@ -54,7 +58,7 @@ class Ride extends Trip {
       'price': price,
       'approved': approved,
       'drive_id': driveId,
-      'rider_id': userId,
+      'rider_id': riderId,
     };
   }
 
@@ -62,16 +66,10 @@ class Ride extends Trip {
     return rides.map((ride) => ride.toJson()).toList();
   }
 
-  @override
-  String toString() {
-    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $userId}';
-  }
-
   static Future<Ride?> rideOfUserAtTime(
       DateTime start, DateTime end, int userId) async {
     //get all rides of user
-    final List<Ride> rides = Ride.fromJsonList(
-        await supabaseClient.from('rides').select().eq('rider_id', userId));
+    final List<Ride> rides = await getRidesOfUser(userId);
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
@@ -79,5 +77,40 @@ class Ride extends Trip {
       }
     }
     return null;
+  }
+
+  static Future<List<Ride>> getRidesOfUser(int userId) async {
+    return Ride.fromJsonList(
+        await supabaseClient.from('rides').select().eq('rider_id', userId));
+  }
+
+  Future<Drive> getDrive() async {
+    return Drive.fromJson(await supabaseClient
+        .from('drives')
+        .select()
+        .eq('id', driveId)
+        .single());
+  }
+
+  Future<Profile> getDriver() async {
+    Drive drive = await getDrive();
+    return Profile.fromJson(await supabaseClient
+        .from('profiles')
+        .select()
+        .eq('id', drive.driverId)
+        .single());
+  }
+
+  Future<Profile> getRider() async {
+    return Profile.fromJson(await supabaseClient
+        .from('profiles')
+        .select()
+        .eq('id', riderId)
+        .single());
+  }
+
+  @override
+  String toString() {
+    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
   }
 }

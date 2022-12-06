@@ -1,3 +1,4 @@
+import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/model.dart';
 
 abstract class Trip extends Model {
@@ -7,7 +8,6 @@ abstract class Trip extends Model {
   final DateTime endTime;
 
   final int seats;
-  final int userId;
 
   Trip({
     super.id,
@@ -17,6 +17,5 @@ abstract class Trip extends Model {
     required this.end,
     required this.endTime,
     required this.seats,
-    required this.userId,
   });
 }

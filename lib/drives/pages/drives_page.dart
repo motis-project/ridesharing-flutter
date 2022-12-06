@@ -32,10 +32,10 @@ class _DrivesPageState extends State<DrivesPage> {
   @override
   Widget build(BuildContext context) {
     return TripPageBuilder.build<Drive>(
-      context,
-      'drives',
-      _drives,
-      (drive) => DriveCard(trip: drive),
+      context, //context
+      'Drives', //title
+      _drives, //trips
+      (drive) => DriveCard(trip: drive), //tripCard
       FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

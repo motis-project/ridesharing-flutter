@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/pages/search_ride_page.dart';
-import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/trip/trip_page_builder.dart';
 
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
-import '../../util/trip/trip_stream_builder.dart';
 import '../models/ride.dart';
 
 class RidesPage extends StatefulWidget {
@@ -34,10 +32,10 @@ class _RidesPageState extends State<RidesPage> {
   @override
   Widget build(BuildContext context) {
     return TripPageBuilder.build(
-      context,
-      'Rides',
-      _rides,
-      (ride) => RideCard(trip: ride),
+      context, //context
+      'Rides', //title
+      _rides, //trips
+      (ride) => RideCard(trip: ride), //tripCard
       FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
