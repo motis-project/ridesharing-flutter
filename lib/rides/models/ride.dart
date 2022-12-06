@@ -10,6 +10,7 @@ class Ride extends Trip {
 
   final int riderId;
   final int driveId;
+  final Profile? rider;
 
   Ride({
     super.id,
@@ -23,6 +24,7 @@ class Ride extends Trip {
     this.price,
     required this.approved,
     required this.driveId,
+    this.rider,
   });
 
   @override
