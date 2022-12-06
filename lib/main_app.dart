@@ -41,8 +41,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        final isFirstRouteInCurrentTab =
-            !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
+        final isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
         if (isFirstRouteInCurrentTab) {
           if (_currentTab == TabItem.home) {
             return true;
@@ -55,9 +54,7 @@ class _MainAppState extends State<MainApp> {
       child: Scaffold(
         body: IndexedStack(
           index: _currentTab.index,
-          children: TabItem.values
-              .map((tabItem) => buildNavigatorForTab(tabItem))
-              .toList(),
+          children: TabItem.values.map((tabItem) => buildNavigatorForTab(tabItem)).toList(),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
