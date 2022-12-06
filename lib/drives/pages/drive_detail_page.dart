@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
+import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +21,6 @@ class DriveDetailPage extends StatefulWidget {
 
 class _DriveDetailPageState extends State<DriveDetailPage> {
   Drive? _drive;
-  List<Ride>? _rides;
 
   @override
   void initState() {
@@ -36,16 +34,16 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await supabaseClient.from('drives').select().eq('id', widget.id).single();
-
-    List<dynamic> ridesData = await supabaseClient.from('rides').select('''
-          *,
-          rider:rider_id (*)
-        ''').eq('drive_id', widget.id).order('start_time', ascending: true);
+    Map<String, dynamic> data = await supabaseClient.from('drives').select('''
+      *,
+      rides(
+        *,
+        rider: rider_id(*)
+      )
+    ''').eq('id', widget.id).single();
 
     setState(() {
       _drive = Drive.fromJson(data);
-      _rides = Ride.fromJsonList(ridesData);
     });
   }
 
@@ -62,10 +60,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ),
       ),
       node: const TimelineNode(
-        indicator: OutlinedDotIndicator(),
-        endConnector: SolidLineConnector(),
+        indicator: CustomOutlinedDotIndicator(),
+        endConnector: CustomSolidLineConnector(),
       ),
     );
+
+    int? maxUsedSeats = _drive?.getMaxUsedSeats();
 
     TimelineTile stopTimelineTile = TimelineTile(
       contents: Padding(
@@ -74,13 +74,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("${DateFormat.Hm().format(_drive!.endTime)} ${_drive!.end}"),
-            Text('3/${_drive!.seats} Seats'),
+            Text(maxUsedSeats == null ? '' : '$maxUsedSeats/${_drive!.seats} Seats'),
           ],
         ),
       ),
       node: const TimelineNode(
-        indicator: OutlinedDotIndicator(),
-        startConnector: SolidLineConnector(),
+        indicator: CustomOutlinedDotIndicator(),
+        startConnector: CustomSolidLineConnector(),
       ),
     );
 
@@ -92,34 +92,37 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     List<Stop> stops = [];
     if (_drive != null) {
       stops.add(Stop(
-        actions: [StopAction(profile: SupabaseManager.getCurrentProfile()!, status: StopStatus.driveStart, seats: 0)],
+        actions: [],
         place: _drive!.start,
         time: _drive!.startTime,
       ));
       stops.add(Stop(
-        actions: [StopAction(profile: SupabaseManager.getCurrentProfile()!, status: StopStatus.driveEnd, seats: 0)],
+        actions: [],
         place: _drive!.end,
         time: _drive!.endTime,
       ));
     }
 
-    if (_rides != null) {
-      for (Ride ride in _rides!) {
+    if (_drive!.rides != null) {
+      for (Ride ride in _drive!.rides!) {
         bool startSaved = false;
         bool endSaved = false;
+
+        StopAction rideStartAction = StopAction(profile: ride.rider!, isStart: true, seats: ride.seats);
+        StopAction rideEndAction = StopAction(profile: ride.rider!, isStart: false, seats: ride.seats);
         for (Stop stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
-            stop.actions.add(StopAction(profile: ride.rider!, status: StopStatus.rideStart, seats: ride.seats));
+            stop.actions.add(rideStartAction);
           } else if (ride.end == stop.place) {
             endSaved = true;
-            stop.actions.add(StopAction(profile: ride.rider!, status: StopStatus.rideEnd, seats: ride.seats));
+            stop.actions.add(rideEndAction);
           }
         }
 
         if (!startSaved) {
           stops.add(Stop(
-            actions: [StopAction(profile: ride.rider!, status: StopStatus.rideStart, seats: ride.seats)],
+            actions: [rideStartAction],
             place: ride.start,
             time: ride.startTime,
           ));
@@ -127,90 +130,49 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
         if (!endSaved) {
           stops.add(Stop(
-            actions: [StopAction(profile: ride.rider!, status: StopStatus.rideEnd, seats: ride.seats)],
+            actions: [rideEndAction],
             place: ride.end,
             time: ride.endTime,
           ));
         }
       }
+
       stops.sort((a, b) => a.time.compareTo(b.time));
+      for (Stop stop in stops) {
+        stop.actions.sort((a, b) => a.isStart ? 1 : -1);
+      }
     }
 
     Widget timeline = FixedTimeline.tileBuilder(
-      theme: CustomTimelineTheme.of(context),
+      theme: CustomTimelineThemeForBuilder.of(context),
       builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.after,
-        indicatorBuilder: (context, index) {
-          final stop = stops[index];
-          return OutlinedDotIndicator(
-            color: Color(0xff6ad192),
-            backgroundColor: Color(0xffd4f5d6),
-            borderWidth: 3.0,
-          );
-        },
-        connectorBuilder: (context, index, type) {
-          final stop = stops[index];
-          final color = Color(0xff6ad192);
-
-          return SolidLineConnector(
-            color: color,
-          );
-        },
+        connectionDirection: ConnectionDirection.before,
+        indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
+        connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
         contentsBuilder: (context, index) {
           final stop = stops[index];
           return Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(1 + stop.actions.length, (index) {
-                    if (index == 0) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "${DateFormat.Hm().format(stop.time)} ",
-                              style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            Text(stop.place),
-                          ],
-                        ),
-                      );
-                    }
-                    const startIcon = Icon(Icons.north_east, color: Colors.green);
-                    const endIcon = Icon(Icons.south_west, color: Colors.red);
-                    return Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                        child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                                onTap: () => print("Hey"),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      stop.actions[index - 1].status == StopStatus.rideStart ? startIcon : endIcon,
-                                      Row(mainAxisSize: MainAxisSize.min, children: [
-                                        CircleAvatar(child: Text(stop.actions[index - 1].profile.username[0])),
-                                        SizedBox(width: 5),
-                                        Text(stop.actions[index - 1].profile.username)
-                                      ]),
-                                      const Icon(
-                                        Icons.chat,
-                                        color: Colors.black,
-                                        size: 36.0,
-                                      ),
-                                    ],
-                                  ),
-                                ))));
-                  })));
-        },
-        itemExtentBuilder: (context, index) {
-          return (stops[index].actions.length + 1) * 50.0;
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 10.0),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1.0, color: Colors.grey.shade500),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: buildCard(stop),
+                  ),
+                ),
+                const SizedBox(height: 10.0)
+              ],
+            ),
+          );
         },
         itemCount: stops.length,
       ),
@@ -218,90 +180,209 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     List<Widget> widgets = [
       shortTimeline,
-      Divider(thickness: 1),
+      const Divider(thickness: 1),
       timeline,
     ];
 
     Widget ridersColumn = Container();
-    if (_rides != null) {
-      List<Profile> riders = [];
-      for (Ride ride in _rides!) {
-        if (ride.rider != null && !riders.contains(ride.rider)) {
-          riders.add(ride.rider!);
-        }
-      }
-      ridersColumn = Column(
-        children: List.generate(
-            riders.length,
-            (index) => InkWell(
-                onTap: () => print("Hey"),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        CircleAvatar(child: Text(riders[index].username[0])),
-                        SizedBox(width: 5),
-                        Text(riders[index].username)
-                      ]),
-                      const Icon(
-                        Icons.chat,
-                        color: Colors.black,
-                        size: 36.0,
-                      ),
-                    ],
-                  ),
-                ))),
-      );
+    if (_drive!.rides != null) {
       widgets.add(const Divider(
         thickness: 1,
       ));
+
+      Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
+
+      ridersColumn = Column(
+        children: List.generate(
+          riders.length,
+          (index) => InkWell(
+            onTap: () => print("Hey"),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  profileRow(riders.elementAt(index)),
+                  const Icon(
+                    Icons.chat,
+                    color: Colors.black,
+                    size: 36.0,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
       widgets.add(ridersColumn);
     }
 
+    if (_drive != null) {
+      Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
+      widgets.add(const Divider(
+        thickness: 1,
+      ));
+      widgets.add(cancelButton);
+    }
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Drive Detail'),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.chat),
-            )
-          ],
-        ),
-        body: _drive == null
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: loadDrive,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: widgets,
-                    ),
+      appBar: AppBar(
+        title: const Text('Drive Detail'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.chat),
+          )
+        ],
+      ),
+      body: _drive == null
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: loadDrive,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widgets,
                   ),
                 ),
-              ));
+              ),
+            ),
+    );
   }
-}
 
-// ATTENTION: Order is important (we show ride ends before starts)
-enum StopStatus {
-  driveStart,
-  rideEnd,
-  rideStart,
-  driveEnd,
+  Row profileRow(Profile profile) {
+    return Row(
+      children: [
+        CircleAvatar(
+          child: Text(profile.username[0]),
+        ),
+        const SizedBox(width: 5),
+        Text(profile.username),
+      ],
+    );
+  }
+
+  List<Widget> buildCard(Stop stop) {
+    List<Widget> list = [];
+    list.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              DateFormat.Hm().format(stop.time),
+              style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(width: 4.0),
+            Text(stop.place),
+          ],
+        ),
+      ),
+    );
+
+    final startIcon = Icon(Icons.north_east_rounded, color: Colors.green.shade700);
+    const endIcon = Icon(Icons.south_west_rounded, color: Colors.red);
+    for (int index = 0, length = stop.actions.length; index < length; index++) {
+      final action = stop.actions[index];
+      final icon = action.isStart ? startIcon : endIcon;
+      final profile = action.profile;
+
+      Widget container = Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.3),
+          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => print("Hey"),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: action.seats <= 2
+                              ? List.generate(action.seats, (index) => icon)
+                              : [
+                                  icon,
+                                  const SizedBox(width: 2),
+                                  Text("x${action.seats}"),
+                                ]),
+                    ),
+                  ),
+                  profileRow(profile),
+                  const Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        Icons.chat,
+                        color: Colors.black,
+                        size: 30.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      list.add(container);
+
+      if (index < length - 1) {
+        list.add(const SizedBox(height: 6.0));
+      }
+    }
+
+    return list;
+  }
+
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Deletion"),
+        content: const Text("Are you sure you want to delete this drive?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text("Confirm"),
+            onPressed: () {
+              _drive!.cancel();
+              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Drive deleted"),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class StopAction {
   final Profile profile;
-  final StopStatus status;
+  final bool isStart;
   final int seats;
 
-  StopAction({required this.profile, required this.status, required this.seats});
+  StopAction({required this.profile, required this.isStart, required this.seats});
 }
 
 class Stop {
