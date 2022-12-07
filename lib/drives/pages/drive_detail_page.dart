@@ -49,54 +49,73 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    TimelineTile startTimelineTile = TimelineTile(
-      contents: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("${DateFormat.Hm().format(_drive!.startTime)} ${_drive!.start}"),
-          ],
-        ),
-      ),
-      node: const TimelineNode(
-        indicator: CustomOutlinedDotIndicator(),
-        endConnector: CustomSolidLineConnector(),
-      ),
-    );
-
     int? maxUsedSeats = _drive?.getMaxUsedSeats();
 
-    TimelineTile stopTimelineTile = TimelineTile(
-      contents: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("${DateFormat.Hm().format(_drive!.endTime)} ${_drive!.end}"),
-            Text(maxUsedSeats == null ? '' : '$maxUsedSeats/${_drive!.seats} Seats'),
-          ],
+    Widget startDest = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(_drive!.start),
+              Text(DateFormat.Hm().format(_drive!.startTime),
+                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
+            ],
+          ),
         ),
-      ),
-      node: const TimelineNode(
-        indicator: CustomOutlinedDotIndicator(),
-        startConnector: CustomSolidLineConnector(),
-      ),
+        const Icon(Icons.arrow_forward_rounded),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(_drive!.end),
+              Text(DateFormat.Hm().format(_drive!.endTime),
+                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
+            ],
+          ),
+        ),
+      ],
     );
 
-    Widget shortTimeline = FixedTimeline(
-      theme: CustomTimelineTheme.of(context),
-      children: [startTimelineTile, stopTimelineTile],
+    List<Widget> infoRowWidgets = [
+      Text(DateFormat('dd.MM.yyyy').format(_drive!.startTime),
+          style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
+    ];
+
+    if (maxUsedSeats != null) {
+      Widget seats = Column(
+        children: [
+          Row(
+            children: List.generate(
+                _drive!.seats,
+                (index) => Icon(Icons.chair,
+                    color: index < maxUsedSeats ? Theme.of(context).colorScheme.primary : Colors.grey.shade500)),
+          ),
+          Text('$maxUsedSeats/${_drive!.seats} Seats')
+        ],
+      );
+      infoRowWidgets.add(seats);
+    }
+
+    Widget infoRow = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: infoRowWidgets,
     );
 
-    List<Stop> stops = [];
+    Widget overview = Column(
+      children: [startDest, const SizedBox(height: 10.0), infoRow],
+    );
+
+    List<Waypoint> stops = [];
     if (_drive != null) {
-      stops.add(Stop(
+      stops.add(Waypoint(
         actions: [],
         place: _drive!.start,
         time: _drive!.startTime,
       ));
-      stops.add(Stop(
+      stops.add(Waypoint(
         actions: [],
         place: _drive!.end,
         time: _drive!.endTime,
@@ -108,9 +127,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bool startSaved = false;
         bool endSaved = false;
 
-        StopAction rideStartAction = StopAction(profile: ride.rider!, isStart: true, seats: ride.seats);
-        StopAction rideEndAction = StopAction(profile: ride.rider!, isStart: false, seats: ride.seats);
-        for (Stop stop in stops) {
+        WaypointAction rideStartAction = WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats);
+        WaypointAction rideEndAction = WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats);
+        for (Waypoint stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
             stop.actions.add(rideStartAction);
@@ -121,7 +140,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         }
 
         if (!startSaved) {
-          stops.add(Stop(
+          stops.add(Waypoint(
             actions: [rideStartAction],
             place: ride.start,
             time: ride.startTime,
@@ -129,7 +148,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         }
 
         if (!endSaved) {
-          stops.add(Stop(
+          stops.add(Waypoint(
             actions: [rideEndAction],
             place: ride.end,
             time: ride.endTime,
@@ -138,7 +157,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       }
 
       stops.sort((a, b) => a.time.compareTo(b.time));
-      for (Stop stop in stops) {
+      for (Waypoint stop in stops) {
         stop.actions.sort((a, b) => a.isStart ? 1 : -1);
       }
     }
@@ -179,7 +198,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
 
     List<Widget> widgets = [
-      shortTimeline,
+      overview,
       const Divider(thickness: 1),
       timeline,
     ];
@@ -242,7 +261,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: widgets,
@@ -265,7 +284,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  List<Widget> buildCard(Stop stop) {
+  List<Widget> buildCard(Waypoint stop) {
     List<Widget> list = [];
     list.add(
       Padding(
@@ -377,20 +396,20 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 }
 
-class StopAction {
+class WaypointAction {
   final Profile profile;
   final bool isStart;
   final int seats;
 
-  StopAction({required this.profile, required this.isStart, required this.seats});
+  WaypointAction({required this.profile, required this.isStart, required this.seats});
 }
 
-class Stop {
-  List<StopAction> actions;
+class Waypoint {
+  List<WaypointAction> actions;
   final String place;
   final DateTime time;
 
-  Stop({
+  Waypoint({
     required this.actions,
     required this.place,
     required this.time,
