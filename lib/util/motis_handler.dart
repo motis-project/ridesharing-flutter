@@ -42,11 +42,15 @@ class MotisHandler {
     })));
 
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());
+    String response = await request.close().then((value) => value.transform(utf8.decoder).join());
 
     List<dynamic> guesses = json.decode(response)['content']['guesses'];
 
-    List<AddressSuggestion> addressSuggestions =
-        guesses.map((guess) => AddressSuggestion.fromMotisResponse(guess)).toList();
+    var seen = <String>{};
+    List<AddressSuggestion> addressSuggestions = guesses
+        .map((guess) => AddressSuggestion.fromMotisResponse(guess))
+        .where((suggestion) => seen.add(suggestion.toString()))
+        .toList();
 
     return addressSuggestions;
   }
