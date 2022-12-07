@@ -12,18 +12,22 @@ class MotisHandler {
 
   // Would be easier, but does not work:
   // http.Response res = await http.post(
-  //   Uri.parse('https://europe.motis-project.de/?elm=AddressSuggestions'),
+  //   Uri.parse('https://europe.motis-project.de/?elm=$elm'),
   //   body: json.encode({
-  //     "destination": {"type": "Module", "target": "/address"},
-  //     "content_type": "AddressRequest",
-  //     "content": {"input": "Berlin Hsbf (tief)"}
+  //     "destination": {"type": "Module", "target": target},
+  //     "content_type": contentType,
+  //     "content": {"input": input, "guess_count": guessCount}
   //   }),
   //   headers: {
   //     'Content-Type': 'application/json',
   //   },
   // );
-  static Future<List<AddressSuggestion>> getAddressSuggestions(
+  static Future<List<dynamic>> _doRequest(
+    String elm,
+    String target,
+    String contentType,
     String input,
+    int guessCount,
   ) async {
     if (input.length < searchLengthRequirement) return [];
 
@@ -31,24 +35,44 @@ class MotisHandler {
       Uri(
         scheme: 'https',
         host: _motisHost,
-        queryParameters: {'elm': 'AddressSuggestions'},
+        queryParameters: {'elm': elm},
       ),
     );
 
     request.add(utf8.encode(json.encode({
-      "destination": {"type": "Module", "target": "/address"},
-      "content_type": "AddressRequest",
-      "content": {"input": input}
+      "destination": {"type": "Module", "target": target},
+      "content_type": contentType,
+      "content": {"input": input, "guess_count": guessCount}
     })));
 
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());
 
-    List<dynamic> guesses = json.decode(response)['content']['guesses'];
+    return json.decode(response)['content']['guesses'];
+  }
+
+  static Future<List<AddressSuggestion>> getSuggestions(String input) async {
+    List<AddressSuggestion> stationSuggestions = await getStationSuggestions(input);
+    List<AddressSuggestion> addressSuggestions = await getAddressSuggestions(input);
+
+    return stationSuggestions + addressSuggestions;
+  }
+
+  static Future<List<AddressSuggestion>> getStationSuggestions(String input) async {
+    List<dynamic> suggestions = await _doRequest('StationSuggestions', '/guesser', 'StationGuesserRequest', input, 5);
+
+    List<AddressSuggestion> stationSuggestions =
+        suggestions.map((suggestion) => AddressSuggestion.fromMotisStationResponse(suggestion)).toList();
+
+    return stationSuggestions;
+  }
+
+  static Future<List<AddressSuggestion>> getAddressSuggestions(String input) async {
+    List<dynamic> suggestions = await _doRequest('AddressSuggestions', '/address', 'AddressRequest', input, 8);
 
     var seen = <String>{};
-    List<AddressSuggestion> addressSuggestions = guesses
-        .map((guess) => AddressSuggestion.fromMotisResponse(guess))
+    List<AddressSuggestion> addressSuggestions = suggestions
+        .map((suggestion) => AddressSuggestion.fromMotisAddressResponse(suggestion))
         .where((suggestion) => seen.add(suggestion.toString()))
         .toList();
 

@@ -44,7 +44,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return FutureBuilder(
-      future: MotisHandler.getAddressSuggestions(query),
+      future: MotisHandler.getSuggestions(query),
       builder: (context, snapshot) {
         if (query.length < MotisHandler.searchLengthRequirement) {
           return const Center(
@@ -61,7 +61,11 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
               itemCount: suggestions.length,
               physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                var suggestion = suggestions[index];
                 return ListTile(
+                  leading: suggestion.type == AddressSuggestionType.station
+                      ? const Icon(Icons.train)
+                      : const Icon(Icons.place),
                   title: Text(suggestions[index].toString()),
                   onTap: () => close(context, suggestions[index]),
                 );
