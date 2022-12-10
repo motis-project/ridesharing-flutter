@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../rides/models/ride.dart';
 import '../../account/models/profile.dart';
+import '../../util/search/address_search_field.dart';
+import '../../util/search/address_suggestion.dart';
 import '../pages/drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
@@ -41,7 +43,9 @@ class CreateDriveForm extends StatefulWidget {
 class _CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
+  AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
@@ -88,32 +92,33 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        //todo: get user from auth when login is implemented
-        // User authUser = supabaseClient.auth.currentUser!;
         //todo: add right end_time from algorithm
         DateTime endTime = DateTime(
             _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         final Profile driver = SupabaseManager.getCurrentProfile()!;
+
+        print("$_startSuggestion $_destinationSuggestion");
+
         //check if the user already has a drive at this time
-        Drive? overlappingDrive = await Drive.driveOfUserAtTime(_selectedDate.toUtc(), endTime.toUtc(), driver.id!);
+        Drive? overlappingDrive = await Drive.driveOfUserAtTime(_selectedDate, endTime, driver.id!);
         if (overlappingDrive != null && mounted) {
           //todo: show view with overlapping drive when implemented
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a drive on ${_formatDate(overlappingDrive.startTime)} at ${_formatTime(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}'),
+                  'You already have a drive on ${_formatDate(overlappingDrive.startTime)} at ${_formatDate(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}'),
             ),
           );
           return;
         }
         //check if the user already has a ride at this time
-        Ride? overlappingRide = await Ride.rideOfUserAtTime(_selectedDate.toUtc(), endTime.toUtc(), driver.id!);
+        Ride? overlappingRide = await Ride.rideOfUserAtTime(_selectedDate, endTime, driver.id!);
         if (overlappingRide != null && mounted) {
           //todo: show view with overlapping ride when implemented
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a ride on ${_formatDate(overlappingRide.startTime)} at ${_formatTime(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}'),
+                  'You already have a ride on ${_formatDate(overlappingRide.startTime)} at ${_formatDate(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}'),
             ),
           );
           return;
@@ -190,35 +195,14 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       key: _formKey,
       child: Column(
         children: [
-          //todo: add search for start and destination
-          TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Start",
-              hintText: "Enter your starting Location",
-            ),
+          AddressSearchField.start(
             controller: _startController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a starting location';
-              }
-              return null;
-            },
+            onSelected: (suggestion) => _startSuggestion = suggestion,
           ),
           const SizedBox(height: 15),
-          TextFormField(
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "Destination",
-              hintText: "Enter your destination",
-            ),
+          AddressSearchField.destination(
             controller: _destinationController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a destination';
-              }
-              return null;
-            },
+            onSelected: (suggestion) => _destinationSuggestion = suggestion,
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15),

@@ -17,7 +17,6 @@ class _DrivesPageState extends State<DrivesPage> {
 
   @override
   void initState() {
-    //todo: method to get userId
     int userId = SupabaseManager.getCurrentProfile()!.id!;
     _drives = supabaseClient
         .from('drives')
