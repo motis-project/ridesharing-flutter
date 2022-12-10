@@ -1,3 +1,4 @@
+import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 import '../../util/model.dart';
@@ -11,6 +12,8 @@ class Drive extends Model {
   final int seats;
   final int driverId;
 
+  final List<Ride>? rides;
+
   Drive({
     super.id,
     super.createdAt,
@@ -20,6 +23,7 @@ class Drive extends Model {
     required this.endTime,
     required this.seats,
     required this.driverId,
+    this.rides,
   });
 
   @override
@@ -33,6 +37,7 @@ class Drive extends Model {
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       driverId: json['driver_id'],
+      rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
     );
   }
 
@@ -70,5 +75,32 @@ class Drive extends Model {
       }
     }
     return null;
+  }
+
+  int? getMaxUsedSeats() {
+    if (rides == null) return null;
+
+    Set<DateTime> times = rides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
+
+    int maxUsedSeats = 0;
+    for (DateTime time in times) {
+      int usedSeats = 0;
+      for (Ride ride in rides!) {
+        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
+        final endTimeAfter = ride.endTime.isAfter(time);
+        if (startTimeBeforeOrEqual && endTimeAfter) {
+          usedSeats += ride.seats;
+        }
+      }
+
+      if (usedSeats > maxUsedSeats) {
+        maxUsedSeats = usedSeats;
+      }
+    }
+    return maxUsedSeats;
+  }
+
+  void cancel() {
+    // TODO: implement cancel
   }
 }

@@ -110,17 +110,18 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           startTime: _selectedDate,
           endTime: endTime,
         );
-        //add Drive to database an Navigate to DriveDetailPage
-        await supabaseClient
-            .from('drives')
-            .insert(drive.toJson())
-            .then(((value) => Navigator.pushReplacement<void, void>(
-                  context,
-                  MaterialPageRoute<void>(
-                    //todo: call DriveDetailPage with id of created drive when implemented
-                    builder: (BuildContext context) => const DriveDetailPage(),
-                  ),
-                )));
+
+        await supabaseClient.from('drives').insert(drive.toJson()).select<Map<String, dynamic>>().single().then(
+          (data) {
+            Drive drive = Drive.fromJson(data);
+            Navigator.pushReplacement<void, void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
+              ),
+            );
+          },
+        );
       } on AuthException {
         //todo: change error message when login is implemented
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
