@@ -63,7 +63,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(suggestions[index].toString()),
-                  onTap: () => closeWithResult(context, suggestions[index]),
+                  onTap: () => close(context, suggestions[index]),
                 );
               },
               separatorBuilder: (context, index) {

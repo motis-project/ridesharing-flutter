@@ -14,7 +14,7 @@ class DriveCard extends TripCard<Drive> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const DriveDetailPage(),
+            builder: (context) => DriveDetailPage.fromDrive(trip),
           ),
         ),
         child: Column(

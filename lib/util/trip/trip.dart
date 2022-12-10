@@ -1,4 +1,3 @@
-import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/model.dart';
 
 abstract class Trip extends Model {

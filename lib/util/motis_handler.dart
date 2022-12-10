@@ -6,8 +6,6 @@ import 'package:flutter_app/util/search/address_suggestion.dart';
 class MotisHandler {
   static final HttpClient _httpClient = HttpClient();
   static const String _motisHost = 'europe.motis-project.de';
-  static const int searchLengthRequirement = 4;
-  static const List<String> adminLevelsNeeded = ['11', '13', '4'];
 
   // If the search is shorter than this, the server will return an empty list anyways.
   static const int searchLengthRequirement = 4;
@@ -43,15 +41,12 @@ class MotisHandler {
       "content": {"input": input}
     })));
 
-    String response = await request
-        .close()
-        .then((value) => value.transform(utf8.decoder).join());
+    String response = await request.close().then((value) => value.transform(utf8.decoder).join());
 
     List<dynamic> guesses = json.decode(response)['content']['guesses'];
 
-    List<AddressSuggestion> addressSuggestions = guesses
-        .map((guess) => AddressSuggestion.fromMotisResponse(guess))
-        .toList();
+    List<AddressSuggestion> addressSuggestions =
+        guesses.map((guess) => AddressSuggestion.fromMotisResponse(guess)).toList();
 
     return addressSuggestions;
   }
