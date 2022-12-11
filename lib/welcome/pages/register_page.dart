@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/email_field.dart';
 import 'package:flutter_app/util/loading_button.dart';
-import 'package:flutter_app/welcome/pages/login_page.dart';
 import 'package:flutter_app/util/password_field.dart';
 import 'package:flutter_app/util/supabase.dart';
-import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

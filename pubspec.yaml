@@ -43,11 +43,13 @@ dependencies:
   flutter_dotenv: ^5.0.2
   progress_state_button: ^1.0.4
 
+  timelines: ^0.1.0
+
   # Internationalization
   intl: ^0.17.0
 
-  # For the Detailed Views and Cards
-  timelines: ^0.1.0
+#For the shimmer effect
+  shimmer: ^2.0.0
 
 dev_dependencies:
   flutter_test:

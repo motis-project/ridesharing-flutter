@@ -1,32 +1,30 @@
+import 'package:flutter_app/account/models/profile.dart';
+import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
-import '../../util/model.dart';
+import '../../drives/models/drive.dart';
 
-class Ride extends Model {
-  final String start;
-  final DateTime startTime;
-  final String end;
-  final DateTime endTime;
-
-  final int seats;
+class Ride extends Trip {
   final double? price;
   final bool approved;
 
-  final int driveId;
   final int riderId;
+  final int driveId;
+  final Profile? rider;
 
   Ride({
     super.id,
     super.createdAt,
-    required this.start,
-    required this.startTime,
-    required this.end,
-    required this.endTime,
-    required this.seats,
+    required super.start,
+    required super.startTime,
+    required super.end,
+    required super.endTime,
+    required super.seats,
+    required this.riderId,
     this.price,
     required this.approved,
     required this.driveId,
-    required this.riderId,
+    this.rider,
   });
 
   @override
@@ -43,13 +41,12 @@ class Ride extends Model {
       approved: json['approved'],
       driveId: json['drive_id'],
       riderId: json['rider_id'],
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
     );
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {
-    return jsonList
-        .map((json) => Ride.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return jsonList.map((json) => Ride.fromJson(json as Map<String, dynamic>)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -70,16 +67,9 @@ class Ride extends Model {
     return rides.map((ride) => ride.toJson()).toList();
   }
 
-  @override
-  String toString() {
-    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
-  }
-
-  static Future<Ride?> rideOfUserAtTime(
-      DateTime start, DateTime end, int userId) async {
+  static Future<Ride?> rideOfUserAtTime(DateTime start, DateTime end, int userId) async {
     //get all rides of user
-    final List<Ride> rides = Ride.fromJsonList(
-        await supabaseClient.from('rides').select().eq('rider_id', userId));
+    final List<Ride> rides = Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
@@ -87,5 +77,27 @@ class Ride extends Model {
       }
     }
     return null;
+  }
+
+  static Future<List<Ride>> getRidesOfUser(int userId) async {
+    return Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
+  }
+
+  Future<Drive> getDrive() async {
+    return Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
+  }
+
+  Future<Profile> getDriver() async {
+    Drive drive = await getDrive();
+    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', drive.driverId).single());
+  }
+
+  Future<Profile> getRider() async {
+    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
+  }
+
+  @override
+  String toString() {
+    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
   }
 }

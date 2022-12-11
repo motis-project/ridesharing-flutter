@@ -72,9 +72,7 @@ class _LoginFormState extends State<LoginForm> {
         fail();
         // looks weird but needed later for i18n
         String text = e.statusCode == '400'
-            ? (e.message.contains("credentials")
-                ? "Invalid credentials"
-                : "Please confirm your email address")
+            ? (e.message.contains("credentials") ? "Invalid credentials" : "Please confirm your email address")
             : "Something went wrong";
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

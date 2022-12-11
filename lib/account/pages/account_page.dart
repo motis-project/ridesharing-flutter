@@ -23,7 +23,7 @@ class _AccountPageState extends State<AccountPage> {
 
     Widget userName = Column(
       children: <Widget>[
-        const Text("User"),
+        Text(SupabaseManager.getCurrentProfile()!.username),
         TextButton.icon(
           onPressed: signOut,
           icon: const Icon(Icons.logout),
