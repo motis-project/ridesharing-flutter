@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
-import 'package:flutter_app/drives/pages/create_drive_page.dart';
+import 'package:flutter_app/drives/pages/drive_detail_page.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_page_builder.dart';
 import '../../util/trip/drive_card.dart';
@@ -30,19 +30,25 @@ class _DrivesPageState extends State<DrivesPage> {
   @override
   Widget build(BuildContext context) {
     return TripPageBuilder.build<Drive>(
-      context, //context
-      'Drives', //title
-      _drives, //trips
-      (drive) => DriveCard(trip: drive), //tripCard
+      context,
+      'Drives',
+      _drives,
+      (drive) => DriveCard(trip: drive),
       FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const CreateDrivePage()),
-          );
-        },
+        onPressed: onPressed,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void onPressed() async {
+    Map<String, dynamic> data = await supabaseClient.from('drives').select().eq('id', 33).limit(1).single();
+    Drive drive = Drive.fromJson(data);
+    if (mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => DriveDetailPage.fromDrive(drive)),
+      );
+    }
   }
 }

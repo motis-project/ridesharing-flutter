@@ -1,7 +1,5 @@
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/trip/trip.dart';
-import 'package:flutter_app/account/models/profile.dart';
-import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 import '../../drives/models/drive.dart';
@@ -71,7 +69,7 @@ class Ride extends Trip {
 
   static Future<Ride?> rideOfUserAtTime(DateTime start, DateTime end, int userId) async {
     //get all rides of user
-    final List<Ride> rides = await getRidesOfUser(userId);
+    final List<Ride> rides = Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
