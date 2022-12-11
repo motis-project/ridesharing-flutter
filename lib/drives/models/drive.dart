@@ -101,31 +101,4 @@ class Drive extends Trip {
   void cancel() {
     // TODO: implement cancel
   }
-
-  int? getMaxUsedSeats() {
-    if (rides == null) return null;
-
-    Set<DateTime> times = rides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
-
-    int maxUsedSeats = 0;
-    for (DateTime time in times) {
-      int usedSeats = 0;
-      for (Ride ride in rides!) {
-        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
-        final endTimeAfter = ride.endTime.isAfter(time);
-        if (startTimeBeforeOrEqual && endTimeAfter) {
-          usedSeats += ride.seats;
-        }
-      }
-
-      if (usedSeats > maxUsedSeats) {
-        maxUsedSeats = usedSeats;
-      }
-    }
-    return maxUsedSeats;
-  }
-
-  void cancel() {
-    // TODO: implement cancel
-  }
 }
