@@ -41,15 +41,12 @@ class MotisHandler {
       "content": {"input": input}
     })));
 
-    String response = await request
-        .close()
-        .then((value) => value.transform(utf8.decoder).join());
+    String response = await request.close().then((value) => value.transform(utf8.decoder).join());
 
     List<dynamic> guesses = json.decode(response)['content']['guesses'];
 
-    List<AddressSuggestion> addressSuggestions = guesses
-        .map((guess) => AddressSuggestion.fromMotisResponse(guess))
-        .toList();
+    List<AddressSuggestion> addressSuggestions =
+        guesses.map((guess) => AddressSuggestion.fromMotisResponse(guess)).toList();
 
     return addressSuggestions;
   }

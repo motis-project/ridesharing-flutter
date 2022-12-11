@@ -48,6 +48,9 @@ dependencies:
   # Internationalization
   intl: ^0.17.0
 
+#For the shimmer effect
+  shimmer: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

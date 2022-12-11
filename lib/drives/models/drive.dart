@@ -1,15 +1,9 @@
 import 'package:flutter_app/rides/models/ride.dart';
+import 'package:flutter_app/util/trip/trip.dart';
+import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/supabase.dart';
 
-import '../../util/model.dart';
-
-class Drive extends Model {
-  final String start;
-  final DateTime startTime;
-  final String end;
-  final DateTime endTime;
-
-  final int seats;
+class Drive extends Trip {
   final int driverId;
 
   final List<Ride>? rides;
@@ -17,11 +11,11 @@ class Drive extends Model {
   Drive({
     super.id,
     super.createdAt,
-    required this.start,
-    required this.startTime,
-    required this.end,
-    required this.endTime,
-    required this.seats,
+    required super.start,
+    required super.startTime,
+    required super.end,
+    required super.endTime,
+    required super.seats,
     required this.driverId,
     this.rides,
   });
@@ -65,9 +59,13 @@ class Drive extends Model {
     return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
   }
 
+  static Future<List<Drive>> getDrivesOfUser(int userId) async {
+    return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
+  }
+
   static Future<Drive?> driveOfUserAtTime(DateTime start, DateTime end, int userId) async {
     //get all drives of user
-    final List<Drive> drives = Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
+    final List<Drive> drives = await Drive.getDrivesOfUser(userId);
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
       if (drive.startTime.isBefore(end) && drive.endTime.isAfter(start)) {
@@ -75,6 +73,33 @@ class Drive extends Model {
       }
     }
     return null;
+  }
+
+  int? getMaxUsedSeats() {
+    if (rides == null) return null;
+
+    Set<DateTime> times = rides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
+
+    int maxUsedSeats = 0;
+    for (DateTime time in times) {
+      int usedSeats = 0;
+      for (Ride ride in rides!) {
+        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
+        final endTimeAfter = ride.endTime.isAfter(time);
+        if (startTimeBeforeOrEqual && endTimeAfter) {
+          usedSeats += ride.seats;
+        }
+      }
+
+      if (usedSeats > maxUsedSeats) {
+        maxUsedSeats = usedSeats;
+      }
+    }
+    return maxUsedSeats;
+  }
+
+  void cancel() {
+    // TODO: implement cancel
   }
 
   int? getMaxUsedSeats() {
