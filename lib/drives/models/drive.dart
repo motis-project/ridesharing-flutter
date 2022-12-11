@@ -1,6 +1,5 @@
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip.dart';
-import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class Drive extends Trip {
