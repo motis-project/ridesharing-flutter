@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/models/ride.dart';
+import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
@@ -26,10 +27,7 @@ class RideCard extends TripCard<Ride> {
             ),
             const Divider(),
             FixedTimeline(
-              theme: TimelineTheme.of(context).copyWith(
-                nodePosition: 0.05,
-                color: Colors.black,
-              ),
+              theme: CustomTimelineTheme.of(context),
               children: [
                 TimelineTile(
                   contents: Padding(
@@ -42,8 +40,8 @@ class RideCard extends TripCard<Ride> {
                     ),
                   ),
                   node: const TimelineNode(
-                    indicator: OutlinedDotIndicator(),
-                    endConnector: SolidLineConnector(),
+                    indicator: CustomOutlinedDotIndicator(),
+                    endConnector: CustomSolidLineConnector(),
                   ),
                 ),
                 TimelineTile(
@@ -57,8 +55,8 @@ class RideCard extends TripCard<Ride> {
                     ),
                   ),
                   node: const TimelineNode(
-                    indicator: OutlinedDotIndicator(),
-                    startConnector: SolidLineConnector(),
+                    indicator: CustomOutlinedDotIndicator(),
+                    startConnector: CustomSolidLineConnector(),
                   ),
                 )
               ],

@@ -13,9 +13,4 @@ abstract class TripCard<T extends Trip> extends StatelessWidget {
   String formatDate(DateTime date) {
     return DateFormat('dd.MM.yyyy').format(date.toLocal());
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
 }
