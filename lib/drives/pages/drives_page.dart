@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
+import 'package:flutter_app/drives/pages/create_drive_page.dart';
 import 'package:flutter_app/drives/pages/drive_detail_page.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_page_builder.dart';
@@ -42,13 +43,9 @@ class _DrivesPageState extends State<DrivesPage> {
     );
   }
 
-  void onPressed() async {
-    Map<String, dynamic> data = await supabaseClient.from('drives').select().eq('id', 33).limit(1).single();
-    Drive drive = Drive.fromJson(data);
-    if (mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => DriveDetailPage.fromDrive(drive)),
-      );
-    }
+  void onPressed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const CreateDrivePage()),
+    );
   }
 }
