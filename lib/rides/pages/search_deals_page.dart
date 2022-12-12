@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
 import 'package:flutter_app/util/trip/search_card.dart';
 import 'package:flutter_app/util/trip/trip_stream_builder.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timelines/timelines.dart';
 
 import '../../util/custom_timeline_theme.dart';
-import '../../util/search/address_search_field.dart';
 import '../../util/search/address_suggestion.dart';
-import '../../util/submit_button.dart';
 import '../../util/supabase.dart';
 import '../models/ride.dart';
 
@@ -23,16 +20,10 @@ class SearchDealPage extends StatefulWidget {
 
   @override
   State<SearchDealPage> createState() =>
-      _SearchDealPageState(start, end, date, seats);
+      _SearchDealPageState();
 }
 
 class _SearchDealPageState extends State<SearchDealPage> {
-  String start;
-  String end;
-  int seats;
-  DateTime date;
-
-  _SearchDealPageState(this.start, this.end, this.date, this.seats);
 
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
@@ -49,12 +40,13 @@ class _SearchDealPageState extends State<SearchDealPage> {
   @override
   initState() {
     super.initState();
-    _firstDate = date;
-    _selectedDate = date;
-    _dateController.text = _formatDate(date);
-    _dropdownValue = seats;
-    _startController.text = start;
-    _destinationController.text = end;
+    _firstDate = widget.date;
+    _selectedDate = widget.date;
+    _dateController.text = _formatDate(widget.date);
+    _dropdownValue = widget.seats;
+    _startController.text = widget.start;
+    _destinationController.text = widget.end;
+    //todo: get initial Ride
     ridesuggestions = supabaseClient
         .from('rides')
         .stream(primaryKey: ['id'])
@@ -229,7 +221,6 @@ class _SearchDealPageState extends State<SearchDealPage> {
                 ]
               ),
             ),
-          //todo filter der Suchergebnisse
           SizedBox(
             height: 20,
             child: ElevatedButton(

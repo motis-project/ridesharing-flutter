@@ -79,7 +79,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   void _onSubmit() async {
     //todo: pressing search button
     if (_formKey.currentState!.validate()) {
-        Navigator.of(context).push(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
               builder: (context) => SearchDealPage(_startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
         );
