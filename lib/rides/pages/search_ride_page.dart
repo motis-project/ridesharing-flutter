@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/pages/search_deals_page.dart';
+import 'package:flutter_app/util/search/address_search_field.dart';
+import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
 
 class SearchRidePage extends StatefulWidget {
@@ -15,6 +17,9 @@ class _SearchRidePageState extends State<SearchRidePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
+
+  AddressSuggestion? _startSuggestion;
+  AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
   late final DateTime _firstDate;
@@ -80,6 +85,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         );
       }
     }
+
     @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,34 +101,14 @@ class _SearchRidePageState extends State<SearchRidePage> {
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
               child: Column(
                 children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Start",
-                      hintText: "Enter your starting Location",
-                    ),
+                  AddressSearchField.start(
                     controller: _startController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a starting location';
-                      }
-                      return null;
-                    },
+                    onSelected: (suggestion) => _startSuggestion = suggestion,
                   ),
                   const SizedBox(height: 15),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Destination",
-                      hintText: "Enter your destination",
-                    ),
+                  AddressSearchField.destination(
                     controller: _destinationController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a destination';
-                      }
-                      return null;
-                    },
+                    onSelected: (suggestion) => _destinationSuggestion = suggestion,
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 15),
