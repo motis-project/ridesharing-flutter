@@ -6,11 +6,22 @@ class Profile extends Model {
   final String username;
   final String email;
 
+  final String? description;
+  final DateTime? birthDate;
+  final String? surname;
+  final String? name;
+  final Gender? gender;
+
   Profile({
     super.id,
     super.createdAt,
     required this.username,
     required this.email,
+    this.description,
+    this.birthDate,
+    this.surname,
+    this.name,
+    this.gender,
   });
 
   @override
@@ -20,6 +31,11 @@ class Profile extends Model {
       createdAt: DateTime.parse(json['created_at']),
       username: json['username'],
       email: json['email'],
+      description: json['description'],
+      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date']) : null,
+      surname: json['surname'],
+      name: json['name'],
+      gender: json['gender'] != null ? Gender.values[json['gender']] : null,
     );
   }
 
@@ -31,6 +47,11 @@ class Profile extends Model {
     return {
       'username': username,
       'email': email,
+      'description': description,
+      'birth_date': birthDate?.toString(),
+      'surname': surname,
+      'name': name,
+      'gender': gender?.index,
     };
   }
 
@@ -51,4 +72,10 @@ class Profile extends Model {
 
     return Profile.fromJson(query);
   }
+}
+
+enum Gender {
+  male,
+  female,
+  diverse,
 }

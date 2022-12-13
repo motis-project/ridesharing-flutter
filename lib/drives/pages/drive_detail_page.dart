@@ -4,7 +4,9 @@ import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 
@@ -21,6 +23,7 @@ class DriveDetailPage extends StatefulWidget {
 
 class _DriveDetailPageState extends State<DriveDetailPage> {
   Drive? _drive;
+  bool _fullyLoaded = false;
 
   @override
   void initState() {
@@ -44,72 +47,22 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     setState(() {
       _drive = Drive.fromJson(data);
+      _fullyLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    int? maxUsedSeats = _drive?.getMaxUsedSeats();
+    List<Widget> widgets = [];
 
-    Widget startDest = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(_drive!.start),
-              Text(DateFormat.Hm().format(_drive!.startTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-            ],
-          ),
-        ),
-        const Icon(Icons.arrow_forward_rounded),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(_drive!.end),
-              Text(DateFormat.Hm().format(_drive!.endTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-            ],
-          ),
-        ),
-      ],
-    );
-
-    List<Widget> infoRowWidgets = [
-      Text(DateFormat('dd.MM.yyyy').format(_drive!.startTime),
-          style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-    ];
-
-    if (maxUsedSeats != null) {
-      Widget seats = Column(
-        children: [
-          Row(
-            children: List.generate(
-                _drive!.seats,
-                (index) => Icon(Icons.chair,
-                    color: index < maxUsedSeats ? Theme.of(context).colorScheme.primary : Colors.grey.shade500)),
-          ),
-          Text('$maxUsedSeats/${_drive!.seats} Seats')
-        ],
-      );
-      infoRowWidgets.add(seats);
+    if (_drive != null) {
+      Widget overview = TripOverview(_drive!);
+      widgets.add(overview);
+      widgets.add(const Divider(thickness: 1));
     }
 
-    Widget infoRow = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: infoRowWidgets,
-    );
-
-    Widget overview = Column(
-      children: [startDest, const SizedBox(height: 10.0), infoRow],
-    );
-
-    List<Waypoint> stops = [];
-    if (_drive != null) {
+    if (_fullyLoaded) {
+      List<Waypoint> stops = [];
       stops.add(Waypoint(
         actions: [],
         place: _drive!.start,
@@ -120,9 +73,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         place: _drive!.end,
         time: _drive!.endTime,
       ));
-    }
 
-    if (_drive!.rides != null) {
       for (Ride ride in _drive!.rides!) {
         bool startSaved = false;
         bool endSaved = false;
@@ -160,88 +111,85 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       for (Waypoint stop in stops) {
         stop.actions.sort((a, b) => a.isStart ? 1 : -1);
       }
-    }
 
-    Widget timeline = FixedTimeline.tileBuilder(
-      theme: CustomTimelineThemeForBuilder.of(context),
-      builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.before,
-        indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
-        connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
-        contentsBuilder: (context, index) {
-          final stop = stops[index];
-          return Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 10.0),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0, color: Colors.grey.shade500),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  padding: const EdgeInsets.all(8.0),
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: buildCard(stop),
-                  ),
-                ),
-                const SizedBox(height: 10.0)
-              ],
-            ),
-          );
-        },
-        itemCount: stops.length,
-      ),
-    );
-
-    List<Widget> widgets = [
-      overview,
-      const Divider(thickness: 1),
-      timeline,
-    ];
-
-    Widget ridersColumn = Container();
-    if (_drive!.rides != null) {
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
-
-      Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
-
-      ridersColumn = Column(
-        children: List.generate(
-          riders.length,
-          (index) => InkWell(
-            onTap: () => print("Hey"),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      Widget timeline = FixedTimeline.tileBuilder(
+        theme: CustomTimelineThemeForBuilder.of(context),
+        builder: TimelineTileBuilder.connected(
+          connectionDirection: ConnectionDirection.before,
+          indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
+          connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
+          contentsBuilder: (context, index) {
+            final stop = stops[index];
+            return Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
                 children: [
-                  profileRow(riders.elementAt(index)),
-                  const Icon(
-                    Icons.chat,
-                    color: Colors.black,
-                    size: 36.0,
+                  const SizedBox(height: 10.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1.0, color: Colors.grey.shade500),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildCard(stop),
+                    ),
                   ),
+                  const SizedBox(height: 10.0)
                 ],
+              ),
+            );
+          },
+          itemCount: stops.length,
+        ),
+      );
+      widgets.add(timeline);
+
+      Widget ridersColumn = Container();
+      if (_drive!.rides != null) {
+        widgets.add(const Divider(
+          thickness: 1,
+        ));
+
+        Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
+
+        ridersColumn = Column(
+          children: List.generate(
+            riders.length,
+            (index) => InkWell(
+              onTap: () => print("Hey"),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ProfileRow(riders.elementAt(index)),
+                    const Icon(
+                      Icons.chat,
+                      color: Colors.black,
+                      size: 36.0,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      );
-      widgets.add(ridersColumn);
-    }
+        );
+        widgets.add(ridersColumn);
 
-    if (_drive != null) {
-      Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
-      widgets.add(cancelButton);
+        Widget deleteButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
+        widgets.add(const Divider(
+          thickness: 1,
+        ));
+        widgets.add(deleteButton);
+        widgets.add(const SizedBox(height: 5));
+      }
+    } else {
+      widgets.add(const SizedBox(height: 10));
+      widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -269,18 +217,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 ),
               ),
             ),
-    );
-  }
-
-  Row profileRow(Profile profile) {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(profile.username[0]),
-        ),
-        const SizedBox(width: 5),
-        Text(profile.username),
-      ],
     );
   }
 
@@ -338,7 +274,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                                 ]),
                     ),
                   ),
-                  profileRow(profile),
+                  ProfileRow(profile),
                   const Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,

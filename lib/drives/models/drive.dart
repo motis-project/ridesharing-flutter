@@ -1,9 +1,11 @@
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class Drive extends Trip {
   final int driverId;
+  final Profile? driver;
 
   final List<Ride>? rides;
 
@@ -16,6 +18,7 @@ class Drive extends Trip {
     required super.endTime,
     required super.seats,
     required this.driverId,
+    this.driver,
     this.rides,
   });
 
@@ -30,6 +33,7 @@ class Drive extends Trip {
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       driverId: json['driver_id'],
+      driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
     );
   }

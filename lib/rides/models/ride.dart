@@ -9,8 +9,10 @@ class Ride extends Trip {
   final bool approved;
 
   final int riderId;
+  Profile? rider;
+
   final int driveId;
-  final Profile? rider;
+  Drive? drive;
 
   Ride({
     super.id,
@@ -20,15 +22,18 @@ class Ride extends Trip {
     required super.end,
     required super.endTime,
     required super.seats,
-    required this.riderId,
     this.price,
     required this.approved,
-    required this.driveId,
+    required this.riderId,
     this.rider,
+    required this.driveId,
+    this.drive,
   });
 
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
+    print(json);
+
     return Ride(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
@@ -39,9 +44,10 @@ class Ride extends Trip {
       seats: json['seats'],
       price: json['price'],
       approved: json['approved'],
-      driveId: json['drive_id'],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
+      driveId: json['drive_id'],
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
     );
   }
 
@@ -84,7 +90,8 @@ class Ride extends Trip {
   }
 
   Future<Drive> getDrive() async {
-    return Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
+    drive ??= Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
+    return drive!;
   }
 
   Future<Profile> getDriver() async {
@@ -93,7 +100,16 @@ class Ride extends Trip {
   }
 
   Future<Profile> getRider() async {
-    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
+    rider ??= Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
+    return rider!;
+  }
+
+  bool overlapsWith(Ride other) {
+    return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
+  }
+
+  void cancel() async {
+    // TODO: implement cancel
   }
 
   @override
