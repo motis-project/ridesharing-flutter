@@ -97,6 +97,11 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
+  //returns a Ride according to parameter using this drive
+  Ride toRide(String pickUpPoint, String dropOffPoint, DateTime pickUpTime, DateTime dropOffTime, int seatsUsed, int riderId, double price ){
+    return Ride(start: pickUpPoint, end: dropOffPoint, startTime: pickUpTime, endTime: dropOffTime, seats: seatsUsed, riderId: riderId, approved: false, driveId: driverId, price: price);
+  }
+
   void cancel() {
     // TODO: implement cancel
   }

@@ -85,7 +85,15 @@ class SearchCard extends TripCard<Ride> {
                     Text('Max Mustermann'),
                   ],
                 ),
-                const Text('Ranking'),
+                Row(
+                  children: const[
+                    Text("3"),
+                    Icon(
+                      Icons.star,
+                      color: Colors.amberAccent,
+                    ),
+                  ],
+                ),
                ],
               ),
             ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
 import 'package:flutter_app/util/trip/search_card.dart';
-import 'package:flutter_app/util/trip/trip_stream_builder.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
@@ -35,10 +35,12 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   final List<int> list = List.generate(10, (index) => index + 1);
 
-  late Stream<List<Ride>> ridesuggestions;
+  late List<Ride> ridesuggestion;
+
+  int riderID = SupabaseManager.getCurrentProfile()!.id!;
 
   @override
-  initState() {
+  initState()  {
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
@@ -46,12 +48,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
     _destinationController.text = widget.end;
-    //todo: get initial Ride
-    ridesuggestions = supabaseClient
-        .from('rides')
-        .stream(primaryKey: ['id'])
-        .order('start_time', ascending: false)
-        .map((ride) => Ride.fromJsonList(ride));
+    getRides();
   }
   @override
   void dispose() {
@@ -73,7 +70,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
             _selectedDate.hour, _selectedDate.minute);
         _dateController.text = _formatDate(_selectedDate);
       }
-      updatePage();
+      getRides();
     });
   }
 
@@ -92,18 +89,28 @@ class _SearchDealPageState extends State<SearchDealPage> {
   }
 
   //todo: get possible Rides from Algorithm
-  void getRides(){
-
-  }
-
-  void updatePage(){
-    getRides();
-    setState(() {});
+  void getRides() async {
+    List<Ride> initializes = await supabaseClient
+        .from('drives').select()
+        .eq('start', _startController.text)
+        .order('start_time', ascending: true)
+        .then((drive)
+    => Drive.fromJsonList(drive).map((e)
+    => e.toRide(_startController.text,
+      _destinationController.text,
+      e.startTime,
+      e.endTime,
+      _dropdownValue,
+      riderID,
+      25.50,)).toList());
+    setState(() {
+      ridesuggestion = initializes;
+    });
   }
 
   //todo: filter
   void filter(){
-    updatePage();
+    getRides();
   }
 
   @override
@@ -137,7 +144,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                                     );
                                    if (startSuggestion != null) {
                                       _startController.text = startSuggestion.name;
-                                      updatePage();
+                                      getRides();
                                    }
                                 },
                                 child: Align(
@@ -181,7 +188,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                                 );
                                 if (destinationsuggestion != null) {
                                   _destinationController.text = destinationsuggestion.name;
-                                  updatePage();
+                                  getRides();
                                 }
                               },
                               child: Align(
@@ -199,7 +206,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                                 icon: const Icon(Icons.arrow_downward),
                                 onChanged: (int? value) {
                                   _dropdownValue = value!;
-                                  updatePage();
+                                  getRides();
                                 },
                                 items: list.map<DropdownMenuItem<int>>((int value) {
                                   return DropdownMenuItem<int>(
@@ -233,11 +240,15 @@ class _SearchDealPageState extends State<SearchDealPage> {
           ),
           const Divider(),
           Expanded(
-            child: TripStreamBuilder(
-                stream: ridesuggestions,
-                emptyMessage: "no rides found",
-                filterTrips: (trips) => trips.reversed.where((trip) => trip.startTime.isBefore(DateTime.now())).toList(),
-                tripCard: (ride) => SearchCard(trip: ride),
+            child: ListView.separated(
+                itemBuilder: (context, index) {
+                  final trip = ridesuggestion[index];
+                  return SearchCard(trip: trip,);
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(height: 10);
+                },
+                itemCount: ridesuggestion.length,
             ),
           ),
         ],
