@@ -8,7 +8,7 @@ class MotisHandler {
   static const String _motisHost = 'europe.motis-project.de';
 
   // If the search is shorter than this, the server will return an empty list anyways.
-  static const int searchLengthRequirement = 4;
+  static const int searchLengthRequirement = 3;
 
   // Would be easier, but does not work:
   // http.Response res = await http.post(
