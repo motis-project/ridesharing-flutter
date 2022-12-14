@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_app/util/theme_manager.dart';
 import 'package:flutter_app/welcome/pages/reset_password_page.dart';
 import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'util/own_theme_fields.dart';
 
 void main() async {
   await dotenv.load();
@@ -19,6 +18,7 @@ void main() async {
     anonKey: dotenv.get('SUPABASE_BASE_KEY'),
   );
   await SupabaseManager.reloadCurrentProfile();
+  await themeManager.loadTheme();
 
   runApp(const AppWrapper());
 }
@@ -31,18 +31,22 @@ class AppWrapper extends StatefulWidget {
 }
 
 class _AppWrapperState extends State<AppWrapper> {
-  final ThemeData lightTheme = ThemeData.light()
-    ..addOwn(const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
-  final ThemeData darkTheme = ThemeData.dark()
-    ..addOwn(const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+  @override
+  void initState() {
+    super.initState();
+    themeManager.addListener(
+      () => setState(() {}),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Motis Mitfahr-App',
       debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: themeManager.lightTheme,
+      darkTheme: themeManager.darkTheme,
+      themeMode: themeManager.themeMode,
       home: const AuthApp(),
     );
   }

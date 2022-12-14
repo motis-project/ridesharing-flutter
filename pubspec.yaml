@@ -52,6 +52,7 @@ dependencies:
 
   # Internationalization
   intl: ^0.18.0
+  shared_preferences: ^2.0.15
 
 #For the shimmer effect
   shimmer: ^2.0.0
