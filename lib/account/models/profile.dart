@@ -1,3 +1,4 @@
+import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 import '../../util/model.dart';
@@ -12,6 +13,8 @@ class Profile extends Model {
   final String? name;
   final Gender? gender;
 
+  List<Review>? reviewsReceived;
+
   Profile({
     super.id,
     super.createdAt,
@@ -22,6 +25,7 @@ class Profile extends Model {
     this.surname,
     this.name,
     this.gender,
+    this.reviewsReceived,
   });
 
   @override
@@ -36,6 +40,9 @@ class Profile extends Model {
       surname: json['surname'],
       name: json['name'],
       gender: json['gender'] != null ? Gender.values[json['gender']] : null,
+      reviewsReceived: json.containsKey('reviews_received')
+          ? Review.fromJsonList(json['reviews_received'].cast<Map<String, dynamic>>())
+          : null,
     );
   }
 

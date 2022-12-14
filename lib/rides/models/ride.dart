@@ -32,8 +32,6 @@ class Ride extends Trip {
 
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
-    print(json);
-
     return Ride(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),

@@ -4,11 +4,11 @@ import '../../util/model.dart';
 
 class Review extends Model {
   int stars;
-  int comfortStars;
-  int safetyStars;
-  int reliabilityStars;
-  int hospitalityStars;
-  String text;
+  int? comfortStars;
+  int? safetyStars;
+  int? reliabilityStars;
+  int? hospitalityStars;
+  String? text;
 
   int writerId;
   Profile? writer;
@@ -20,11 +20,11 @@ class Review extends Model {
     super.id,
     super.createdAt,
     required this.stars,
-    required this.comfortStars,
-    required this.safetyStars,
-    required this.reliabilityStars,
-    required this.hospitalityStars,
-    required this.text,
+    this.comfortStars,
+    this.safetyStars,
+    this.reliabilityStars,
+    this.hospitalityStars,
+    this.text,
     required this.writerId,
     this.writer,
     required this.receiverId,

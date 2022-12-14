@@ -89,7 +89,7 @@ class TripOverview extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
       );
-      text = Text('${trip.seats} Seats');
+      text = Text('${trip.seats} ${Intl.plural(trip.seats, one: 'Seat', other: 'Seats')}');
     }
 
     return Column(

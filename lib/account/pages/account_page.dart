@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/pages/settings_page.dart';
+import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class AccountPage extends StatefulWidget {
@@ -16,36 +17,29 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget profilePic = CircleAvatar(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      child: const Text('U'),
-    );
-
-    Widget userName = Column(
-      children: <Widget>[
-        Text(SupabaseManager.getCurrentProfile()!.username),
-        TextButton.icon(
-          onPressed: signOut,
-          icon: const Icon(Icons.logout),
-          label: const Text("Log out"),
-        )
-      ],
-    );
-
-    Widget userRow = InkWell(
-      onTap: () => {},
-      child: Row(
-        children: <Widget>[profilePic, userName],
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Account"),
       ),
       body: ListView(
         children: [
-          userRow,
+          InkWell(
+            onTap: () => {},
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ProfileRow(SupabaseManager.getCurrentProfile()!),
+                  TextButton.icon(
+                    onPressed: signOut,
+                    icon: const Icon(Icons.logout),
+                    label: const Text("Log out"),
+                  ),
+                ],
+              ),
+            ),
+          ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),

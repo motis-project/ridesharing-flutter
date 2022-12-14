@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
+import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
-import 'package:intl/intl.dart';
-import 'package:timelines/timelines.dart';
 
 class RideDetailPage extends StatefulWidget {
   final int id;
@@ -40,13 +39,17 @@ class _RideDetailPageState extends State<RideDetailPage> {
       *,
       drive: drive_id(
         *,
-        driver: driver_id(*),
+        driver: driver_id(
+          *,
+          reviews_received: reviews!reviews_receiver_id_fkey(*)
+        ),
         rides(
           *,
           rider: rider_id(*)
         )
       )
     ''').eq('id', widget.id).single();
+    //reviews_receiver_id_fkey
 
     setState(() {
       _ride = Ride.fromJson(data);
@@ -72,6 +75,16 @@ class _RideDetailPageState extends State<RideDetailPage> {
       Widget driverRow = ProfileRow(driver);
       // TODO: Show more info about the driver
       widgets.add(driverRow);
+
+      widgets.add(Row(
+        children: [Flexible(child: Text(driver.description ?? "No description"))],
+      ));
+
+      widgets.add(const Divider(
+        thickness: 1,
+      ));
+
+      widgets.add(_buildReviewsColumn(driver));
 
       widgets.add(const Divider(
         thickness: 1,
@@ -133,6 +146,44 @@ class _RideDetailPageState extends State<RideDetailPage> {
               ),
             ),
     );
+  }
+
+  Widget _buildReviewsColumn(Profile driver) {
+    List<Review> reviews = driver.reviewsReceived!;
+
+    print(reviews.length);
+
+    double averageStars =
+        reviews.isEmpty ? 0 : reviews.map((review) => review.stars).reduce((a, b) => a + b) / reviews.length;
+
+    List<Review> comfortReviews = reviews.where((review) => review.comfortStars != null).toList();
+    double averageComfortStars = comfortReviews.isEmpty
+        ? 0
+        : comfortReviews.map((review) => review.comfortStars!).reduce((a, b) => a + b) / comfortReviews.length;
+
+    List<Review> safetyReviews = reviews.where((review) => review.safetyStars != null).toList();
+    double averageSafetyStars = safetyReviews.isEmpty
+        ? 0
+        : safetyReviews.map((review) => review.safetyStars!).reduce((a, b) => a + b) / safetyReviews.length;
+
+    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityStars != null).toList();
+    double averageReliabilityStars = reliabilityReviews.isEmpty
+        ? 0
+        : reliabilityReviews.map((review) => review.reliabilityStars!).reduce((a, b) => a + b) /
+            reliabilityReviews.length;
+
+    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityStars != null).toList();
+    double averageHospitalityStars = hospitalityReviews.isEmpty
+        ? 0
+        : hospitalityReviews.map((review) => review.hospitalityStars!).reduce((a, b) => a + b) /
+            hospitalityReviews.length;
+    return Column(children: [
+      Text("Average stars: ${averageStars.toStringAsFixed(1)}"),
+      Text("Average comfort stars: ${averageComfortStars.toStringAsFixed(1)}"),
+      Text("Average safety stars: ${averageSafetyStars.toStringAsFixed(1)}"),
+      Text("Average reliability stars: ${averageReliabilityStars.toStringAsFixed(1)}"),
+      Text("Average hospitality stars: ${averageHospitalityStars.toStringAsFixed(1)}"),
+    ]);
   }
 
   void _showDeleteDialog() {
