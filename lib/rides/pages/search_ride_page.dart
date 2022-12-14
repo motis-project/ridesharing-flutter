@@ -36,6 +36,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
     _dateController.text = _formatDate(_selectedDate);
+    _timeController.text = _formatTime(_selectedDate);
     _dropdownValue = list.first;
   }
 
