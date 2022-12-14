@@ -11,8 +11,7 @@ import '../../util/supabase.dart';
 import '../models/ride.dart';
 
 class SearchDealPage extends StatefulWidget {
-  const SearchDealPage(this.start, this.end, this.date, this.seats,
-      {super.key});
+  const SearchDealPage(this.start, this.end, this.date, this.seats, {super.key});
 
   final String start;
   final String end;
@@ -20,12 +19,10 @@ class SearchDealPage extends StatefulWidget {
   final DateTime date;
 
   @override
-  State<SearchDealPage> createState() =>
-      _SearchDealPageState();
+  State<SearchDealPage> createState() => _SearchDealPageState();
 }
 
 class _SearchDealPageState extends State<SearchDealPage> {
-
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
@@ -40,7 +37,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
   List<Ride>? ridesuggestion;
 
   @override
-  initState()  {
+  initState() {
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
@@ -51,6 +48,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
     _destinationController.text = widget.end;
     getRides();
   }
+
   @override
   void dispose() {
     _dateController.dispose();
@@ -68,8 +66,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
       lastDate: _firstDate.add(const Duration(days: 30)),
     ).then((value) {
       if (value != null) {
-        _selectedDate = DateTime(value.year, value.month, value.day,
-            _selectedDate.hour, _selectedDate.minute);
+        _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
         _dateController.text = _formatDate(_selectedDate);
       }
       getRides();
@@ -115,25 +112,28 @@ class _SearchDealPageState extends State<SearchDealPage> {
   //todo: get possible Rides from Algorithm
   void getRides() async {
     List<Ride> initializes = await supabaseClient
-        .from('drives').select()
+        .from('drives')
+        .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .order('start_time', ascending: true)
-        .then((drive)
-    => Drive.fromJsonList(drive).map((e)
-    => e.toRide(_startController.text,
-      _destinationController.text,
-      e.startTime,
-      e.endTime,
-      _dropdownValue,
-      -1,
-      10.25,)).toList());
+        .then((drive) => Drive.fromJsonList(drive)
+            .map((e) => e.toRide(
+                  _startController.text,
+                  _destinationController.text,
+                  e.startTime,
+                  e.endTime,
+                  _dropdownValue,
+                  -1,
+                  10.25,
+                ))
+            .toList());
     setState(() {
       ridesuggestion = initializes;
     });
   }
 
   //todo: filter
-  void filter(){
+  void filter() {
     getRides();
   }
 
@@ -147,115 +147,111 @@ class _SearchDealPageState extends State<SearchDealPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            FixedTimeline(
-              theme: CustomTimelineTheme.of(context),
-              children: [
-                TimelineTile(
-                    contents: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                final AddressSuggestion? startSuggestion =
-                                  await showSearch<AddressSuggestion?>(
-                                  context: context,
-                                  delegate: AddressSearchDelegate(),
-                                  query: _startController.text,
-                                  );
-                                 if (startSuggestion != null) {
-                                    _startController.text = startSuggestion.name;
-                                    getRides();
-                                 }
-                              },
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(_startController.text),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 50),
-                          SizedBox(
-                            width: 45,
-                            child: TextFormField(
-                              readOnly: true,
-                              onTap: _showTimePicker,
-                              controller: _timeController,
-                              validator: _timeValidator,
-                            ),
-                          ),
-                          const SizedBox(width: 5),                          SizedBox(
-                            width: 100,
-                            child: TextFormField(
-                              readOnly: true,
-                              onTap: _showDatePicker,
-                              controller: _dateController,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    node: const TimelineNode(
-                      indicator: CustomOutlinedDotIndicator(),
-                      endConnector: CustomSolidLineConnector(),
-                    ),
-                ),
-                TimelineTile(
-                  contents: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              final AddressSuggestion? destinationsuggestion =
-                              await showSearch<AddressSuggestion?>(
-                                context: context,
-                                delegate: AddressSearchDelegate(),
-                                query: _destinationController.text,
-                              );
-                              if (destinationsuggestion != null) {
-                                _destinationController.text = destinationsuggestion.name;
-                                getRides();
-                              }
-                            },
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(_destinationController.text),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 100),
-                        SizedBox(
-                          height: 40,
-                          width: 100,
-                          child: DropdownButtonFormField<int>(
-                            value: _dropdownValue,
-                            onChanged: (int? value) {
-                              _dropdownValue = value!;
+            FixedTimeline(theme: CustomTimelineTheme.of(context), children: [
+              TimelineTile(
+                contents: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final AddressSuggestion? startSuggestion = await showSearch<AddressSuggestion?>(
+                              context: context,
+                              delegate: AddressSearchDelegate(),
+                              query: _startController.text,
+                            );
+                            if (startSuggestion != null) {
+                              _startController.text = startSuggestion.name;
                               getRides();
-                            },
-                            items: list.map<DropdownMenuItem<int>>((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text('Seats: ${value.toString()}'),
-                              );
-                            }).toList(),
+                            }
+                          },
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(_startController.text),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  node: const TimelineNode(
-                    indicator: CustomOutlinedDotIndicator(),
-                    startConnector: CustomSolidLineConnector(),
+                      ),
+                      const SizedBox(width: 50),
+                      SizedBox(
+                        width: 45,
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: _showTimePicker,
+                          controller: _timeController,
+                          validator: _timeValidator,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: _showDatePicker,
+                          controller: _dateController,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ]
-            ),
+                node: const TimelineNode(
+                  indicator: CustomOutlinedDotIndicator(),
+                  endConnector: CustomSolidLineConnector(),
+                ),
+              ),
+              TimelineTile(
+                contents: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final AddressSuggestion? destinationsuggestion = await showSearch<AddressSuggestion?>(
+                              context: context,
+                              delegate: AddressSearchDelegate(),
+                              query: _destinationController.text,
+                            );
+                            if (destinationsuggestion != null) {
+                              _destinationController.text = destinationsuggestion.name;
+                              getRides();
+                            }
+                          },
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(_destinationController.text),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 100),
+                      SizedBox(
+                        height: 40,
+                        width: 100,
+                        child: DropdownButtonFormField<int>(
+                          value: _dropdownValue,
+                          onChanged: (int? value) {
+                            _dropdownValue = value!;
+                            getRides();
+                          },
+                          items: list.map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text('Seats: ${value.toString()}'),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                node: const TimelineNode(
+                  indicator: CustomOutlinedDotIndicator(),
+                  startConnector: CustomSolidLineConnector(),
+                ),
+              ),
+            ]),
             const SizedBox(height: 5),
             SizedBox(
               height: 20,
@@ -269,20 +265,19 @@ class _SearchDealPageState extends State<SearchDealPage> {
             ),
             const SizedBox(height: 5),
             ridesuggestion == null
-              ? const Center(child: CircularProgressIndicator())
-              :
-              Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final trip = ridesuggestion![index];
-                    return SearchCard(trip: trip);
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(height: 10);
-                  },
-                  itemCount: ridesuggestion!.length,
-                ),
-              ),
+                ? const Center(child: CircularProgressIndicator())
+                : Expanded(
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        final ride = ridesuggestion![index];
+                        return SearchCard(ride);
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 10);
+                      },
+                      itemCount: ridesuggestion!.length,
+                    ),
+                  ),
           ],
         ),
       ),

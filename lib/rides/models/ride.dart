@@ -9,8 +9,10 @@ class Ride extends Trip {
   final bool approved;
 
   final int riderId;
-  final int driveId;
   final Profile? rider;
+
+  final int driveId;
+  final Drive? drive;
 
   Ride({
     super.id,
@@ -24,6 +26,7 @@ class Ride extends Trip {
     this.price,
     required this.approved,
     required this.driveId,
+    this.drive,
     this.rider,
   });
 
@@ -40,6 +43,7 @@ class Ride extends Trip {
       price: json['price'],
       approved: json['approved'],
       driveId: json['drive_id'],
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
     );

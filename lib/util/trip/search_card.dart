@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
@@ -6,10 +7,12 @@ import 'package:timelines/timelines.dart';
 import '../../rides/pages/search_detail_page.dart';
 
 class SearchCard extends TripCard<Ride> {
-  const SearchCard({super.key, required super.trip});
+  const SearchCard(super.trip, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    Profile driver = trip.drive!.driver!;
+
     return Card(
       child: InkWell(
         onTap: () => Navigator.of(context).push(
@@ -75,25 +78,25 @@ class SearchCard extends TripCard<Ride> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Row(
-                  children: const [
-                    CircleAvatar(
-                      child: Text('M'),
-                    ),
-                    SizedBox(width: 5),
-                    Text("Max Mustermann"),
-                  ],
-                ),
-                Row(
-                  children: const[
-                    Text("3"),
-                    Icon(
-                      Icons.star,
-                      color: Colors.amberAccent,
-                    ),
-                  ],
-                ),
-               ],
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        child: Text(driver.username[0]),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(driver.username),
+                    ],
+                  ),
+                  Row(
+                    children: const [
+                      Text("3"),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amberAccent,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

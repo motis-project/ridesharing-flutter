@@ -7,7 +7,7 @@ import '../../drives/pages/drive_detail_page.dart';
 import 'package:timelines/timelines.dart';
 
 class DriveCard extends TripCard<Drive> {
-  const DriveCard({super.key, required super.trip});
+  const DriveCard(super.trip, {super.key});
 
   @override
   Widget build(BuildContext context) {

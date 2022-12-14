@@ -7,7 +7,7 @@ import 'package:timelines/timelines.dart';
 import '../../rides/pages/ride_detail_page.dart';
 
 class RideCard extends TripCard<Ride> {
-  const RideCard({super.key, required super.trip});
+  const RideCard(super.trip, {super.key});
 
   @override
   Widget build(BuildContext context) {
