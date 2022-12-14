@@ -3,7 +3,6 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
-
 import '../../rides/pages/search_detail_page.dart';
 
 class SearchCard extends TripCard<Ride> {
@@ -82,7 +81,7 @@ class SearchCard extends TripCard<Ride> {
                       child: Text('M'),
                     ),
                     SizedBox(width: 5),
-                    Text('Max Mustermann'),
+                    Text("Max Mustermann"),
                   ],
                 ),
                 Row(

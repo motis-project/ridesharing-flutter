@@ -3,6 +3,7 @@ import 'package:flutter_app/rides/pages/search_deals_page.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
+import 'package:intl/intl.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
   late final DateTime _firstDate;
   late DateTime _selectedDate;
   late int _dropdownValue;
@@ -40,9 +42,28 @@ class _SearchRidePageState extends State<SearchRidePage> {
   @override
   void dispose() {
     _dateController.dispose();
+    _timeController.dispose();
     _startController.dispose();
     _destinationController.dispose();
     super.dispose();
+  }
+
+  void _showTimePicker() {
+    showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
+      builder: (context, childWidget) {
+        return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
+      },
+    ).then((value) {
+      setState(() {
+        if (value != null) {
+          _selectedDate =
+              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
+          _timeController.text = _formatTime(_selectedDate);
+        }
+      });
+    });
   }
 
   void _showDatePicker() {
@@ -54,8 +75,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     ).then((value) {
       setState(() {
         if (value != null) {
-          _selectedDate = DateTime(value.year, value.month, value.day,
-              _selectedDate.hour, _selectedDate.minute);
+          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
           _dateController.text = _formatDate(_selectedDate);
         }
       });
@@ -66,12 +86,16 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return '${date.day}.${date.month}.${date.year}';
   }
 
-  String? _dateValidator(String? value) {
+  String _formatTime(DateTime time) {
+    return DateFormat.Hm().format(time);
+  }
+
+  String? _timeValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a date';
+      return 'Please enter a time';
     }
     if (_selectedDate.isBefore(_firstDate)) {
-      return 'Please enter a valid date';
+      return 'Please enter a valid time';
     }
     return null;
   }
@@ -124,12 +148,24 @@ class _SearchRidePageState extends State<SearchRidePage> {
                             readOnly: true,
                             onTap: _showDatePicker,
                             controller: _dateController,
-                            validator: _dateValidator,
                           ),
                         ),
-                        const SizedBox(width: 164),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Time",
+                            ),
+                            readOnly: true,
+                            onTap: _showTimePicker,
+                            controller: _timeController,
+                            validator: _timeValidator,
+                          ),
+                        ),
+                        const SizedBox(width: 50),
                         Expanded(
                           child: SizedBox(
+                            //todo: add same height as time&date.
                             height: 60,
                             child: DropdownButtonFormField<int>(
                               value: _dropdownValue,

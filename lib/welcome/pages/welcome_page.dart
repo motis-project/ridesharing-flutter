@@ -3,6 +3,8 @@ import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/welcome/pages/login_page.dart';
 import 'package:flutter_app/welcome/pages/register_page.dart';
 
+import '../../rides/pages/search_ride_page.dart';
+
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
 
@@ -65,6 +67,17 @@ class _WelcomePageState extends State<WelcomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Hero(
+            tag: "SearchButton",
+            transitionOnUserGestures: true,
+            child: BigButton(
+              text: "Search",
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SearchRidePage()),
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
           Hero(
             tag: "LoginButton",
             transitionOnUserGestures: true,
