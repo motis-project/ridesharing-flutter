@@ -109,11 +109,25 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       widgets.add(ridersColumn);
 
-      Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
-      widgets.add(cancelButton);
+      if (_ride!.approved) {
+        Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
+        widgets.add(const Divider(
+          thickness: 1,
+        ));
+        widgets.add(cancelButton);
+      } else if (_ride!.id == null) {
+        Widget requestButton = BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
+        widgets.add(const Divider(
+          thickness: 1,
+        ));
+        widgets.add(requestButton);
+      } else {
+        Widget requestButton = const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
+        widgets.add(const Divider(
+          thickness: 1,
+        ));
+        widgets.add(requestButton);
+      }
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -152,11 +166,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Column(children: [
-      Text("Average stars: ${aggregateReview.stars.toStringAsFixed(1)}"),
-      Text("Average comfort stars: ${aggregateReview.comfortStars.toStringAsFixed(1)}"),
-      Text("Average safety stars: ${aggregateReview.safetyStars.toStringAsFixed(1)}"),
-      Text("Average reliability stars: ${aggregateReview.reliabilityStars.toStringAsFixed(1)}"),
-      Text("Average hospitality stars: ${aggregateReview.hospitalityStars.toStringAsFixed(1)}"),
+      Text("Average rating: ${aggregateReview.rating.toStringAsFixed(1)}"),
+      Text("Average comfort rating: ${aggregateReview.comfortRating.toStringAsFixed(1)}"),
+      Text("Average safety rating: ${aggregateReview.safetyRating.toStringAsFixed(1)}"),
+      Text("Average reliability rating: ${aggregateReview.reliabilityRating.toStringAsFixed(1)}"),
+      Text("Average hospitality rating: ${aggregateReview.hospitalityRating.toStringAsFixed(1)}"),
     ]);
   }
 

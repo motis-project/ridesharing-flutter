@@ -3,11 +3,11 @@ import 'package:flutter_app/account/models/profile.dart';
 import '../../util/model.dart';
 
 class Review extends Model {
-  int stars;
-  int? comfortStars;
-  int? safetyStars;
-  int? reliabilityStars;
-  int? hospitalityStars;
+  int rating;
+  int? comfortRating;
+  int? safetyRating;
+  int? reliabilityRating;
+  int? hospitalityRating;
   String? text;
 
   int writerId;
@@ -19,11 +19,11 @@ class Review extends Model {
   Review({
     super.id,
     super.createdAt,
-    required this.stars,
-    this.comfortStars,
-    this.safetyStars,
-    this.reliabilityStars,
-    this.hospitalityStars,
+    required this.rating,
+    this.comfortRating,
+    this.safetyRating,
+    this.reliabilityRating,
+    this.hospitalityRating,
     this.text,
     required this.writerId,
     this.writer,
@@ -36,11 +36,11 @@ class Review extends Model {
     return Review(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
-      stars: json['stars'],
-      comfortStars: json['comfort_stars'],
-      safetyStars: json['safety_stars'],
-      reliabilityStars: json['reliability_stars'],
-      hospitalityStars: json['hospitality_stars'],
+      rating: json['rating'],
+      comfortRating: json['comfort_rating'],
+      safetyRating: json['safety_rating'],
+      reliabilityRating: json['reliability_rating'],
+      hospitalityRating: json['hospitality_rating'],
       text: json['text'],
       writerId: json['writer_id'],
       receiverId: json['receiver_id'],
@@ -53,11 +53,11 @@ class Review extends Model {
 
   Map<String, dynamic> toJson() {
     return {
-      'stars': stars,
-      'comfort_stars': comfortStars,
-      'safety_stars': safetyStars,
-      'reliability_stars': reliabilityStars,
-      'hospitality_stars': hospitalityStars,
+      'rating': rating,
+      'comfort_rating': comfortRating,
+      'safety_rating': safetyRating,
+      'reliability_rating': reliabilityRating,
+      'hospitality_rating': hospitalityRating,
       'text': text,
       'writer_id': writerId,
       'receiver_id': receiverId
@@ -70,56 +70,57 @@ class Review extends Model {
 
   @override
   String toString() {
-    return 'Review{id: $id, stars: $stars, text: $text, writerId: $writerId, receiverId: $receiverId, createdAt: $createdAt}';
+    return 'Review{id: $id, rating: $rating, text: $text, writerId: $writerId, receiverId: $receiverId, createdAt: $createdAt}';
   }
 }
 
 class AggregateReview {
-  double stars;
-  double comfortStars;
-  double safetyStars;
-  double reliabilityStars;
-  double hospitalityStars;
+  double rating;
+  double comfortRating;
+  double safetyRating;
+  double reliabilityRating;
+  double hospitalityRating;
 
   AggregateReview({
-    required this.stars,
-    required this.comfortStars,
-    required this.safetyStars,
-    required this.reliabilityStars,
-    required this.hospitalityStars,
+    required this.rating,
+    required this.comfortRating,
+    required this.safetyRating,
+    required this.reliabilityRating,
+    required this.hospitalityRating,
   });
 
   factory AggregateReview.fromReviews(List<Review> reviews) {
-    double stars = reviews.isEmpty ? 0 : reviews.map((review) => review.stars).reduce((a, b) => a + b) / reviews.length;
+    double rating =
+        reviews.isEmpty ? 0 : reviews.map((review) => review.rating).reduce((a, b) => a + b) / reviews.length;
 
-    List<Review> comfortReviews = reviews.where((review) => review.comfortStars != null).toList();
-    double comfortStars = comfortReviews.isEmpty
+    List<Review> comfortReviews = reviews.where((review) => review.comfortRating != null).toList();
+    double comfortRating = comfortReviews.isEmpty
         ? 0
-        : comfortReviews.map((review) => review.comfortStars!).reduce((a, b) => a + b) / comfortReviews.length;
+        : comfortReviews.map((review) => review.comfortRating!).reduce((a, b) => a + b) / comfortReviews.length;
 
-    List<Review> safetyReviews = reviews.where((review) => review.safetyStars != null).toList();
-    double safetyStars = safetyReviews.isEmpty
+    List<Review> safetyReviews = reviews.where((review) => review.safetyRating != null).toList();
+    double safetyRating = safetyReviews.isEmpty
         ? 0
-        : safetyReviews.map((review) => review.safetyStars!).reduce((a, b) => a + b) / safetyReviews.length;
+        : safetyReviews.map((review) => review.safetyRating!).reduce((a, b) => a + b) / safetyReviews.length;
 
-    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityStars != null).toList();
-    double reliabilityStars = reliabilityReviews.isEmpty
+    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityRating != null).toList();
+    double reliabilityRating = reliabilityReviews.isEmpty
         ? 0
-        : reliabilityReviews.map((review) => review.reliabilityStars!).reduce((a, b) => a + b) /
+        : reliabilityReviews.map((review) => review.reliabilityRating!).reduce((a, b) => a + b) /
             reliabilityReviews.length;
 
-    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityStars != null).toList();
-    double averageStars = hospitalityReviews.isEmpty
+    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityRating != null).toList();
+    double averageRating = hospitalityReviews.isEmpty
         ? 0
-        : hospitalityReviews.map((review) => review.hospitalityStars!).reduce((a, b) => a + b) /
+        : hospitalityReviews.map((review) => review.hospitalityRating!).reduce((a, b) => a + b) /
             hospitalityReviews.length;
 
     return AggregateReview(
-      stars: stars,
-      comfortStars: comfortStars,
-      safetyStars: safetyStars,
-      reliabilityStars: reliabilityStars,
-      hospitalityStars: averageStars,
+      rating: rating,
+      comfortRating: comfortRating,
+      safetyRating: safetyRating,
+      reliabilityRating: reliabilityRating,
+      hospitalityRating: averageRating,
     );
   }
 }
