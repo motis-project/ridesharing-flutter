@@ -36,8 +36,13 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   List<Ride>? ridesuggestion;
 
+  late final int? riderID;
+
   @override
   initState() {
+    SupabaseManager.getCurrentProfile() == null ?
+        riderID = -1
+        : riderID = SupabaseManager.getCurrentProfile()?.id;
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
@@ -123,7 +128,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                   e.startTime,
                   e.endTime,
                   _dropdownValue,
-                  -1,
+                  riderID!,
                   10.25,
                 ))
             .toList());
@@ -173,10 +178,14 @@ class _SearchDealPageState extends State<SearchDealPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 50),
+                      const SizedBox(width: 20),
                       SizedBox(
-                        width: 45,
+                        width: 65,
                         child: TextFormField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Time",
+                          ),
                           readOnly: true,
                           onTap: _showTimePicker,
                           controller: _timeController,
@@ -185,8 +194,12 @@ class _SearchDealPageState extends State<SearchDealPage> {
                       ),
                       const SizedBox(width: 5),
                       SizedBox(
-                        width: 100,
+                        width: 110,
                         child: TextFormField(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Date",
+                          ),
                           readOnly: true,
                           onTap: _showDatePicker,
                           controller: _dateController,
@@ -225,11 +238,15 @@ class _SearchDealPageState extends State<SearchDealPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 100),
+                      const SizedBox(width: 90),
                       SizedBox(
-                        height: 40,
-                        width: 100,
+                        height: 60,
+                        width: 110,
                         child: DropdownButtonFormField<int>(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Seats",
+                          ),
                           value: _dropdownValue,
                           onChanged: (int? value) {
                             _dropdownValue = value!;
@@ -238,7 +255,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                           items: list.map<DropdownMenuItem<int>>((int value) {
                             return DropdownMenuItem<int>(
                               value: value,
-                              child: Text('Seats: ${value.toString()}'),
+                              child: Text(value.toString()),
                             );
                           }).toList(),
                         ),
