@@ -3,7 +3,6 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
-import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
@@ -149,40 +148,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Widget _buildReviewsColumn(Profile driver) {
-    List<Review> reviews = driver.reviewsReceived!;
+    List<Review> reviews = driver.reviewsReceived ?? [];
+    AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
-    print(reviews.length);
-
-    double averageStars =
-        reviews.isEmpty ? 0 : reviews.map((review) => review.stars).reduce((a, b) => a + b) / reviews.length;
-
-    List<Review> comfortReviews = reviews.where((review) => review.comfortStars != null).toList();
-    double averageComfortStars = comfortReviews.isEmpty
-        ? 0
-        : comfortReviews.map((review) => review.comfortStars!).reduce((a, b) => a + b) / comfortReviews.length;
-
-    List<Review> safetyReviews = reviews.where((review) => review.safetyStars != null).toList();
-    double averageSafetyStars = safetyReviews.isEmpty
-        ? 0
-        : safetyReviews.map((review) => review.safetyStars!).reduce((a, b) => a + b) / safetyReviews.length;
-
-    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityStars != null).toList();
-    double averageReliabilityStars = reliabilityReviews.isEmpty
-        ? 0
-        : reliabilityReviews.map((review) => review.reliabilityStars!).reduce((a, b) => a + b) /
-            reliabilityReviews.length;
-
-    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityStars != null).toList();
-    double averageHospitalityStars = hospitalityReviews.isEmpty
-        ? 0
-        : hospitalityReviews.map((review) => review.hospitalityStars!).reduce((a, b) => a + b) /
-            hospitalityReviews.length;
     return Column(children: [
-      Text("Average stars: ${averageStars.toStringAsFixed(1)}"),
-      Text("Average comfort stars: ${averageComfortStars.toStringAsFixed(1)}"),
-      Text("Average safety stars: ${averageSafetyStars.toStringAsFixed(1)}"),
-      Text("Average reliability stars: ${averageReliabilityStars.toStringAsFixed(1)}"),
-      Text("Average hospitality stars: ${averageHospitalityStars.toStringAsFixed(1)}"),
+      Text("Average stars: ${aggregateReview.stars.toStringAsFixed(1)}"),
+      Text("Average comfort stars: ${aggregateReview.comfortStars.toStringAsFixed(1)}"),
+      Text("Average safety stars: ${aggregateReview.safetyStars.toStringAsFixed(1)}"),
+      Text("Average reliability stars: ${aggregateReview.reliabilityStars.toStringAsFixed(1)}"),
+      Text("Average hospitality stars: ${aggregateReview.hospitalityStars.toStringAsFixed(1)}"),
     ]);
   }
 

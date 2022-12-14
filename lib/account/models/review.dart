@@ -73,3 +73,53 @@ class Review extends Model {
     return 'Review{id: $id, stars: $stars, text: $text, writerId: $writerId, receiverId: $receiverId, createdAt: $createdAt}';
   }
 }
+
+class AggregateReview {
+  double stars;
+  double comfortStars;
+  double safetyStars;
+  double reliabilityStars;
+  double hospitalityStars;
+
+  AggregateReview({
+    required this.stars,
+    required this.comfortStars,
+    required this.safetyStars,
+    required this.reliabilityStars,
+    required this.hospitalityStars,
+  });
+
+  factory AggregateReview.fromReviews(List<Review> reviews) {
+    double stars = reviews.isEmpty ? 0 : reviews.map((review) => review.stars).reduce((a, b) => a + b) / reviews.length;
+
+    List<Review> comfortReviews = reviews.where((review) => review.comfortStars != null).toList();
+    double comfortStars = comfortReviews.isEmpty
+        ? 0
+        : comfortReviews.map((review) => review.comfortStars!).reduce((a, b) => a + b) / comfortReviews.length;
+
+    List<Review> safetyReviews = reviews.where((review) => review.safetyStars != null).toList();
+    double safetyStars = safetyReviews.isEmpty
+        ? 0
+        : safetyReviews.map((review) => review.safetyStars!).reduce((a, b) => a + b) / safetyReviews.length;
+
+    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityStars != null).toList();
+    double reliabilityStars = reliabilityReviews.isEmpty
+        ? 0
+        : reliabilityReviews.map((review) => review.reliabilityStars!).reduce((a, b) => a + b) /
+            reliabilityReviews.length;
+
+    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityStars != null).toList();
+    double averageStars = hospitalityReviews.isEmpty
+        ? 0
+        : hospitalityReviews.map((review) => review.hospitalityStars!).reduce((a, b) => a + b) /
+            hospitalityReviews.length;
+
+    return AggregateReview(
+      stars: stars,
+      comfortStars: comfortStars,
+      safetyStars: safetyStars,
+      reliabilityStars: reliabilityStars,
+      hospitalityStars: averageStars,
+    );
+  }
+}
