@@ -3,6 +3,7 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
+import 'package:flutter_app/util/profiles/custom_rating_bar_indicator.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
@@ -166,11 +167,46 @@ class _RideDetailPageState extends State<RideDetailPage> {
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Column(children: [
-      Text("Average rating: ${aggregateReview.rating.toStringAsFixed(1)}"),
-      Text("Average comfort rating: ${aggregateReview.comfortRating.toStringAsFixed(1)}"),
-      Text("Average safety rating: ${aggregateReview.safetyRating.toStringAsFixed(1)}"),
-      Text("Average reliability rating: ${aggregateReview.reliabilityRating.toStringAsFixed(1)}"),
-      Text("Average hospitality rating: ${aggregateReview.hospitalityRating.toStringAsFixed(1)}"),
+      Row(
+        children: [
+          Text("Rating: ${aggregateReview.rating.toStringAsFixed(1)}"),
+          const SizedBox(width: 10),
+          CustomRatingBarIndicator(rating: aggregateReview.rating)
+        ],
+      ),
+      Row(
+        children: [
+          Column(
+            children: [
+              Row(children: [
+                Text("Comfort: ${aggregateReview.comfortRating.toStringAsFixed(1)}"),
+                const SizedBox(width: 10),
+                CustomRatingBarIndicator(rating: aggregateReview.comfortRating)
+              ]),
+              Row(children: [
+                Text("Safety: ${aggregateReview.safetyRating.toStringAsFixed(1)}"),
+                const SizedBox(width: 10),
+                CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
+              ]),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Column(
+            children: [
+              Row(children: [
+                Text("Reliability: ${aggregateReview.reliabilityRating.toStringAsFixed(1)}"),
+                const SizedBox(width: 10),
+                CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
+              ]),
+              Row(children: [
+                Text("Hospitality: ${aggregateReview.hospitalityRating.toStringAsFixed(1)}"),
+                const SizedBox(width: 10),
+                CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
+              ]),
+            ],
+          ),
+        ],
+      ),
     ]);
   }
 
