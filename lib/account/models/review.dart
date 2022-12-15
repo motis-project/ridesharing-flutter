@@ -44,6 +44,7 @@ class Review extends Model {
       text: json['text'],
       writerId: json['writer_id'],
       receiverId: json['receiver_id'],
+      writer: json.containsKey('writer') ? Profile.fromJson(json['writer']) : null,
     );
   }
 

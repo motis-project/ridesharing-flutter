@@ -9,6 +9,7 @@ import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/profiles/custom_rating_bar_indicator.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
+import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
         *,
         driver: driver_id(
           *,
-          reviews_received: reviews!reviews_receiver_id_fkey(*)
+          reviews_received: reviews!reviews_receiver_id_fkey(
+            *,
+            writer: writer_id(*)
+          )
         ),
         rides(
           *,
@@ -182,71 +186,105 @@ class _RideDetailPageState extends State<RideDetailPage> {
     List<Review> reviews = driver.reviewsReceived ?? [];
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
-    return InkWell(
-      onTap: () {
-        // TODO: Navigate to reviews page
-      },
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
-              const SizedBox(width: 10),
-              CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarIndicatorSize.large),
-              Expanded(
-                child: Text(
-                  "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
-                  style: const TextStyle(color: Colors.grey),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: Wrap(
-              spacing: 5,
-              runSpacing: 5,
-              alignment: WrapAlignment.spaceBetween,
+    return Stack(
+      children: [
+        Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Comfort"),
-                    const SizedBox(width: 10),
-                    CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Safety"),
-                    const SizedBox(width: 10),
-                    CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Reliability"),
-                    const SizedBox(width: 10),
-                    CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Hospitality"),
-                    const SizedBox(width: 10),
-                    CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
-                  ],
+                Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
+                const SizedBox(width: 10),
+                CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarIndicatorSize.large),
+                Expanded(
+                  child: Text(
+                    "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
+                    style: const TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.right,
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                spacing: 5,
+                runSpacing: 5,
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Comfort"),
+                      const SizedBox(width: 10),
+                      CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Safety"),
+                      const SizedBox(width: 10),
+                      CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Reliability"),
+                      const SizedBox(width: 10),
+                      CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Hospitality"),
+                      const SizedBox(width: 10),
+                      CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            if (reviews.isNotEmpty)
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text("Reviews", style: Theme.of(context).textTheme.titleSmall),
+                  ShaderMask(
+                      shaderCallback: (rect) => const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.transparent])
+                          .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height - 5)),
+                      blendMode: BlendMode.dstIn,
+                      child: ReviewDetail(review: reviews[0]))
+                ],
+              )
+          ],
+        ),
+        Positioned(
+          bottom: 2,
+          right: 2,
+          child: Text(
+            "More",
+            style: TextStyle(color: Theme.of(context).primaryColor),
           ),
-        ],
-      ),
+        ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                // TODO: Navigate to reviews page
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
