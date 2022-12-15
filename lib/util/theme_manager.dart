@@ -5,10 +5,9 @@ import 'own_theme_fields.dart';
 ThemeManager themeManager = ThemeManager();
 
 class ThemeManager with ChangeNotifier {
-  final ThemeData lightTheme = ThemeData.light().copyWith(useMaterial3: true)
-    ..addOwn(const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+  final ThemeData lightTheme = ThemeData.light().copyWith(useMaterial3: true)..addOwn(const OwnThemeFields());
   final ThemeData darkTheme = ThemeData.dark().copyWith(useMaterial3: true)
-    ..addOwn(const OwnThemeFields(success: Colors.green, onSuccess: Colors.white));
+    ..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
   late ThemeMode themeMode;
 

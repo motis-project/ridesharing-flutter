@@ -4,11 +4,15 @@ class OwnThemeFields {
   final Color success;
   final Color onSuccess;
 
-  const OwnThemeFields({this.success = Colors.green, this.onSuccess = Colors.white});
+  final Color warning;
+  final Color onWarning;
 
-  factory OwnThemeFields.empty() {
-    return const OwnThemeFields(success: Colors.green, onSuccess: Colors.white);
-  }
+  const OwnThemeFields({
+    this.success = Colors.green,
+    this.onSuccess = Colors.white,
+    this.warning = Colors.orange,
+    this.onWarning = Colors.white,
+  });
 }
 
 extension ThemeDataExtensions on ThemeData {
@@ -23,7 +27,7 @@ extension ThemeDataExtensions on ThemeData {
   OwnThemeFields own() {
     var o = _own[inputDecorationTheme];
     if (o == null) {
-      empty ??= OwnThemeFields.empty();
+      empty ??= const OwnThemeFields();
       o = empty;
     }
     return o!;

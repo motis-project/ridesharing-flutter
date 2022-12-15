@@ -15,7 +15,10 @@ class ReviewDetail extends StatelessWidget {
     Widget header = Row(
       children: [
         ProfileChip(review.writer!),
-        Text(DateFormat('dd.MM.yyyy').format(review.createdAt!), style: const TextStyle(color: Colors.grey)),
+        Text(
+          DateFormat('dd.MM.yyyy').format(review.createdAt!),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+        ),
         Expanded(
           child: Align(
             alignment: Alignment.centerRight,

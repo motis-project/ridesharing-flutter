@@ -5,6 +5,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/own_theme_fields.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -130,7 +131,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   const SizedBox(height: 10.0),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(width: 1.0, color: Colors.grey.shade500),
+                      border: Border.all(width: 1.0, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     padding: const EdgeInsets.all(8.0),
@@ -175,9 +176,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     Widget content = Column(
       children: [
         if (_drive?.cancelled ?? false)
-          CustomBanner(
-            color: Theme.of(context).colorScheme.onError,
-            backgroundColor: Theme.of(context).errorColor,
+          const CustomBanner(
+            kind: CustomBannerKind.error,
             text: "You have cancelled this drive.",
           ),
         Padding(
@@ -231,8 +231,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       ),
     );
 
-    final startIcon = Icon(Icons.north_east_rounded, color: Colors.green.shade700);
-    const endIcon = Icon(Icons.south_west_rounded, color: Colors.red);
+    final startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
+    final endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).errorColor);
     for (int index = 0, length = stop.actions.length; index < length; index++) {
       final action = stop.actions[index];
       final icon = action.isStart ? startIcon : endIcon;
@@ -240,7 +240,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       Widget container = Container(
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         ),
         child: Material(
@@ -268,12 +268,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     ),
                   ),
                   ProfileWidget(profile, size: 15),
-                  const Expanded(
+                  Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Icon(
                         Icons.chat,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                         size: 30.0,
                       ),
                     ),

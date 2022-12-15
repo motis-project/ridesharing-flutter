@@ -77,7 +77,7 @@ class TripOverview extends StatelessWidget {
           Icons.chair,
           color: maxUsedSeats != null && index < maxUsedSeats
               ? Theme.of(context).colorScheme.primary
-              : Colors.grey.shade500,
+              : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
         ),
       );
       text = Text("${maxUsedSeats ?? '?'}/${trip.seats} Seats");
