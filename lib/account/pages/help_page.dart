@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/big_button.dart';
+import 'package:flutter_app/util/submit_button.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
@@ -20,20 +20,26 @@ class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Help'),
+      appBar: AppBar(
+        title: const Text('Help'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: ListView(
+          // ignore: unnecessary_cast
+          children: (faqs.map((e) => e.card as Widget).toList()) +
+              [
+                const Divider(
+                  thickness: 1,
+                ),
+                SubmitButton(
+                  text: "Contact us",
+                  onPressed: () => print("Contact"),
+                ),
+              ],
         ),
-        body: ListView(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(faqs.length, (index) => faqs[index].card),
-            ),
-            const BigButton(
-              text: "Contact us",
-            ),
-          ],
-        ));
+      ),
+    );
   }
 }
 
@@ -62,25 +68,37 @@ class _FAQCardState extends State<FAQCard> {
   Widget build(BuildContext context) {
     Widget question = Text(
       widget.question,
+      textAlign: TextAlign.center,
       style: const TextStyle(fontWeight: FontWeight.bold),
     );
-    return Card(
-      child: InkWell(
+    return Hero(
+      tag: question.hashCode,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
           onTap: () => setState(() => _expanded = !_expanded),
-          child: _expanded
-              ? Column(
-                  children: [
-                    question,
-                    const Divider(
-                      thickness: 1,
-                    ),
-                    Text(
-                      widget.answer,
-                      textAlign: TextAlign.start,
-                    ),
-                  ],
-                )
-              : question),
+          child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: _expanded
+                    ? Column(
+                        children: [
+                          question,
+                          const Divider(
+                            thickness: 1,
+                          ),
+                          Text(
+                            widget.answer,
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      )
+                    : question),
+          ),
+        ),
+      ),
     );
   }
 }
