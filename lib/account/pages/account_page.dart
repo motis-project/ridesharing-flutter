@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/theme_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'about_page.dart';
 import 'help_page.dart';
@@ -14,7 +15,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   ThemeMode? _currentTheme = themeManager.themeMode;
-  String? _currentLanguage = "en";
+  Locale? _currentLanguage;
 
   void signOut() {
     supabaseClient.auth.signOut();
@@ -60,12 +61,12 @@ class _AccountPageState extends State<AccountPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
-              3,
+              2,
               (index) => RadioListTile(
-                  title: Text(["Deutsch", "English", "Français"][index]),
-                  value: ["de", "en", "fr"][index],
+                  title: Text(AppLocalizations.supportedLocales.map((e) => languageName(e)).toList()[index]),
+                  value: AppLocalizations.supportedLocales[index],
                   groupValue: _currentLanguage,
-                  onChanged: (String? value) {
+                  onChanged: (Locale? value) {
                     setState(() {
                       _currentLanguage = value;
                     });
@@ -78,8 +79,21 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
+  String languageName(Locale? language) {
+    switch (language?.languageCode) {
+      case "de":
+        return "Deutsch";
+      case "en":
+        return "English";
+      default:
+        return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _currentLanguage ??= Localizations.localeOf(context);
+
     Widget profilePic = CircleAvatar(
       backgroundColor: Theme.of(context).colorScheme.secondary,
       child: const Text('U'),
@@ -118,20 +132,7 @@ class _AccountPageState extends State<AccountPage> {
         themeText = "";
     }
 
-    String languageText;
-    switch (_currentLanguage) {
-      case "de":
-        languageText = "Deutsch";
-        break;
-      case "en":
-        languageText = "English";
-        break;
-      case "fr":
-        languageText = "Français";
-        break;
-      default:
-        languageText = "";
-    }
+    String languageText = languageName(_currentLanguage);
 
     return Scaffold(
       appBar: AppBar(

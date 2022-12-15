@@ -8,6 +8,8 @@ import 'package:flutter_app/welcome/pages/reset_password_page.dart';
 import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   await dotenv.load();
@@ -47,6 +49,8 @@ class _AppWrapperState extends State<AppWrapper> {
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
       themeMode: themeManager.themeMode,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const AuthApp(),
     );
   }
