@@ -40,9 +40,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   @override
   initState() {
-    SupabaseManager.getCurrentProfile() == null ?
-        riderID = -1
-        : riderID = SupabaseManager.getCurrentProfile()?.id;
+    int riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
