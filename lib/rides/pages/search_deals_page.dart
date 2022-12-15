@@ -110,16 +110,16 @@ class _SearchDealPageState extends State<SearchDealPage> {
         .eq('start', _startController.text)
         .order('start_time', ascending: true);
   List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
-  List<Ride> rides =  drives.map((e) => e.toRide(
-                  _startController.text,
-                  _destinationController.text,
-                  e.startTime,
-                  e.endTime,
-                  _dropdownValue,
-                  riderId,
-                  10.25,
-                ))
-            .toList();
+  List<Ride> rides =  drives.map((drive) => Ride.fromDrive(
+          drive,
+          _startController.text,
+          _destinationController.text,
+          drive.startTime,
+          drive.endTime,
+          _dropdownValue,
+          riderId,
+          10.25))
+      .toList();
     setState(() {
       ridesuggestion = rides;
     });

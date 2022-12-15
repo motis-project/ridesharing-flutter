@@ -30,6 +30,21 @@ class Ride extends Trip {
     this.rider,
   });
 
+  factory Ride.fromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
+      int riderId, double price){
+    return Ride(
+        start: start,
+        end: end,
+        startTime: startTime,
+        endTime: endTime,
+        seats: seats,
+        riderId: riderId,
+        approved: false,
+        driveId: drive.driverId!,
+        drive: drive,
+        price: price);
+  }
+
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
