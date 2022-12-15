@@ -119,7 +119,22 @@ class _SearchDealPageState extends State<SearchDealPage> {
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .order('start_time', ascending: true)
-        .then((drive) => Drive.fromJsonList(drive)
+    List<<Map<String,dynamic>>> data = await supabaseClient
+        .from('drives')
+        .select('*, driver:driver_id (*)')
+        .eq('start', _startController.text)
+        .order('start_time', ascending: true);
+  List<Drive> drives = data.map((drive) => Drive.fromJsonList(drive));
+  List<Ride> rides =  drives.map((e) => e.toRide(
+                  _startController.text,
+                  _destinationController.text,
+                  e.startTime,
+                  e.endTime,
+                  _dropdownValue,
+                  -1,
+                  10.25,
+                ))
+            .toList());
             .map((e) => e.toRide(
                   _startController.text,
                   _destinationController.text,
