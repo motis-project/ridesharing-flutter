@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rides/models/search_helper.dart';
 import 'package:flutter_app/rides/pages/search_deals_page.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
-import 'package:intl/intl.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({Key? key}) : super(key: key);
@@ -35,8 +35,8 @@ class _SearchRidePageState extends State<SearchRidePage> {
     super.initState();
     _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
-    _dateController.text = _formatDate(_selectedDate);
-    _timeController.text = _formatTime(_selectedDate);
+    _dateController.text = SearchHelper.formatDate(_selectedDate);
+    _timeController.text = SearchHelper.formatTime(_selectedDate);
     _dropdownValue = list.first;
   }
 
@@ -61,7 +61,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         if (value != null) {
           _selectedDate =
               DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = _formatTime(_selectedDate);
+          _timeController.text = SearchHelper.formatTime(_selectedDate);
         }
       });
     });
@@ -77,18 +77,10 @@ class _SearchRidePageState extends State<SearchRidePage> {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = _formatDate(_selectedDate);
+          _dateController.text = SearchHelper.formatDate(_selectedDate);
         }
       });
     });
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}.${date.month}.${date.year}';
-  }
-
-  String _formatTime(DateTime time) {
-    return DateFormat.Hm().format(time);
   }
 
   String? _timeValidator(String? value) {

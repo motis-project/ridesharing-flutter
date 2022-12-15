@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/rides/models/search_helper.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
 import 'package:flutter_app/util/trip/search_card.dart';
-import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
-
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';
 import '../../util/search/address_suggestion.dart';
@@ -36,20 +35,20 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   List<Ride>? ridesuggestion;
 
-  late final int? riderID;
+  late final int riderId;
 
   @override
   initState() {
-    int riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
+    riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
-    _dateController.text = _formatDate(widget.date);
-    _timeController.text = _formatTime(widget.date);
+    _dateController.text = SearchHelper.formatDate(widget.date);
+    _timeController.text = SearchHelper.formatTime(widget.date);
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
     _destinationController.text = widget.end;
-    getRides();
+    loadRides();
   }
 
   @override
@@ -70,9 +69,9 @@ class _SearchDealPageState extends State<SearchDealPage> {
     ).then((value) {
       if (value != null) {
         _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-        _dateController.text = _formatDate(_selectedDate);
+        _dateController.text = SearchHelper.formatDate(_selectedDate);
       }
-      getRides();
+      loadRides();
     });
   }
 
@@ -84,22 +83,13 @@ class _SearchDealPageState extends State<SearchDealPage> {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
     ).then((value) {
-      setState(() {
-        if (value != null) {
-          _selectedDate =
-              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = _formatTime(_selectedDate);
-        }
-      });
+      if (value != null) {
+        _selectedDate =
+            DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
+        _timeController.text = SearchHelper.formatTime(_selectedDate);
+        loadRides();
+      }
     });
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}.${date.month}.${date.year}';
-  }
-
-  String _formatTime(DateTime time) {
-    return DateFormat.Hm().format(time);
   }
 
   String? _timeValidator(String? value) {
@@ -113,46 +103,31 @@ class _SearchDealPageState extends State<SearchDealPage> {
   }
 
   //todo: get possible Rides from Algorithm
-  void getRides() async {
-    List<Ride> initializes = await supabaseClient
-        .from('drives')
-        .select('*, driver:driver_id (*)')
-        .eq('start', _startController.text)
-        .order('start_time', ascending: true)
-    List<<Map<String,dynamic>>> data = await supabaseClient
+  void loadRides() async {
+  List<dynamic> data = await supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .order('start_time', ascending: true);
-  List<Drive> drives = data.map((drive) => Drive.fromJsonList(drive));
+  List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
   List<Ride> rides =  drives.map((e) => e.toRide(
                   _startController.text,
                   _destinationController.text,
                   e.startTime,
                   e.endTime,
                   _dropdownValue,
-                  -1,
+                  riderId,
                   10.25,
                 ))
-            .toList());
-            .map((e) => e.toRide(
-                  _startController.text,
-                  _destinationController.text,
-                  e.startTime,
-                  e.endTime,
-                  _dropdownValue,
-                  riderID!,
-                  10.25,
-                ))
-            .toList());
+            .toList();
     setState(() {
-      rideSuggestions = initializes;
+      ridesuggestion = rides;
     });
   }
 
   //todo: filter
   void filter() {
-    getRides();
+    loadRides();
   }
 
   @override
@@ -182,7 +157,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                             );
                             if (startSuggestion != null) {
                               _startController.text = startSuggestion.name;
-                              getRides();
+                              loadRides();
                             }
                           },
                           child: Align(
@@ -242,7 +217,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                             );
                             if (destinationsuggestion != null) {
                               _destinationController.text = destinationsuggestion.name;
-                              getRides();
+                              loadRides();
                             }
                           },
                           child: Align(
@@ -263,7 +238,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                           value: _dropdownValue,
                           onChanged: (int? value) {
                             _dropdownValue = value!;
-                            getRides();
+                            loadRides();
                           },
                           items: list.map<DropdownMenuItem<int>>((int value) {
                             return DropdownMenuItem<int>(
