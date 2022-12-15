@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CustomRatingBarIndicator extends StatelessWidget {
-  double rating;
+  final double rating;
+  final CustomRatingBarIndicatorSize size;
 
-  CustomRatingBarIndicator({
+  const CustomRatingBarIndicator({
     super.key,
     required this.rating,
+    this.size = CustomRatingBarIndicatorSize.small,
   });
 
   @override
@@ -20,8 +20,13 @@ class CustomRatingBarIndicator extends StatelessWidget {
         color: Colors.amber,
       ),
       itemCount: 5,
-      itemSize: 15.0,
+      itemSize: size == CustomRatingBarIndicatorSize.small ? 15.0 : 30.0,
       direction: Axis.horizontal,
     );
   }
+}
+
+enum CustomRatingBarIndicatorSize {
+  small,
+  large,
 }

@@ -1,12 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
+import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/profiles/custom_rating_bar_indicator.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
+import 'package:intl/intl.dart';
 
 class RideDetailPage extends StatefulWidget {
   final int id;
@@ -49,7 +54,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
         )
       )
     ''').eq('id', widget.id).single();
-    //reviews_receiver_id_fkey
 
     setState(() {
       _ride = Ride.fromJson(data);
@@ -60,8 +64,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgets = [];
+    bool currentlyWaitingForApproval = Random().nextBool(); // TODO: Get this from the database
+    bool isCancelled = Random().nextBool(); // TODO: Get this from the database
 
     if (_ride != null) {
+      if (true) {}
+
       Widget overview = TripOverview(_ride!);
       widgets.add(overview);
     }
@@ -72,13 +80,22 @@ class _RideDetailPageState extends State<RideDetailPage> {
       ));
 
       Profile driver = _ride!.drive!.driver!;
-      Widget driverRow = ProfileRow(driver);
-      // TODO: Show more info about the driver
-      widgets.add(driverRow);
-
-      widgets.add(Row(
-        children: [Flexible(child: Text(driver.description ?? "No description"))],
-      ));
+      Widget driverColumn = InkWell(
+        onTap: () {
+          // TODO: Navigate to driver profile
+        },
+        child: Column(
+          children: [
+            ProfileRow(driver),
+            const SizedBox(height: 10),
+            if (driver.description != null && driver.description!.isNotEmpty)
+              Row(
+                children: [Flexible(child: Text(driver.description!))],
+              ),
+          ],
+        ),
+      );
+      widgets.add(driverColumn);
 
       widgets.add(const Divider(
         thickness: 1,
@@ -93,22 +110,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       Set<Profile> riders =
           _ride!.drive!.rides!.where((otherRide) => _ride!.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
 
-      Widget ridersColumn = Column(
-        children: List.generate(
-          riders.length,
-          (index) => InkWell(
-            onTap: () => print("Hey"),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-              child: ProfileRow(
-                riders.elementAt(index),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      widgets.add(ridersColumn);
+      widgets.add(ProfileWrapList(riders, title: "Riders"));
 
       if (_ride!.approved) {
         Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
@@ -122,7 +124,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
           thickness: 1,
         ));
         widgets.add(requestButton);
-      } else {
+      } else if (currentlyWaitingForApproval) {
         Widget requestButton = const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
         widgets.add(const Divider(
           thickness: 1,
@@ -133,6 +135,26 @@ class _RideDetailPageState extends State<RideDetailPage> {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
+
+    Widget content = Column(
+      children: [
+        if (currentlyWaitingForApproval)
+          const CustomBanner(backgroundColor: Colors.orange, text: "You have requested this ride.")
+        else if (isCancelled)
+          CustomBanner(
+            color: Theme.of(context).colorScheme.onError,
+            backgroundColor: Theme.of(context).errorColor,
+            text: "This ride has been cancelled.",
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        ),
+      ],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -150,13 +172,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
               onRefresh: loadRide,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widgets,
-                  ),
-                ),
+                child: content,
               ),
             ),
     );
@@ -166,48 +182,72 @@ class _RideDetailPageState extends State<RideDetailPage> {
     List<Review> reviews = driver.reviewsReceived ?? [];
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
-    return Column(children: [
-      Row(
+    return InkWell(
+      onTap: () {
+        // TODO: Navigate to reviews page
+      },
+      child: Column(
         children: [
-          Text("Rating: ${aggregateReview.rating.toStringAsFixed(1)}"),
-          const SizedBox(width: 10),
-          CustomRatingBarIndicator(rating: aggregateReview.rating)
-        ],
-      ),
-      Row(
-        children: [
-          Column(
+          Row(
             children: [
-              Row(children: [
-                Text("Comfort: ${aggregateReview.comfortRating.toStringAsFixed(1)}"),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.comfortRating)
-              ]),
-              Row(children: [
-                Text("Safety: ${aggregateReview.safetyRating.toStringAsFixed(1)}"),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
-              ]),
+              Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: 10),
+              CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarIndicatorSize.large),
+              Expanded(
+                child: Text(
+                  "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
+                  style: const TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.right,
+                ),
+              ),
             ],
           ),
-          const SizedBox(width: 10),
-          Column(
-            children: [
-              Row(children: [
-                Text("Reliability: ${aggregateReview.reliabilityRating.toStringAsFixed(1)}"),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
-              ]),
-              Row(children: [
-                Text("Hospitality: ${aggregateReview.hospitalityRating.toStringAsFixed(1)}"),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
-              ]),
-            ],
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              spacing: 5,
+              runSpacing: 5,
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Comfort"),
+                    const SizedBox(width: 10),
+                    CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Safety"),
+                    const SizedBox(width: 10),
+                    CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Reliability"),
+                    const SizedBox(width: 10),
+                    CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Hospitality"),
+                    const SizedBox(width: 10),
+                    CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
-    ]);
+    );
   }
 
   void _showDeleteDialog() {

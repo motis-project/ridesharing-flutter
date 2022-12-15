@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/pages/settings_page.dart';
+import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 
@@ -26,11 +27,14 @@ class _AccountPageState extends State<AccountPage> {
           InkWell(
             onTap: () => {},
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ProfileRow(SupabaseManager.getCurrentProfile()!),
+                  ProfileRow(
+                    SupabaseManager.getCurrentProfile()!,
+                    size: 25,
+                  ),
                   TextButton.icon(
                     onPressed: signOut,
                     icon: const Icon(Icons.logout),

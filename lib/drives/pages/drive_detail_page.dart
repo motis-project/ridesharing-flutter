@@ -4,7 +4,9 @@ import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
@@ -148,37 +150,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       widgets.add(timeline);
 
-      Widget ridersColumn = Container();
       if (_drive!.rides != null) {
         widgets.add(const Divider(
           thickness: 1,
         ));
 
         Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
-
-        ridersColumn = Column(
-          children: List.generate(
-            riders.length,
-            (index) => InkWell(
-              onTap: () => print("Hey"),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ProfileRow(riders.elementAt(index)),
-                    const Icon(
-                      Icons.chat,
-                      color: Colors.black,
-                      size: 36.0,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-        widgets.add(ridersColumn);
+        widgets.add(ProfileWrapList(riders, title: 'Riders'));
 
         Widget deleteButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
         widgets.add(const Divider(
@@ -274,7 +252,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                                 ]),
                     ),
                   ),
-                  ProfileRow(profile),
+                  ProfileRow(profile, size: 15),
                   const Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,
