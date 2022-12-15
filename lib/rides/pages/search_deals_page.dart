@@ -146,7 +146,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
                 ))
             .toList());
     setState(() {
-      ridesuggestion = initializes;
+      rideSuggestions = initializes;
     });
   }
 
