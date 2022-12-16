@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/models/search_helper.dart';
-import 'package:flutter_app/rides/pages/search_deals_page.dart';
+import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
@@ -12,9 +12,7 @@ class SearchRidePage extends StatefulWidget {
   State<SearchRidePage> createState() => _SearchRidePageState();
 }
 
-
 class _SearchRidePageState extends State<SearchRidePage> {
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
@@ -96,23 +94,24 @@ class _SearchRidePageState extends State<SearchRidePage> {
   void _onSubmit() async {
     //todo: pressing search button
     if (_formKey.currentState!.validate()) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (context) => SearchDealPage(_startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
-        );
-      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => SearchSuggestionPage(
+                _startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
+      );
     }
+  }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         title: const Text('Search Ride'),
-        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(),
         child: SingleChildScrollView(
-            child: Form(
+          child: Form(
             key: _formKey,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),

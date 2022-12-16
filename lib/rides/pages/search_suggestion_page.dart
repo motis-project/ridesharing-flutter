@@ -9,8 +9,8 @@ import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
 import '../models/ride.dart';
 
-class SearchDealPage extends StatefulWidget {
-  const SearchDealPage(this.start, this.end, this.date, this.seats, {super.key});
+class SearchSuggestionPage extends StatefulWidget {
+  const SearchSuggestionPage(this.start, this.end, this.date, this.seats, {super.key});
 
   final String start;
   final String end;
@@ -18,10 +18,10 @@ class SearchDealPage extends StatefulWidget {
   final DateTime date;
 
   @override
-  State<SearchDealPage> createState() => _SearchDealPageState();
+  State<SearchSuggestionPage> createState() => _SearchSuggestionPage();
 }
 
-class _SearchDealPageState extends State<SearchDealPage> {
+class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
@@ -33,13 +33,10 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   final List<int> list = List.generate(10, (index) => index + 1);
 
-  List<Ride>? ridesuggestion;
-
-  late final int riderId;
+  List<Ride>? _rideSuggestions;
 
   @override
   initState() {
-    riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
@@ -84,8 +81,7 @@ class _SearchDealPageState extends State<SearchDealPage> {
       },
     ).then((value) {
       if (value != null) {
-        _selectedDate =
-            DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
+        _selectedDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
         _timeController.text = SearchHelper.formatTime(_selectedDate);
         loadRides();
       }
@@ -104,24 +100,18 @@ class _SearchDealPageState extends State<SearchDealPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
-  List<dynamic> data = await supabaseClient
+    List<dynamic> data = await supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .order('start_time', ascending: true);
-  List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
-  List<Ride> rides =  drives.map((drive) => Ride.fromDrive(
-          drive,
-          _startController.text,
-          _destinationController.text,
-          drive.startTime,
-          drive.endTime,
-          _dropdownValue,
-          riderId,
-          10.25))
-      .toList();
+    List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
+    List<Ride> rides = drives
+        .map((drive) => Ride.fromDrive(drive, _startController.text, _destinationController.text, drive.startTime,
+            drive.endTime, _dropdownValue, SupabaseManager.getCurrentProfile()?.id ?? -1, 10.25))
+        .toList();
     setState(() {
-      ridesuggestion = rides;
+      _rideSuggestions = rides;
     });
   }
 
@@ -210,13 +200,13 @@ class _SearchDealPageState extends State<SearchDealPage> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            final AddressSuggestion? destinationsuggestion = await showSearch<AddressSuggestion?>(
+                            final AddressSuggestion? destinationSuggestion = await showSearch<AddressSuggestion?>(
                               context: context,
                               delegate: AddressSearchDelegate(),
                               query: _destinationController.text,
                             );
-                            if (destinationsuggestion != null) {
-                              _destinationController.text = destinationsuggestion.name;
+                            if (destinationSuggestion != null) {
+                              _destinationController.text = destinationSuggestion.name;
                               loadRides();
                             }
                           },
@@ -269,18 +259,18 @@ class _SearchDealPageState extends State<SearchDealPage> {
               ),
             ),
             const SizedBox(height: 5),
-            ridesuggestion == null
+            _rideSuggestions == null
                 ? const Center(child: CircularProgressIndicator())
                 : Expanded(
                     child: ListView.separated(
                       itemBuilder: (context, index) {
-                        final ride = ridesuggestion![index];
+                        final ride = _rideSuggestions![index];
                         return SearchCard(ride);
                       },
                       separatorBuilder: (BuildContext context, int index) {
                         return const SizedBox(height: 10);
                       },
-                      itemCount: ridesuggestion!.length,
+                      itemCount: _rideSuggestions!.length,
                     ),
                   ),
           ],
