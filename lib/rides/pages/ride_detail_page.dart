@@ -183,7 +183,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Widget _buildReviewsColumn(Profile driver) {
-    List<Review> reviews = driver.reviewsReceived ?? [];
+    List<Review> reviews = driver.reviewsReceived != null ? List.from(driver.reviewsReceived!.reversed) : [];
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Stack(
@@ -255,25 +255,49 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   ),
                   Text("Reviews", style: Theme.of(context).textTheme.titleSmall),
                   ShaderMask(
-                      shaderCallback: (rect) => const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.transparent])
-                          .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height - 5)),
-                      blendMode: BlendMode.dstIn,
-                      child: ReviewDetail(review: reviews[0]))
+                    shaderCallback: (rect) => const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black, Colors.transparent],
+                    ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
+                    blendMode: BlendMode.dstIn,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 0, maxHeight: 200),
+                      child: Container(
+                        color: Colors.blue,
+                        child: ClipRect(
+                          child: Container(
+                            color: Colors.yellow,
+                            child: OverflowBox(
+                              maxHeight: double.infinity,
+                              child: Container(
+                                color: Colors.red,
+                                child: Column(
+                                  children: List.generate(
+                                    min(reviews.length, 2),
+                                    (index) => ReviewDetail(review: reviews[index]),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               )
           ],
         ),
-        Positioned(
-          bottom: 2,
-          right: 2,
-          child: Text(
-            "More",
-            style: TextStyle(color: Theme.of(context).primaryColor),
+        if (reviews.isNotEmpty)
+          Positioned(
+            bottom: 2,
+            right: 2,
+            child: Text(
+              "More",
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
           ),
-        ),
         Positioned.fill(
           child: Material(
             color: Colors.transparent,

@@ -90,7 +90,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
 
     return Card(
       child: Padding(
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: Column(
           children: [
             stars,
@@ -99,6 +99,10 @@ class _ReviewDetailState extends State<ReviewDetail> {
                 _review.reliabilityRating != null ||
                 _review.hospitalityRating != null)
               categories,
+            if (_review.text != null)
+              const SizedBox(
+                height: 5,
+              ),
             if (_review.text != null)
               SizedBox(
                 width: double.infinity,
