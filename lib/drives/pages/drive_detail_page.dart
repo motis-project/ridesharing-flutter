@@ -3,8 +3,8 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
+import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
-import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -58,25 +58,26 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     List<Widget> widgets = [];
 
     if (_drive != null) {
-      Widget overview = TripOverview(_drive!);
-      widgets.add(overview);
+      widgets.add(TripOverview(_drive!));
       widgets.add(const Divider(thickness: 1));
     }
 
     if (_fullyLoaded) {
+      Drive drive = _drive!;
+
       List<Waypoint> stops = [];
       stops.add(Waypoint(
         actions: [],
-        place: _drive!.start,
-        time: _drive!.startTime,
+        place: drive.start,
+        time: drive.startTime,
       ));
       stops.add(Waypoint(
         actions: [],
-        place: _drive!.end,
-        time: _drive!.endTime,
+        place: drive.end,
+        time: drive.endTime,
       ));
 
-      for (Ride ride in _drive!.rides!) {
+      for (Ride ride in drive.rides!) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -150,25 +151,43 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       widgets.add(timeline);
 
-      if (_drive!.rides != null) {
-        widgets.add(const Divider(
-          thickness: 1,
-        ));
-
-        Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
+      if (drive.rides!.isNotEmpty) {
+        widgets.add(const Divider(thickness: 1));
+        Set<Profile> riders = drive.rides!.map((ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: 'Riders'));
-
-        Widget deleteButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
-        widgets.add(const Divider(
-          thickness: 1,
-        ));
-        widgets.add(deleteButton);
-        widgets.add(const SizedBox(height: 5));
       }
+
+      widgets.add(const Divider(thickness: 1));
+      Widget deleteButton = BigButton(
+        text: "CANCEL DRIVE",
+        onPressed: _showCancelDialog,
+        color: Theme.of(context).errorColor,
+      );
+      widgets.add(deleteButton);
+      widgets.add(const SizedBox(height: 5));
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
+
+    print(_drive?.cancelled);
+    Widget content = Column(
+      children: [
+        if (_drive?.cancelled ?? false)
+          CustomBanner(
+            color: Theme.of(context).colorScheme.onError,
+            backgroundColor: Theme.of(context).errorColor,
+            text: "You have cancelled this drive.",
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        ),
+      ],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -186,13 +205,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               onRefresh: loadDrive,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widgets,
-                  ),
-                ),
+                child: content,
               ),
             ),
     );
@@ -232,7 +245,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => print("Hey"),
+            onTap: () {},
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
               child: Row(
@@ -242,14 +255,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: action.seats <= 2
-                              ? List.generate(action.seats, (index) => icon)
-                              : [
-                                  icon,
-                                  const SizedBox(width: 2),
-                                  Text("x${action.seats}"),
-                                ]),
+                        mainAxisSize: MainAxisSize.min,
+                        children: action.seats <= 2
+                            ? List.generate(action.seats, (index) => icon)
+                            : [
+                                icon,
+                                const SizedBox(width: 2),
+                                Text("x${action.seats}"),
+                              ],
+                      ),
                     ),
                   ),
                   ProfileRow(profile, size: 15),
@@ -279,26 +293,26 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return list;
   }
 
-  void _showDeleteDialog() {
+  void _showCancelDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Deletion"),
-        content: const Text("Are you sure you want to delete this drive?"),
+        title: const Text("Confirm Cancellation"),
+        content: const Text("Are you sure you want to cancel this drive?"),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: const Text("No"),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Confirm"),
+            child: const Text("Yes"),
             onPressed: () {
-              _drive!.cancel();
+              _cancelDrive();
+
               Navigator.of(context).pop();
-              Navigator.of(context).maybePop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Drive deleted"),
+                  content: Text("Drive cancelled"),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -307,6 +321,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
+  }
+
+  void _cancelDrive() async {
+    await _drive?.cancel();
+    setState(() {});
   }
 }
 

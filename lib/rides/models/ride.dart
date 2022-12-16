@@ -6,7 +6,7 @@ import '../../drives/models/drive.dart';
 
 class Ride extends Trip {
   final double? price;
-  final bool approved;
+  RideStatus status;
 
   final int riderId;
   Profile? rider;
@@ -23,7 +23,7 @@ class Ride extends Trip {
     required super.endTime,
     required super.seats,
     this.price,
-    required this.approved,
+    required this.status,
     required this.riderId,
     this.rider,
     required this.driveId,
@@ -41,7 +41,7 @@ class Ride extends Trip {
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       price: json['price'],
-      approved: json['approved'],
+      status: RideStatus.values[json['status']],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
@@ -61,7 +61,6 @@ class Ride extends Trip {
       'end_time': endTime.toString(),
       'seats': seats,
       'price': price,
-      'approved': approved,
       'drive_id': driveId,
       'rider_id': riderId,
     };
@@ -106,12 +105,21 @@ class Ride extends Trip {
     return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
   }
 
-  void cancel() async {
-    // TODO: implement cancel
+  Future<void> cancel() async {
+    status = RideStatus.cancelledByRider;
+    await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
   }
 
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+  }
+}
+
+enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cancelledByRider }
+
+extension RideStatusExtension on RideStatus {
+  bool isCancelled() {
+    return this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
   }
 }

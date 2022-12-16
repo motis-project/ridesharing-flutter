@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
+import 'package:flutter_app/account/models/profile_feature.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
@@ -50,7 +51,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
           reviews_received: reviews!reviews_receiver_id_fkey(
             *,
             writer: writer_id(*)
-          )
+          ),
+          profile_features(*)
         ),
         rides(
           *,
@@ -68,22 +70,16 @@ class _RideDetailPageState extends State<RideDetailPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgets = [];
-    bool currentlyWaitingForApproval = Random().nextBool(); // TODO: Get this from the database
-    bool isCancelled = Random().nextBool(); // TODO: Get this from the database
 
     if (_ride != null) {
-      if (true) {}
-
-      Widget overview = TripOverview(_ride!);
-      widgets.add(overview);
+      widgets.add(TripOverview(_ride!));
+      widgets.add(const Divider(thickness: 1));
     }
 
     if (_fullyLoaded) {
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
+      Ride ride = _ride!;
 
-      Profile driver = _ride!.drive!.driver!;
+      Profile driver = ride.drive!.driver!;
       Widget driverColumn = InkWell(
         onTap: () {
           // TODO: Navigate to driver profile
@@ -97,39 +93,30 @@ class _RideDetailPageState extends State<RideDetailPage> {
         ),
       );
       widgets.add(driverColumn);
-
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
+      widgets.add(const Divider(thickness: 1));
 
       widgets.add(_buildReviewsColumn(driver));
+      widgets.add(const Divider(thickness: 1));
 
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
+      widgets.add(_buildFeaturesColumn(driver));
+      if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
 
       Set<Profile> riders =
-          _ride!.drive!.rides!.where((otherRide) => _ride!.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
+          ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
 
       widgets.add(ProfileWrapList(riders, title: "Riders"));
 
-      if (_ride!.approved) {
-        Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
-        widgets.add(const Divider(
-          thickness: 1,
-        ));
-        widgets.add(cancelButton);
-      } else if (_ride!.id == null) {
+      if (ride.status == RideStatus.preview) {
         Widget requestButton = BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
-        widgets.add(const Divider(
-          thickness: 1,
-        ));
+        widgets.add(const Divider(thickness: 1));
         widgets.add(requestButton);
-      } else if (currentlyWaitingForApproval) {
+      } else if (ride.status == RideStatus.approved) {
+        Widget cancelButton = BigButton(text: "DELETE", onPressed: _showCancelDialog, color: Colors.red);
+        widgets.add(const Divider(thickness: 1));
+        widgets.add(cancelButton);
+      } else if (ride.status == RideStatus.pending) {
         Widget requestButton = const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
-        widgets.add(const Divider(
-          thickness: 1,
-        ));
+        widgets.add(const Divider(thickness: 1));
         widgets.add(requestButton);
       }
     } else {
@@ -139,13 +126,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
     Widget content = Column(
       children: [
-        if (currentlyWaitingForApproval)
+        if (_ride != null && _ride!.status == RideStatus.pending)
           const CustomBanner(backgroundColor: Colors.orange, text: "You have requested this ride.")
-        else if (isCancelled)
+        else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             color: Theme.of(context).colorScheme.onError,
             backgroundColor: Theme.of(context).errorColor,
-            text: "This ride has been cancelled.",
+            text: _ride!.status == RideStatus.cancelledByDriver
+                ? "This ride has been cancelled."
+                : "You have cancelled this ride.",
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -180,7 +169,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Widget _buildReviewsColumn(Profile driver) {
-    List<Review> reviews = (driver.reviewsReceived ?? [])..sort((a, b) => a.compareTo(b));
+    List<Review> reviews = driver.reviewsReceived!..sort((a, b) => a.compareTo(b));
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Stack(
@@ -300,26 +289,43 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void _showDeleteDialog() {
+  Widget _buildFeaturesColumn(Profile driver) {
+    List<ProfileFeature> profileFeatures = driver.profileFeatures!;
+
+    return ListView.builder(
+      itemBuilder: ((context, index) {
+        Feature feature = profileFeatures[index].feature;
+        return ListTile(
+          leading: feature.getIcon(context),
+          title: Text(feature.getDescription(context)),
+        );
+      }),
+      itemCount: profileFeatures.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+    );
+  }
+
+  void _showCancelDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Deletion"),
-        content: const Text("Are you sure you want to delete this ride?"),
+        title: const Text("Confirm Cancellation"),
+        content: const Text("Are you sure you want to cancel this ride?"),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: const Text("No"),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Confirm"),
+            child: const Text("Yes"),
             onPressed: () {
-              _ride!.cancel();
+              _cancelRide();
+
               Navigator.of(context).pop();
-              Navigator.of(context).maybePop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Ride deleted"),
+                  content: Text("Ride cancelled"),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -328,5 +334,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
         ],
       ),
     );
+  }
+
+  void _cancelRide() async {
+    await _ride?.cancel();
+    setState(() {});
   }
 }

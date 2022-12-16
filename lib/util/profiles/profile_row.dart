@@ -19,8 +19,8 @@ class ProfileRow extends StatelessWidget {
       children: [
         // TODO: Use profile picture
         CircleAvatar(
-          child: Text(profile.username[0], style: TextStyle(fontSize: size)),
           minRadius: size,
+          child: Text(profile.username[0], style: TextStyle(fontSize: size)),
         ),
         const SizedBox(width: 5),
         Text(profile.username, style: TextStyle(fontSize: size)),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/pages/settings_page.dart';
-import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/supabase.dart';
 
