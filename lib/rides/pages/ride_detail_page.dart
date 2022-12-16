@@ -92,10 +92,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
           children: [
             ProfileRow(driver),
             const SizedBox(height: 10),
-            if (driver.description != null && driver.description!.isNotEmpty)
-              Row(
-                children: [Flexible(child: Text(driver.description!))],
-              ),
+            if (driver.description != null && driver.description!.isNotEmpty) Text(driver.description!),
           ],
         ),
       );
@@ -183,7 +180,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Widget _buildReviewsColumn(Profile driver) {
-    List<Review> reviews = driver.reviewsReceived != null ? List.from(driver.reviewsReceived!.reversed) : [];
+    List<Review> reviews = (driver.reviewsReceived ?? [])..sort((a, b) => a.compareTo(b));
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Stack(
@@ -253,7 +250,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Text("Reviews", style: Theme.of(context).textTheme.titleSmall),
                   ShaderMask(
                     shaderCallback: (rect) => const LinearGradient(
                       begin: Alignment.topCenter,
@@ -262,23 +258,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
                     ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
                     blendMode: BlendMode.dstIn,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 0, maxHeight: 200),
-                      child: Container(
-                        color: Colors.blue,
-                        child: ClipRect(
-                          child: Container(
-                            color: Colors.yellow,
-                            child: OverflowBox(
-                              maxHeight: double.infinity,
-                              child: Container(
-                                color: Colors.red,
-                                child: Column(
-                                  children: List.generate(
-                                    min(reviews.length, 2),
-                                    (index) => ReviewDetail(review: reviews[index]),
-                                  ),
-                                ),
-                              ),
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ClipRect(
+                        child: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              min(reviews.length, 2),
+                              (index) => ReviewDetail(review: reviews[index]),
                             ),
                           ),
                         ),

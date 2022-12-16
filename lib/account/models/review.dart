@@ -2,7 +2,7 @@ import 'package:flutter_app/account/models/profile.dart';
 
 import '../../util/model.dart';
 
-class Review extends Model {
+class Review extends Model implements Comparable<Review> {
   int rating;
   int? comfortRating;
   int? safetyRating;
@@ -63,6 +63,19 @@ class Review extends Model {
       'writer_id': writerId,
       'receiver_id': receiverId
     };
+  }
+
+  @override
+  int compareTo(Review other) {
+    bool thisHasText = text?.isNotEmpty ?? false;
+    bool otherHasText = other.text?.isNotEmpty ?? false;
+    if (thisHasText && !otherHasText) {
+      return -1;
+    } else if (!thisHasText && otherHasText) {
+      return 1;
+    } else {
+      return other.createdAt!.compareTo(createdAt!);
+    }
   }
 
   List<Map<String, dynamic>> toJsonList(List<Review> reviews) {

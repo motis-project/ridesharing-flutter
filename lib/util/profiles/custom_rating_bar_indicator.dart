@@ -20,13 +20,25 @@ class CustomRatingBarIndicator extends StatelessWidget {
         color: Colors.amber,
       ),
       itemCount: 5,
-      itemSize: size == CustomRatingBarIndicatorSize.small ? 15.0 : 30.0,
+      itemSize: getRatingBarIndicatorSize(),
       direction: Axis.horizontal,
     );
+  }
+
+  double getRatingBarIndicatorSize() {
+    switch (size) {
+      case CustomRatingBarIndicatorSize.small:
+        return 15.0;
+      case CustomRatingBarIndicatorSize.medium:
+        return 20.0;
+      case CustomRatingBarIndicatorSize.large:
+        return 30.0;
+    }
   }
 }
 
 enum CustomRatingBarIndicatorSize {
   small,
+  medium,
   large,
 }
