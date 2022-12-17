@@ -49,11 +49,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           ? Review.fromJson(data)
           : Review(
               rating: 0,
-              comfortRating: 0,
-              safetyRating: 0,
-              reliabilityRating: 0,
-              hospitalityRating: 0,
-              text: null,
               writerId: SupabaseManager.getCurrentProfile()!.id!,
               receiverId: widget.profile.id!,
             );
