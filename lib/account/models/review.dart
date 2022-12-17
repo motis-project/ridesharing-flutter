@@ -43,8 +43,9 @@ class Review extends Model implements Comparable<Review> {
       hospitalityRating: json['hospitality_rating'],
       text: json['text'],
       writerId: json['writer_id'],
-      receiverId: json['receiver_id'],
       writer: json.containsKey('writer') ? Profile.fromJson(json['writer']) : null,
+      receiverId: json['receiver_id'],
+      receiver: json.containsKey('receiver') ? Profile.fromJson(json['receiver']) : null,
     );
   }
 
