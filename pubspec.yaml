@@ -41,8 +41,11 @@ dependencies:
 
   # Handling .env files
   flutter_dotenv: ^5.0.2
+
+  # Progress state button
   progress_state_button: ^1.0.4
 
+  # Trip timelines
   timelines: ^0.1.0
 
   # Internationalization
