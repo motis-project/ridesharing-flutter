@@ -157,7 +157,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.add(ProfileWrapList(riders, title: 'Riders'));
       }
 
-      if (!_drive!.isFinished) {
+      if (!(_drive!.isFinished || _drive!.cancelled)) {
         widgets.add(const SizedBox(height: 10));
         Widget deleteButton = BigButton(
           text: "CANCEL DRIVE",
