@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/profile_feature.dart';
 import 'package:flutter_app/account/models/review.dart';
+import 'package:flutter_app/account/pages/write_review_page.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
-import 'package:flutter_app/util/profiles/custom_rating_bar_indicator.dart';
+import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:flutter_app/util/profiles/profile_row.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
+import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
@@ -106,18 +108,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       widgets.add(ProfileWrapList(riders, title: "Riders"));
 
-      if (ride.status == RideStatus.preview) {
-        Widget requestButton = BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
-        widgets.add(const Divider(thickness: 1));
-        widgets.add(requestButton);
-      } else if (ride.status == RideStatus.approved) {
-        Widget cancelButton = BigButton(text: "DELETE", onPressed: _showCancelDialog, color: Colors.red);
-        widgets.add(const Divider(thickness: 1));
-        widgets.add(cancelButton);
-      } else if (ride.status == RideStatus.pending) {
-        Widget requestButton = const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
-        widgets.add(const Divider(thickness: 1));
-        widgets.add(requestButton);
+      Widget? primaryButton = _buildPrimaryButton(driver);
+      if (primaryButton != null) {
+        widgets.add(const SizedBox(height: 10));
+        widgets.add(primaryButton);
+        widgets.add(const SizedBox(height: 5));
       }
     } else {
       widgets.add(const SizedBox(height: 10));
@@ -180,7 +175,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
               children: [
                 Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
                 const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarIndicatorSize.large),
+                CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
                 Expanded(
                   child: Text(
                     "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
@@ -304,6 +299,33 @@ class _RideDetailPageState extends State<RideDetailPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
+  }
+
+  Widget? _buildPrimaryButton(Profile driver) {
+    switch (_ride!.status) {
+      case RideStatus.preview:
+        return BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
+      case RideStatus.approved:
+        return _ride!.isFinished
+            ? BigButton(
+                text: "RATE DRIVER",
+                onPressed: () => _navigateToRatePage(driver),
+                color: Theme.of(context).primaryColor,
+              )
+            : BigButton(text: "DELETE", onPressed: _showCancelDialog, color: Colors.red);
+      case RideStatus.pending:
+        return const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
+      default:
+        return null;
+    }
+  }
+
+  void _navigateToRatePage(Profile driver) {
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(builder: (context) => WriteReviewPage(driver)),
+        )
+        .then((value) => loadRide());
   }
 
   void _showCancelDialog() {
