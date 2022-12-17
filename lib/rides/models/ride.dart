@@ -101,10 +101,6 @@ class Ride extends Trip {
     return rider!;
   }
 
-  bool overlapsWith(Ride other) {
-    return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
-  }
-
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
     await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
