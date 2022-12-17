@@ -98,15 +98,17 @@ class _RideDetailPageState extends State<RideDetailPage> {
       widgets.add(const Divider(thickness: 1));
 
       widgets.add(_buildReviewsColumn(driver));
-      widgets.add(const Divider(thickness: 1));
 
-      widgets.add(_buildFeaturesColumn(driver));
       if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
+      widgets.add(_buildFeaturesColumn(driver));
 
-      Set<Profile> riders =
-          ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
+      if (ride.status != RideStatus.preview && ride.status != RideStatus.pending) {
+        widgets.add(const Divider(thickness: 1));
 
-      widgets.add(ProfileWrapList(riders, title: "Riders"));
+        Set<Profile> riders =
+            ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
+        widgets.add(ProfileWrapList(riders, title: "Riders"));
+      }
 
       Widget? primaryButton = _buildPrimaryButton(driver);
       if (primaryButton != null) {
