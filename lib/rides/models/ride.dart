@@ -40,7 +40,7 @@ class Ride extends Trip {
         seats: seats,
         riderId: riderId,
         approved: false,
-        driveId: drive.driverId!,
+        driveId: drive.driverId,
         drive: drive,
         price: price);
   }
