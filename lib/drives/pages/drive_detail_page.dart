@@ -157,20 +157,21 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.add(ProfileWrapList(riders, title: 'Riders'));
       }
 
-      widgets.add(const Divider(thickness: 1));
-      Widget deleteButton = BigButton(
-        text: "CANCEL DRIVE",
-        onPressed: _showCancelDialog,
-        color: Theme.of(context).errorColor,
-      );
-      widgets.add(deleteButton);
-      widgets.add(const SizedBox(height: 5));
+      if (!_drive!.isFinished) {
+        widgets.add(const SizedBox(height: 10));
+        Widget deleteButton = BigButton(
+          text: "CANCEL DRIVE",
+          onPressed: _showCancelDialog,
+          color: Theme.of(context).errorColor,
+        );
+        widgets.add(deleteButton);
+        widgets.add(const SizedBox(height: 5));
+      }
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    print(_drive?.cancelled);
     Widget content = Column(
       children: [
         if (_drive?.cancelled ?? false)

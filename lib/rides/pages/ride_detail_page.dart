@@ -314,7 +314,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 onPressed: () => _navigateToRatePage(driver),
                 color: Theme.of(context).primaryColor,
               )
-            : BigButton(text: "DELETE", onPressed: _showCancelDialog, color: Colors.red);
+            : BigButton(text: "CANCEL RIDE", onPressed: _showCancelDialog, color: Colors.red);
       case RideStatus.pending:
         return const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
       default:
