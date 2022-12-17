@@ -46,7 +46,7 @@ dependencies:
   timelines: ^0.1.0
 
   # Internationalization
-  intl: ^0.17.0
+  intl: ^0.18.0
 
 #For the shimmer effect
   shimmer: ^2.0.0
