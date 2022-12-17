@@ -9,7 +9,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
-import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/review_detail.dart';
@@ -88,7 +88,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
         },
         child: Column(
           children: [
-            ProfileRow(driver),
+            ProfileWidget(driver),
             const SizedBox(height: 10),
             if (driver.description != null && driver.description!.isNotEmpty) Text(driver.description!),
           ],

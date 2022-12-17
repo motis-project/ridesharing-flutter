@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 
-class ProfileRow extends StatelessWidget {
+class ProfileWidget extends StatelessWidget {
   final Profile profile;
-  final bool showChatButton;
   final double size;
 
-  const ProfileRow(
+  const ProfileWidget(
     this.profile, {
     super.key,
-    this.showChatButton = false,
     this.size = 20,
   });
 

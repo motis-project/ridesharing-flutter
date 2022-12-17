@@ -5,7 +5,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
-import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
@@ -266,7 +266,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                       ),
                     ),
                   ),
-                  ProfileRow(profile, size: 15),
+                  ProfileWidget(profile, size: 15),
                   const Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,

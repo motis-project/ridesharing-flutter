@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/util/loading_button.dart';
-import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -61,7 +61,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: ProfileRow(widget.profile),
+        title: ProfileWidget(widget.profile),
       ),
       body: Center(
         child: _review == null

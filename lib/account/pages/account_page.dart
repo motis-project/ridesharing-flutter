@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/pages/settings_page.dart';
-import 'package:flutter_app/util/profiles/profile_row.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class AccountPage extends StatefulWidget {
@@ -30,7 +30,7 @@ class _AccountPageState extends State<AccountPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ProfileRow(
+                  ProfileWidget(
                     SupabaseManager.getCurrentProfile()!,
                     size: 25,
                   ),
