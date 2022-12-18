@@ -39,9 +39,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
-  AddressSuggestion? _startSuggestion;
-  AddressSuggestion? _destinationSuggestion;
-
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   late final DateTime _firstDate;
@@ -191,12 +188,12 @@ class _SearchRideFormState extends State<SearchRideForm> {
           children: [
             AddressSearchField.start(
               controller: _startController,
-              onSelected: (suggestion) => _startSuggestion = suggestion,
+              onSelected: (suggestion) {},
             ),
             const SizedBox(height: 15),
             AddressSearchField.destination(
               controller: _destinationController,
-              onSelected: (suggestion) => _destinationSuggestion = suggestion,
+              onSelected: (suggestion) {},
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 15),
