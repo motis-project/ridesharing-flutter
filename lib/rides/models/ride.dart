@@ -31,7 +31,7 @@ class Ride extends Trip {
   });
 
   factory Ride.fromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
-      int riderId, double price){
+      int riderId, double price) {
     return Ride(
         start: start,
         end: end,

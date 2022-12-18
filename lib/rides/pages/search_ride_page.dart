@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/rides/models/search_helper.dart';
+import 'package:flutter_app/util/format_helper.dart';
 import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
 
 class SearchRidePage extends StatefulWidget {
-  const SearchRidePage({Key? key}) : super(key: key);
+  const SearchRidePage({super.key});
 
   @override
   State<SearchRidePage> createState() => _SearchRidePageState();
 }
 
 class _SearchRidePageState extends State<SearchRidePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search Ride'),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(),
+        child: SingleChildScrollView(child: SearchRideForm()),
+      ),
+    );
+  }
+}
+
+class SearchRideForm extends StatefulWidget {
+  const SearchRideForm({super.key});
+
+  @override
+  State<SearchRideForm> createState() => _SearchRideFormState();
+}
+
+class _SearchRideFormState extends State<SearchRideForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
@@ -33,8 +55,8 @@ class _SearchRidePageState extends State<SearchRidePage> {
     super.initState();
     _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
-    _dateController.text = SearchHelper.formatDate(_selectedDate);
-    _timeController.text = SearchHelper.formatTime(_selectedDate);
+    _dateController.text = FormatHelper.formatDate(_selectedDate);
+    _timeController.text = FormatHelper.formatTime(_selectedDate);
     _dropdownValue = list.first;
   }
 
@@ -59,7 +81,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         if (value != null) {
           _selectedDate =
               DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = SearchHelper.formatTime(_selectedDate);
+          _timeController.text = FormatHelper.formatTime(_selectedDate);
         }
       });
     });
@@ -75,7 +97,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = SearchHelper.formatDate(_selectedDate);
+          _dateController.text = FormatHelper.formatDate(_selectedDate);
         }
       });
     });
@@ -102,96 +124,101 @@ class _SearchRidePageState extends State<SearchRidePage> {
     }
   }
 
+  Widget datePicker() {
+    return Expanded(
+      child: TextFormField(
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "Date",
+        ),
+        readOnly: true,
+        onTap: _showDatePicker,
+        controller: _dateController,
+      ),
+    );
+  }
+
+  Widget timePicker() {
+    return Expanded(
+      child: TextFormField(
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "Time",
+        ),
+        readOnly: true,
+        onTap: _showTimePicker,
+        controller: _timeController,
+        validator: _timeValidator,
+      ),
+    );
+  }
+
+  Widget seatsPicker() {
+    return Expanded(
+      child: SizedBox(
+        //todo: add same height as time&date.
+        height: 60,
+        child: DropdownButtonFormField<int>(
+          value: _dropdownValue,
+          icon: const Icon(Icons.arrow_downward),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: "Seats",
+          ),
+          onChanged: (int? value) {
+            setState(() {
+              _dropdownValue = value!;
+            });
+          },
+          items: list.map<DropdownMenuItem<int>>((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Ride'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-              child: Column(
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+        child: Column(
+          children: [
+            AddressSearchField.start(
+              controller: _startController,
+              onSelected: (suggestion) => _startSuggestion = suggestion,
+            ),
+            const SizedBox(height: 15),
+            AddressSearchField.destination(
+              controller: _destinationController,
+              onSelected: (suggestion) => _destinationSuggestion = suggestion,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AddressSearchField.start(
-                    controller: _startController,
-                    onSelected: (suggestion) => _startSuggestion = suggestion,
-                  ),
-                  const SizedBox(height: 15),
-                  AddressSearchField.destination(
-                    controller: _destinationController,
-                    onSelected: (suggestion) => _destinationSuggestion = suggestion,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Date",
-                            ),
-                            readOnly: true,
-                            onTap: _showDatePicker,
-                            controller: _dateController,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Time",
-                            ),
-                            readOnly: true,
-                            onTap: _showTimePicker,
-                            controller: _timeController,
-                            validator: _timeValidator,
-                          ),
-                        ),
-                        const SizedBox(width: 50),
-                        Expanded(
-                          child: SizedBox(
-                            //todo: add same height as time&date.
-                            height: 60,
-                            child: DropdownButtonFormField<int>(
-                              value: _dropdownValue,
-                              icon: const Icon(Icons.arrow_downward),
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Seats",
-                              ),
-                              onChanged: (int? value) {
-                                setState(() {
-                                  _dropdownValue = value!;
-                                });
-                              },
-                              items: list.map<DropdownMenuItem<int>>((int value) {
-                                return DropdownMenuItem<int>(
-                                  value: value,
-                                  child: Text(value.toString()),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  //Search
-                  SubmitButton(
-                    text: "Search",
-                    onPressed: _onSubmit,
-                  ),
+                  datePicker(),
+                  timePicker(),
+                  const SizedBox(width: 50),
+                  seatsPicker(),
                 ],
               ),
             ),
-          ),
+            //Search
+            Hero(
+              tag: "SearchButton",
+              child: SubmitButton(
+                text: "Search",
+                onPressed: _onSubmit,
+              ),
+            ),
+          ],
         ),
       ),
     );

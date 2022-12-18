@@ -71,7 +71,7 @@ class _WelcomePageState extends State<WelcomePage> {
             tag: "SearchButton",
             transitionOnUserGestures: true,
             child: BigButton(
-              text: "Search",
+              text: "Look for Rides",
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SearchRidePage()),
               ),
