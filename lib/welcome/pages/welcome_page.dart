@@ -114,7 +114,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   horizontal: 20,
                   vertical: 10,
                 ),
-                child: height > 300
+                child: height > 378
                     ? Column(
                         children: [
                           SizedBox(height: height / 2, child: carousel),
