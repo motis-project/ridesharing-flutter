@@ -118,7 +118,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     loadRides();
   }
 
-  FixedTimeline searchFieldViewer() {
+  FixedTimeline buildSearchFieldViewer() {
     return FixedTimeline(theme: CustomTimelineTheme.of(context), children: [
       TimelineTile(
         contents: Padding(
@@ -126,16 +126,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              locationPicker(_startController),
+              buildLocationPicker(_startController),
               const SizedBox(width: 20),
               SizedBox(
                 width: 65,
-                child: timePicker(),
+                child: buildTimePicker(),
               ),
               const SizedBox(width: 5),
               SizedBox(
                 width: 110,
-                child: datePicker(),
+                child: buildDatePicker(),
               ),
             ],
           ),
@@ -151,9 +151,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              locationPicker(_destinationController),
+              buildLocationPicker(_destinationController),
               const SizedBox(width: 90),
-              seatsPicker(),
+              buildSeatsPicker(),
             ],
           ),
         ),
@@ -165,7 +165,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     ]);
   }
 
-  Widget datePicker() {
+  Widget buildDatePicker() {
     return TextFormField(
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
@@ -180,7 +180,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget timePicker() {
+  Widget buildTimePicker() {
     return TextFormField(
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
@@ -196,7 +196,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget seatsPicker() {
+  Widget buildSeatsPicker() {
     return SizedBox(
       height: 60,
       width: 110,
@@ -220,7 +220,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget locationPicker(TextEditingController controller) {
+  Widget buildLocationPicker(TextEditingController controller) {
     return Expanded(
       child: ElevatedButton(
         onPressed: () async {
@@ -242,7 +242,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget searchCardList() {
+  Widget buildSearchCardList() {
     return _rideSuggestions == null
         ? const Center(child: CircularProgressIndicator())
         : Expanded(
@@ -259,7 +259,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           );
   }
 
-  Widget filterPicker() {
+  Widget buildFilterPicker() {
     return SizedBox(
       height: 20,
       child: ElevatedButton(
@@ -282,11 +282,11 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            searchFieldViewer(),
+            buildSearchFieldViewer(),
             const SizedBox(height: 5),
-            filterPicker(),
+            buildFilterPicker(),
             const SizedBox(height: 5),
-            searchCardList(),
+            buildSearchCardList(),
           ],
         ),
       ),

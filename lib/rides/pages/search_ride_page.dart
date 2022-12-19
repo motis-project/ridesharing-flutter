@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/format_helper.dart';
 import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
-import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/submit_button.dart';
 
 class SearchRidePage extends StatefulWidget {
@@ -121,7 +120,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
     }
   }
 
-  Widget datePicker() {
+  Widget buildDatePicker() {
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(
@@ -135,7 +134,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
     );
   }
 
-  Widget timePicker() {
+  Widget buildTimePicker() {
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(
@@ -150,7 +149,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
     );
   }
 
-  Widget seatsPicker() {
+  Widget buildSeatsPicker() {
     return Expanded(
       child: SizedBox(
         //todo: add same height as time&date.
@@ -200,10 +199,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  datePicker(),
-                  timePicker(),
+                  buildDatePicker(),
+                  buildTimePicker(),
                   const SizedBox(width: 50),
-                  seatsPicker(),
+                  buildSeatsPicker(),
                 ],
               ),
             ),

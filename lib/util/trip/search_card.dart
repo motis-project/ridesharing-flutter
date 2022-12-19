@@ -9,7 +9,7 @@ import '../../rides/pages/search_detail_page.dart';
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});
 
-  FixedTimeline showRoute(context) {
+  FixedTimeline buildRoute(context) {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: [
@@ -47,7 +47,7 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget showDate() {
+  Widget buildDate() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -57,7 +57,7 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget showProfile(driver) {
+  Widget buildProfile(driver) {
     return Row(
       children: [
         CircleAvatar(
@@ -69,7 +69,7 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget showRanking() {
+  Widget buildRanking() {
     return Row(
       children: const [
         Text("3"),
@@ -81,18 +81,18 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget showCardInfo(context, driver) {
+  Widget buildCardInfo(context, driver) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(12.0),
-          child: showDate(),
+          child: buildDate(),
         ),
         const Divider(),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: showRoute(context),
+          child: buildRoute(context),
         ),
         const Divider(),
         Padding(
@@ -100,8 +100,8 @@ class SearchCard extends TripCard<Ride> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              showProfile(driver),
-              showRanking(),
+              buildProfile(driver),
+              buildRanking(),
             ],
           ),
         ),
@@ -120,7 +120,7 @@ class SearchCard extends TripCard<Ride> {
             builder: (context) => const SearchDetailPage(),
           ),
         ),
-        child: showCardInfo(context, driver),
+        child: buildCardInfo(context, driver),
       ),
     );
   }
