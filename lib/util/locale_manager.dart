@@ -24,7 +24,9 @@ class LocaleManager with ChangeNotifier {
     });
   }
 
-  void setCurrentLocale(Locale locale) {
+  void setCurrentLocale(Locale? locale) {
+    if (locale == null) return;
+
     currentLocale = locale;
     StorageManager.saveData('locale', locale.languageCode);
     notifyListeners();

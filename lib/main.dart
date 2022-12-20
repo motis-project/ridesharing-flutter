@@ -51,7 +51,7 @@ class _AppWrapperState extends State<AppWrapper> {
       debugShowCheckedModeBanner: false,
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
-      themeMode: themeManager.themeMode,
+      themeMode: themeManager.currentThemeMode,
       localizationsDelegates: localeManager.localizationsDelegates,
       supportedLocales: localeManager.supportedLocales,
       locale: localeManager.currentLocale,

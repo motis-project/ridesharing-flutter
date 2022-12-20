@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/locale_manager.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/theme_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,9 +16,6 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  ThemeMode? _currentTheme = themeManager.themeMode;
-  Locale? _currentLanguage;
-
   void signOut() {
     supabaseClient.auth.signOut();
   }
@@ -30,23 +28,17 @@ class _AccountPageState extends State<AccountPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
-              3,
+              ThemeMode.values.length,
               (index) => RadioListTile(
                   title: Text(
-                    [
-                      AppLocalizations.of(context)!.pageAccountThemesSystem,
-                      AppLocalizations.of(context)!.pageAccountThemesLight,
-                      AppLocalizations.of(context)!.pageAccountThemesDark
-                    ][index],
+                    ThemeMode.values[index].getName(context),
                   ),
-                  value: [ThemeMode.system, ThemeMode.light, ThemeMode.dark][index],
-                  groupValue: _currentTheme,
+                  value: ThemeMode.values[index],
+                  groupValue: themeManager.currentThemeMode,
                   onChanged: (ThemeMode? value) {
                     setState(() {
-                      _currentTheme = value;
-                      changeTheme(value);
+                      themeManager.setTheme(value);
                     });
-                    this.setState(() {});
                   }),
             ),
           ),
@@ -57,7 +49,6 @@ class _AccountPageState extends State<AccountPage> {
 
   void changeTheme(ThemeMode? themeMode) {
     if (themeMode == null) return;
-    themeManager.setTheme(themeMode);
   }
 
   void showLanguageDialog(BuildContext context) {
@@ -68,14 +59,14 @@ class _AccountPageState extends State<AccountPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
-              2,
+              localeManager.supportedLocales.length,
               (index) => RadioListTile(
                 title: Text(localeManager.supportedLocales.map((e) => e.languageName).toList()[index]),
                 value: localeManager.supportedLocales[index],
                 groupValue: localeManager.currentLocale,
-                onChanged: (Object? value) {
+                onChanged: (Locale? value) {
                   setState(() {
-                    localeManager.setCurrentLocale((value as Locale));
+                    localeManager.setCurrentLocale(value);
                   });
                 },
               ),
@@ -88,53 +79,32 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    _currentLanguage ??= Localizations.localeOf(context);
-
-    Widget profilePic = CircleAvatar(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      child: const Text('U'),
-    );
-
-    Widget userName = Column(
-      children: <Widget>[
-        Text(SupabaseManager.getCurrentProfile()!.username),
-        TextButton.icon(
-          onPressed: signOut,
-          icon: const Icon(Icons.logout),
-          label: Text(AppLocalizations.of(context)!.pageAccountSignOut),
-        )
-      ],
-    );
-
-    Widget userRow = InkWell(
-      onTap: () => {},
-      child: Row(
-        children: <Widget>[profilePic, userName],
-      ),
-    );
-
-    String themeText;
-    switch (_currentTheme) {
-      case ThemeMode.system:
-        themeText = AppLocalizations.of(context)!.pageAccountThemesSystem;
-        break;
-      case ThemeMode.light:
-        themeText = AppLocalizations.of(context)!.pageAccountThemesLight;
-        break;
-      case ThemeMode.dark:
-        themeText = AppLocalizations.of(context)!.pageAccountThemesDark;
-        break;
-      default:
-        themeText = "";
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Account"),
+        title: Text(AppLocalizations.of(context)!.pageAccountTitle),
       ),
       body: ListView(
         children: [
-          userRow,
+          InkWell(
+            onTap: () => {},
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ProfileWidget(
+                    SupabaseManager.getCurrentProfile()!,
+                    size: 25,
+                  ),
+                  TextButton.icon(
+                    onPressed: signOut,
+                    icon: const Icon(Icons.logout),
+                    label: Text(AppLocalizations.of(context)!.pageAccountSignOut),
+                  ),
+                ],
+              ),
+            ),
+          ),
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(AppLocalizations.of(context)!.pageAccountLanguage),
@@ -144,7 +114,7 @@ class _AccountPageState extends State<AccountPage> {
           ListTile(
             leading: const Icon(Icons.brightness_medium),
             title: Text(AppLocalizations.of(context)!.pageAccountDesign),
-            subtitle: Text(themeText),
+            subtitle: Text(themeManager.currentThemeMode.getName(context)),
             onTap: () => showDesignDialog(context),
           ),
           ListTile(

@@ -9,12 +9,16 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
-  List<FAQ> faqs = [
-    FAQ(question: "What can this app do?", answer: "With the MOTIS Ride App, you can do a lot of useful stuff!"),
-    FAQ(
-        question: "Where are the accessibility settings?",
-        answer:
-            "This app supports a multitude of accessibility settings offered by the OS. Go to your OS's settings to enable Screen Reader or large fonts!"),
+  List<Widget> faqCards = const [
+    FAQCard(
+      question: "What can this app do?",
+      answer: "With the MOTIS Ride App, you can do a lot of useful stuff!",
+    ),
+    FAQCard(
+      question: "Where are the accessibility settings?",
+      answer:
+          "This app supports a multitude of accessibility settings offered by the OS. Go to your OS's settings to enable Screen Reader or large fonts!",
+    ),
   ];
 
   @override
@@ -26,8 +30,7 @@ class _HelpPageState extends State<HelpPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: ListView(
-          // ignore: unnecessary_cast
-          children: (faqs.map((e) => e.card as Widget).toList()) +
+          children: faqCards +
               [
                 const Divider(
                   thickness: 1,
@@ -41,14 +44,6 @@ class _HelpPageState extends State<HelpPage> {
       ),
     );
   }
-}
-
-class FAQ {
-  final String question;
-  final String answer;
-  final FAQCard card;
-
-  FAQ({required this.question, required this.answer}) : card = FAQCard(question: question, answer: answer);
 }
 
 class FAQCard extends StatefulWidget {
@@ -81,21 +76,22 @@ class _FAQCardState extends State<FAQCard> {
           child: SizedBox(
             width: double.infinity,
             child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: _expanded
-                    ? Column(
-                        children: [
-                          question,
-                          const Divider(
-                            thickness: 1,
-                          ),
-                          Text(
-                            widget.answer,
-                            textAlign: TextAlign.start,
-                          ),
-                        ],
-                      )
-                    : question),
+              padding: const EdgeInsets.all(10),
+              child: _expanded
+                  ? Column(
+                      children: [
+                        question,
+                        const Divider(
+                          thickness: 1,
+                        ),
+                        Text(
+                          widget.answer,
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    )
+                  : question,
+            ),
           ),
         ),
       ),
