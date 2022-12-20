@@ -44,7 +44,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         .limit(1)
         .maybeSingle();
     setState(() {
-      print(data);
       _review = data != null
           ? Review.fromJson(data)
           : Review(
