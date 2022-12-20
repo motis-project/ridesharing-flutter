@@ -3,7 +3,6 @@ import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../rides/models/ride.dart';

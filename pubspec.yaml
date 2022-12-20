@@ -52,14 +52,14 @@ dependencies:
 
   # Internationalization
   intl: ^0.17.0
+  flutter_localizations:
+    sdk: flutter
 
   # Local saving
   shared_preferences: ^2.0.15
 
   #For the shimmer effect
   shimmer: ^2.0.0
-  flutter_localizations:
-    sdk: flutter
 
 dev_dependencies:
   flutter_test:
