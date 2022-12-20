@@ -1,6 +1,13 @@
 {
     "@@locale": "de",
 
+    "pageAccountTitle": "Account",
+    "pageAccountSignOut": "Ausloggen",
+    "pageAccountLanguage": "Sprache",
+    "pageAccountDesign": "Design",
+    "pageAccountHelp": "Hilfe",
+    "pageAccountAbout": "Über uns",
+  
     "pageAccountThemesSystem": "System",
     "pageAccountThemesLight": "Hell",
     "pageAccountThemesDark": "Dunkel",

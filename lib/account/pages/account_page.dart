@@ -101,7 +101,7 @@ class _AccountPageState extends State<AccountPage> {
         TextButton.icon(
           onPressed: signOut,
           icon: const Icon(Icons.logout),
-          label: const Text("Log out"),
+          label: Text(AppLocalizations.of(context)!.pageAccountSignOut),
         )
       ],
     );
@@ -137,19 +137,19 @@ class _AccountPageState extends State<AccountPage> {
           userRow,
           ListTile(
             leading: const Icon(Icons.language),
-            title: const Text('Language'),
+            title: Text(AppLocalizations.of(context)!.pageAccountLanguage),
             subtitle: Text(localeManager.currentLocale.languageName),
             onTap: () => showLanguageDialog(context),
           ),
           ListTile(
             leading: const Icon(Icons.brightness_medium),
-            title: const Text('Design'),
+            title: Text(AppLocalizations.of(context)!.pageAccountDesign),
             subtitle: Text(themeText),
             onTap: () => showDesignDialog(context),
           ),
           ListTile(
             leading: const Icon(Icons.help),
-            title: const Text('Help'),
+            title: Text(AppLocalizations.of(context)!.pageAccountHelp),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const HelpPage(),
@@ -158,7 +158,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text('About'),
+            title: Text(AppLocalizations.of(context)!.pageAccountAbout),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const AboutPage(),

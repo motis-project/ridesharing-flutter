@@ -1,9 +1,17 @@
 {
   "@@locale": "en",
 
+  "pageAccountTitle": "Account",
+  "pageAccountSignOut": "Sign Out",
+  "pageAccountLanguage": "Language",
+  "pageAccountDesign": "Design",
+  "pageAccountHelp": "Help",
+  "pageAccountAbout": "About",
+
   "pageAccountThemesSystem": "System",
   "pageAccountThemesLight": "Light",
-  "pageAccountThemesDark": "Dark",
+  "pageAccountThemesDark": "Dark",  
+
 
   "appName": "Motis Ride-Sharing App"
 }
