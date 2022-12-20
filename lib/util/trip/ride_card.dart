@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
@@ -23,7 +24,7 @@ class RideCard extends TripCard<Ride> {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Text(formatDate(trip.startTime)),
+              child: Text(localeManager.formatDate(trip.startTime)),
             ),
             const Divider(),
             FixedTimeline(
@@ -35,7 +36,7 @@ class RideCard extends TripCard<Ride> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                        Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
                       ],
                     ),
                   ),
@@ -50,7 +51,7 @@ class RideCard extends TripCard<Ride> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${formatTime(trip.endTime)}  ${trip.end}'),
+                        Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
                       ],
                     ),
                   ),

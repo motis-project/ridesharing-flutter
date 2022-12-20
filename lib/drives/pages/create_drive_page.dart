@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:intl/intl.dart';
@@ -67,7 +68,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         if (value != null) {
           _selectedDate =
               DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = _formatTime(_selectedDate);
+          _timeController.text = localeManager.formatTime(_selectedDate);
         }
       });
     });
@@ -83,7 +84,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = _formatDate(_selectedDate);
+          _dateController.text = localeManager.formatDate(_selectedDate);
         }
       });
     });
@@ -106,7 +107,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a drive on ${_formatDate(overlappingDrive.startTime)} at ${_formatDate(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}'),
+                'You already have a drive on ${localeManager.formatDate(overlappingDrive.startTime)} at ${localeManager.formatDate(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}',
+              ),
             ),
           );
           return;
@@ -118,7 +120,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'You already have a ride on ${_formatDate(overlappingRide.startTime)} at ${_formatDate(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}'),
+                'You already have a ride on ${localeManager.formatDate(overlappingRide.startTime)} at ${localeManager.formatDate(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}',
+              ),
             ),
           );
           return;
@@ -153,14 +156,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     }
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy').format(date);
-  }
-
-  String _formatTime(DateTime time) {
-    return DateFormat.Hm().format(time);
-  }
-
   String? _timeValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a time';
@@ -176,8 +171,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     super.initState();
     _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
-    _dateController.text = _formatDate(_selectedDate);
-    _timeController.text = _formatTime(_selectedDate);
     _dropdownValue = list.first;
   }
 
@@ -192,6 +185,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
   @override
   Widget build(BuildContext context) {
+    // This needs to happen on rebuild to make sure we pick up locale changes
+    _dateController.text = localeManager.formatDate(_selectedDate);
+    _timeController.text = localeManager.formatTime(_selectedDate);
+
     return Form(
       key: _formKey,
       child: Column(

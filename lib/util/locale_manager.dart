@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/storage_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 
 LocaleManager localeManager = LocaleManager();
 
@@ -27,6 +28,14 @@ class LocaleManager with ChangeNotifier {
     currentLocale = locale;
     StorageManager.saveData('locale', locale.languageCode);
     notifyListeners();
+  }
+
+  String formatDate(DateTime date) {
+    return DateFormat.yMd(currentLocale.languageCode).format(date);
+  }
+
+  String formatTime(DateTime time) {
+    return DateFormat.Hm(currentLocale.languageCode).format(time);
   }
 }
 
