@@ -1,9 +1,9 @@
 {
-  "@@locale" : "en",
+  "@@locale": "en",
 
-  "appName" : "MOTIS Ridesharing App"
-    "helloWorld": "Hello World!",
-    "@helloWorld": {
-      "description": "The conventional newborn programmer greeting"
-    }
+  "pageAccountThemesSystem": "System",
+  "pageAccountThemesLight": "Light",
+  "pageAccountThemesDark": "Dark",
+
+  "appName": "Motis Ride-Sharing App"
 }

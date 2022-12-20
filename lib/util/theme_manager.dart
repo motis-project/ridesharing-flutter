@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/storage_manager';
+import 'package:flutter_app/util/storage_manager.dart';
 import 'own_theme_fields.dart';
 
 ThemeManager themeManager = ThemeManager();

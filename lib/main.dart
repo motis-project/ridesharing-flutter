@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/theme_manager.dart';
 import 'package:flutter_app/welcome/pages/reset_password_page.dart';
 import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   await dotenv.load();
@@ -21,6 +20,7 @@ void main() async {
   );
   await SupabaseManager.reloadCurrentProfile();
   await themeManager.loadTheme();
+  await localeManager.loadCurrentLocale();
 
   runApp(const AppWrapper());
 }
@@ -39,6 +39,9 @@ class _AppWrapperState extends State<AppWrapper> {
     themeManager.addListener(
       () => setState(() {}),
     );
+    localeManager.addListener(
+      () => setState(() {}),
+    );
   }
 
   @override
@@ -49,8 +52,9 @@ class _AppWrapperState extends State<AppWrapper> {
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
       themeMode: themeManager.themeMode,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: localeManager.localizationsDelegates,
+      supportedLocales: localeManager.supportedLocales,
+      locale: localeManager.currentLocale,
       home: const AuthApp(),
     );
   }

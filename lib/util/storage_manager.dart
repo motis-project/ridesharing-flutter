@@ -9,8 +9,6 @@ class StorageManager {
       prefs.setString(key, value);
     } else if (value is bool) {
       prefs.setBool(key, value);
-    } else {
-      print("Invalid Type");
     }
   }
 

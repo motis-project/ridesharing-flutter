@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/theme_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -31,7 +32,13 @@ class _AccountPageState extends State<AccountPage> {
             children: List.generate(
               3,
               (index) => RadioListTile(
-                  title: Text(["System setting", "Light", "Dark"][index]),
+                  title: Text(
+                    [
+                      AppLocalizations.of(context)!.pageAccountThemesSystem,
+                      AppLocalizations.of(context)!.pageAccountThemesLight,
+                      AppLocalizations.of(context)!.pageAccountThemesDark
+                    ][index],
+                  ),
                   value: [ThemeMode.system, ThemeMode.light, ThemeMode.dark][index],
                   groupValue: _currentTheme,
                   onChanged: (ThemeMode? value) {
@@ -63,31 +70,20 @@ class _AccountPageState extends State<AccountPage> {
             children: List.generate(
               2,
               (index) => RadioListTile(
-                  title: Text(AppLocalizations.supportedLocales.map((e) => languageName(e)).toList()[index]),
-                  value: AppLocalizations.supportedLocales[index],
-                  groupValue: _currentLanguage,
-                  onChanged: (Locale? value) {
-                    setState(() {
-                      _currentLanguage = value;
-                    });
-                    this.setState(() {});
-                  }),
+                title: Text(localeManager.supportedLocales.map((e) => e.languageName).toList()[index]),
+                value: localeManager.supportedLocales[index],
+                groupValue: localeManager.currentLocale,
+                onChanged: (Object? value) {
+                  setState(() {
+                    localeManager.setCurrentLocale((value as Locale));
+                  });
+                },
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  String languageName(Locale? language) {
-    switch (language?.languageCode) {
-      case "de":
-        return "Deutsch";
-      case "en":
-        return "English";
-      default:
-        return "";
-    }
   }
 
   @override
@@ -120,19 +116,17 @@ class _AccountPageState extends State<AccountPage> {
     String themeText;
     switch (_currentTheme) {
       case ThemeMode.system:
-        themeText = "System setting";
+        themeText = AppLocalizations.of(context)!.pageAccountThemesSystem;
         break;
       case ThemeMode.light:
-        themeText = "Light";
+        themeText = AppLocalizations.of(context)!.pageAccountThemesLight;
         break;
       case ThemeMode.dark:
-        themeText = "Dark";
+        themeText = AppLocalizations.of(context)!.pageAccountThemesDark;
         break;
       default:
         themeText = "";
     }
-
-    String languageText = languageName(_currentLanguage);
 
     return Scaffold(
       appBar: AppBar(
@@ -144,7 +138,7 @@ class _AccountPageState extends State<AccountPage> {
           ListTile(
             leading: const Icon(Icons.language),
             title: const Text('Language'),
-            subtitle: Text(languageText),
+            subtitle: Text(localeManager.currentLocale.languageName),
             onTap: () => showLanguageDialog(context),
           ),
           ListTile(

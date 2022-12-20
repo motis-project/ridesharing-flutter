@@ -1,3 +1,9 @@
 {
-    "helloWorld": "Hallo Welt!"
+    "@@locale": "de",
+
+    "pageAccountThemesSystem": "System",
+    "pageAccountThemesLight": "Hell",
+    "pageAccountThemesDark": "Dunkel",
+
+    "appName": "Motis Mitfahr-App"
 }
