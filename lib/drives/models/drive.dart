@@ -1,9 +1,13 @@
+import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
 
 class Drive extends Trip {
+  bool cancelled;
+
   final int driverId;
+  final Profile? driver;
 
   final List<Ride>? rides;
 
@@ -15,7 +19,9 @@ class Drive extends Trip {
     required super.end,
     required super.endTime,
     required super.seats,
+    this.cancelled = false,
     required this.driverId,
+    this.driver,
     this.rides,
   });
 
@@ -29,7 +35,9 @@ class Drive extends Trip {
       end: json['end'],
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
+      cancelled: json['cancelled'],
       driverId: json['driver_id'],
+      driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
     );
   }
@@ -44,6 +52,7 @@ class Drive extends Trip {
       'start_time': startTime.toString(),
       'end': end,
       'end_time': endTime.toString(),
+      'cancelled': cancelled,
       'seats': seats,
       'driver_id': driverId,
     };
@@ -97,7 +106,9 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
-  void cancel() {
-    // TODO: implement cancel
+  Future<void> cancel() async {
+    cancelled = true;
+    await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
+    await supabaseClient.from('rides').update({'status': RideStatus.cancelledByDriver.index}).eq('drive_id', id);
   }
 }

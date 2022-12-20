@@ -6,11 +6,13 @@ import '../../drives/models/drive.dart';
 
 class Ride extends Trip {
   final double? price;
-  final bool approved;
+  RideStatus status;
 
   final int riderId;
+  Profile? rider;
+
   final int driveId;
-  final Profile? rider;
+  Drive? drive;
 
   Ride({
     super.id,
@@ -20,11 +22,12 @@ class Ride extends Trip {
     required super.end,
     required super.endTime,
     required super.seats,
-    required this.riderId,
     this.price,
-    required this.approved,
-    required this.driveId,
+    required this.status,
+    required this.riderId,
     this.rider,
+    required this.driveId,
+    this.drive,
   });
 
   @override
@@ -38,10 +41,11 @@ class Ride extends Trip {
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       price: json['price'],
-      approved: json['approved'],
-      driveId: json['drive_id'],
+      status: RideStatus.values[json['status']],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
+      driveId: json['drive_id'],
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
     );
   }
 
@@ -57,7 +61,6 @@ class Ride extends Trip {
       'end_time': endTime.toString(),
       'seats': seats,
       'price': price,
-      'approved': approved,
       'drive_id': driveId,
       'rider_id': riderId,
     };
@@ -84,7 +87,8 @@ class Ride extends Trip {
   }
 
   Future<Drive> getDrive() async {
-    return Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
+    drive ??= Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
+    return drive!;
   }
 
   Future<Profile> getDriver() async {
@@ -93,11 +97,25 @@ class Ride extends Trip {
   }
 
   Future<Profile> getRider() async {
-    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
+    rider ??= Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
+    return rider!;
+  }
+
+  Future<void> cancel() async {
+    status = RideStatus.cancelledByRider;
+    await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
   }
 
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+  }
+}
+
+enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cancelledByRider }
+
+extension RideStatusExtension on RideStatus {
+  bool isCancelled() {
+    return this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
   }
 }
