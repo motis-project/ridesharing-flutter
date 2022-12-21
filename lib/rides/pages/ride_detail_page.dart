@@ -18,6 +18,7 @@ import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
 
+import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
 
 class RideDetailPage extends StatefulWidget {
@@ -328,7 +329,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
         return BigButton(
             text: "REQUEST RIDE",
             onPressed: (() => {
-                  if (SupabaseManager.getCurrentProfile() == null) {_showRegisterDialog()} else {_showRequestDialog()}
+                  if (SupabaseManager.getCurrentProfile() == null) {_showLoginDialog()} else {_showRequestDialog()}
                 }),
             color: Theme.of(context).primaryColor);
       case RideStatus.approved:
@@ -420,28 +421,35 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void confirmRequest(Ride ride) async {
-    if (isAvailable()) {
-      //TODO: check if ride is still possible
+    if (isAvailable(ride.driveId)) {
+      //TODO: check if ride is still possible -> is the check necessary? or can we do it with rls?
       await supabaseClient.from('rides').insert(ride.toJson());
       //todo: send notification to driver
     }
   }
 
-  bool isAvailable() {
+  bool isAvailable(int driveId) {
     return true;
   }
 
-  _showRegisterDialog() {
+  _showLoginDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Please Register First"),
-        content: const Text("Please register first before requesting a ride."),
+        title: const Text("Please Login First"),
+        content:
+            const Text("Please login before requesting a ride. if you don't have an account yet, please create one."),
         actions: <Widget>[
           TextButton(
             child: const Text("Close"),
             onPressed: () => Navigator.of(context).pop(),
           ),
+          TextButton(
+              child: const Text("Login"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              }),
           TextButton(
             child: const Text("Register"),
             onPressed: () {
