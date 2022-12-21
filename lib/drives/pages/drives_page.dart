@@ -33,7 +33,7 @@ class _DrivesPageState extends State<DrivesPage> {
       context,
       'Drives',
       _drives,
-      (drive) => DriveCard(trip: drive),
+      (drive) => DriveCard(drive),
       FloatingActionButton(
         onPressed: onPressed,
         backgroundColor: Theme.of(context).colorScheme.primary,

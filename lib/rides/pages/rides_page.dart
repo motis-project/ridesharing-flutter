@@ -35,7 +35,7 @@ class _RidesPageState extends State<RidesPage> {
       context, //context
       'Rides', //title
       _rides, //trips
-      (ride) => RideCard(trip: ride), //tripCard
+      (ride) => RideCard(ride),
       FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

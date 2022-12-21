@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 abstract class TripCard<T extends Trip> extends StatelessWidget {
   final T trip;
-  const TripCard({super.key, required this.trip});
+  const TripCard(this.trip, {super.key});
 
   String formatTime(DateTime time) {
     return DateFormat.Hm().format(time.toLocal());

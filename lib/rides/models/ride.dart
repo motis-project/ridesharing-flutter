@@ -14,6 +14,9 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
+  final int driveId;
+  final Drive? drive;
+
   Ride({
     super.id,
     super.createdAt,
@@ -24,11 +27,27 @@ class Ride extends Trip {
     required super.seats,
     this.price,
     required this.status,
-    required this.riderId,
-    this.rider,
     required this.driveId,
     this.drive,
+    required this.riderId,
+    this.rider,
   });
+
+  factory Ride.fromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
+      int riderId, double price) {
+    return Ride(
+        start: start,
+        end: end,
+        startTime: startTime,
+        endTime: endTime,
+        seats: seats,
+        riderId: riderId,
+        status: RideStatus.preview,
+        driveId: drive.driverId,
+        drive: drive,
+        price: price,
+     );
+  }
 
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
@@ -61,6 +80,7 @@ class Ride extends Trip {
       'end_time': endTime.toString(),
       'seats': seats,
       'price': price,
+      'status': status.index,
       'drive_id': driveId,
       'rider_id': riderId,
     };

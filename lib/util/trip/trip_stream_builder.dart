@@ -17,7 +17,7 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
             if (snapshot.hasData) {
               List<T> trips = snapshot.data!;
               List<T> filteredTrips = filterTrips(trips);
-              return trips.isEmpty
+              return filteredTrips.isEmpty
                   ? Center(child: Text(emptyMessage))
                   : ListView.separated(
                       itemCount: filteredTrips.length,
