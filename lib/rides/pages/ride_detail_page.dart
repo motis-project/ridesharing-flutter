@@ -18,6 +18,8 @@ import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
 
+import '../../welcome/pages/register_page.dart';
+
 class RideDetailPage extends StatefulWidget {
   // One of these two must be set
   final int? id;
@@ -323,7 +325,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
   Widget? _buildPrimaryButton(Profile driver) {
     switch (_ride!.status) {
       case RideStatus.preview:
-        return BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
+        return BigButton(
+            text: "REQUEST RIDE",
+            onPressed: (() => {
+                  if (SupabaseManager.getCurrentProfile() == null) {_showRegisterDialog()} else {_showRequestDialog()}
+                }),
+            color: Theme.of(context).primaryColor);
       case RideStatus.approved:
         return _ride!.isFinished
             ? BigButton(
@@ -380,5 +387,71 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _cancelRide() async {
     await _ride?.cancel();
     setState(() {});
+  }
+
+  _showRequestDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Confirm Ride Request"),
+        content: const Text("Are you sure you want to request this ride?"),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: const Text("Confirm"),
+            onPressed: () {
+              confirmRequest(_ride!);
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).popUntil(((route) => route.isFirst));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Ride request confirmed!"),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void confirmRequest(Ride ride) async {
+    if (isAvailable()) {
+      //TODO: check if ride is still possible
+      await supabaseClient.from('rides').insert(ride.toJson());
+      //todo: send notification to driver
+    }
+  }
+
+  bool isAvailable() {
+    return true;
+  }
+
+  _showRegisterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Please Register First"),
+        content: const Text("Please register first before requesting a ride."),
+        actions: <Widget>[
+          TextButton(
+            child: const Text("Close"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text("Register"),
+            onPressed: () {
+              //todo: register
+              Navigator.of(context).pop();
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
