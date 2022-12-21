@@ -13,6 +13,8 @@ import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:timelines/timelines.dart';
 
+import 'drive_chat_page.dart';
+
 class DriveDetailPage extends StatefulWidget {
   final int id;
   final Drive? drive;
@@ -195,7 +197,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         title: const Text('Drive Detail'),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DriveChatPage(
+                  drive: _drive!,
+                ),
+              ),
+            ),
             icon: const Icon(Icons.chat),
           )
         ],
