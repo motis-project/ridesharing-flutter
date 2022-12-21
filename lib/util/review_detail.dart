@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
-import 'package:intl/intl.dart';
 
 import '../account/models/review.dart';
 import 'profiles/reviews/custom_rating_bar_indicator.dart';
