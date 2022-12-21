@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
+import 'package:flutter_app/rides/pages/ride_detail_page.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
-import '../../rides/pages/search_detail_page.dart';
 
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});
@@ -117,7 +117,7 @@ class SearchCard extends TripCard<Ride> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const SearchDetailPage(),
+            builder: (context) => RideDetailPage.fromRide(trip),
           ),
         ),
         child: buildCardInfo(context, driver),

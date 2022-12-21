@@ -5,6 +5,7 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/account/models/profile_feature.dart';
 import 'package:flutter_app/account/models/review.dart';
 import 'package:flutter_app/account/pages/write_review_page.dart';
+import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
@@ -44,9 +45,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Future<void> loadRide() async {
-    Map<String, dynamic> data = await supabaseClient.from('rides').select('''
-      *,
-      drive: drive_id(
+    Ride ride;
+    if (_ride?.status == RideStatus.preview) {
+      ride = _ride!;
+
+      Map<String, dynamic> data = await supabaseClient.from('drives').select('''
         *,
         driver: driver_id(
           *,
@@ -60,11 +63,33 @@ class _RideDetailPageState extends State<RideDetailPage> {
           *,
           rider: rider_id(*)
         )
-      )
-    ''').eq('id', widget.id).single();
+      ''').eq('id', ride.driveId).single();
+
+      ride.drive = Drive.fromJson(data);
+    } else {
+      Map<String, dynamic> data = await supabaseClient.from('rides').select('''
+        *,
+        drive: drive_id(
+          *,
+          driver: driver_id(
+            *,
+            reviews_received: reviews!reviews_receiver_id_fkey(
+              *,
+              writer: writer_id(*)
+            ),
+            profile_features(*)
+          ),
+          rides(
+            *,
+            rider: rider_id(*)
+          )
+        )
+      ''').eq('id', widget.id).single();
+      ride = Ride.fromJson(data);
+    }
 
     setState(() {
-      _ride = Ride.fromJson(data);
+      _ride = ride;
       _fullyLoaded = true;
     });
   }

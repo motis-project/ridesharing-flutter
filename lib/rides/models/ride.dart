@@ -14,9 +14,6 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
-  final int driveId;
-  final Drive? drive;
-
   Ride({
     super.id,
     super.createdAt,
@@ -33,20 +30,29 @@ class Ride extends Trip {
     this.rider,
   });
 
-  factory Ride.fromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
-      int riderId, double price) {
+  factory Ride.previewFromDrive(
+    Drive drive,
+    String start,
+    String end,
+    DateTime startTime,
+    DateTime endTime,
+    int seats,
+    int riderId,
+    double price,
+  ) {
     return Ride(
-        start: start,
-        end: end,
-        startTime: startTime,
-        endTime: endTime,
-        seats: seats,
-        riderId: riderId,
-        status: RideStatus.preview,
-        driveId: drive.driverId,
-        drive: drive,
-        price: price,
-     );
+      id: -1,
+      start: start,
+      end: end,
+      startTime: startTime,
+      endTime: endTime,
+      seats: seats,
+      riderId: riderId,
+      status: RideStatus.preview,
+      driveId: drive.driverId,
+      drive: drive,
+      price: price,
+    );
   }
 
   @override

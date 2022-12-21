@@ -105,8 +105,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
-        .map((drive) => Ride.fromDrive(drive, _startController.text, _destinationController.text, drive.startTime,
-            drive.endTime, _dropdownValue, SupabaseManager.getCurrentProfile()?.id ?? -1, 10.25))
+        .map((drive) => Ride.previewFromDrive(
+              drive,
+              _startController.text,
+              _destinationController.text,
+              drive.startTime,
+              drive.endTime,
+              _dropdownValue,
+              SupabaseManager.getCurrentProfile()?.id ?? -1,
+              10.25,
+            ))
         .toList();
     setState(() {
       _rideSuggestions = rides;
