@@ -60,8 +60,7 @@ class AddressSearchField extends StatelessWidget {
         return null;
       },
       onTap: () async {
-        final AddressSuggestion? addressSuggestion =
-            await showSearch<AddressSuggestion?>(
+        final AddressSuggestion? addressSuggestion = await showSearch<AddressSuggestion?>(
           context: context,
           delegate: AddressSearchDelegate(),
           query: controller.text,

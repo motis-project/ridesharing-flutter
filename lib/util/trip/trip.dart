@@ -17,4 +17,11 @@ abstract class Trip extends Model {
     required this.endTime,
     required this.seats,
   });
+
+  bool get isFinished => endTime.isBefore(DateTime.now());
+  bool get isOngoing => startTime.isBefore(DateTime.now()) && endTime.isAfter(DateTime.now());
+
+  bool overlapsWith(Trip other) {
+    return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
+  }
 }

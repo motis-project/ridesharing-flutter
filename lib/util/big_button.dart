@@ -14,6 +14,7 @@ class BigButton extends StatelessWidget {
       child: MaterialButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         color: color ?? Theme.of(context).colorScheme.primary,
+        disabledColor: onPressed == null ? color : null,
         onPressed: onPressed,
         child: Text(
           text,

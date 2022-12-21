@@ -15,7 +15,7 @@ class RideCard extends TripCard<Ride> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const RideDetailPage(),
+            builder: (context) => RideDetailPage.fromRide(trip),
           ),
         ),
         child: Column(

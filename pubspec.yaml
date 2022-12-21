@@ -37,16 +37,21 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # The adapter for supabase
-  supabase_flutter: ^1.1.0
+  supabase_flutter: ^1.2.2
 
   # Handling .env files
   flutter_dotenv: ^5.0.2
+
+  # Progress state button
   progress_state_button: ^1.0.4
 
+  # Trip timelines
   timelines: ^0.1.0
 
+  flutter_rating_bar: ^4.0.1
+
   # Internationalization
-  intl: ^0.17.0
+  intl: ^0.18.0
 
 #For the shimmer effect
   shimmer: ^2.0.0

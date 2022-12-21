@@ -3,8 +3,12 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
+import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
+import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 
@@ -21,6 +25,7 @@ class DriveDetailPage extends StatefulWidget {
 
 class _DriveDetailPageState extends State<DriveDetailPage> {
   Drive? _drive;
+  bool _fullyLoaded = false;
 
   @override
   void initState() {
@@ -44,86 +49,35 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     setState(() {
       _drive = Drive.fromJson(data);
+      _fullyLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    int? maxUsedSeats = _drive?.getMaxUsedSeats();
+    List<Widget> widgets = [];
 
-    Widget startDest = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(_drive!.start),
-              Text(DateFormat.Hm().format(_drive!.startTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-            ],
-          ),
-        ),
-        const Icon(Icons.arrow_forward_rounded),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(_drive!.end),
-              Text(DateFormat.Hm().format(_drive!.endTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-            ],
-          ),
-        ),
-      ],
-    );
-
-    List<Widget> infoRowWidgets = [
-      Text(DateFormat('dd.MM.yyyy').format(_drive!.startTime),
-          style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700))
-    ];
-
-    if (maxUsedSeats != null) {
-      Widget seats = Column(
-        children: [
-          Row(
-            children: List.generate(
-                _drive!.seats,
-                (index) => Icon(Icons.chair,
-                    color: index < maxUsedSeats ? Theme.of(context).colorScheme.primary : Colors.grey.shade500)),
-          ),
-          Text('$maxUsedSeats/${_drive!.seats} Seats')
-        ],
-      );
-      infoRowWidgets.add(seats);
-    }
-
-    Widget infoRow = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: infoRowWidgets,
-    );
-
-    Widget overview = Column(
-      children: [startDest, const SizedBox(height: 10.0), infoRow],
-    );
-
-    List<Waypoint> stops = [];
     if (_drive != null) {
-      stops.add(Waypoint(
-        actions: [],
-        place: _drive!.start,
-        time: _drive!.startTime,
-      ));
-      stops.add(Waypoint(
-        actions: [],
-        place: _drive!.end,
-        time: _drive!.endTime,
-      ));
+      widgets.add(TripOverview(_drive!));
+      widgets.add(const Divider(thickness: 1));
     }
 
-    if (_drive!.rides != null) {
-      for (Ride ride in _drive!.rides!) {
+    if (_fullyLoaded) {
+      Drive drive = _drive!;
+
+      List<Waypoint> stops = [];
+      stops.add(Waypoint(
+        actions: [],
+        place: drive.start,
+        time: drive.startTime,
+      ));
+      stops.add(Waypoint(
+        actions: [],
+        place: drive.end,
+        time: drive.endTime,
+      ));
+
+      for (Ride ride in drive.rides!) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -160,89 +114,81 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       for (Waypoint stop in stops) {
         stop.actions.sort((a, b) => a.isStart ? 1 : -1);
       }
-    }
 
-    Widget timeline = FixedTimeline.tileBuilder(
-      theme: CustomTimelineThemeForBuilder.of(context),
-      builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.before,
-        indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
-        connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
-        contentsBuilder: (context, index) {
-          final stop = stops[index];
-          return Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 10.0),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0, color: Colors.grey.shade500),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  padding: const EdgeInsets.all(8.0),
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: buildCard(stop),
-                  ),
-                ),
-                const SizedBox(height: 10.0)
-              ],
-            ),
-          );
-        },
-        itemCount: stops.length,
-      ),
-    );
-
-    List<Widget> widgets = [
-      overview,
-      const Divider(thickness: 1),
-      timeline,
-    ];
-
-    Widget ridersColumn = Container();
-    if (_drive!.rides != null) {
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
-
-      Set<Profile> riders = _drive!.rides!.map((ride) => ride.rider!).toSet();
-
-      ridersColumn = Column(
-        children: List.generate(
-          riders.length,
-          (index) => InkWell(
-            onTap: () => print("Hey"),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      Widget timeline = FixedTimeline.tileBuilder(
+        theme: CustomTimelineThemeForBuilder.of(context),
+        builder: TimelineTileBuilder.connected(
+          connectionDirection: ConnectionDirection.before,
+          indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
+          connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
+          contentsBuilder: (context, index) {
+            final stop = stops[index];
+            return Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
                 children: [
-                  profileRow(riders.elementAt(index)),
-                  const Icon(
-                    Icons.chat,
-                    color: Colors.black,
-                    size: 36.0,
+                  const SizedBox(height: 10.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1.0, color: Colors.grey.shade500),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildCard(stop),
+                    ),
                   ),
+                  const SizedBox(height: 10.0)
                 ],
               ),
-            ),
-          ),
+            );
+          },
+          itemCount: stops.length,
         ),
       );
-      widgets.add(ridersColumn);
+      widgets.add(timeline);
+
+      if (drive.rides!.isNotEmpty) {
+        widgets.add(const Divider(thickness: 1));
+        Set<Profile> riders = drive.rides!.map((ride) => ride.rider!).toSet();
+        widgets.add(ProfileWrapList(riders, title: 'Riders'));
+      }
+
+      if (!(_drive!.isFinished || _drive!.cancelled)) {
+        widgets.add(const SizedBox(height: 10));
+        Widget deleteButton = BigButton(
+          text: "CANCEL DRIVE",
+          onPressed: _showCancelDialog,
+          color: Theme.of(context).errorColor,
+        );
+        widgets.add(deleteButton);
+        widgets.add(const SizedBox(height: 5));
+      }
+    } else {
+      widgets.add(const SizedBox(height: 10));
+      widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    if (_drive != null) {
-      Widget cancelButton = BigButton(text: "DELETE", onPressed: _showDeleteDialog, color: Colors.red);
-      widgets.add(const Divider(
-        thickness: 1,
-      ));
-      widgets.add(cancelButton);
-    }
+    Widget content = Column(
+      children: [
+        if (_drive?.cancelled ?? false)
+          CustomBanner(
+            color: Theme.of(context).colorScheme.onError,
+            backgroundColor: Theme.of(context).errorColor,
+            text: "You have cancelled this drive.",
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        ),
+      ],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -260,27 +206,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               onRefresh: loadDrive,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widgets,
-                  ),
-                ),
+                child: content,
               ),
             ),
-    );
-  }
-
-  Row profileRow(Profile profile) {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(profile.username[0]),
-        ),
-        const SizedBox(width: 5),
-        Text(profile.username),
-      ],
     );
   }
 
@@ -318,7 +246,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => print("Hey"),
+            onTap: () {},
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
               child: Row(
@@ -328,17 +256,18 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: action.seats <= 2
-                              ? List.generate(action.seats, (index) => icon)
-                              : [
-                                  icon,
-                                  const SizedBox(width: 2),
-                                  Text("x${action.seats}"),
-                                ]),
+                        mainAxisSize: MainAxisSize.min,
+                        children: action.seats <= 2
+                            ? List.generate(action.seats, (index) => icon)
+                            : [
+                                icon,
+                                const SizedBox(width: 2),
+                                Text("x${action.seats}"),
+                              ],
+                      ),
                     ),
                   ),
-                  profileRow(profile),
+                  ProfileWidget(profile, size: 15),
                   const Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -365,26 +294,26 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return list;
   }
 
-  void _showDeleteDialog() {
+  void _showCancelDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Deletion"),
-        content: const Text("Are you sure you want to delete this drive?"),
+        title: const Text("Confirm Cancellation"),
+        content: const Text("Are you sure you want to cancel this drive?"),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: const Text("No"),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Confirm"),
+            child: const Text("Yes"),
             onPressed: () {
-              _drive!.cancel();
+              _cancelDrive();
+
               Navigator.of(context).pop();
-              Navigator.of(context).maybePop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Drive deleted"),
+                  content: Text("Drive cancelled"),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -393,6 +322,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
+  }
+
+  void _cancelDrive() async {
+    await _drive?.cancel();
+    setState(() {});
   }
 }
 
