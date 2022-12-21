@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_stream_builder.dart';
@@ -29,23 +30,26 @@ class TripPageBuilder {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            TripStreamBuilder<T>(
-              stream: trips,
-              emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
-              filterTrips: (trips) => trips.where((trip) => trip.endTime.isAfter(DateTime.now())).toList(),
-              tripCard: tripCard,
-            ),
-            TripStreamBuilder<T>(
-              stream: trips,
-              emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
-              filterTrips: (trips) => trips.reversed.where((trip) => trip.endTime.isBefore(DateTime.now())).toList(),
-              tripCard: tripCard,
-            ),
-          ],
+        body: Semantics(
+          sortKey: const OrdinalSortKey(1),
+          child: TabBarView(
+            children: [
+              TripStreamBuilder<T>(
+                stream: trips,
+                emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
+                filterTrips: (trips) => trips.where((trip) => trip.endTime.isAfter(DateTime.now())).toList(),
+                tripCard: tripCard,
+              ),
+              TripStreamBuilder<T>(
+                stream: trips,
+                emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
+                filterTrips: (trips) => trips.reversed.where((trip) => trip.endTime.isBefore(DateTime.now())).toList(),
+                tripCard: tripCard,
+              ),
+            ],
+          ),
         ),
-        floatingActionButton: floatingActionButton,
+        floatingActionButton: Semantics(sortKey: const OrdinalSortKey(0), child: floatingActionButton),
       ),
     );
   }

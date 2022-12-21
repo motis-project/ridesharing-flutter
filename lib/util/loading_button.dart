@@ -53,7 +53,11 @@ class _LoadingButtonState extends State<LoadingButton> {
       onPressed: widget.onPressed,
       state: widget.state,
       textStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: widget.state == ButtonState.fail
+            ? Theme.of(context).colorScheme.onError
+            : widget.state == ButtonState.success
+                ? Theme.of(context).own().onSuccess
+                : Theme.of(context).colorScheme.onPrimary,
         fontWeight: FontWeight.w500,
       ),
     );

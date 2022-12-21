@@ -218,6 +218,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               position: BadgePosition.topEnd(top: -12),
               child: const Icon(Icons.chat),
             ),
+            tooltip: 'Chat',
           ),
         ],
       ),
@@ -236,18 +237,20 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   List<Widget> buildCard(Waypoint stop) {
     List<Widget> list = [];
     list.add(
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              localeManager.formatTime(stop.time),
-              style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(width: 4.0),
-            Text(stop.place),
-          ],
+      MergeSemantics(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                localeManager.formatTime(stop.time),
+                style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(width: 4.0),
+              Text(stop.place),
+            ],
+          ),
         ),
       ),
     );
@@ -259,38 +262,45 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       final icon = action.isStart ? startIcon : endIcon;
       final profile = action.profile;
 
-      Widget container = Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconWidget(icon: icon, count: action.seats),
-                    ),
-                  ),
-                  ProfileWidget(profile, size: 15),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Icon(
-                        Icons.chat,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        size: 30.0,
+      Widget container = Semantics(
+        button: true,
+        label:
+            "${action.isStart ? "Pick up" : "Drop-off"} ${action.seats} people associated with ${action.profile.username}.",
+        excludeSemantics: true,
+        tooltip: "Open Chat",
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconWidget(icon: icon, count: action.seats),
                       ),
                     ),
-                  ),
-                ],
+                    ProfileWidget(profile, size: 15),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Icon(
+                          Icons.chat,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
