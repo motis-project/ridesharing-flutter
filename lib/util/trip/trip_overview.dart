@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:intl/intl.dart';
 
@@ -19,7 +20,7 @@ class TripOverview extends StatelessWidget {
             children: [
               Text(trip.start),
               Text(
-                DateFormat.Hm().format(trip.startTime),
+                localeManager.formatTime(trip.startTime),
                 style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
               )
             ],
@@ -32,7 +33,7 @@ class TripOverview extends StatelessWidget {
             children: [
               Text(trip.end),
               Text(
-                DateFormat.Hm().format(trip.endTime),
+                localeManager.formatTime(trip.startTime),
                 style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
               )
             ],
@@ -44,7 +45,7 @@ class TripOverview extends StatelessWidget {
     List<Widget> infoRowWidgets = [];
 
     Widget dateWidget = Text(
-      DateFormat('dd.MM.yyyy').format(trip.startTime),
+      localeManager.formatDate(trip.startTime),
       style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
     );
     infoRowWidgets.add(dateWidget);

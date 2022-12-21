@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/format_helper.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
 import 'package:flutter_app/util/trip/search_card.dart';
 import 'package:timelines/timelines.dart';
@@ -40,8 +40,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     super.initState();
     _firstDate = widget.date;
     _selectedDate = widget.date;
-    _dateController.text = FormatHelper.formatDate(widget.date);
-    _timeController.text = FormatHelper.formatTime(widget.date);
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
     _destinationController.text = widget.end;
@@ -58,6 +56,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showDatePicker() {
+    _timeController.text = localeManager.formatTime(widget.date);
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -66,12 +65,13 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     ).then((value) {
       if (value != null) {
         _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-        _dateController.text = FormatHelper.formatDate(_selectedDate);
+        _dateController.text = localeManager.formatDate(_selectedDate);
       }
     });
   }
 
   void _showTimePicker() {
+    _timeController.text = localeManager.formatTime(widget.date);
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
@@ -81,7 +81,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     ).then((value) {
       if (value != null) {
         _selectedDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-        _timeController.text = FormatHelper.formatTime(_selectedDate);
+        _timeController.text = localeManager.formatTime(_selectedDate);
       }
     });
   }

@@ -9,7 +9,6 @@ import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
-import 'package:flutter_app/util/own_theme_fields.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';

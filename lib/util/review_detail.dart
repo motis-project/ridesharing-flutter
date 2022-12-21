@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/profiles/profile_chip.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,7 @@ class ReviewDetail extends StatelessWidget {
       children: [
         ProfileChip(review.writer!),
         Text(
-          DateFormat('dd.MM.yyyy').format(review.createdAt!),
+          localeManager.formatDate(review.createdAt!),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
         ),
         Expanded(

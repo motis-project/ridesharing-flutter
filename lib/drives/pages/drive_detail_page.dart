@@ -5,6 +5,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/own_theme_fields.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
@@ -221,7 +222,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              DateFormat.Hm().format(stop.time),
+              localeManager.formatTime(stop.time),
               style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(width: 4.0),

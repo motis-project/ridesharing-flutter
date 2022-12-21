@@ -3,6 +3,7 @@ import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/rides/pages/ride_detail_page.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
@@ -19,7 +20,7 @@ class SearchCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
               ],
             ),
           ),
@@ -34,7 +35,7 @@ class SearchCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${formatTime(trip.endTime)}  ${trip.end}'),
+                Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
               ],
             ),
           ),
@@ -51,7 +52,7 @@ class SearchCard extends TripCard<Ride> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(formatDate(trip.startTime)),
+        Text(localeManager.formatDate(trip.startTime)),
         Text("${trip.price}\u{20AC} "),
       ],
     );
