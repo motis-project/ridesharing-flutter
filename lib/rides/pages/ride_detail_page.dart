@@ -19,17 +19,34 @@ import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
 
 class RideDetailPage extends StatefulWidget {
-  final int id;
+  // One of these two must be set
+  final int? id;
   final Ride? ride;
 
   const RideDetailPage({super.key, required this.id}) : ride = null;
-  RideDetailPage.fromRide(this.ride, {super.key}) : id = ride!.id!;
+  RideDetailPage.fromRide(this.ride, {super.key}) : id = ride!.id;
 
   @override
   State<RideDetailPage> createState() => _RideDetailPageState();
 }
 
 class _RideDetailPageState extends State<RideDetailPage> {
+  static const String _driveQuery = '''
+    *,
+    driver: driver_id(
+      *,
+      reviews_received: reviews!reviews_receiver_id_fkey(
+        *,
+        writer: writer_id(*)
+      ),
+      profile_features(*)
+    ),
+    rides(
+      *,
+      rider: rider_id(*)
+    )
+  ''';
+
   Ride? _ride;
   bool _fullyLoaded = false;
 
@@ -49,42 +66,17 @@ class _RideDetailPageState extends State<RideDetailPage> {
     if (_ride?.status == RideStatus.preview) {
       ride = _ride!;
 
-      Map<String, dynamic> data = await supabaseClient.from('drives').select('''
-        *,
-        driver: driver_id(
-          *,
-          reviews_received: reviews!reviews_receiver_id_fkey(
-            *,
-            writer: writer_id(*)
-          ),
-          profile_features(*)
-        ),
-        rides(
-          *,
-          rider: rider_id(*)
-        )
-      ''').eq('id', ride.driveId).single();
+      Map<String, dynamic> data =
+          await supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
       ride.drive = Drive.fromJson(data);
     } else {
       Map<String, dynamic> data = await supabaseClient.from('rides').select('''
         *,
         drive: drive_id(
-          *,
-          driver: driver_id(
-            *,
-            reviews_received: reviews!reviews_receiver_id_fkey(
-              *,
-              writer: writer_id(*)
-            ),
-            profile_features(*)
-          ),
-          rides(
-            *,
-            rider: rider_id(*)
-          )
+          $_driveQuery
         )
-      ''').eq('id', widget.id).single();
+      ''').eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 

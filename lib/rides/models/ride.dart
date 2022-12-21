@@ -41,7 +41,6 @@ class Ride extends Trip {
     double price,
   ) {
     return Ride(
-      id: -1,
       start: start,
       end: end,
       startTime: startTime,
