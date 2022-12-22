@@ -89,12 +89,12 @@ class Drive extends Trip {
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
-    Set<DateTime> times = rides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
+    Set<DateTime> times = approvedRides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
 
     int maxUsedSeats = 0;
     for (DateTime time in times) {
       int usedSeats = 0;
-      for (Ride ride in rides!) {
+      for (Ride ride in approvedRides!) {
         final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
         final endTimeAfter = ride.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
@@ -110,19 +110,19 @@ class Drive extends Trip {
   }
 
   bool isRidePossible(Ride ride) {
-    Set<DateTime> times = approvedRides!
-        .map((ride) => [ride.startTime, ride.endTime])
+    List<Ride> consideredRides = approvedRides! + [ride];
+    Set<DateTime> times = consideredRides
+        .map((consideredRide) => [consideredRide.startTime, consideredRide.endTime])
         .expand((x) => x)
-        .where((time) => time.isBefore(ride.endTime) && time.isAfter(ride.startTime))
         .toSet();
-    times = times.union({ride.startTime, ride.endTime});
     for (DateTime time in times) {
       int usedSeats = 0;
-      for (Ride ride in rides!) {
-        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
-        final endTimeAfter = ride.endTime.isAfter(time);
+      for (Ride consideredRide in consideredRides) {
+        final startTimeBeforeOrEqual =
+            consideredRide.startTime.isBefore(time) || consideredRide.startTime.isAtSameMomentAs(time);
+        final endTimeAfter = consideredRide.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
-          usedSeats += ride.seats;
+          usedSeats += consideredRide.seats;
         }
       }
 
