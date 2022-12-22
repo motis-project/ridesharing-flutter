@@ -432,25 +432,28 @@ class _RideDetailPageState extends State<RideDetailPage> {
   _showLoginDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text("Please Login First"),
         content: const Text(
-            "Please login before requesting a ride. if you don't have an account yet, please register first."),
+          "Please login before requesting a ride. if you don't have an account yet, please register first.",
+        ),
         actions: <Widget>[
           TextButton(
             child: const Text("Close"),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
               child: const Text("Login"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
+                Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
               }),
           TextButton(
             child: const Text("Register"),
             onPressed: () {
               Navigator.of(context).pop();
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
             },
           ),
