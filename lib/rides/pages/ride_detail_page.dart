@@ -335,7 +335,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       case RideStatus.preview:
         return BigButton(
             text: "REQUEST RIDE",
-           onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+            onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
             color: Theme.of(context).primaryColor);
       case RideStatus.approved:
         return _ride!.isFinished
