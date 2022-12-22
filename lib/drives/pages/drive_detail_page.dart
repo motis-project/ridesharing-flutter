@@ -240,7 +240,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       Widget container = Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         ),
         child: Material(
