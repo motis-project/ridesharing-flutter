@@ -84,9 +84,12 @@ class _FAQCardState extends State<FAQCard> {
                         const Divider(
                           thickness: 1,
                         ),
-                        Text(
-                          widget.answer,
-                          textAlign: TextAlign.start,
+                        Semantics(
+                          liveRegion: true,
+                          child: Text(
+                            widget.answer,
+                            textAlign: TextAlign.start,
+                          ),
                         ),
                       ],
                     )

@@ -14,15 +14,18 @@ class CustomRatingBarIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RatingBarIndicator(
-      rating: rating,
-      itemBuilder: (context, index) => const Icon(
-        Icons.star,
-        color: Colors.amber,
+    return Semantics(
+      label: "${rating.toStringAsFixed(1)} stars",
+      child: RatingBarIndicator(
+        rating: rating,
+        itemBuilder: (context, index) => const Icon(
+          Icons.star,
+          color: Colors.amber,
+        ),
+        itemCount: 5,
+        itemSize: size.itemSize,
+        direction: Axis.horizontal,
       ),
-      itemCount: 5,
-      itemSize: size.itemSize,
-      direction: Axis.horizontal,
     );
   }
 }

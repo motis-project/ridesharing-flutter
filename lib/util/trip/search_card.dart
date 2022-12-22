@@ -4,6 +4,8 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
 import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
@@ -58,30 +60,6 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget buildProfile(driver) {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(driver.username[0]),
-        ),
-        const SizedBox(width: 5),
-        Text(driver.username),
-      ],
-    );
-  }
-
-  Widget buildRanking() {
-    return Row(
-      children: const [
-        Text("3"),
-        Icon(
-          Icons.star,
-          color: Colors.amberAccent,
-        ),
-      ],
-    );
-  }
-
   Widget buildCardInfo(context, driver) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,8 +79,8 @@ class SearchCard extends TripCard<Ride> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildProfile(driver),
-              buildRanking(),
+              ProfileWidget(driver),
+              CustomRatingBarIndicator(rating: 3),
             ],
           ),
         ),

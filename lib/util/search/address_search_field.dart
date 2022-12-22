@@ -39,31 +39,37 @@ class AddressSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: getLabelText(context),
-        hintText: getHintText(context),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return getValidatorEmptyText(context);
-        }
-        return null;
-      },
-      onTap: () async {
-        final AddressSuggestion? addressSuggestion = await showSearch<AddressSuggestion?>(
-          context: context,
-          delegate: AddressSearchDelegate(),
-          query: controller.text,
-        );
+    return Semantics(
+      button: true,
+      label: getLabelText(context),
+      tooltip: getHintText(context),
+      excludeSemantics: true,
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: getLabelText(context),
+          hintText: getHintText(context),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return getValidatorEmptyText(context);
+          }
+          return null;
+        },
+        onTap: () async {
+          final AddressSuggestion? addressSuggestion = await showSearch<AddressSuggestion?>(
+            context: context,
+            delegate: AddressSearchDelegate(),
+            query: controller.text,
+          );
 
-        if (addressSuggestion != null) {
-          controller.text = addressSuggestion.name;
-          onSelected(addressSuggestion);
-        }
-      },
+          if (addressSuggestion != null) {
+            controller.text = addressSuggestion.name;
+            onSelected(addressSuggestion);
+          }
+        },
+      ),
     );
   }
 

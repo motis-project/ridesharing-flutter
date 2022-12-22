@@ -12,13 +12,10 @@ class RideCard extends TripCard<Ride> {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label:
-          "From ${trip.start} to ${trip.end} starting at ${localeManager.formatTime(trip.startTime)}, arriving at ${localeManager.formatTime(trip.endTime)} on ${localeManager.formatDate(trip.startTime)}.",
-      tooltip: "Open details",
-      excludeSemantics: true,
-      child: Card(
+    return Card(
+      child: Semantics(
+        button: true,
+        tooltip: "Open details",
         child: InkWell(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(

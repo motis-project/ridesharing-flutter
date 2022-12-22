@@ -123,14 +123,17 @@ class _SearchRideFormState extends State<SearchRideForm> {
     _dateController.text = localeManager.formatDate(_selectedDate);
 
     return Expanded(
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: S.of(context).formDate,
+      child: Semantics(
+        button: true,
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: S.of(context).formDate,
+          ),
+          readOnly: true,
+          onTap: _showDatePicker,
+          controller: _dateController,
         ),
-        readOnly: true,
-        onTap: _showDatePicker,
-        controller: _dateController,
       ),
     );
   }
@@ -139,15 +142,18 @@ class _SearchRideFormState extends State<SearchRideForm> {
     _timeController.text = localeManager.formatTime(_selectedDate);
 
     return Expanded(
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: S.of(context).formTime,
+      child: Semantics(
+        button: true,
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: S.of(context).formTime,
+          ),
+          readOnly: true,
+          onTap: _showTimePicker,
+          controller: _timeController,
+          validator: _timeValidator,
         ),
-        readOnly: true,
-        onTap: _showTimePicker,
-        controller: _timeController,
-        validator: _timeValidator,
       ),
     );
   }

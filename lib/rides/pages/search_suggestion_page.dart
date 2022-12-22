@@ -175,35 +175,41 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildDatePicker() {
     _dateController.text = localeManager.formatDate(widget.date);
 
-    return TextFormField(
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: S.of(context).formDate,
+    return Semantics(
+      button: true,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formDate,
+        ),
+        readOnly: true,
+        onTap: () {
+          _showDatePicker;
+          loadRides();
+        },
+        controller: _dateController,
       ),
-      readOnly: true,
-      onTap: () {
-        _showDatePicker;
-        loadRides();
-      },
-      controller: _dateController,
     );
   }
 
   Widget buildTimePicker() {
     _timeController.text = localeManager.formatTime(widget.date);
 
-    return TextFormField(
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: S.of(context).formTime,
+    return Semantics(
+      button: true,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formTime,
+        ),
+        readOnly: true,
+        onTap: () {
+          _showTimePicker;
+          loadRides();
+        },
+        controller: _timeController,
+        validator: _timeValidator,
       ),
-      readOnly: true,
-      onTap: () {
-        _showTimePicker;
-        loadRides();
-      },
-      controller: _timeController,
-      validator: _timeValidator,
     );
   }
 

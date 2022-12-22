@@ -249,6 +249,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               ),
               const SizedBox(width: 4.0),
               Text(stop.place),
+              if (stop.place == _drive!.start) Semantics(label: 'Start of drive'),
+              if (stop.place == _drive!.end) Semantics(label: 'End of drive'),
             ],
           ),
         ),

@@ -13,16 +13,22 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // TODO: Use profile picture
-        CircleAvatar(
-          minRadius: size,
-          child: Text(profile.username[0], style: TextStyle(fontSize: size)),
-        ),
-        const SizedBox(width: 5),
-        Text(profile.username, style: TextStyle(fontSize: size)),
-      ],
+    return Semantics(
+      label: profile.username,
+      excludeSemantics: true,
+      button: true,
+      tooltip: "See profile",
+      child: Row(
+        children: [
+          // TODO: Use profile picture
+          CircleAvatar(
+            minRadius: size,
+            child: Text(profile.username[0], style: TextStyle(fontSize: size)),
+          ),
+          const SizedBox(width: 5),
+          Text(profile.username, style: TextStyle(fontSize: size)),
+        ],
+      ),
     );
   }
 }

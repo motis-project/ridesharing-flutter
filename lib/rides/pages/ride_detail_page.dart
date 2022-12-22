@@ -191,120 +191,134 @@ class _RideDetailPageState extends State<RideDetailPage> {
     List<Review> reviews = driver.reviewsReceived!..sort((a, b) => a.compareTo(b));
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Row(
-              children: [
-                Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
-                Expanded(
-                  child: Text(
-                    S.of(context).pageReviewCount(reviews.length),
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: 5,
-                runSpacing: 5,
-                alignment: WrapAlignment.spaceBetween,
+    return Semantics(
+      label: "Reviews",
+      button: true,
+      tooltip: "Show reviews",
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Row(
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryComfort),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
-                    ],
+                  ExcludeSemantics(
+                    child: Text(
+                      aggregateReview.rating.toStringAsFixed(1),
+                      style: const TextStyle(fontSize: 20),
+                    ),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategorySafety),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryReliability),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryHospitality),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
-                    ],
+                  const SizedBox(width: 10),
+                  CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
+                  Expanded(
+                    child: Text(
+                      S.of(context).pageReviewCount(reviews.length),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                      textAlign: TextAlign.right,
+                    ),
                   ),
                 ],
               ),
-            ),
-            if (reviews.isNotEmpty)
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ShaderMask(
-                    shaderCallback: (rect) => const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.black, Colors.transparent],
-                    ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
-                    blendMode: BlendMode.dstIn,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 200),
-                      child: ClipRect(
-                        child: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(
-                              min(reviews.length, 2),
-                              (index) => ReviewDetail(review: reviews[index]),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  spacing: 5,
+                  runSpacing: 5,
+                  alignment: WrapAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(S.of(context).reviewCategoryComfort),
+                        const SizedBox(width: 10),
+                        CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(S.of(context).reviewCategorySafety),
+                        const SizedBox(width: 10),
+                        CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(S.of(context).reviewCategoryReliability),
+                        const SizedBox(width: 10),
+                        CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(S.of(context).reviewCategoryHospitality),
+                        const SizedBox(width: 10),
+                        CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (reviews.isNotEmpty)
+                ExcludeSemantics(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ShaderMask(
+                        shaderCallback: (rect) => const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black, Colors.transparent],
+                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
+                        blendMode: BlendMode.dstIn,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 200),
+                          child: ClipRect(
+                            child: SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(
+                                  min(reviews.length, 2),
+                                  (index) => ReviewDetail(review: reviews[index]),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              )
-          ],
-        ),
-        if (reviews.isNotEmpty)
-          Positioned(
-            bottom: 2,
-            right: 2,
-            child: Text(
-              S.of(context).more,
-              style: TextStyle(color: Theme.of(context).primaryColor),
+                )
+            ],
+          ),
+          if (reviews.isNotEmpty)
+            Positioned(
+              bottom: 2,
+              right: 2,
+              child: ExcludeSemantics(
+                child: Text(
+                  S.of(context).more,
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  // TODO: Navigate to reviews page
+                },
+              ),
             ),
           ),
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                // TODO: Navigate to reviews page
-              },
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

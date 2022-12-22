@@ -12,16 +12,22 @@ class ProfileChip extends StatelessWidget {
     // TODO: Use profile picture
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: ActionChip(
-        avatar: CircleAvatar(
-          child: Text(profile.username[0]),
+      child: Semantics(
+        label: profile.username,
+        excludeSemantics: true,
+        button: true,
+        tooltip: "See profile",
+        child: ActionChip(
+          avatar: CircleAvatar(
+            child: Text(profile.username[0]),
+          ),
+          label: Text(profile.username),
+          labelPadding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
+          onPressed: () {
+            // TODO: Navigate to profile page
+          },
         ),
-        label: Text(profile.username),
-        labelPadding: const EdgeInsets.all(5),
-        padding: const EdgeInsets.all(5),
-        onPressed: () {
-          // TODO: Navigate to profile page
-        },
       ),
     );
   }

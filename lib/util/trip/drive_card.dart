@@ -13,10 +13,10 @@ class DriveCard extends TripCard<Drive> {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      tooltip: "Open details",
-      child: Card(
+    return Card(
+      child: Semantics(
+        button: true,
+        tooltip: "Open details",
         child: InkWell(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
