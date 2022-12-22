@@ -109,16 +109,28 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
-  int getMaxUsedSeatsforRide(Ride ride) {
-    if (rides == null) return 0;
-    Set<Ride> approvedRides = rides!.where((element) => element.status == RideStatus.approved).toSet();
-    int maxUsedSeats = 0;
-    for (Ride approvedRide in approvedRides) {
-      if (approvedRide.overlapsWith(ride)) {
-        maxUsedSeats += approvedRide.seats;
+  bool isRidePossible(Ride ride) {
+    Set<DateTime> times = approvedRides!
+        .map((ride) => [ride.startTime, ride.endTime])
+        .expand((x) => x)
+        .where((time) => time.isBefore(ride.endTime) && time.isAfter(ride.startTime))
+        .toSet();
+    times = times.union({ride.startTime, ride.endTime});
+    for (DateTime time in times) {
+      int usedSeats = 0;
+      for (Ride ride in rides!) {
+        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
+        final endTimeAfter = ride.endTime.isAfter(time);
+        if (startTimeBeforeOrEqual && endTimeAfter) {
+          usedSeats += ride.seats;
+        }
+      }
+
+      if (usedSeats > seats) {
+        return false;
       }
     }
-    return maxUsedSeats;
+    return true;
   }
 
   Future<void> cancel() async {
