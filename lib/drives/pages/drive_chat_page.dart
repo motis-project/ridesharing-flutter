@@ -38,6 +38,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         (index) => PendingRideCard(
           _pendingRides.elementAt(index),
           reloadPage: loadDrive,
+          drive: _drive,
         ),
       );
     }
@@ -95,11 +96,9 @@ class _DriveChatPageState extends State<DriveChatPage> {
     ''').eq('id', widget.drive.id).single();
     setState(() {
       _drive = Drive.fromJson(data);
-      if (_drive.rides != null) {
-        List<Ride> rides = _drive.rides!;
-        _riders = Set.from(rides.where((ride) => ride.status == RideStatus.approved).map((ride) => ride.rider!));
-        _pendingRides = Set.from(rides.where((ride) => ride.status == RideStatus.pending));
-      }
+
+      _riders = _drive.approvedRides!.map((ride) => ride.rider!).toSet();
+      _pendingRides = _drive.pendingRides!.toSet();
     });
   }
 

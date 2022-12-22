@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
@@ -78,8 +79,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         place: drive.end,
         time: drive.endTime,
       ));
-
-      for (Ride ride in drive.rides!) {
+      List<Ride> approvedRides = drive.approvedRides!;
+      for (Ride ride in approvedRides) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -153,9 +154,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       widgets.add(timeline);
 
-      if (drive.rides!.isNotEmpty) {
+      if (approvedRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
-        Set<Profile> riders = drive.rides!.map((ride) => ride.rider!).toSet();
+        Set<Profile> riders = approvedRides.map((ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: 'Riders'));
       }
 
@@ -204,9 +205,18 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   drive: _drive!,
                 ),
               ),
+            ).then((value) => loadDrive()),
+            icon: Badge(
+              badgeContent: Text(
+                _drive?.pendingRides?.length.toString() ?? '',
+                style: const TextStyle(color: Colors.white),
+                textScaleFactor: 1.0,
+              ),
+              showBadge: _drive?.pendingRides?.isNotEmpty ?? false,
+              position: BadgePosition.topEnd(top: -12),
+              child: const Icon(Icons.chat),
             ),
-            icon: const Icon(Icons.chat),
-          )
+          ),
         ],
       ),
       body: _drive == null
