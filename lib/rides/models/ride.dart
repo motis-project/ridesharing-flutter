@@ -96,8 +96,12 @@ class Ride extends Trip {
   }
 
   static Future<Ride?> rideOfUserAtTime(DateTime start, DateTime end, int userId) async {
-    //get all rides of user
-    final List<Ride> rides = Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
+    //get all approved of user
+    final List<Ride> rides = await getRidesOfUser(userId).then(
+      (value) {
+        return value.where((ride) => ride.status.isApproved()).toList();
+      },
+    );
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
@@ -142,5 +146,9 @@ enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cance
 extension RideStatusExtension on RideStatus {
   bool isCancelled() {
     return this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
+  }
+
+  bool isApproved() {
+    return this == RideStatus.approved;
   }
 }
