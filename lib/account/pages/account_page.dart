@@ -47,10 +47,6 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  void changeTheme(ThemeMode? themeMode) {
-    if (themeMode == null) return;
-  }
-
   void showLanguageDialog(BuildContext context) {
     showDialog(
       context: context,
