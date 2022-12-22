@@ -16,52 +16,44 @@ class DriveChatPage extends StatefulWidget {
 
 class _DriveChatPageState extends State<DriveChatPage> {
   late Drive _drive;
-  late Set<Profile> _riders;
-  late Set<Ride> _pendingRides;
 
   @override
   void initState() {
     super.initState();
     _drive = widget.drive;
-    _riders = _drive.approvedRides!.map((ride) => ride.rider!).toSet();
-    _pendingRides = _drive.pendingRides!.toSet();
   }
 
   @override
   Widget build(BuildContext context) {
+    Set<Profile> riders = _drive.approvedRides!.map((ride) => ride.rider!).toSet();
+    List<Ride> pendingRides = _drive.pendingRides!.toList();
     List<Widget> widgets = [];
-    if (_riders.isEmpty && _pendingRides.isEmpty) {
+    if (riders.isEmpty && pendingRides.isEmpty) {
       widgets.add(const Center(
         child: Text("No riders or pending rides"),
       ));
     } else {
-      if (_riders.isNotEmpty) {
+      if (riders.isNotEmpty) {
         List<Widget> riderColumn = [
-          const Text(
+          Text(
             "Riders",
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.headline4,
           ),
           const SizedBox(height: 10.0),
-          riderList(),
+          _riderList(riders),
         ];
         widgets.addAll(riderColumn);
       }
       widgets.add(const SizedBox(height: 10.0));
-      if (_pendingRides.isNotEmpty) {
+      if (pendingRides.isNotEmpty) {
         List<Widget> pendingRidesColumn = [
-          const Text(
+          Text(
             "Pending Rides",
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.headline4,
           ),
           const SizedBox(height: 10.0),
         ];
-        pendingRidesColumn.addAll(pendingRidesList());
+        pendingRidesColumn.addAll(_pendingRidesList(pendingRides));
         widgets.addAll(pendingRidesColumn);
       }
     }
@@ -84,13 +76,13 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  List<Widget> pendingRidesList() {
+  List<Widget> _pendingRidesList(List<Ride> pendingRides) {
     List<Widget> pendingRidesColumn = [];
-    if (_pendingRides.isNotEmpty) {
+    if (pendingRides.isNotEmpty) {
       pendingRidesColumn = List.generate(
-        _pendingRides.length,
+        pendingRides.length,
         (index) => PendingRideCard(
-          _pendingRides.elementAt(index),
+          pendingRides.elementAt(index),
           reloadPage: loadDrive,
           drive: _drive,
         ),
@@ -111,12 +103,12 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  Widget riderList() {
+  Widget _riderList(Set<Profile> riders) {
     Widget ridersColumn = Container();
-    if (_riders.isNotEmpty) {
+    if (riders.isNotEmpty) {
       ridersColumn = Column(
         children: List.generate(
-          _riders.length,
+          riders.length,
           (index) => InkWell(
             onTap: () => print("Hey"),
             child: Padding(
@@ -124,7 +116,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  profileRow(_riders.elementAt(index)),
+                  profileRow(riders.elementAt(index)),
                   const Icon(
                     Icons.chat,
                     color: Colors.black,
@@ -150,9 +142,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
     ''').eq('id', widget.drive.id).single();
     setState(() {
       _drive = Drive.fromJson(data);
-
-      _riders = _drive.approvedRides!.map((ride) => ride.rider!).toSet();
-      _pendingRides = _drive.pendingRides!.toSet();
     });
   }
 }
