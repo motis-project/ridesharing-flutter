@@ -106,6 +106,18 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
+  int getMaxUsedSeatsforRide(Ride ride) {
+    if (rides == null) return 0;
+    Set<Ride> approvedRides = rides!.where((element) => element.status == RideStatus.approved).toSet();
+    int maxUsedSeats = 0;
+    for (Ride approvedRide in approvedRides) {
+      if (approvedRide.overlapsWith(ride)) {
+        maxUsedSeats += approvedRide.seats;
+      }
+    }
+    return maxUsedSeats;
+  }
+
   Future<void> cancel() async {
     cancelled = true;
     await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
