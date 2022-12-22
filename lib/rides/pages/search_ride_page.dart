@@ -64,8 +64,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _showTimePicker() {
-    _timeController.text = localeManager.formatTime(_selectedDate);
-
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
@@ -84,8 +82,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _showDatePicker() {
-    _dateController.text = localeManager.formatDate(_selectedDate);
-
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -123,6 +119,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   Widget buildDatePicker() {
+    _dateController.text = localeManager.formatDate(_selectedDate);
+
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(
@@ -137,6 +135,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   Widget buildTimePicker() {
+    _timeController.text = localeManager.formatTime(_selectedDate);
+
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(

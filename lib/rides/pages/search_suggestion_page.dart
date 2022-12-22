@@ -56,7 +56,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showDatePicker() {
-    _timeController.text = localeManager.formatTime(widget.date);
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -71,7 +70,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showTimePicker() {
-    _timeController.text = localeManager.formatTime(widget.date);
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
@@ -174,6 +172,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildDatePicker() {
+    _dateController.text = localeManager.formatDate(widget.date);
+
     return TextFormField(
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
@@ -189,6 +189,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildTimePicker() {
+    _timeController.text = localeManager.formatTime(widget.date);
+
     return TextFormField(
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
