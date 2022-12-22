@@ -154,21 +154,20 @@ class PendingRideCard extends TripCard<Ride> {
             child: const Text("Confirm"),
             onPressed: () {
               // check if there are enough seats available
-              if (drive.getMaxUsedSeatsforRide(trip) + trip.seats > drive.seats) {
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Not enough seats available"),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-                return;
-              } else {
+              if (drive.isRidePossible(trip)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Ride confirmed"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } else {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Not enough seats available"),
                     duration: Duration(seconds: 2),
                   ),
                 );
