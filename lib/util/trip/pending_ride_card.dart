@@ -10,13 +10,13 @@ class PendingRideCard extends TripCard<Ride> {
   const PendingRideCard(super.trip, {super.key, required this.reloadPage});
 
   void approveRide() async {
-    await supabaseClient.from('rides').update({'status': 3}).eq('id', trip.id);
+    await supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', trip.id);
     // todo: notify rider
     reloadPage();
   }
 
   void rejectRide() async {
-    await supabaseClient.from('rides').update({'status': 4}).eq('id', trip.id);
+    await supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', trip.id);
     //todo: notify rider
     reloadPage();
   }
@@ -100,14 +100,26 @@ class PendingRideCard extends TripCard<Ride> {
           TextButton(
             child: const Text("Confirm"),
             onPressed: () {
-              approveRide();
-              Navigator.of(dialogContext).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride confirmed"),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+              // check if there are enough seats available
+              if (trip.drive!.getMaxUsedSeatsforRide(trip) + trip.seats > trip.drive!.seats) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Not enough seats available"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                return;
+              } else {
+                approveRide();
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Ride confirmed"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
             },
           ),
         ],

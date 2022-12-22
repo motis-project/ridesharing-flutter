@@ -145,6 +145,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
           const CustomBanner(kind: CustomBannerKind.warning, text: "You have requested this ride.")
+        else if (_ride != null && _ride!.status == RideStatus.rejected)
+          const CustomBanner(kind: CustomBannerKind.error, text: "This ride has been rejected.")
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             kind: CustomBannerKind.error,
@@ -422,6 +424,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void confirmRequest(Ride ride) async {
     if (isAvailable(ride.driveId)) {
       //TODO: check if ride is still possible -> is the check necessary? or can we do it with rls?
+      ride.status = RideStatus.pending;
       await supabaseClient.from('rides').insert(ride.toJson());
       //todo: send notification to driver
     }
@@ -436,8 +439,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Please Login First"),
-        content:
-            const Text("Please login before requesting a ride. if you don't have an account yet, please create one."),
+        content: const Text(
+            "Please login before requesting a ride. if you don't have an account yet, please register first."),
         actions: <Widget>[
           TextButton(
             child: const Text("Close"),
@@ -452,7 +455,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
           TextButton(
             child: const Text("Register"),
             onPressed: () {
-              //todo: register
               Navigator.of(context).pop();
               Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
             },
