@@ -62,6 +62,9 @@ class Drive extends Trip {
     return drives.map((drive) => drive.toJson()).toList();
   }
 
+  List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();
+  List<Ride>? get pendingRides => rides?.where((ride) => ride.status == RideStatus.pending).toList();
+
   @override
   String toString() {
     return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';

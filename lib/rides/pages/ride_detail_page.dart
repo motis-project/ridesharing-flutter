@@ -49,6 +49,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
       rider: rider_id(*)
     )
   ''';
+  static const String _rideQuery = '''
+        *,
+        drive: drive_id(
+          $_driveQuery
+        )
+      ''';
 
   Ride? _ride;
   bool _fullyLoaded = false;
@@ -74,12 +80,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       ride.drive = Drive.fromJson(data);
     } else {
-      Map<String, dynamic> data = await supabaseClient.from('rides').select('''
-        *,
-        drive: drive_id(
-          $_driveQuery
-        )
-      ''').eq('id', widget.id!).single();
+      Map<String, dynamic> data = await supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 
@@ -407,13 +408,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
             onPressed: () {
               confirmRequest(_ride!);
               Navigator.of(dialogContext).pop();
-              Navigator.of(context).popUntil(((route) => route.isFirst));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride request confirmed!"),
-                  duration: Duration(seconds: 2),
-                ),
-              );
             },
           ),
         ],
@@ -422,16 +416,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void confirmRequest(Ride ride) async {
-    if (isAvailable(ride.driveId)) {
-      //TODO: check if ride is still possible -> is the check necessary? or can we do it with rls?
-      ride.status = RideStatus.pending;
-      await supabaseClient.from('rides').insert(ride.toJson());
-      //todo: send notification to driver
-    }
-  }
-
-  bool isAvailable(int driveId) {
-    return true;
+    ride.status = RideStatus.pending;
+    final data = await supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    setState(() {
+      _ride = Ride.fromJson(data);
+    });
+    //todo: send notification to driver
   }
 
   _showLoginDialog() {
