@@ -26,7 +26,7 @@ class AddressSuggestionManager {
   };
 
   // If the fuzzy search score is below this, the result will not be shown.
-  static const int _fuzzySearchCutoff = 50;
+  static const int _fuzzySearchCutoff = 70;
 
   Future<List<AddressSuggestion>> getSuggestions(String query) async {
     final suggestions = await Future.wait([
@@ -79,7 +79,7 @@ class AddressSuggestionManager {
   //   body: json.encode({
   //     "destination": {"type": "Module", "target": target},
   //     "content_type": contentType,
-  //     "content": {"input": query, "guess_count": guessCount}
+  //     "content": {"input": query}
   //   }),
   //   headers: {
   //     'Content-Type': 'application/json',
@@ -90,7 +90,6 @@ class AddressSuggestionManager {
     String target,
     String contentType,
     String query,
-    int guessCount,
   ) async {
     if (query.length < searchLengthRequirement) return [];
 
@@ -105,7 +104,9 @@ class AddressSuggestionManager {
     request.add(utf8.encode(json.encode({
       "destination": {"type": "Module", "target": target},
       "content_type": contentType,
-      "content": {"input": query, "guess_count": guessCount}
+      "content": {
+        "input": query,
+      }
     })));
 
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());
@@ -125,28 +126,36 @@ class AddressSuggestionManager {
       limit: _suggestionsCount['history']!,
       cutoff: _fuzzySearchCutoff,
     ).map((e) => e.choice).toList();
+    // TODO: Use fuzzy score also for ranking suggestions.
   }
 
   Future<List<AddressSuggestion>> getStationSuggestions(String query) async {
     List<dynamic> suggestions = await _doRequest(
-        'StationSuggestions', '/guesser', 'StationGuesserRequest', query, _suggestionsCount['station']!);
+      'StationSuggestions',
+      '/guesser',
+      'StationGuesserRequest',
+      query,
+    );
 
-    List<AddressSuggestion> stationSuggestions =
-        suggestions.map((suggestion) => AddressSuggestion.fromMotisStationResponse(suggestion)).toList();
+    Iterable<AddressSuggestion> stationSuggestions =
+        suggestions.map((suggestion) => AddressSuggestion.fromMotisStationResponse(suggestion));
 
-    return stationSuggestions;
+    return stationSuggestions.take(_suggestionsCount['station']!).toList();
   }
 
   Future<List<AddressSuggestion>> getAddressSuggestions(String query) async {
-    List<dynamic> suggestions =
-        await _doRequest('AddressSuggestions', '/address', 'AddressRequest', query, _suggestionsCount['address']!);
+    List<dynamic> suggestions = await _doRequest(
+      'AddressSuggestions',
+      '/address',
+      'AddressRequest',
+      query,
+    );
 
     var seen = <String>{};
-    List<AddressSuggestion> addressSuggestions = suggestions
+    Iterable<AddressSuggestion> addressSuggestions = suggestions
         .map((suggestion) => AddressSuggestion.fromMotisAddressResponse(suggestion))
-        .where((suggestion) => seen.add(suggestion.toString()))
-        .toList();
+        .where((suggestion) => seen.add(suggestion.toString()));
 
-    return addressSuggestions;
+    return addressSuggestions.take(_suggestionsCount['address']!).toList();
   }
 }

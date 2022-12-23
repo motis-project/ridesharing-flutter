@@ -54,7 +54,6 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<AddressSuggestion> suggestions = snapshot.data!;
-          print("Suggestions: $suggestions");
           if (suggestions.isNotEmpty) {
             return ListView.separated(
               shrinkWrap: true,

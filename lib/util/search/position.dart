@@ -14,4 +14,14 @@ class Position {
       'lng': lng,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Position) return false;
+
+    return lat == other.lat && lng == other.lng;
+  }
+
+  @override
+  int get hashCode => lat.hashCode ^ lng.hashCode;
 }
