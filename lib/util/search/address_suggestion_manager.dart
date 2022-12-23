@@ -22,7 +22,7 @@ class AddressSuggestionManager {
   static const Map<String, int> _suggestionsCount = {
     'history': 3,
     'station': 3,
-    'address': 3,
+    'address': 5,
   };
 
   // If the fuzzy search score is below this, the result will not be shown.
@@ -104,9 +104,7 @@ class AddressSuggestionManager {
     request.add(utf8.encode(json.encode({
       "destination": {"type": "Module", "target": target},
       "content_type": contentType,
-      "content": {
-        "input": query,
-      }
+      "content": {"input": query}
     })));
 
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());

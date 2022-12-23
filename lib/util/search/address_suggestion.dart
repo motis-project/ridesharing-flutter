@@ -115,8 +115,8 @@ class AddressSuggestion {
   int get score => showCount * 100000 - lastUsed.millisecondsSinceEpoch ~/ 1000;
 
   int compareTo(AddressSuggestion other) {
-    print("Compare $this to $other: ${-score.compareTo(other.score)}");
-    return -score.compareTo(other.score);
+    // Higher score is better
+    return other.score.compareTo(score);
   }
 
   @override
