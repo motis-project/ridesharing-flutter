@@ -8,6 +8,7 @@ import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
+import '../locale_manager.dart';
 
 class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;
@@ -25,7 +26,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
               ],
             ),
           ),
@@ -40,7 +41,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${formatTime(trip.endTime)}  ${trip.end}'),
+                Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
               ],
             ),
           ),
