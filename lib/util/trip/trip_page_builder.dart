@@ -14,8 +14,9 @@ class TripPageBuilder {
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            labelColor: Theme.of(context).colorScheme.onSurface,
+            tabs: const [
               Tab(
                 text: 'Upcoming',
               ),

@@ -77,7 +77,7 @@ class _MainAppState extends State<MainApp> {
             ),
           ],
           currentIndex: _currentTab.index,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
           onTap: (index) {
             _selectTab(TabItem.values[index]);
           },

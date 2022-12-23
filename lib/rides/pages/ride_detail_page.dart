@@ -141,11 +141,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Widget content = Column(
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
-          const CustomBanner(backgroundColor: Colors.orange, text: "You have requested this ride.")
+          const CustomBanner(kind: CustomBannerKind.warning, text: "You have requested this ride.")
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
-            color: Theme.of(context).colorScheme.onError,
-            backgroundColor: Theme.of(context).errorColor,
+            kind: CustomBannerKind.error,
             text: _ride!.status == RideStatus.cancelledByDriver
                 ? "This ride has been cancelled."
                 : "You have cancelled this ride.",
@@ -198,7 +197,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 Expanded(
                   child: Text(
                     "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -331,9 +330,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 onPressed: () => _navigateToRatePage(driver),
                 color: Theme.of(context).primaryColor,
               )
-            : BigButton(text: "CANCEL RIDE", onPressed: _showCancelDialog, color: Colors.red);
+            : BigButton(text: "CANCEL RIDE", onPressed: _showCancelDialog, color: Theme.of(context).errorColor);
       case RideStatus.pending:
-        return const BigButton(text: "RIDE REQUESTED", color: Colors.grey);
+        return BigButton(text: "RIDE REQUESTED", color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
       default:
         return null;
     }

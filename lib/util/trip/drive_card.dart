@@ -6,6 +6,8 @@ import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import 'package:timelines/timelines.dart';
 
+import '../locale_manager.dart';
+
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
 
@@ -23,7 +25,7 @@ class DriveCard extends TripCard<Drive> {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Text(formatDate(trip.startTime)),
+              child: Text(localeManager.formatDate(trip.startTime)),
             ),
             const Divider(),
             FixedTimeline(
@@ -35,7 +37,7 @@ class DriveCard extends TripCard<Drive> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${formatTime(trip.startTime)}  ${trip.start}'),
+                        Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
                       ],
                     ),
                   ),
@@ -50,7 +52,7 @@ class DriveCard extends TripCard<Drive> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${formatTime(trip.endTime)}  ${trip.end}'),
+                        Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
                       ],
                     ),
                   ),

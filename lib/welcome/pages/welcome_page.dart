@@ -26,7 +26,7 @@ class _WelcomePageState extends State<WelcomePage> {
         width: indicatorSize,
         height: indicatorSize,
         decoration: BoxDecoration(
-          color: currentIndex == index ? Colors.black : Colors.black26,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(currentIndex == index ? 1 : 0.3),
           shape: BoxShape.circle,
         ),
       );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/format_helper.dart';
 import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
+import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/submit_button.dart';
 
@@ -51,8 +51,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
     super.initState();
     _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
-    _dateController.text = FormatHelper.formatDate(_selectedDate);
-    _timeController.text = FormatHelper.formatTime(_selectedDate);
     _dropdownValue = list.first;
   }
 
@@ -77,7 +75,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
         if (value != null) {
           _selectedDate =
               DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = FormatHelper.formatTime(_selectedDate);
+          _timeController.text = localeManager.formatTime(_selectedDate);
         }
       });
     });
@@ -93,7 +91,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = FormatHelper.formatDate(_selectedDate);
+          _dateController.text = localeManager.formatDate(_selectedDate);
         }
       });
     });
@@ -121,6 +119,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   Widget buildDatePicker() {
+    _dateController.text = localeManager.formatDate(_selectedDate);
+
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(
@@ -135,6 +135,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   Widget buildTimePicker() {
+    _timeController.text = localeManager.formatTime(_selectedDate);
+
     return Expanded(
       child: TextFormField(
         decoration: const InputDecoration(
