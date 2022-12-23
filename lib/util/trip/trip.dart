@@ -22,6 +22,10 @@ abstract class Trip extends Model {
   bool get isOngoing => startTime.isBefore(DateTime.now()) && endTime.isAfter(DateTime.now());
 
   bool overlapsWith(Trip other) {
-    return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
+    return overlapsWithTime(other.startTime, other.endTime);
+  }
+
+  bool overlapsWithTime(DateTime start, DateTime end) {
+    return startTime.isBefore(end) && endTime.isAfter(start);
   }
 }
