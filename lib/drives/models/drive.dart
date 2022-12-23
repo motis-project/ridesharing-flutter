@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip.dart';
@@ -69,13 +70,13 @@ class Drive extends Trip {
     return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
-  static Future<Drive?> driveOfUserAtTime(DateTime start, DateTime end, int userId) async {
+  static Future<Drive?> driveOfUserAtTimeRange(DateTimeRange range, int userId) async {
     //get all upcoming drives of user
     List<Drive> drives = await Drive.getDrivesOfUser(userId);
     drives = drives.where((drive) => !drive.cancelled && !drive.isFinished).toList();
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
-      if (drive.overlapsWithTime(start, end)) {
+      if (drive.overlapsWithTimeRange(range)) {
         return drive;
       }
     }
