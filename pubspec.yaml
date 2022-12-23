@@ -61,6 +61,11 @@ dependencies:
   #For the shimmer effect
   shimmer: ^2.0.0
 
+  # Fuzzy search
+  fuzzywuzzy: ^0.2.0
+
+  collection: ^1.16.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_app/util/search/position.dart';
 
 class AddressSuggestion {
@@ -8,6 +9,10 @@ class AddressSuggestion {
   final String country;
   final AddressSuggestionType type;
 
+  bool fromHistory;
+  int showCount;
+  DateTime lastUsed;
+
   AddressSuggestion({
     required this.name,
     required this.position,
@@ -15,6 +20,9 @@ class AddressSuggestion {
     required this.city,
     required this.country,
     required this.postalCode,
+    this.fromHistory = false,
+    this.showCount = 1,
+    required this.lastUsed,
   });
 
   factory AddressSuggestion.fromMotisAddressResponse(Map<String, dynamic> json) {
@@ -35,6 +43,24 @@ class AddressSuggestion {
       postalCode: postalCode,
       city: city,
       country: country,
+      lastUsed: DateTime.now(),
+    );
+  }
+
+  factory AddressSuggestion.fromMotisStationResponse(Map<String, dynamic> json) {
+    String name = json['name'];
+    AddressSuggestionType type = AddressSuggestionType.station;
+
+    Position pos = Position(json['pos']['lat'], json['pos']['lng']);
+
+    return AddressSuggestion(
+      name: name,
+      position: pos,
+      type: type,
+      postalCode: '',
+      city: '',
+      country: '',
+      lastUsed: DateTime.now(),
     );
   }
 
@@ -48,6 +74,65 @@ class AddressSuggestion {
     }
     return '';
   }
+
+  factory AddressSuggestion.fromJson(Map<String, dynamic> json, {bool fromHistory = false}) {
+    return AddressSuggestion(
+      name: json['name'],
+      position: Position.fromJson(json['position']),
+      type: AddressSuggestionType.values.firstWhere((e) => e.name == json['type']),
+      postalCode: json['postalCode'],
+      city: json['city'],
+      country: json['country'],
+      fromHistory: fromHistory,
+      lastUsed: json['lastUsed'] != null ? DateTime.parse(json['lastUsed']) : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'position': position.toJson(),
+      'type': type.name,
+      'postalCode': postalCode,
+      'city': city,
+      'country': country,
+      'last_used': lastUsed.toIso8601String(),
+    };
+  }
+
+  Icon getIcon() {
+    if (fromHistory) return const Icon(Icons.history);
+
+    switch (type) {
+      case AddressSuggestionType.place:
+        return const Icon(Icons.place);
+      case AddressSuggestionType.station:
+        return const Icon(Icons.train);
+    }
+  }
+
+  // TODO: improve scoring function
+  int get score => showCount * 100000 - lastUsed.millisecondsSinceEpoch ~/ 1000;
+
+  int compareTo(AddressSuggestion other) {
+    print("Compare $this to $other: ${-score.compareTo(other.score)}");
+    return -score.compareTo(other.score);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! AddressSuggestion) return false;
+
+    return name == other.name &&
+        position == other.position &&
+        type == other.type &&
+        postalCode == other.postalCode &&
+        city == other.city &&
+        country == other.country;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 
   @override
   String toString() {

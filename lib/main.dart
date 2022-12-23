@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main_app.dart';
 import 'package:flutter_app/util/locale_manager.dart';
+import 'package:flutter_app/util/search/address_suggestion_manager.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/theme_manager.dart';
 import 'package:flutter_app/welcome/pages/reset_password_page.dart';
@@ -21,6 +22,7 @@ void main() async {
   await SupabaseManager.reloadCurrentProfile();
   await themeManager.loadTheme();
   await localeManager.loadCurrentLocale();
+  addressSuggestionManager.loadHistorySuggestions();
 
   runApp(const AppWrapper());
 }
