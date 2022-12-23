@@ -65,21 +65,17 @@ class Drive extends Trip {
   List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();
   List<Ride>? get pendingRides => rides?.where((ride) => ride.status == RideStatus.pending).toList();
 
-  @override
-  String toString() {
-    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
-  }
-
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
     return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
   static Future<Drive?> driveOfUserAtTime(DateTime start, DateTime end, int userId) async {
-    //get all drives of user
-    final List<Drive> drives = await Drive.getDrivesOfUser(userId);
+    //get all upcoming drives of user
+    List<Drive> drives = await Drive.getDrivesOfUser(userId);
+    drives = drives.where((drive) => !drive.cancelled && !drive.isFinished).toList();
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
-      if (drive.startTime.isBefore(end) && drive.endTime.isAfter(start)) {
+      if (drive.overlapsWithTime(start, end)) {
         return drive;
       }
     }
@@ -136,6 +132,16 @@ class Drive extends Trip {
   Future<void> cancel() async {
     cancelled = true;
     await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    await supabaseClient.from('rides').update({'status': RideStatus.cancelledByDriver.index}).eq('drive_id', id);
+    //cancel all pending and approved rides for this drive.
+    await supabaseClient
+        .from('rides')
+        .update({'status': RideStatus.cancelledByDriver.index})
+        .eq('drive_id', id)
+        .or('status.eq.${RideStatus.pending.index},status.eq.${RideStatus.approved.index}');
+  }
+
+  @override
+  String toString() {
+    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
   }
 }
