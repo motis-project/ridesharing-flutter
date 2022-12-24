@@ -59,7 +59,7 @@ class PendingRideCard extends TripCard<Ride> {
         Icons.chair,
         color: Theme.of(context).colorScheme.primary,
       );
-      Widget seatIcons = Row(
+      return Row(
         mainAxisSize: MainAxisSize.min,
         children: trip.seats <= 2
             ? List.generate(trip.seats, (index) => icon)
@@ -68,14 +68,6 @@ class PendingRideCard extends TripCard<Ride> {
                 const SizedBox(width: 2),
                 Text("x${trip.seats}"),
               ],
-      );
-      Widget text = Text('${trip.seats} ${Intl.plural(trip.seats, one: 'Seat', other: 'Seats')}');
-
-      return Column(
-        children: [
-          seatIcons,
-          text,
-        ],
       );
     }
 
