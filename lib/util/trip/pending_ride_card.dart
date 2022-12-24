@@ -5,6 +5,7 @@ import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_indicator.da
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
+import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
@@ -52,13 +53,31 @@ class PendingRideCard extends TripCard<Ride> {
         ),
       ],
     );
-    Widget ratingBar = Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: CustomRatingBarIndicator(
-        rating: trip.rider!.getAggregateReview().rating,
-        size: CustomRatingBarSize.medium,
-      ),
-    );
+
+    buildSeatsIndicator() {
+      Widget icon = Icon(
+        Icons.chair,
+        color: Theme.of(context).colorScheme.primary,
+      );
+      Widget seatIcons = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: trip.seats <= 2
+            ? List.generate(trip.seats, (index) => icon)
+            : [
+                icon,
+                const SizedBox(width: 2),
+                Text("x${trip.seats}"),
+              ],
+      );
+      Widget text = Text('${trip.seats} ${Intl.plural(trip.seats, one: 'Seat', other: 'Seats')}');
+
+      return Column(
+        children: [
+          seatIcons,
+          text,
+        ],
+      );
+    }
 
     return Card(
       child: Column(
@@ -70,7 +89,6 @@ class PendingRideCard extends TripCard<Ride> {
                 padding: const EdgeInsets.all(8.0),
                 child: ProfileWidget(trip.rider!),
               ),
-              ratingBar,
             ],
           ),
           const Divider(
@@ -115,7 +133,7 @@ class PendingRideCard extends TripCard<Ride> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Seats: ${trip.seats.toString()}"),
+                child: buildSeatsIndicator(),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
