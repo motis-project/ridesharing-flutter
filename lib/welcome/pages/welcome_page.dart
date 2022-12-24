@@ -74,7 +74,11 @@ class _WelcomePageState extends State<WelcomePage> {
             child: BigButton(
               text: S.of(context).pageWelcomeAnonymousSearch,
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SearchRidePage()),
+                MaterialPageRoute(
+                  builder: (context) => const SearchRidePage(
+                    anonymous: true,
+                  ),
+                ),
               ),
             ),
           ),

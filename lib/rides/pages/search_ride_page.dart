@@ -8,7 +8,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../util/search/address_suggestion.dart';
 
 class SearchRidePage extends StatefulWidget {
-  const SearchRidePage({super.key});
+  final bool anonymous;
+
+  const SearchRidePage({super.key, this.anonymous = false});
 
   @override
   State<SearchRidePage> createState() => _SearchRidePageState();
@@ -17,20 +19,31 @@ class SearchRidePage extends StatefulWidget {
 class _SearchRidePageState extends State<SearchRidePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Widget scaffold = Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageSearchRideTitle),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(),
-        child: SingleChildScrollView(child: SearchRideForm()),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(),
+        child: SingleChildScrollView(
+            child: SearchRideForm(
+          anonymous: widget.anonymous,
+        )),
       ),
     );
+    return widget.anonymous
+        ? scaffold
+        : Hero(
+            tag: 'RideFAB',
+            child: scaffold,
+          );
   }
 }
 
 class SearchRideForm extends StatefulWidget {
-  const SearchRideForm({super.key});
+  final bool anonymous;
+
+  const SearchRideForm({super.key, this.anonymous = false});
 
   @override
   State<SearchRideForm> createState() => _SearchRideFormState();
@@ -196,6 +209,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   @override
   Widget build(BuildContext context) {
+    Widget submitButton = SubmitButton(
+      text: S.of(context).pageSearchRideButtonSearch,
+      onPressed: _onSubmit,
+    );
     return Form(
       key: _formKey,
       child: Padding(
@@ -227,13 +244,13 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            Hero(
-              tag: "SearchButton",
-              child: SubmitButton(
-                text: S.of(context).pageSearchRideButtonSearch,
-                onPressed: _onSubmit,
-              ),
-            ),
+            //Search
+            widget.anonymous
+                ? Hero(
+                    tag: "SearchButton",
+                    child: submitButton,
+                  )
+                : submitButton,
           ],
         ),
       ),

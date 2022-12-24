@@ -38,15 +38,18 @@ class _RidesPageState extends State<RidesPage> {
       _rides, //trips
       (ride) => RideCard(ride),
       FloatingActionButton(
+        heroTag: 'RideFAB',
         tooltip: S.of(context).pageRidesTooltipSearchRide,
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const SearchRidePage()),
-          );
-        },
+        onPressed: searchRide,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.search),
       ),
+    );
+  }
+
+  void searchRide() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const SearchRidePage()),
     );
   }
 }

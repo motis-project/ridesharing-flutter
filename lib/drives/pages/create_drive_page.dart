@@ -22,13 +22,16 @@ class CreateDrivePage extends StatefulWidget {
 class _CreateDrivePageState extends State<CreateDrivePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).pageCreateDriveTitle),
-      ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        child: SingleChildScrollView(child: CreateDriveForm()),
+    return Hero(
+      tag: 'DriveFAB',
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).pageCreateDriveTitle),
+        ),
+        body: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: SingleChildScrollView(child: CreateDriveForm()),
+        ),
       ),
     );
   }

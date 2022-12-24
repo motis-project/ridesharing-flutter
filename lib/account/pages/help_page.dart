@@ -66,37 +66,22 @@ class _FAQCardState extends State<FAQCard> {
       textAlign: TextAlign.center,
       style: const TextStyle(fontWeight: FontWeight.bold),
     );
-    return Hero(
-      tag: question.hashCode,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8),
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: SizedBox(
-            width: double.infinity,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: ExpansionTile(
+        title: question,
+        children: [
+          Semantics(
+            liveRegion: true,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: _expanded
-                  ? Column(
-                      children: [
-                        question,
-                        const Divider(
-                          thickness: 1,
-                        ),
-                        Semantics(
-                          liveRegion: true,
-                          child: Text(
-                            widget.answer,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ],
-                    )
-                  : question,
+              child: Text(
+                widget.answer,
+                textAlign: TextAlign.start,
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
