@@ -71,14 +71,12 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                 return const Divider();
               },
             );
-          } else {
-            return const Center(
-              child: Text('Please enter more information to get results'),
-            );
           }
         }
-        return const Center(
-          child: CircularProgressIndicator(),
+        return Center(
+          child: query.length < AddressSuggestionManager.searchLengthRequirement
+              ? const Text('Please enter more information to get results')
+              : const CircularProgressIndicator(),
         );
       },
     );
