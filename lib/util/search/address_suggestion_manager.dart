@@ -27,7 +27,7 @@ class AddressSuggestionManager {
   };
 
   // If the fuzzy search score is below this, the result will not be shown.
-  static const int _fuzzySearchCutoff = 70;
+  static const int _fuzzySearchCutoff = 60;
 
   Future<List<AddressSuggestion>> getSuggestions(String query) async {
     final suggestionsByCategory = await Future.wait([
