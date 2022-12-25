@@ -30,15 +30,15 @@ class AddressSuggestionManager {
   static const int _fuzzySearchCutoff = 70;
 
   Future<List<AddressSuggestion>> getSuggestions(String query) async {
-    final suggestions = await Future.wait([
+    final suggestionsByCategory = await Future.wait([
       getHistorySuggestions(query),
       getStationSuggestions(query),
       getAddressSuggestions(query),
     ]);
 
-    List<AddressSuggestion> suggestionsList = suggestions.expand((element) => element).toList();
+    List<AddressSuggestion> suggestionsList = suggestionsByCategory.expand((element) => element).toList();
 
-    return suggestionsList;
+    return AddressSuggestion.deduplicate(suggestionsList);
   }
 
   void loadHistorySuggestions() async {
@@ -150,12 +150,12 @@ class AddressSuggestionManager {
       query,
     );
 
-    var seen = <String>{};
-    Iterable<AddressSuggestion> addressSuggestions = suggestions
-        .map((suggestion) => AddressSuggestion.fromMotisAddressResponse(suggestion))
-        .where((suggestion) => seen.add(suggestion.toString()));
+    List<AddressSuggestion> addressSuggestions =
+        suggestions.map((suggestion) => AddressSuggestion.fromMotisAddressResponse(suggestion)).toList();
 
-    return addressSuggestions.take(_suggestionsCount['address']!).toList();
+    List<AddressSuggestion> deduplicatedSuggestions = AddressSuggestion.deduplicate(addressSuggestions);
+
+    return deduplicatedSuggestions.take(_suggestionsCount['address']!).toList();
   }
 
   String getStorageKey() {

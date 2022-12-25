@@ -64,6 +64,13 @@ class AddressSuggestion {
     );
   }
 
+  static List<AddressSuggestion> deduplicate(List<AddressSuggestion> suggestions) {
+    suggestions.sort((a, b) => a.compareTo(b));
+
+    var seen = <AddressSuggestion>{};
+    return suggestions.where((suggestion) => seen.add(suggestion)).toList();
+  }
+
   static String _extractFromRegions(List<Map<String, dynamic>> regions, List<int> adminLevels) {
     for (int adminLevel in adminLevels) {
       try {
@@ -115,6 +122,9 @@ class AddressSuggestion {
   int get score => showCount * 100000 - lastUsed.millisecondsSinceEpoch ~/ 1000;
 
   int compareTo(AddressSuggestion other) {
+    if (fromHistory && !other.fromHistory) return -1;
+    if (!fromHistory && other.fromHistory) return 1;
+
     // Higher score is better
     return other.score.compareTo(score);
   }
