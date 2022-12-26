@@ -33,7 +33,7 @@ class TripOverview extends StatelessWidget {
             children: [
               Text(trip.end),
               Text(
-                localeManager.formatTime(trip.startTime),
+                localeManager.formatTime(trip.endTime),
                 style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
               )
             ],
