@@ -7,6 +7,7 @@ import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../locale_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;
@@ -126,7 +127,7 @@ class PendingRideCard extends TripCard<Ride> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Price: ${trip.price.toString()} €"),
+                child: Text("${AppLocalizations.of(context)!.price}: ${trip.price.toString()} €"),
               ),
             ],
           ),
@@ -151,32 +152,32 @@ class PendingRideCard extends TripCard<Ride> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Confirm Ride"),
-        content: const Text("Are you sure you want to confirm this ride?"),
+        title: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogcontent),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-            child: const Text("Confirm"),
+            child: Text(AppLocalizations.of(context)!.confirm),
             onPressed: () {
               // check if there are enough seats available
               if (drive.isRidePossible(trip)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Ride confirmed"),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogSuccesSnackbar),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               } else {
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Not enough seats available"),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogErrorSnackbar),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               }
@@ -191,22 +192,22 @@ class PendingRideCard extends TripCard<Ride> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Reject Ride"),
-        content: const Text("Are you sure you want to reject this ride?"),
+        title: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogContent),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Reject"),
+            child: Text(AppLocalizations.of(context)!.confirm),
             onPressed: () {
               rejectRide();
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride rejected"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogSuccesSnackBar),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },

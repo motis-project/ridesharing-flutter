@@ -1,6 +1,12 @@
 {
     "@@locale": "de",
 
+    "price": "Preis",
+    "cancel": "abbrechen",
+    "confirm": "bestätigen",  
+    "seat": "Platz",
+    "seats": "Plätze",
+
     "pageAccountTitle": "Account",
     "pageAccountSignOut": "Ausloggen",
     "pageAccountLanguage": "Sprache",
@@ -11,6 +17,21 @@
     "pageAccountThemesSystem": "System",
     "pageAccountThemesLight": "Hell",
     "pageAccountThemesDark": "Dunkel",
+
+    "driveChatPageTitle": "Fahrt Chat",
+    "driveChatPageEmptyMessage": "Keine Mitfahrer oder Anfragen",
+    "driveChatPageRiderHeadline": "Mitfahrer",
+    "driveChatPageRequestsHeadline": "Mitfahrtanfragen",
+
+   
+    "pendingRideCardApproveDialogTitle":"Mitfahrt annehmen",
+    "pendingRideCardApproveDialogcontent":"Sind Sie sich sicher das Sie die Mitfahrt annehmen möchten?",
+    "pendingRideCardApproveDialogSuccesSnackbar":"Mitfahrt bestätigt",
+    "pendingRideCardApproveDialogErrorSnackbar": "Es sind nicht genügend Plätze verfügbar",
+    "pendingRideCardRejectDialogTitle": "Mitfahrt ablehnen",
+    "pendingRideCardRejectDialogContent":"Sind Sie sich sicher das Sie die Mitfahrt ablehnen möchten?",
+    "pendingRideCardRejectDialogSnackBar":"Mitfahrt abgelehnt",
+
 
     "appName": "Motis Mitfahr-App"
 }

@@ -1,6 +1,15 @@
 {
   "@@locale": "en",
 
+  "price": "Price",
+  "cancel": "cancel",
+  "confirm": "confirm",
+  "reject": "reject",
+  "seat": "seat",
+  "seats": "seats",
+
+
+
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
   "pageAccountLanguage": "Language",
@@ -12,6 +21,18 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",  
 
+  "driveChatPageTitle": "Drive Chat",
+  "driveChatPageEmptyMessage": "No riders or pending rides",
+  "driveChatPageRiderHeadline": "Riders",
+  "driveChatPageRequestsHeadline": "Ride requests",
+
+  "pendingRideCardApproveDialogTitle":"Confirm ride",
+  "pendingRideCardApproveDialogcontent":"Are you sure you want to confirm this ride?",
+  "pendingRideCardApproveDialogSuccesSnackbar":"Ride confirmed",
+  "pendingRideCardApproveDialogErrorSnackbar": "Not enough seats available",
+  "pendingRideCardRejectDialogTitle": "Reject Ride",
+  "pendingRideCardRejectDialogContent":"Are you sure you want to reject this ride?",
+  "pendingRideCardRejectDialogSuccesSnackBar":"Ride rejected",
 
   "appName": "Motis Ride-Sharing App"
 }

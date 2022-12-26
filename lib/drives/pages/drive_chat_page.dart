@@ -5,6 +5,7 @@ import '../../rides/models/ride.dart';
 import '../../util/trip/pending_ride_card.dart';
 import '../../util/supabase.dart';
 import '../models/drive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DriveChatPage extends StatefulWidget {
   final Drive drive;
@@ -36,17 +37,18 @@ class _DriveChatPageState extends State<DriveChatPage> {
       if (riders.isEmpty && pendingRides.isEmpty) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Drive Chat'),
+            title: Text(AppLocalizations.of(context)!.driveChatPageTitle),
           ),
-          body: const Center(
-            child: Text("No riders or pending rides"),
+          body: Center(
+            child: Text(AppLocalizations.of(context)!.driveChatPageEmptyMessage),
           ),
         );
       } else {
         if (riders.isNotEmpty) {
           List<Widget> riderColumn = [
             const SizedBox(height: 5.0),
-            Text('Riders', style: Theme.of(context).textTheme.titleLarge),
+            Text(AppLocalizations.of(context)!.driveChatPageRiderHeadline,
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10.0),
             _riderList(riders),
           ];
@@ -56,7 +58,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
         if (pendingRides.isNotEmpty) {
           List<Widget> pendingRidesColumn = [
             const SizedBox(height: 5.0),
-            Text('Ride requests', style: Theme.of(context).textTheme.titleLarge),
+            Text(AppLocalizations.of(context)!.driveChatPageRequestsHeadline,
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10.0),
           ];
           pendingRidesColumn.addAll(_pendingRidesList(pendingRides));
@@ -69,7 +72,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Drive Chat'),
+        title: Text(AppLocalizations.of(context)!.driveChatPageTitle),
       ),
       body: RefreshIndicator(
         onRefresh: loadDrive,
