@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
-import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
-import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
-import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
@@ -112,7 +109,7 @@ class PendingRideCard extends TripCard<Ride> {
                       onPressed: (() => showRejectDialog(context)),
                       icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
                     ),
-                  ),
+                  )
                 ],
               ),
             ],
@@ -129,7 +126,7 @@ class PendingRideCard extends TripCard<Ride> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Price: ${trip.price.toString()}"),
+                child: Text("Price: ${trip.price.toString()} €"),
               ),
             ],
           ),
