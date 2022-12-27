@@ -1,14 +1,24 @@
 {
   "@@locale": "en",
 
-  "price": "Price",
+  "price": "Preis: {amount}€",
+  "@price": {
+      "placeholders": {
+          "amount": {
+              "example": "123.45",
+              "description": "amount"
+          }
+      }
+  },
   "cancel": "cancel",
   "confirm": "confirm",
   "reject": "reject",
-  "seat": "seat",
-  "seats": "seats",
-
-
+  "seat": "{count, plural, one{seat} other{seats}}",
+  "@seat": {
+    "placeholders": {
+      "count": {}
+    }
+  },
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
@@ -21,18 +31,18 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",  
 
-  "driveChatPageTitle": "Drive Chat",
-  "driveChatPageEmptyMessage": "No riders or pending rides",
-  "driveChatPageRiderHeadline": "Riders",
-  "driveChatPageRequestsHeadline": "Ride requests",
+  "pageDriveChatTitle": "Drive Chat",
+  "pageDriveChatEmptyMessage": "No riders or pending rides",
+  "pageDriveChatRiderHeadline": "Riders",
+  "pageDriveChatRequestsHeadline": "Ride requests",
 
-  "pendingRideCardApproveDialogTitle":"Confirm ride",
-  "pendingRideCardApproveDialogcontent":"Are you sure you want to confirm this ride?",
-  "pendingRideCardApproveDialogSuccesSnackbar":"Ride confirmed",
-  "pendingRideCardApproveDialogErrorSnackbar": "Not enough seats available",
-  "pendingRideCardRejectDialogTitle": "Reject Ride",
-  "pendingRideCardRejectDialogContent":"Are you sure you want to reject this ride?",
-  "pendingRideCardRejectDialogSuccesSnackBar":"Ride rejected",
+  "cardPendingRideApproveDialogTitle":"Confirm ride",
+  "cardPendingRideApproveDialogcontent":"Are you sure you want to confirm this ride?",
+  "cardPendingRideApproveDialogSuccesSnackbar":"Ride confirmed",
+  "cardPendingRideApproveDialogErrorSnackbar": "Not enough seats available",
+  "cardPendingRideRejectDialogTitle": "Reject Ride",
+  "cardPendingRideRejectDialogContent":"Are you sure you want to reject this ride?",
+  "cardPendingRideRejectDialogSuccesSnackBar":"Ride rejected",
 
   "appName": "Motis Ride-Sharing App"
 }

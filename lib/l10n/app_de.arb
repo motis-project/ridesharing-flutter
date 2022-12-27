@@ -1,11 +1,23 @@
 {
     "@@locale": "de",
 
-    "price": "Preis",
+    "price": "price: {amount}€",
+    "@price": {
+        "placeholders": {
+            "amount": {
+                "example": "123.45",
+                "description": "amount"
+            }
+        }
+    },
     "cancel": "abbrechen",
     "confirm": "bestätigen",  
-    "seat": "Platz",
-    "seats": "Plätze",
+    "seat": "{count, plural, one{Platz} other{Plätze}}",
+    "@seat": {
+        "placeholders": {
+            "count": {}
+        }
+    },
 
     "pageAccountTitle": "Account",
     "pageAccountSignOut": "Ausloggen",
@@ -25,7 +37,7 @@
 
    
     "pendingRideCardApproveDialogTitle":"Mitfahrt annehmen",
-    "pendingRideCardApproveDialogcontent":"Sind Sie sich sicher das Sie die Mitfahrt annehmen möchten?",
+    "pendingRideCardApproveDialogcontent":"Sind Sie sich sicher, dass Sie die Mitfahrt annehmen möchten?",
     "pendingRideCardApproveDialogSuccesSnackbar":"Mitfahrt bestätigt",
     "pendingRideCardApproveDialogErrorSnackbar": "Es sind nicht genügend Plätze verfügbar",
     "pendingRideCardRejectDialogTitle": "Mitfahrt ablehnen",

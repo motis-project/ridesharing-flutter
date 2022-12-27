@@ -59,13 +59,18 @@ class PendingRideCard extends TripCard<Ride> {
       );
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: trip.seats <= 2
-            ? List.generate(trip.seats, (index) => icon)
-            : [
-                icon,
-                const SizedBox(width: 2),
-                Text("x${trip.seats}"),
-              ],
+        children: [
+          icon,
+          const SizedBox(width: 2),
+          Text("${AppLocalizations.of(context)!.seat(1)}"),
+        ],
+        // children: trip.seats <= 2
+        //     ? List.generate(trip.seats, (index) => icon)
+        //     : [
+        //         icon,
+        //         const SizedBox(width: 2),
+        //         Text("x${trip.seats}"),
+        //       ],
       );
     }
 
@@ -127,7 +132,7 @@ class PendingRideCard extends TripCard<Ride> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("${AppLocalizations.of(context)!.price}: ${trip.price.toString()} €"),
+                child: Text(AppLocalizations.of(context)!.price(trip.price.toString())),
               ),
             ],
           ),
@@ -152,8 +157,8 @@ class PendingRideCard extends TripCard<Ride> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogTitle),
-        content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogcontent),
+        title: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogTitle),
+        content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogcontent),
         actions: <Widget>[
           TextButton(
             child: Text(AppLocalizations.of(context)!.cancel),
@@ -168,7 +173,7 @@ class PendingRideCard extends TripCard<Ride> {
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogSuccesSnackbar),
+                    content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogSuccesSnackbar),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -176,7 +181,7 @@ class PendingRideCard extends TripCard<Ride> {
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.pendingRideCardApproveDialogErrorSnackbar),
+                    content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogErrorSnackbar),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -192,8 +197,8 @@ class PendingRideCard extends TripCard<Ride> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogTitle),
-        content: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogContent),
+        title: Text(AppLocalizations.of(context)!.cardPendingRideRejectDialogTitle),
+        content: Text(AppLocalizations.of(context)!.cardPendingRideRejectDialogContent),
         actions: <Widget>[
           TextButton(
             child: Text(AppLocalizations.of(context)!.cancel),
@@ -206,7 +211,7 @@ class PendingRideCard extends TripCard<Ride> {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.pendingRideCardRejectDialogSuccesSnackBar),
+                  content: Text(AppLocalizations.of(context)!.cardPendingRideRejectDialogSuccesSnackBar),
                   duration: const Duration(seconds: 2),
                 ),
               );
