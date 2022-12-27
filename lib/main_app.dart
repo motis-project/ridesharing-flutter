@@ -3,6 +3,7 @@ import 'package:flutter_app/account/pages/account_page.dart';
 import 'package:flutter_app/drives/pages/drives_page.dart';
 import 'package:flutter_app/home_page.dart';
 import 'package:flutter_app/rides/pages/rides_page.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 enum TabItem { home, drives, rides, account }
 
@@ -14,84 +15,62 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  TabItem _currentTab = TabItem.home;
-  final _navigatorKeys = {
-    TabItem.home: GlobalKey<NavigatorState>(),
-    TabItem.drives: GlobalKey<NavigatorState>(),
-    TabItem.rides: GlobalKey<NavigatorState>(),
-    TabItem.account: GlobalKey<NavigatorState>(),
-  };
-  final _pages = {
-    TabItem.home: const HomePage(),
-    TabItem.drives: const DrivesPage(),
-    TabItem.rides: const RidesPage(),
-    TabItem.account: const AccountPage(),
-  };
-
-  void _selectTab(TabItem tabItem) {
-    if (tabItem == _currentTab) {
-      // pop to first route
-      _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst);
-    } else {
-      setState(() => _currentTab = tabItem);
-    }
-  }
+  PersistentTabController _controller = PersistentTabController(initialIndex: 0);
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
-        if (isFirstRouteInCurrentTab) {
-          if (_currentTab == TabItem.home) {
-            return true;
-          }
-
-          _selectTab(TabItem.home);
-        }
-        return false;
-      },
-      child: Scaffold(
-        body: IndexedStack(
-          index: _currentTab.index,
-          children: TabItem.values.map((tabItem) => buildNavigatorForTab(tabItem)).toList(),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              label: 'Drives',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chair),
-              label: 'Rides',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
-            ),
-          ],
-          currentIndex: _currentTab.index,
-          selectedItemColor: Theme.of(context).colorScheme.primary,
-          onTap: (index) {
-            _selectTab(TabItem.values[index]);
-          },
-        ),
+    return PersistentTabView(
+      context,
+      controller: _controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineInSafeArea: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      popAllScreensOnTapOfSelectedTab: true,
+      popActionScreens: PopActionScreensType.all,
+      itemAnimationProperties: const ItemAnimationProperties(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease,
       ),
+      screenTransitionAnimation: const ScreenTransitionAnimation(
+        animateTabTransition: true,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
+      ),
+      navBarStyle: NavBarStyle.style3,
     );
   }
 
-  Widget buildNavigatorForTab(TabItem tabItem) {
-    return Navigator(
-      key: _navigatorKeys[tabItem]!,
-      onGenerateRoute: (routeSettings) => MaterialPageRoute(
-        builder: (context) => _pages[tabItem]!,
+  List<Widget> _buildScreens() {
+    return const [HomePage(), HomePage(), HomePage(), HomePage()];
+  }
+
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.home),
+        title: ("Home"),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Theme.of(context).unselectedWidgetColor,
       ),
-    );
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.drive_eta),
+        title: ("Drives"),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Theme.of(context).unselectedWidgetColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.chair),
+        title: ("Rides"),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Theme.of(context).unselectedWidgetColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.account_circle),
+        title: ("Account"),
+        activeColorPrimary: Theme.of(context).colorScheme.primary,
+        inactiveColorPrimary: Theme.of(context).unselectedWidgetColor,
+      ),
+    ];
   }
 }

@@ -11,16 +11,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
-  await dotenv.load();
-
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: dotenv.get('SUPABASE_BASE_URL'),
-    anonKey: dotenv.get('SUPABASE_BASE_KEY'),
-  );
-  await SupabaseManager.reloadCurrentProfile();
-  await themeManager.loadTheme();
-  await localeManager.loadCurrentLocale();
 
   runApp(const AppWrapper());
 }
@@ -34,28 +25,11 @@ class AppWrapper extends StatefulWidget {
 
 class _AppWrapperState extends State<AppWrapper> {
   @override
-  void initState() {
-    super.initState();
-    themeManager.addListener(
-      () => setState(() {}),
-    );
-    localeManager.addListener(
-      () => setState(() {}),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Motis Mitfahr-App',
       debugShowCheckedModeBanner: false,
-      theme: themeManager.lightTheme,
-      darkTheme: themeManager.darkTheme,
-      themeMode: themeManager.currentThemeMode,
-      localizationsDelegates: localeManager.localizationsDelegates,
-      supportedLocales: localeManager.supportedLocales,
-      locale: localeManager.currentLocale,
-      home: const AuthApp(),
+      home: MainApp(),
     );
   }
 }
