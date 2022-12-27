@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:motis_mitfahr_app/util/loading_button.dart';
+import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';

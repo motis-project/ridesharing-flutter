@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../util/big_button.dart';
 import '../../models/profile.dart';
 import '../../models/profile_feature.dart';
 
@@ -125,9 +125,9 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             const SizedBox(
               height: 10,
             ),
-            BigButton(
+            Button(
+              S.of(context).save,
               onPressed: () => onPressed(context),
-              text: S.of(context).save,
             ),
           ],
         ),

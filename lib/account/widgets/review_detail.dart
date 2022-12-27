@@ -3,8 +3,8 @@ import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 
-import '../account/models/review.dart';
-import 'profiles/reviews/custom_rating_bar_indicator.dart';
+import '../../util/profiles/reviews/custom_rating_bar_indicator.dart';
+import '../models/review.dart';
 
 class ReviewDetail extends StatelessWidget {
   final Review review;

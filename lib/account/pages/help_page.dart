@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/submit_button.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HelpPage extends StatefulWidget {
@@ -35,9 +35,10 @@ class _HelpPageState extends State<HelpPage> {
                 const Divider(
                   thickness: 1,
                 ),
-                SubmitButton(
-                  text: S.of(context).pageHelpContactUs,
-                  onPressed: () => print("Contact TODO"),
+                Button.submit(
+                  S.of(context).pageHelpContactUs,
+                  //TODO Open email program
+                  onPressed: () {},
                 ),
               ],
         ),
@@ -57,8 +58,6 @@ class FAQCard extends StatefulWidget {
 }
 
 class _FAQCardState extends State<FAQCard> {
-  bool _expanded = false;
-
   @override
   Widget build(BuildContext context) {
     Widget question = Text(

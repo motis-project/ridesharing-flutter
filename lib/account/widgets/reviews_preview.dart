@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
 
-import '../../util/review_detail.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
 import '../pages/reviews_page.dart';
@@ -69,7 +69,7 @@ class ReviewsPreview extends StatelessWidget {
               child: ExcludeSemantics(
                 child: Text(
                   S.of(context).more,
-                  style: TextStyle(color: Theme.of(context).primaryColor),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
             ),

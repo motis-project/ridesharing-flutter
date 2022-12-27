@@ -104,7 +104,7 @@ class SearchCard extends TripCard<Ride> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ProfileWidget(driver),
-              CustomRatingBarIndicator(rating: 3),
+              const CustomRatingBarIndicator(rating: 3),
             ],
           ),
         ),

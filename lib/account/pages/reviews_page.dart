@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/big_button.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../util/review_detail.dart';
 import '../models/review.dart';
 import 'write_review_page.dart';
 
@@ -62,10 +62,9 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    BigButton reviewButton = BigButton(
-      text: _hasReviewed ? S.of(context).pageReviewsUpdateRating : S.of(context).pageReviewsRate,
+    Button reviewButton = Button(
+      _hasReviewed ? S.of(context).pageReviewsUpdateRating : S.of(context).pageReviewsRate,
       onPressed: () => _navigateToRatePage(),
-      color: Theme.of(context).primaryColor,
     );
     List<Review> reviews = _profile!.reviewsReceived!..sort((a, b) => a.compareTo(b));
     AggregateReviewWidget aggregated = AggregateReview.fromReviews(reviews).widget();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_suggestion_page.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_field.dart';
-import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/search/address_suggestion.dart';
@@ -209,8 +209,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   @override
   Widget build(BuildContext context) {
-    Widget submitButton = SubmitButton(
-      text: S.of(context).pageSearchRideButtonSearch,
+    Widget submitButton = Button.submit(
+      S.of(context).pageSearchRideButtonSearch,
       onPressed: _onSubmit,
     );
     return Form(
