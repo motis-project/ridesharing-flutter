@@ -59,18 +59,13 @@ class PendingRideCard extends TripCard<Ride> {
       );
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          icon,
-          const SizedBox(width: 2),
-          Text("${AppLocalizations.of(context)!.seat(1)}"),
-        ],
-        // children: trip.seats <= 2
-        //     ? List.generate(trip.seats, (index) => icon)
-        //     : [
-        //         icon,
-        //         const SizedBox(width: 2),
-        //         Text("x${trip.seats}"),
-        //       ],
+        children: trip.seats <= 2
+            ? List.generate(trip.seats, (index) => icon)
+            : [
+                icon,
+                const SizedBox(width: 2),
+                Text("x${trip.seats}"),
+              ],
       );
     }
 

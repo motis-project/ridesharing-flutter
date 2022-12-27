@@ -12,7 +12,7 @@
     },
     "cancel": "abbrechen",
     "confirm": "bestätigen",  
-    "seat": "{count, plural, one{Platz} other{Plätze}}",
+    "seat": "{count, plural, =1{Platz} other{Plätze}}",
     "@seat": {
         "placeholders": {
             "count": {}
@@ -30,19 +30,19 @@
     "pageAccountThemesLight": "Hell",
     "pageAccountThemesDark": "Dunkel",
 
-    "driveChatPageTitle": "Fahrt Chat",
-    "driveChatPageEmptyMessage": "Keine Mitfahrer oder Anfragen",
-    "driveChatPageRiderHeadline": "Mitfahrer",
-    "driveChatPageRequestsHeadline": "Mitfahrtanfragen",
+    "pageDriveChatTitle": "Fahrt Chat",
+    "pageDriveChatEmptyMessage": "Keine Mitfahrer oder Anfragen",
+    "pageDriveChatRiderHeadline": "Mitfahrer",
+    "pageDriveChatRequestsHeadline": "Mitfahrtanfragen",
 
    
-    "pendingRideCardApproveDialogTitle":"Mitfahrt annehmen",
-    "pendingRideCardApproveDialogcontent":"Sind Sie sich sicher, dass Sie die Mitfahrt annehmen möchten?",
-    "pendingRideCardApproveDialogSuccesSnackbar":"Mitfahrt bestätigt",
-    "pendingRideCardApproveDialogErrorSnackbar": "Es sind nicht genügend Plätze verfügbar",
-    "pendingRideCardRejectDialogTitle": "Mitfahrt ablehnen",
-    "pendingRideCardRejectDialogContent":"Sind Sie sich sicher das Sie die Mitfahrt ablehnen möchten?",
-    "pendingRideCardRejectDialogSnackBar":"Mitfahrt abgelehnt",
+    "cardPendingRideApproveDialogTitle": "Mitfahrt annehmen",
+    "cardPendingRideApproveDialogContent": "Sind Sie sich sicher, dass Sie die Mitfahrt annehmen möchten?",
+    "cardPendingRideApproveDialogSuccesSnackbar": "Mitfahrt bestätigt",
+    "cardPendingRideApproveDialogErrorSnackbar": "Es sind nicht genügend Plätze verfügbar",
+    "cardPendingRideRejectDialogTitle": "Mitfahrt ablehnen",
+    "cardPendingRideRejectDialogContent": "Sind Sie sich sicher das Sie die Mitfahrt ablehnen möchten?",
+    "cardPendingRideRejectDialogSuccessSnackBar": "Mitfahrt abgelehnt",
 
 
     "appName": "Motis Mitfahr-App"
