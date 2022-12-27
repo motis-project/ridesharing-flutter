@@ -82,6 +82,15 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   @override
+  void initState() {
+    //I don't know why this isn't propagated through, for localeManager we just need to call setState in main...
+    themeManager.addListener(
+      () => setState(() {}),
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
