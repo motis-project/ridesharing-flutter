@@ -35,13 +35,13 @@
   "pageDriveChatRiderHeadline": "Riders",
   "pageDriveChatRequestsHeadline": "Ride requests",
 
-  "cardPendingRideApproveDialogTitle":"Confirm ride",
-  "cardPendingRideApproveDialogContent":"Are you sure you want to confirm this ride?",
-  "cardPendingRideApproveDialogSuccesSnackbar":"Ride confirmed",
+  "cardPendingRideApproveDialogTitle": "Confirm ride",
+  "cardPendingRideApproveDialogContent": "Are you sure you want to confirm this ride?",
+  "cardPendingRideApproveDialogSuccessSnackbar": "Ride confirmed",
   "cardPendingRideApproveDialogErrorSnackbar": "Not enough seats available",
   "cardPendingRideRejectDialogTitle": "Reject Ride",
-  "cardPendingRideRejectDialogContent":"Are you sure you want to reject this ride?",
-  "cardPendingRideRejectDialogSuccessSnackBar":"Ride rejected",
+  "cardPendingRideRejectDialogContent": "Are you sure you want to reject this ride?",
+  "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
 
   "appName": "Motis Ride-Sharing App"
 }

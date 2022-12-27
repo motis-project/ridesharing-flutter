@@ -38,7 +38,7 @@
    
     "cardPendingRideApproveDialogTitle": "Mitfahrt annehmen",
     "cardPendingRideApproveDialogContent": "Sind Sie sich sicher, dass Sie die Mitfahrt annehmen möchten?",
-    "cardPendingRideApproveDialogSuccesSnackbar": "Mitfahrt bestätigt",
+    "cardPendingRideApproveDialogSuccessSnackbar": "Mitfahrt bestätigt",
     "cardPendingRideApproveDialogErrorSnackbar": "Es sind nicht genügend Plätze verfügbar",
     "cardPendingRideRejectDialogTitle": "Mitfahrt ablehnen",
     "cardPendingRideRejectDialogContent": "Sind Sie sich sicher das Sie die Mitfahrt ablehnen möchten?",

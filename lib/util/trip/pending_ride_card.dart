@@ -153,7 +153,7 @@ class PendingRideCard extends TripCard<Ride> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogTitle),
-        content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogcontent),
+        content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogContent),
         actions: <Widget>[
           TextButton(
             child: Text(AppLocalizations.of(context)!.cancel),
@@ -168,7 +168,7 @@ class PendingRideCard extends TripCard<Ride> {
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogSuccesSnackbar),
+                    content: Text(AppLocalizations.of(context)!.cardPendingRideApproveDialogSuccessSnackbar),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -206,7 +206,7 @@ class PendingRideCard extends TripCard<Ride> {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.cardPendingRideRejectDialogSuccesSnackBar),
+                  content: Text(AppLocalizations.of(context)!.cardPendingRideRejectDialogSuccessSnackBar),
                   duration: const Duration(seconds: 2),
                 ),
               );
