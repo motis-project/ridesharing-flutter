@@ -6,6 +6,7 @@ import 'package:flutter_app/util/search/address_suggestion.dart';
 import 'package:flutter_app/util/storage_manager.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
+import 'package:fuzzywuzzy/model/extracted_result.dart';
 
 final addressSuggestionManager = AddressSuggestionManager();
 
@@ -54,7 +55,6 @@ class AddressSuggestionManager {
 
     if (previousSuggestion != null) {
       previousSuggestion.lastUsed = DateTime.now();
-      previousSuggestion.showCount += 1;
     } else {
       suggestion.fromHistory = true;
       _historySuggestions.add(suggestion);
@@ -64,10 +64,20 @@ class AddressSuggestionManager {
         _historySuggestions.removeLast();
       }
 
-      List<String> data = _historySuggestions.map((suggestion) => jsonEncode(suggestion.toJson())).toList();
-
-      StorageManager.saveData(getStorageKey(), data);
+      saveHistorySuggestionsToStorage();
     }
+  }
+
+  void removeSuggestion(AddressSuggestion suggestion) {
+    _historySuggestions.remove(suggestion);
+
+    saveHistorySuggestionsToStorage();
+  }
+
+  void saveHistorySuggestionsToStorage() {
+    List<String> data = _historySuggestions.map((suggestion) => jsonEncode(suggestion.toJson())).toList();
+
+    StorageManager.saveData(getStorageKey(), data);
   }
 
   void sortHistorySuggestions() {
@@ -118,14 +128,17 @@ class AddressSuggestionManager {
 
     if (query == '') return _historySuggestions.take(15).toList();
 
-    return extractTop<AddressSuggestion>(
+    List<ExtractedResult<AddressSuggestion>> fuzyyResults = extractTop<AddressSuggestion>(
       query: query,
       choices: _historySuggestions,
       getter: (suggestion) => suggestion.toString(),
       limit: _suggestionsCount['history']!,
       cutoff: _fuzzySearchCutoff,
-    ).map((e) => e.choice).toList();
-    // TODO: Use fuzzy score also for ranking suggestions.
+    ).toList();
+
+    fuzyyResults.sort((a, b) => a.compareTo(b));
+
+    return fuzyyResults.map((result) => result.choice).toList();
   }
 
   Future<List<AddressSuggestion>> getStationSuggestions(String query) async {
@@ -160,5 +173,14 @@ class AddressSuggestionManager {
 
   String getStorageKey() {
     return "$_storageKey.${SupabaseManager.getCurrentProfile()?.id}";
+  }
+}
+
+extension Score on ExtractedResult<AddressSuggestion> {
+  int compareTo(ExtractedResult<AddressSuggestion> other) {
+    int scoreDifference = score - other.score;
+    int timeDifference = other.choice.lastUsed.millisecondsSinceEpoch - choice.lastUsed.millisecondsSinceEpoch;
+
+    return scoreDifference * 100 + timeDifference ~/ 1000;
   }
 }

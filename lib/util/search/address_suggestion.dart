@@ -10,7 +10,6 @@ class AddressSuggestion {
   final AddressSuggestionType type;
 
   bool fromHistory;
-  int showCount;
   DateTime lastUsed;
 
   AddressSuggestion({
@@ -21,7 +20,6 @@ class AddressSuggestion {
     required this.country,
     required this.postalCode,
     this.fromHistory = false,
-    this.showCount = 1,
     required this.lastUsed,
   });
 
@@ -118,15 +116,12 @@ class AddressSuggestion {
     }
   }
 
-  // TODO: improve scoring function
-  int get score => showCount * 100000 - lastUsed.millisecondsSinceEpoch ~/ 1000;
-
   int compareTo(AddressSuggestion other) {
     if (fromHistory && !other.fromHistory) return -1;
     if (!fromHistory && other.fromHistory) return 1;
 
-    // Higher score is better
-    return other.score.compareTo(score);
+    // Newer (higher) timestamp is better
+    return other.lastUsed.compareTo(lastUsed);
   }
 
   @override

@@ -49,34 +49,49 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
-      future: addressSuggestionManager.getSuggestions(query),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<AddressSuggestion> suggestions = snapshot.data!;
-          if (suggestions.isNotEmpty) {
-            return ListView.separated(
-              shrinkWrap: true,
-              itemCount: suggestions.length,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                var suggestion = suggestions[index];
-                return ListTile(
-                  leading: suggestion.getIcon(),
-                  title: Text(suggestions[index].toString()),
-                  onTap: () => close(context, suggestions[index]),
+    return StatefulBuilder(
+      builder: (BuildContext context, setState) {
+        return FutureBuilder<List<AddressSuggestion>>(
+          future: addressSuggestionManager.getSuggestions(query),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<AddressSuggestion> suggestions = snapshot.data!;
+              if (suggestions.isNotEmpty) {
+                return ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: suggestions.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    var suggestion = suggestions[index];
+                    return ListTile(
+                      leading: suggestion.getIcon(),
+                      title: Text(suggestion.toString()),
+                      trailing: suggestion.fromHistory
+                          ? IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                addressSuggestionManager.removeSuggestion(suggestion);
+                                setState(() {
+                                  suggestions.removeAt(index);
+                                });
+                              },
+                            )
+                          : null,
+                      onTap: () => close(context, suggestion),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
                 );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
+              }
+            }
+            return Center(
+              child: query.length < AddressSuggestionManager.searchLengthRequirement
+                  ? const Text('Please enter more information to get results')
+                  : const CircularProgressIndicator(),
             );
-          }
-        }
-        return Center(
-          child: query.length < AddressSuggestionManager.searchLengthRequirement
-              ? const Text('Please enter more information to get results')
-              : const CircularProgressIndicator(),
+          },
         );
       },
     );
