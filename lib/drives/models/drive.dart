@@ -77,7 +77,7 @@ class Drive extends Trip {
   List<Ride>? get pendingRides => rides?.where((ride) => ride.status == RideStatus.pending).toList();
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
-    return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
+    return Drive.fromJsonList(await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
@@ -143,8 +143,8 @@ class Drive extends Trip {
 
   Future<void> cancel() async {
     cancelled = true;
-    await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    //the rides get updated automatically by a supabase function.
+    await SupabaseManager.supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
+    //the rides get SupabaseManager.updated automatically by a supabase function.
   }
 
   @override

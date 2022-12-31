@@ -132,7 +132,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           endTime: endTime,
         );
 
-        await supabaseClient.from('drives').insert(drive.toJson()).select<Map<String, dynamic>>().single().then(
+        await SupabaseManager.supabaseClient
+            .from('drives')
+            .insert(drive.toJson())
+            .select<Map<String, dynamic>>()
+            .single()
+            .then(
           (data) {
             Drive drive = Drive.fromJson(data);
             Navigator.pushReplacement(

@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
+  
   await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,7 +73,7 @@ class AuthApp extends StatefulWidget {
 
 class _AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
-  bool _isLoggedIn = supabaseClient.auth.currentSession != null;
+  bool _isLoggedIn = SupabaseManager.supabaseClient.auth.currentSession != null;
   bool _resettingPassword = false;
 
   @override
@@ -83,7 +84,7 @@ class _AuthAppState extends State<AuthApp> {
   }
 
   void _setupAuthStateSubscription() {
-    _authStateSubscription = supabaseClient.auth.onAuthStateChange.listen(
+    _authStateSubscription = SupabaseManager.supabaseClient.auth.onAuthStateChange.listen(
       (data) async {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;

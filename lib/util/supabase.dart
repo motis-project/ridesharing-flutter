@@ -2,12 +2,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/models/profile.dart';
 
-SupabaseClient supabaseClient = Supabase.instance.client;
+class SupabaseManagerManager {
+  SupabaseClient getSupabaseClient() {
+    return Supabase.instance.client;
+  }
+}
 
 class SupabaseManager {
+  static SupabaseManagerManager supabaseManagerManager = SupabaseManagerManager();
+
   static Profile? _currentProfile;
 
   static Profile? getCurrentProfile() => _currentProfile;
+
+  static SupabaseClient supabaseClient = supabaseManagerManager.getSupabaseClient();
+
+  static SupabaseClient getClient() => supabaseClient;
+
+  static setSupabaseManagerManager(SupabaseManagerManager client) {
+    supabaseManagerManager = client;
+  }
 
   static Future<void> reloadCurrentProfile() async {
     try {

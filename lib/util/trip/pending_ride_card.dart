@@ -126,13 +126,13 @@ class PendingRideCard extends TripCard<Ride> {
   }
 
   void approveRide() async {
-    await supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', trip.id);
+    await SupabaseManager.supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', trip.id);
     // todo: notify rider
     reloadPage();
   }
 
   void rejectRide() async {
-    await supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', trip.id);
+    await SupabaseManager.supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', trip.id);
     //todo: notify rider
     reloadPage();
   }
