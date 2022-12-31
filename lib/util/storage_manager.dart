@@ -9,7 +9,16 @@ class StorageManager {
       prefs.setString(key, value);
     } else if (value is bool) {
       prefs.setBool(key, value);
+    } else if (value is List<String>) {
+      prefs.setStringList(key, value);
+    } else {
+      throw Exception('Unsupported type');
     }
+  }
+
+  static Future<List<String>> readStringList(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(key) ?? [];
   }
 
   static Future<dynamic> readData(String key) async {
