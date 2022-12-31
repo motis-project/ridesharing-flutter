@@ -67,9 +67,6 @@ class _LoginFormState extends State<LoginForm> {
           email: emailController.text,
           password: passwordController.text,
         );
-        setState(() {
-          _state = ButtonState.success;
-        });
       } on AuthException catch (e) {
         fail();
         // looks weird but needed later for i18n
