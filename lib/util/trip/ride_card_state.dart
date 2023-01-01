@@ -5,11 +5,15 @@ import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../../rides/pages/ride_detail_page.dart';
+import '../profiles/reviews/custom_rating_bar_indicator.dart';
+import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
+import 'package:flutter_app/account/models/review.dart';
 
 class RideCardState<T extends RideCard> extends TripCardState<RideCard> {
   Ride? ride;
   bool fullyLoaded = false;
+  Profile? driver;
 
   static const String _driveQuery = '''
     *,
@@ -30,7 +34,6 @@ class RideCardState<T extends RideCard> extends TripCardState<RideCard> {
   @override
   void initState() {
     super.initState();
-
     setState(() {
       ride = widget.trip;
       super.trip = ride;
@@ -47,38 +50,83 @@ class RideCardState<T extends RideCard> extends TripCardState<RideCard> {
 
     setState(() {
       ride = ride;
+      driver = ride!.drive!.driver!;
       fullyLoaded = true;
     });
   }
 
   @override
   Widget buildTopRight() {
-    return Text("${ride!.price}\u{20AC} ");
+    Icon progress;
+    switch (ride!.status) {
+      case RideStatus.approved:
+        progress = const Icon(
+          Icons.done_all,
+          color: Colors.green,
+        );
+        break;
+      case RideStatus.preview:
+        progress = const Icon(
+          Icons.done,
+          color: Colors.grey,
+        );
+        break;
+      case RideStatus.pending:
+        progress = const Icon(
+          Icons.done_all,
+          color: Colors.grey,
+        );
+        break;
+      case RideStatus.rejected:
+        progress = const Icon(
+          Icons.remove_done,
+          color: Colors.red,
+        );
+        break;
+      case RideStatus.cancelledByDriver:
+        progress = const Icon(
+          Icons.block,
+          color: Colors.red,
+        );
+        break;
+      case RideStatus.cancelledByRider:
+        progress = const Icon(
+          Icons.done_all,
+          color: Colors.red,
+        );
+        break;
+    }
+    return Row(
+      children: [
+        progress,
+        const SizedBox(width: 4),
+        Text("${ride!.price}\u{20AC} "),
+      ],
+    );
   }
 
   @override
   Widget buildBottomLeft() {
-    Profile driver = ride!.drive!.driver!;
     return Row(
       children: [
         CircleAvatar(
-          child: Text(driver.username[0]),
+          child: Text(driver!.username[0]),
         ),
         const SizedBox(width: 5),
-        Text(driver.username),
+        Text(driver!.username),
       ],
     );
   }
 
   @override
   Widget buildBottomRight() {
+    AggregateReview aggregateReview = AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!);
+
     return Row(
-      children: const [
-        Text("3"),
-        Icon(
-          Icons.star,
-          color: Colors.amberAccent,
-        ),
+      children: [
+        Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
+        const SizedBox(width: 10),
+        CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
       ],
     );
   }

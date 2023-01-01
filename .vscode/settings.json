@@ -13,5 +13,6 @@
   // Remove from file watching
   "files.watcherExclude": {
     "**/.fvm": true
-  }
+  },
+  "cmake.sourceDirectory": "${workspaceFolder}/linux"
 }

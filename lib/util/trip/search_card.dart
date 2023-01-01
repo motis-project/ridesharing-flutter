@@ -12,8 +12,9 @@ class _SearchCard extends RideCardState<SearchCard> {
   void initState() {
     super.initState();
     setState(() {
-      super.ride = widget.trip;
-      super.fullyLoaded = true;
+      ride = widget.trip;
+      driver = ride!.drive!.driver!;
+      fullyLoaded = true;
     });
   }
 }

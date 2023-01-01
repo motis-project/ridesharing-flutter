@@ -50,7 +50,7 @@ class TripOverview extends StatelessWidget {
     );
     infoRowWidgets.add(dateWidget);
 
-    Widget seatIndicator = buildSeatIndicator(context);
+    Widget seatIndicator = buildSeatIndicator(context, trip);
     infoRowWidgets.add(seatIndicator);
 
     Widget infoRow = Row(
@@ -66,7 +66,7 @@ class TripOverview extends StatelessWidget {
     return overview;
   }
 
-  Widget buildSeatIndicator(BuildContext context) {
+  static Widget buildSeatIndicator(BuildContext context, Trip trip) {
     List<Widget> seatIcons;
     Widget text;
 
