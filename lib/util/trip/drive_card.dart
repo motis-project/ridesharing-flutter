@@ -55,6 +55,7 @@ class _DriveCard extends TripCardState<DriveCard> {
     return TripOverview.buildSeatIndicator(context, super.trip!);
   }
 
+  // Notification
   @override
   Widget buildTopRight() {
     return _drive!.cancelled

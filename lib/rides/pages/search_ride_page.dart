@@ -3,6 +3,7 @@ import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/submit_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({super.key});
@@ -16,7 +17,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Ride'),
+        title: Text(AppLocalizations.of(context)!.pageSearchRideTitle),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(),
@@ -108,7 +109,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _onSubmit() async {
-    //todo: pressing search button
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -125,7 +125,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
       child: TextFormField(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
-          labelText: "Date",
+          labelText: "Seats",
         ),
         readOnly: true,
         onTap: _showDatePicker,
