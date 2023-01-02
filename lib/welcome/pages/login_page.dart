@@ -28,12 +28,12 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: const Center(
         child: CustomScrollView(
-          physics:  ClampingScrollPhysics(),
+          physics: ClampingScrollPhysics(),
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 child: LoginForm(),
               ),
             )

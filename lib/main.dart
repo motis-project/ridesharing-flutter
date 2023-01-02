@@ -13,7 +13,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
-  
   await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
