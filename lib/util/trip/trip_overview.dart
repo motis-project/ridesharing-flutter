@@ -81,7 +81,7 @@ class TripOverview extends StatelessWidget {
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
         ),
       );
-      text = Text("${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}}");
+      text = Text("${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}");
     } else {
       seatIcons = List.generate(
         trip.seats,
