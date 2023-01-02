@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "price": "Preis: {amount}€",
+  "price": "{amount}€",
   "@price": {
       "placeholders": {
           "amount": {
@@ -12,12 +12,8 @@
   },
   "cancel": "cancel",
   "confirm": "confirm",
-  "seat": "{count, plural, =1{seat} other{seats}}",
-  "@seat": {
-    "placeholders": {
-      "count": {}
-    }
-  },
+  "login": "Login",
+  "register": "Register",
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
@@ -42,6 +38,14 @@
   "cardPendingRideRejectDialogTitle": "Reject Ride",
   "cardPendingRideRejectDialogContent": "Are you sure you want to reject this ride?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
+
+  "pageRideDetailCancelDialogTitle": "Confirm Cancellation",
+  "pageRideDetailCancelDialogContent": "Are you sure you want to cancel this ride?",
+  "pageRideDetailCancelDialogSuccessSnackbar": "Ride cancelled",
+  "pageRideDetailRequestlDialogTitle": "Confirm Ride Request",
+  "pageRideDetailRequestlDialogContent": "Are you sure you want to request this ride?",
+  "pageRideDetailLoginlDialogTitle": "Please Login First",
+  "pageRideDetailLoginlDialogContent": "Please login before requesting a ride. if you don't have an account yet, please register first.",
 
   "appName": "Motis Ride-Sharing App"
 }

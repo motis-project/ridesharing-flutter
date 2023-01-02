@@ -6,6 +6,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/icon_widget.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/own_theme_fields.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
@@ -274,16 +275,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: action.seats <= 2
-                            ? List.generate(action.seats, (index) => icon)
-                            : [
-                                icon,
-                                const SizedBox(width: 2),
-                                Text("x${action.seats}"),
-                              ],
-                      ),
+                      child: IconWidget(icon: icon, count: action.seats),
                     ),
                   ),
                   ProfileWidget(profile, size: 15),

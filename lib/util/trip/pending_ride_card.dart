@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/icon_widget.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
@@ -57,16 +58,7 @@ class PendingRideCard extends TripCard<Ride> {
         Icons.chair,
         color: Theme.of(context).colorScheme.primary,
       );
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: trip.seats <= 2
-            ? List.generate(trip.seats, (index) => icon)
-            : [
-                icon,
-                const SizedBox(width: 2),
-                Text("x${trip.seats}"),
-              ],
-      );
+      return IconWidget(icon: icon, count: trip.seats);
     }
 
     return Card(

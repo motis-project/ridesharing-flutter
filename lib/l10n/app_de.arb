@@ -1,23 +1,9 @@
 {
     "@@locale": "de",
 
-    "price": "price: {amount}€",
-    "@price": {
-        "placeholders": {
-            "amount": {
-                "example": "123.45",
-                "description": "amount"
-            }
-        }
-    },
     "cancel": "abbrechen",
     "confirm": "bestätigen",  
-    "seat": "{count, plural, =1{Platz} other{Plätze}}",
-    "@seat": {
-        "placeholders": {
-            "count": {}
-        }
-    },
+    "register": "Registrieren",
 
     "pageAccountTitle": "Account",
     "pageAccountSignOut": "Ausloggen",
@@ -43,6 +29,14 @@
     "cardPendingRideRejectDialogTitle": "Mitfahrt ablehnen",
     "cardPendingRideRejectDialogContent": "Sind Sie sich sicher das Sie die Mitfahrt ablehnen möchten?",
     "cardPendingRideRejectDialogSuccessSnackBar": "Mitfahrt abgelehnt",
+
+    "pageRideDetailCancelDialogTitle": "Mitfahrt Absagen",
+    "pageRideDetailCancelDialogContent": "Sind Sie sich sicher, dass Sie die Mitfahrt absagen wollen?",
+    "pageRideDetailCancelDialogSuccessSnackbar": "Mitfahrt abgesagt",
+    "pageRideDetailRequestlDialogTitle": "Mitfahrt Anfragen",
+    "pageRideDetailRequestlDialogContent": "Sind Sie sicher, dass Sie die Mitfahrt anfragen wollen?",
+    "pageRideDetailLoginlDialogTitle": "Bitte zuerst Einloggen",
+    "pageRideDetailLoginlDialogContent": "Bitte loggen Sie sich ein bevor Sie eine Fahrt anfragen. Wenn Sie noch keinen Account haben müssen Sie sich zuerst registrieren.",
 
 
     "appName": "Motis Mitfahr-App"

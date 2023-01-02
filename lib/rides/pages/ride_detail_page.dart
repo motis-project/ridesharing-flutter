@@ -17,6 +17,7 @@ import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
@@ -329,9 +330,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
     switch (_ride!.status) {
       case RideStatus.preview:
         return BigButton(
-            text: "REQUEST RIDE",
-            onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
-            color: Theme.of(context).primaryColor);
+          text: "REQUEST RIDE",
+          onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+          color: Theme.of(context).primaryColor,
+        );
       case RideStatus.approved:
         return _ride!.isFinished
             ? BigButton(
@@ -359,23 +361,23 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Cancellation"),
-        content: const Text("Are you sure you want to cancel this ride?"),
+        title: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogContent),
         actions: <Widget>[
           TextButton(
-            child: const Text("No"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Yes"),
+            child: Text(AppLocalizations.of(context)!.confirm),
             onPressed: () {
               _cancelRide();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride cancelled"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogSuccessSnackbar),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -394,15 +396,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Confirm Ride Request"),
-        content: const Text("Are you sure you want to request this ride?"),
+        title: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogContent),
         actions: <Widget>[
           TextButton(
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-            child: const Text("Confirm"),
+            child: Text(AppLocalizations.of(context)!.confirm),
             onPressed: () {
               confirmRequest(_ride!);
               Navigator.of(dialogContext).pop();
@@ -426,24 +428,22 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Please Login First"),
-        content: const Text(
-          "Please login before requesting a ride. if you don't have an account yet, please register first.",
-        ),
+        title: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogContent),
         actions: <Widget>[
           TextButton(
-            child: const Text("Close"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-              child: const Text("Login"),
+              child: Text(AppLocalizations.of(context)!.login),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
               }),
           TextButton(
-            child: const Text("Register"),
+            child: Text(AppLocalizations.of(context)!.register),
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.popUntil(context, (route) => route.isFirst);
