@@ -164,7 +164,7 @@
   "pageRideDetailLoginDialogLogin": "Einloggen",
   "pageRideDetailBannerRequested": "Du hast diese Mitfahrt angefragt.",
   "pageRideDetailBannerRejected": "Diese Mitfahrt wurde abgelehnt.",
-  "pageRideDetailBannerCancelledByDriver": "Der Fahrer hat diese Mitfahrt abgesagt.",
+  "pageRideDetailBannerCancelledByDriver": "Diese Mitfahrt wurde abgesagt.",
   "pageRideDetailBannerCancelledByYou": "Du hast diese Mitfahrt abgesagt.",
 
   "pageDriveChatTitle": "Fahrt Chat",
