@@ -188,7 +188,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     // This needs to happen on rebuild to make sure we pick up locale changes
     _dateController.text = localeManager.formatDate(_selectedDate);
     _timeController.text = localeManager.formatTime(_selectedDate);
-
     return Form(
       key: _formKey,
       child: Column(
