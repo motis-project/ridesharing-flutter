@@ -165,6 +165,7 @@
   "pageRideDetailLoginDialogTitle": "Please login First",
   "pageRideDetailLoginDialogMessage": "You need to login to request a ride. If you don't have an account yet, please register first.",
   "pageRideDetailBannerRequested": "You have requested this ride.",
+  "pageRideDetailBannerRejected": "This ride has been rejected.",
   "pageRideDetailBannerCancelledByDriver": "This ride has been cancelled.",
   "pageRideDetailBannerCancelledByYou": "You have cancelled this ride.",
 

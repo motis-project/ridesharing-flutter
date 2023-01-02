@@ -147,6 +147,7 @@
   "pageRideDetailLoginDialogMessage": "Du musst eingeloggt sein, um eine Mitfahrt anzufragen. Wenn du noch kein Konto hast, kannst du es hier erstellen.",
   "pageRideDetailLoginDialogLogin": "Einloggen",
   "pageRideDetailBannerRequested": "Du hast diese Mitfahrt angefragt.",
+  "pageRideDetailBannerRejected": "Diese Mitfahrt wurde abgelehnt.",
   "pageRideDetailBannerCancelledByDriver": "Der Fahrer hat diese Mitfahrt abgesagt.",
   "pageRideDetailBannerCancelledByYou": "Du hast diese Mitfahrt abgesagt.",
 

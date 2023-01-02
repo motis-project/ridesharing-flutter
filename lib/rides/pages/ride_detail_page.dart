@@ -147,8 +147,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
         if (_ride != null && _ride!.status == RideStatus.pending)
           CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRequested)
         else if (_ride != null && _ride!.status == RideStatus.rejected)
-          // TODO: Translate
-          const CustomBanner(kind: CustomBannerKind.error, text: "This ride has been rejected.")
+          CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerRejected)
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             kind: CustomBannerKind.error,
