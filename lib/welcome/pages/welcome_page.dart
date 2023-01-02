@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/welcome/pages/login_page.dart';
 import 'package:flutter_app/welcome/pages/register_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/search_ride_page.dart';
 
@@ -71,7 +72,7 @@ class _WelcomePageState extends State<WelcomePage> {
             tag: "SearchButton",
             transitionOnUserGestures: true,
             child: BigButton(
-              text: "Anonymous Search",
+              text: S.of(context).pageWelcomeAnonymousSearch,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SearchRidePage()),
               ),
@@ -82,7 +83,7 @@ class _WelcomePageState extends State<WelcomePage> {
             tag: "LoginButton",
             transitionOnUserGestures: true,
             child: BigButton(
-              text: "Login",
+              text: S.of(context).pageWelcomeLogin,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const LoginPage()),
               ),
@@ -93,7 +94,7 @@ class _WelcomePageState extends State<WelcomePage> {
             tag: "RegisterButton",
             transitionOnUserGestures: true,
             child: BigButton(
-              text: "Register",
+              text: S.of(context).pageWelcomeRegister,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const RegisterPage()),
               ),

@@ -14,6 +14,7 @@ import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:timelines/timelines.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'drive_chat_page.dart';
 
@@ -159,13 +160,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       if (approvedRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
         Set<Profile> riders = approvedRides.map((ride) => ride.rider!).toSet();
-        widgets.add(ProfileWrapList(riders, title: 'Riders'));
+        widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
       if (!(_drive!.isFinished || _drive!.cancelled)) {
         widgets.add(const SizedBox(height: 10));
         Widget deleteButton = BigButton(
-          text: "CANCEL DRIVE",
+          text: S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
           color: Theme.of(context).errorColor,
         );
@@ -180,9 +181,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     Widget content = Column(
       children: [
         if (_drive?.cancelled ?? false)
-          const CustomBanner(
+          CustomBanner(
             kind: CustomBannerKind.error,
-            text: "You have cancelled this drive.",
+            text: S.of(context).pageDriveDetailBannerCancelled,
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -196,7 +197,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Drive Detail'),
+        title: Text(S.of(context).pageDriveDetailTitle),
         actions: <Widget>[
           IconButton(
             onPressed: () => Navigator.push(
@@ -309,23 +310,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Cancellation"),
-        content: const Text("Are you sure you want to cancel this drive?"),
+        title: Text(S.of(context).pageDriveDetailCancelDialogTitle),
+        content: Text(S.of(context).pageDriveDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: const Text("No"),
+            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Yes"),
+            child: Text(S.of(context).yes),
             onPressed: () {
               _cancelDrive();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Drive cancelled"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(S.of(context).pageDriveDetailCancelDialogToast),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },

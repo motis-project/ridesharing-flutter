@@ -10,6 +10,7 @@ import 'package:flutter_app/welcome/pages/reset_password_page.dart';
 import 'package:flutter_app/welcome/pages/welcome_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   await dotenv.load();
@@ -49,7 +50,7 @@ class _AppWrapperState extends State<AppWrapper> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Motis Mitfahr-App',
+      onGenerateTitle: (context) => S.of(context).appName,
       debugShowCheckedModeBanner: false,
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
@@ -105,8 +106,8 @@ class _AuthAppState extends State<AuthApp> {
           error = error as AuthException;
           if (error.message == 'Email link is invalid or has expired') {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Email link is invalid or has expired"),
+              SnackBar(
+                content: Text(S.of(context).authEmailLinkInvalid),
               ),
             );
           }

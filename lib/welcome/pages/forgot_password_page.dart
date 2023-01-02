@@ -4,6 +4,7 @@ import 'package:flutter_app/util/email_field.dart';
 import 'package:flutter_app/util/loading_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_app/util/supabase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;
@@ -18,7 +19,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Reset password"),
+        title: Text(S.of(context).pageForgotPasswordTitle),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -59,8 +60,10 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         _state = ButtonState.loading;
       });
 
-      supabaseClient.auth.resetPasswordForEmail(emailController.text,
-          redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/');
+      supabaseClient.auth.resetPasswordForEmail(
+        emailController.text,
+        redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
+      );
 
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
@@ -107,8 +110,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             LoadingButton(
               onPressed: onSubmit,
               state: _state,
-              idleText: "Send recovery",
-              successText: "Sent",
+              idleText: S.of(context).pageForgotPasswordButtonSend,
+              successText: S.of(context).pageForgotPasswordButtonSent,
             )
           ],
         ),

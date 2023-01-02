@@ -96,17 +96,18 @@ class Ride extends Trip {
     return rides.map((ride) => ride.toJson()).toList();
   }
 
-  static Future<Ride?> rideOfUserAtTimeRange(DateTimeRange range, int userId) async {
+  static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
     //get all approved and upcoming rides of user
     List<Ride> rides = await getRidesOfUser(userId);
     rides = rides.where((ride) => ride.status.isApproved() && !ride.isFinished).toList();
+
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
       if (ride.overlapsWithTimeRange(range)) {
-        return ride;
+        return true;
       }
     }
-    return null;
+    return false;
   }
 
   static Future<List<Ride>> getRidesOfUser(int userId) async {

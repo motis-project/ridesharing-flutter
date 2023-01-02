@@ -16,7 +16,6 @@ import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../welcome/pages/login_page.dart';
@@ -129,7 +128,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
         Set<Profile> riders =
             ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
-        widgets.add(ProfileWrapList(riders, title: "Riders"));
+        widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
       Widget? primaryButton = _buildPrimaryButton(driver);
@@ -146,15 +145,16 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Widget content = Column(
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
-          const CustomBanner(kind: CustomBannerKind.warning, text: "You have requested this ride.")
+          CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRequested)
         else if (_ride != null && _ride!.status == RideStatus.rejected)
+          // TODO: Translate
           const CustomBanner(kind: CustomBannerKind.error, text: "This ride has been rejected.")
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             kind: CustomBannerKind.error,
             text: _ride!.status == RideStatus.cancelledByDriver
-                ? "This ride has been cancelled."
-                : "You have cancelled this ride.",
+                ? S.of(context).pageRideDetailBannerCancelledByDriver
+                : S.of(context).pageRideDetailBannerCancelledByYou,
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -168,7 +168,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ride Detail'),
+        title: Text(S.of(context).pageDriveDetailTitle),
         actions: <Widget>[
           IconButton(
             onPressed: () {},
@@ -203,7 +203,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
                 Expanded(
                   child: Text(
-                    "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
+                    S.of(context).pageReviewCount(reviews.length),
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                     textAlign: TextAlign.right,
                   ),
@@ -221,7 +221,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Comfort"),
+                      Text(S.of(context).reviewCategoryComfort),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
                     ],
@@ -229,7 +229,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Safety"),
+                      Text(S.of(context).reviewCategorySafety),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
                     ],
@@ -237,7 +237,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Reliability"),
+                      Text(S.of(context).reviewCategoryReliability),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
                     ],
@@ -245,7 +245,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Hospitality"),
+                      Text(S.of(context).reviewCategoryHospitality),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
                     ],
@@ -291,7 +291,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             bottom: 2,
             right: 2,
             child: Text(
-              "More",
+              S.of(context).more,
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
@@ -330,20 +330,27 @@ class _RideDetailPageState extends State<RideDetailPage> {
     switch (_ride!.status) {
       case RideStatus.preview:
         return BigButton(
-          text: "REQUEST RIDE",
+          text: S.of(context).pageRideDetailButtonRequest,
           onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
           color: Theme.of(context).primaryColor,
         );
       case RideStatus.approved:
         return _ride!.isFinished
             ? BigButton(
-                text: "RATE DRIVER",
+                text: S.of(context).pageRideDetailButtonRate,
                 onPressed: () => _navigateToRatePage(driver),
                 color: Theme.of(context).primaryColor,
               )
-            : BigButton(text: "CANCEL RIDE", onPressed: _showCancelDialog, color: Theme.of(context).errorColor);
+            : BigButton(
+                text: S.of(context).pageRideDetailButtonCancel,
+                onPressed: _showCancelDialog,
+                color: Theme.of(context).errorColor,
+              );
       case RideStatus.pending:
-        return BigButton(text: "RIDE REQUESTED", color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
+        return BigButton(
+          text: S.of(context).pageRideDetailButtonRequested,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        );
       default:
         return null;
     }
@@ -361,22 +368,22 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogTitle),
-        content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogContent),
+        title: Text(S.of(context).pageRideDetailCancelDialogTitle),
+        content: Text(S.of(context).pageRideDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: Text(AppLocalizations.of(context)!.confirm),
+            child: Text(S.of(context).yes),
             onPressed: () {
               _cancelRide();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogSuccessSnackbar),
+                  content: Text(S.of(context).pageRideDetailCancelDialogToast),
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -396,15 +403,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogTitle),
-        content: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogContent),
+        title: Text(S.of(context).pageRideDetailRequestDialogTitle),
+        content: Text(S.of(context).pageRideDetailRequestDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-            child: Text(AppLocalizations.of(context)!.confirm),
+            child: Text(S.of(context).yes),
             onPressed: () {
               confirmRequest(_ride!);
               Navigator.of(dialogContext).pop();
@@ -428,22 +435,22 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogTitle),
-        content: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogContent),
+        title: Text(S.of(context).pageRideDetailLoginDialogTitle),
+        content: Text(S.of(context).pageRideDetailLoginDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(S.of(context).cancel),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-              child: Text(AppLocalizations.of(context)!.login),
+              child: Text(S.of(context).pageWelcomeLogin),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
               }),
           TextButton(
-            child: Text(AppLocalizations.of(context)!.register),
+            child: Text(S.of(context).pageWelcomeRegister),
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.popUntil(context, (route) => route.isFirst);

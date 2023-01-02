@@ -4,6 +4,7 @@ import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/submit_button.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/models/ride.dart';
 import '../../account/models/profile.dart';
@@ -23,7 +24,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Drive'),
+        title: Text(S.of(context).pageCreateDriveTitle),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -49,7 +50,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
-  late final DateTime _firstDate;
   late DateTime _selectedDate;
   late int _dropdownValue;
 
@@ -74,11 +74,13 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   void _showDatePicker() {
+    DateTime firstDate = DateTime.now();
+
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: _firstDate,
-      lastDate: _firstDate.add(const Duration(days: 30)),
+      firstDate: firstDate,
+      lastDate: firstDate.add(const Duration(days: 30)),
     ).then((value) {
       setState(() {
         if (value != null) {
@@ -99,31 +101,19 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
         print("$_startSuggestion $_destinationSuggestion");
 
-        //check if the user already has a drive at this time
-        Drive? overlappingDrive =
-            await Drive.driveOfUserAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (overlappingDrive != null && mounted) {
-          //todo: show view with overlapping drive when implemented
+        bool hasDrive =
+            await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
+        if (hasDrive && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'You already have a drive on ${localeManager.formatDate(overlappingDrive.startTime)} at ${localeManager.formatDate(overlappingDrive.startTime)} from ${overlappingDrive.start} to ${overlappingDrive.end}',
-              ),
-            ),
+            SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveDrive)),
           );
           return;
         }
-        //check if the user already has a ride at this time
-        Ride? overlappingRide =
-            await Ride.rideOfUserAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (overlappingRide != null && mounted) {
-          //todo: show view with overlapping ride when implemented
+
+        bool hasRide = await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
+        if (hasRide && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'You already have a ride on ${localeManager.formatDate(overlappingRide.startTime)} at ${localeManager.formatDate(overlappingRide.startTime)} from ${overlappingRide.start} to ${overlappingRide.end}',
-              ),
-            ),
+            SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveRide)),
           );
           return;
         }
@@ -140,9 +130,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         await supabaseClient.from('drives').insert(drive.toJson()).select<Map<String, dynamic>>().single().then(
           (data) {
             Drive drive = Drive.fromJson(data);
-            Navigator.pushReplacement<void, void>(
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute<void>(
+              MaterialPageRoute(
                 builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
               ),
             );
@@ -150,8 +140,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         );
       } on AuthException {
         //todo: change error message when login is implemented
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Something went wrong"),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(S.of(context).failureSnackBar),
         ));
       }
     }
@@ -159,10 +149,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
   String? _timeValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a time';
+      return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(_firstDate)) {
-      return 'Please enter a valid time';
+    if (_selectedDate.isBefore(DateTime.now())) {
+      return S.of(context).formTimeValidateFuture;
     }
     return null;
   }
@@ -170,7 +160,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   @override
   initState() {
     super.initState();
-    _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
     _dropdownValue = list.first;
   }
@@ -210,9 +199,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               children: [
                 Expanded(
                   child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Date",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).formDate,
                     ),
                     readOnly: true,
                     onTap: _showDatePicker,
@@ -221,9 +210,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                 ),
                 Expanded(
                   child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Time",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).formTime,
                     ),
                     readOnly: true,
                     onTap: _showTimePicker,
@@ -239,9 +228,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                     child: DropdownButtonFormField<int>(
                       value: _dropdownValue,
                       icon: const Icon(Icons.arrow_downward),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Seats",
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: S.of(context).seats,
                       ),
                       onChanged: (int? value) {
                         setState(() {
@@ -261,7 +250,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             ),
           ),
           SubmitButton(
-            text: "Create",
+            text: S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/pages/search_ride_page.dart';
 import 'package:flutter_app/util/trip/trip_page_builder.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
@@ -33,7 +34,7 @@ class _RidesPageState extends State<RidesPage> {
   Widget build(BuildContext context) {
     return TripPageBuilder.build(
       context, //context
-      'Rides', //title
+      S.of(context).pageRidesTitle, //title
       _rides, //trips
       (ride) => RideCard(ride),
       FloatingActionButton(

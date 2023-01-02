@@ -8,6 +8,7 @@ import '../../util/custom_timeline_theme.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
 import '../models/ride.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchSuggestionPage extends StatefulWidget {
   const SearchSuggestionPage(this.start, this.end, this.date, this.seats, {super.key});
@@ -27,7 +28,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
-  late final DateTime _firstDate;
   late DateTime _selectedDate;
   late int _dropdownValue;
 
@@ -38,7 +38,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   @override
   initState() {
     super.initState();
-    _firstDate = widget.date;
     _selectedDate = widget.date;
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
@@ -56,11 +55,13 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showDatePicker() {
+    DateTime firstDate = DateTime.now();
+
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: _firstDate,
-      lastDate: _firstDate.add(const Duration(days: 30)),
+      firstDate: firstDate,
+      lastDate: firstDate.add(const Duration(days: 30)),
     ).then((value) {
       if (value != null) {
         _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
@@ -86,10 +87,10 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   String? _timeValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a time';
+      return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(_firstDate)) {
-      return 'Please enter a valid time';
+    if (_selectedDate.isBefore(DateTime.now())) {
+      return S.of(context).formTimeValidateFuture;
     }
     return null;
   }
@@ -175,9 +176,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _dateController.text = localeManager.formatDate(widget.date);
 
     return TextFormField(
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: "Date",
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: S.of(context).formDate,
       ),
       readOnly: true,
       onTap: () {
@@ -192,9 +193,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _timeController.text = localeManager.formatTime(widget.date);
 
     return TextFormField(
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: "Time",
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: S.of(context).formTime,
       ),
       readOnly: true,
       onTap: () {
@@ -211,9 +212,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       height: 60,
       width: 110,
       child: DropdownButtonFormField<int>(
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Seats",
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).seats,
         ),
         value: _dropdownValue,
         onChanged: (int? value) {
@@ -274,9 +275,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       height: 20,
       child: ElevatedButton(
         onPressed: () => filter(),
-        child: const Align(
+        child: Align(
           alignment: Alignment.center,
-          child: Text('Filter'),
+          child: Text(S.of(context).pageSearchSuggestionsButtonFilter),
         ),
       ),
     );
@@ -286,7 +287,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Ride'),
+        title: Text(S.of(context).pageSearchSuggestionsTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

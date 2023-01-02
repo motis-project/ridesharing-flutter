@@ -37,10 +37,10 @@ class _DriveChatPageState extends State<DriveChatPage> {
       if (riders.isEmpty && pendingRides.isEmpty) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.pageDriveChatTitle),
+            title: Text(S.of(context).pageDriveChatTitle),
           ),
           body: Center(
-            child: Text(AppLocalizations.of(context)!.pageDriveChatEmptyMessage),
+            child: Text(S.of(context).pageDriveChatEmptyMessage),
           ),
         );
       } else {
@@ -48,7 +48,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
           List<Widget> riderColumn = [
             const SizedBox(height: 5.0),
             Text(
-              AppLocalizations.of(context)!.pageDriveChatRiderHeadline,
+              S.of(context).pageDriveChatRiderHeadline,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10.0),
@@ -60,8 +60,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         if (pendingRides.isNotEmpty) {
           List<Widget> pendingRidesColumn = [
             const SizedBox(height: 5.0),
-            Text(AppLocalizations.of(context)!.pageDriveChatRequestsHeadline,
-                style: Theme.of(context).textTheme.titleLarge),
+            Text(S.of(context).pageDriveChatRequestsHeadline, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10.0),
           ];
           pendingRidesColumn.addAll(_pendingRidesList(pendingRides));
@@ -74,7 +73,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.pageDriveChatTitle),
+        title: Text(S.of(context).pageDriveChatTitle),
       ),
       body: RefreshIndicator(
         onRefresh: loadDrive,
