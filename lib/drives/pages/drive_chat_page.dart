@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/util/profiles/profile_widget.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
@@ -106,18 +107,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
     return pendingRidesColumn;
   }
 
-  Row profileRow(Profile profile) {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(profile.username[0]),
-        ),
-        const SizedBox(width: 5),
-        Text(profile.username),
-      ],
-    );
-  }
-
   Widget _riderList(Set<Profile> riders) {
     Widget ridersColumn = Container();
     if (riders.isNotEmpty) {
@@ -131,7 +120,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  profileRow(riders.elementAt(index)),
+                  ProfileWidget(riders.elementAt(index)),
                   const Icon(
                     Icons.chat,
                     color: Colors.black,
