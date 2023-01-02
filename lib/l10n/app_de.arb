@@ -96,14 +96,14 @@
   "pageHelpWhereIsAccessibilityQuestion": "Wo finde ich die Einstellungen für Barrierefreiheit?",
   "pageHelpWhereIsAccessibilityAnswer": "Diese App unterstützt eine Vielzahl von Einstellungen zur Barrierefreiheit, die vom Betriebssystem angeboten werden. Geh zu den Einstellungen deines Betriebssystems, um Screen Reader oder größere Schrift zu aktivieren!",
 
-  "pageReviewCount": "{count, plural, =1{{count} Review}, other{{count} Reviews}}",
+  "pageReviewCount": "{count, plural, =1{{count} Bewertung}, other{{count} Bewertungen}}",
   "reviewCategoryComfort": "Komfort",
   "reviewCategorySafety": "Sicherheit",
   "reviewCategoryReliability": "Verlässlichkeit",
   "reviewCategoryHospitality": "Gastfreundschaft",
 
-  "pageWriteReviewTitle": "Review schreiben",
-  "pageWriteReviewReview": "Review",
+  "pageWriteReviewTitle": "Bewertung schreiben",
+  "pageWriteReviewReview": "Bewertung",
   "pageWriteReviewReviewHint": "Was hat dir an der Fahrt gefallen? Was hat dir weniger gefallen?",
   "pageWriteReviewRatingRequired": "Bitte bewerte deine Erfahrung",
 
