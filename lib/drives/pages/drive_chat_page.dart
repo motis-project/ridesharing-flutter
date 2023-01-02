@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/profiles/profile_widget.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';

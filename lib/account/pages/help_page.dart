@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/submit_button.dart';
+import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HelpPage extends StatefulWidget {

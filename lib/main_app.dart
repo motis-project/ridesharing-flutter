@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/pages/account_page.dart';
-import 'package:flutter_app/drives/pages/drives_page.dart';
-import 'package:flutter_app/home_page.dart';
-import 'package:flutter_app/rides/pages/rides_page.dart';
+import 'package:motis_mitfahr_app/account/pages/account_page.dart';
+import 'package:motis_mitfahr_app/drives/pages/drives_page.dart';
+import 'package:motis_mitfahr_app/home_page.dart';
+import 'package:motis_mitfahr_app/rides/pages/rides_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum TabItem { home, drives, rides, account }

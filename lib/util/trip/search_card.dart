@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/models/profile.dart';
-import 'package:flutter_app/rides/models/ride.dart';
-import 'package:flutter_app/rides/pages/ride_detail_page.dart';
-import 'package:flutter_app/util/custom_timeline_theme.dart';
-import 'package:flutter_app/util/locale_manager.dart';
-import 'package:flutter_app/util/trip/trip_card.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
+import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
 class SearchCard extends TripCard<Ride> {

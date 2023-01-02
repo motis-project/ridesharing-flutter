@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 
 class ProfileChip extends StatelessWidget {
   final Profile profile;

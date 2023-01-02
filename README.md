@@ -1,16 +1,24 @@
-# flutter_app
+# Motis Mitfahr-App
 
-A new Flutter project.
+A ride-sharing app by the Motis team.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter](https://flutter.dev/docs/get-started/install)
+- A working emulator or device
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installing
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Clone the repository
+- Insert the environment variables in `.env`, following the `example.env` file. You can find the supabase url and key in the supabase project settings (use the `anon` key for the `SUPABASE_KEY` variable)
+- Run `flutter pub get` to install all dependencies
+
+## Local Development
+
+- Run `flutter run` to start the app
+
+## Running the tests
+
+- Run `flutter test` to run all tests

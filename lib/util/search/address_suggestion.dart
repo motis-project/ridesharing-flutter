@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/search/position.dart';
+import 'package:motis_mitfahr_app/util/search/position.dart';
 
 class AddressSuggestion {
   final Position position;

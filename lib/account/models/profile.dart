@@ -1,6 +1,6 @@
-import 'package:flutter_app/account/models/review.dart';
-import 'package:flutter_app/account/models/profile_feature.dart';
-import 'package:flutter_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/account/models/review.dart';
+import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import '../../util/model.dart';
 
