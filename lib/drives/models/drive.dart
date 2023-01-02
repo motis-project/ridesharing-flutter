@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip.dart';
@@ -62,21 +63,20 @@ class Drive extends Trip {
     return drives.map((drive) => drive.toJson()).toList();
   }
 
-  @override
-  String toString() {
-    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
-  }
+  List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();
+  List<Ride>? get pendingRides => rides?.where((ride) => ride.status == RideStatus.pending).toList();
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
     return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
-  static Future<Drive?> driveOfUserAtTime(DateTime start, DateTime end, int userId) async {
-    //get all drives of user
-    final List<Drive> drives = await Drive.getDrivesOfUser(userId);
+  static Future<Drive?> driveOfUserAtTimeRange(DateTimeRange range, int userId) async {
+    //get all upcoming drives of user
+    List<Drive> drives = await Drive.getDrivesOfUser(userId);
+    drives = drives.where((drive) => !drive.cancelled && !drive.isFinished).toList();
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
-      if (drive.startTime.isBefore(end) && drive.endTime.isAfter(start)) {
+      if (drive.overlapsWithTimeRange(range)) {
         return drive;
       }
     }
@@ -86,12 +86,12 @@ class Drive extends Trip {
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
-    Set<DateTime> times = rides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
+    Set<DateTime> times = approvedRides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
 
     int maxUsedSeats = 0;
     for (DateTime time in times) {
       int usedSeats = 0;
-      for (Ride ride in rides!) {
+      for (Ride ride in approvedRides!) {
         final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
         final endTimeAfter = ride.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
@@ -106,9 +106,43 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
+  bool isRidePossible(Ride ride) {
+    List<Ride> consideredRides = approvedRides! + [ride];
+    Set<DateTime> times = consideredRides
+        .map((consideredRide) => [consideredRide.startTime, consideredRide.endTime])
+        .expand((x) => x)
+        .toSet();
+    for (DateTime time in times) {
+      int usedSeats = 0;
+      for (Ride consideredRide in consideredRides) {
+        final startTimeBeforeOrEqual =
+            consideredRide.startTime.isBefore(time) || consideredRide.startTime.isAtSameMomentAs(time);
+        final endTimeAfter = consideredRide.endTime.isAfter(time);
+        if (startTimeBeforeOrEqual && endTimeAfter) {
+          usedSeats += consideredRide.seats;
+        }
+      }
+
+      if (usedSeats > seats) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> cancel() async {
     cancelled = true;
     await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    await supabaseClient.from('rides').update({'status': RideStatus.cancelledByDriver.index}).eq('drive_id', id);
+    //cancel all pending and approved rides for this drive.
+    await supabaseClient
+        .from('rides')
+        .update({'status': RideStatus.cancelledByDriver.index})
+        .eq('drive_id', id)
+        .or('status.eq.${RideStatus.pending.index},status.eq.${RideStatus.approved.index}');
+  }
+
+  @override
+  String toString() {
+    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
   }
 }

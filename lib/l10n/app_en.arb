@@ -1,6 +1,20 @@
 {
   "@@locale": "en",
 
+  "price": "{amount}€",
+  "@price": {
+      "placeholders": {
+          "amount": {
+              "example": "123.45",
+              "description": "amount"
+          }
+      }
+  },
+  "cancel": "cancel",
+  "confirm": "confirm",
+  "login": "Login",
+  "register": "Register",
+
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
   "pageAccountLanguage": "Language",
@@ -12,6 +26,26 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",  
 
+  "pageDriveChatTitle": "Drive Chat",
+  "pageDriveChatEmptyMessage": "No riders or pending rides",
+  "pageDriveChatRiderHeadline": "Riders",
+  "pageDriveChatRequestsHeadline": "Ride requests",
+
+  "cardPendingRideApproveDialogTitle": "Confirm ride",
+  "cardPendingRideApproveDialogContent": "Are you sure you want to confirm this ride?",
+  "cardPendingRideApproveDialogSuccessSnackbar": "Ride confirmed",
+  "cardPendingRideApproveDialogErrorSnackbar": "Not enough seats available",
+  "cardPendingRideRejectDialogTitle": "Reject Ride",
+  "cardPendingRideRejectDialogContent": "Are you sure you want to reject this ride?",
+  "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
+
+  "pageRideDetailCancelDialogTitle": "Confirm Cancellation",
+  "pageRideDetailCancelDialogContent": "Are you sure you want to cancel this ride?",
+  "pageRideDetailCancelDialogSuccessSnackbar": "Ride cancelled",
+  "pageRideDetailRequestlDialogTitle": "Confirm Ride Request",
+  "pageRideDetailRequestlDialogContent": "Are you sure you want to request this ride?",
+  "pageRideDetailLoginlDialogTitle": "Please Login First",
+  "pageRideDetailLoginlDialogContent": "Please login before requesting a ride. if you don't have an account yet, please register first.",
 
   "appName": "Motis Ride-Sharing App"
 }

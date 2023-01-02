@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/trip/trip.dart';
 import 'package:flutter_app/util/supabase.dart';
@@ -48,7 +49,7 @@ class Ride extends Trip {
       seats: seats,
       riderId: riderId,
       status: RideStatus.preview,
-      driveId: drive.driverId,
+      driveId: drive.id!,
       drive: drive,
       price: price,
     );
@@ -95,12 +96,13 @@ class Ride extends Trip {
     return rides.map((ride) => ride.toJson()).toList();
   }
 
-  static Future<Ride?> rideOfUserAtTime(DateTime start, DateTime end, int userId) async {
-    //get all rides of user
-    final List<Ride> rides = Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
+  static Future<Ride?> rideOfUserAtTimeRange(DateTimeRange range, int userId) async {
+    //get all approved and upcoming rides of user
+    List<Ride> rides = await getRidesOfUser(userId);
+    rides = rides.where((ride) => ride.status.isApproved() && !ride.isFinished).toList();
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
-      if (ride.startTime.isBefore(end) && ride.endTime.isAfter(start)) {
+      if (ride.overlapsWithTimeRange(range)) {
         return ride;
       }
     }
@@ -142,5 +144,9 @@ enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cance
 extension RideStatusExtension on RideStatus {
   bool isCancelled() {
     return this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
+  }
+
+  bool isApproved() {
+    return this == RideStatus.approved;
   }
 }

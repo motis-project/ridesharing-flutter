@@ -17,6 +17,10 @@ import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../welcome/pages/login_page.dart';
+import '../../welcome/pages/register_page.dart';
 
 class RideDetailPage extends StatefulWidget {
   // One of these two must be set
@@ -46,6 +50,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
       rider: rider_id(*)
     )
   ''';
+  static const String _rideQuery = '''
+        *,
+        drive: drive_id(
+          $_driveQuery
+        )
+      ''';
 
   Ride? _ride;
   bool _fullyLoaded = false;
@@ -71,12 +81,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       ride.drive = Drive.fromJson(data);
     } else {
-      Map<String, dynamic> data = await supabaseClient.from('rides').select('''
-        *,
-        drive: drive_id(
-          $_driveQuery
-        )
-      ''').eq('id', widget.id!).single();
+      Map<String, dynamic> data = await supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 
@@ -142,6 +147,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
           const CustomBanner(kind: CustomBannerKind.warning, text: "You have requested this ride.")
+        else if (_ride != null && _ride!.status == RideStatus.rejected)
+          const CustomBanner(kind: CustomBannerKind.error, text: "This ride has been rejected.")
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             kind: CustomBannerKind.error,
@@ -322,7 +329,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
   Widget? _buildPrimaryButton(Profile driver) {
     switch (_ride!.status) {
       case RideStatus.preview:
-        return BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
+        return BigButton(
+          text: "REQUEST RIDE",
+          onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+          color: Theme.of(context).primaryColor,
+        );
       case RideStatus.approved:
         return _ride!.isFinished
             ? BigButton(
@@ -350,23 +361,23 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Cancellation"),
-        content: const Text("Are you sure you want to cancel this ride?"),
+        title: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogContent),
         actions: <Widget>[
           TextButton(
-            child: const Text("No"),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Yes"),
+            child: Text(AppLocalizations.of(context)!.confirm),
             onPressed: () {
               _cancelRide();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride cancelled"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.pageRideDetailCancelDialogSuccessSnackbar),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -379,5 +390,68 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _cancelRide() async {
     await _ride?.cancel();
     setState(() {});
+  }
+
+  _showRequestDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailRequestlDialogContent),
+        actions: <Widget>[
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.cancel),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.confirm),
+            onPressed: () {
+              confirmRequest(_ride!);
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void confirmRequest(Ride ride) async {
+    ride.status = RideStatus.pending;
+    final data = await supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    setState(() {
+      _ride = Ride.fromJson(data);
+    });
+    //todo: send notification to driver
+  }
+
+  _showLoginDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogTitle),
+        content: Text(AppLocalizations.of(context)!.pageRideDetailLoginlDialogContent),
+        actions: <Widget>[
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.cancel),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+              child: Text(AppLocalizations.of(context)!.login),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              }),
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.register),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
