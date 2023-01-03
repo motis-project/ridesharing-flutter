@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
-import 'package:flutter_app/util/trip/search_card.dart';
+import 'package:flutter_app/util/trip/ride_card.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';
@@ -259,7 +259,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
             child: ListView.separated(
               itemBuilder: (context, index) {
                 final ride = _rideSuggestions![index];
-                return SearchCard(ride);
+                return RideCard(ride);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const SizedBox(height: 10);
