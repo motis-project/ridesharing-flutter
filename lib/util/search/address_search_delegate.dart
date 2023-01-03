@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/search/address_suggestion_manager.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
@@ -88,7 +89,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
             }
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
-                  ? const Text('Please enter more information to get results')
+                  ? Text(S.of(context).searchAddressEnterMoreCharacters)
                   : const CircularProgressIndicator(),
             );
           },

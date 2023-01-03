@@ -53,7 +53,7 @@ class SearchCard extends TripCard<Ride> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(localeManager.formatDate(trip.startTime)),
-        Text("${trip.price}\u{20AC} "),
+        Text("${trip.price}€"),
       ],
     );
   }

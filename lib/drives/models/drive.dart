@@ -70,17 +70,18 @@ class Drive extends Trip {
     return Drive.fromJsonList(await supabaseClient.from('drives').select().eq('driver_id', userId));
   }
 
-  static Future<Drive?> driveOfUserAtTimeRange(DateTimeRange range, int userId) async {
+  static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     //get all upcoming drives of user
     List<Drive> drives = await Drive.getDrivesOfUser(userId);
     drives = drives.where((drive) => !drive.cancelled && !drive.isFinished).toList();
+
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
       if (drive.overlapsWithTimeRange(range)) {
-        return drive;
+        return true;
       }
     }
-    return null;
+    return false;
   }
 
   int? getMaxUsedSeats() {

@@ -77,7 +77,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.pageAccountTitle),
+        title: Text(S.of(context).pageAccountTitle),
       ),
       body: ListView(
         children: [
@@ -95,7 +95,7 @@ class _AccountPageState extends State<AccountPage> {
                   TextButton.icon(
                     onPressed: signOut,
                     icon: const Icon(Icons.logout),
-                    label: Text(AppLocalizations.of(context)!.pageAccountSignOut),
+                    label: Text(S.of(context).pageAccountSignOut),
                   ),
                 ],
               ),
@@ -103,19 +103,19 @@ class _AccountPageState extends State<AccountPage> {
           ),
           ListTile(
             leading: const Icon(Icons.language),
-            title: Text(AppLocalizations.of(context)!.pageAccountLanguage),
+            title: Text(S.of(context).pageAccountLanguage),
             subtitle: Text(localeManager.currentLocale.languageName),
             onTap: () => showLanguageDialog(context),
           ),
           ListTile(
             leading: const Icon(Icons.brightness_medium),
-            title: Text(AppLocalizations.of(context)!.pageAccountDesign),
+            title: Text(S.of(context).pageAccountDesign),
             subtitle: Text(themeManager.currentThemeMode.getName(context)),
             onTap: () => showDesignDialog(context),
           ),
           ListTile(
             leading: const Icon(Icons.help),
-            title: Text(AppLocalizations.of(context)!.pageAccountHelp),
+            title: Text(S.of(context).pageAccountHelp),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const HelpPage(),
@@ -124,7 +124,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: Text(AppLocalizations.of(context)!.pageAccountAbout),
+            title: Text(S.of(context).pageAccountAbout),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const AboutPage(),

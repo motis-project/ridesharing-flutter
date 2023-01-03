@@ -5,6 +5,7 @@ import 'package:flutter_app/util/password_field.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -18,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Register"),
+        title: Text(S.of(context).pageRegisterTitle),
       ),
       body: const Center(
         child: SingleChildScrollView(
@@ -61,7 +62,7 @@ class _RegisterFormState extends State<RegisterForm> {
         );
       } on AuthException {
         fail();
-        showSnackBar("Something went wrong.");
+        showSnackBar(S.of(context).failureSnackBar);
         return;
       }
       final User? user = res.user;
@@ -77,7 +78,7 @@ class _RegisterFormState extends State<RegisterForm> {
           fail();
           // TODO: Show error if user exists already?
           // if (e.message.contains('duplicate key value violates unique constraint "users_email_key"')) {
-          showSnackBar("Something went wrong.");
+          if (mounted) showSnackBar(S.of(context).failureSnackBar);
           return;
         }
         await Future.delayed(const Duration(seconds: 2));
@@ -87,7 +88,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text("Account created. Please check your email."),
+            content: Text(S.of(context).pageRegisterSuccess),
             duration: Duration(seconds: double.infinity.toInt()),
           ));
         }
@@ -133,50 +134,51 @@ class _RegisterFormState extends State<RegisterForm> {
             EmailField(controller: emailController),
             const SizedBox(height: 15),
             TextFormField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Username',
-                  hintText: 'We recommend you choose your real name'),
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: S.of(context).pageRegisterUsername,
+                hintText: S.of(context).pageRegisterUsernameHint,
+              ),
               controller: usernameController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your username';
+                  return S.of(context).pageRegisterUsernameValidateEmpty;
                 }
                 return null;
               },
             ),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: "Password",
-              hintText: "Enter your password",
+              labelText: S.of(context).formPassword,
+              hintText: S.of(context).formPasswordHint,
               controller: passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
+                  return S.of(context).formPasswordValidateEmpty;
                 } else if (value.length < 8) {
-                  return 'Password must be at least 8 characters';
+                  return S.of(context).formPasswordValidateMinLength;
                 } else if (RegExp('[0-9]').hasMatch(value) == false) {
-                  return 'Password must contain at least one number';
+                  return S.of(context).formPasswordValidateMinLength;
                 } else if (RegExp('[A-Z]').hasMatch(value) == false) {
-                  return 'Password must contain at least one uppercase letter';
+                  return S.of(context).formPasswordValidateUppercase;
                 } else if (RegExp('[a-z]').hasMatch(value) == false) {
-                  return 'Password must contain at least one lowercase letter';
+                  return S.of(context).formPasswordValidateLowercase;
                 } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
-                  return 'Password must contain at least one special character';
+                  return S.of(context).formPasswordValidateSpecial;
                 }
                 return null;
               },
             ),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: "Confirm password",
-              hintText: "Re-enter your password",
+              labelText: S.of(context).formPasswordConfirm,
+              hintText: S.of(context).formPasswordConfirmHint,
               controller: passwordConfirmationController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please confirm your password';
+                  return S.of(context).formPasswordConfirmValidateEmpty;
                 } else if (value != passwordController.text) {
-                  return 'Passwords do not match';
+                  return S.of(context).formPasswordConfirmValidateMatch;
                 }
                 return null;
               },
@@ -186,8 +188,8 @@ class _RegisterFormState extends State<RegisterForm> {
               tag: "RegisterButton",
               transitionOnUserGestures: true,
               child: LoadingButton(
-                idleText: "Create account",
-                successText: "Account created",
+                idleText: S.of(context).pageRegisterButtonCreate,
+                successText: S.of(context).pageRegisterButtonCreated,
                 onPressed: onSubmit,
                 state: _state,
               ),

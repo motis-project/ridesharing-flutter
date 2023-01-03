@@ -44,11 +44,11 @@ extension ThemeModeName on ThemeMode {
   String getName(BuildContext context) {
     switch (this) {
       case ThemeMode.system:
-        return AppLocalizations.of(context)!.pageAccountThemesSystem;
+        return S.of(context).pageAccountThemesSystem;
       case ThemeMode.light:
-        return AppLocalizations.of(context)!.pageAccountThemesLight;
+        return S.of(context).pageAccountThemesLight;
       case ThemeMode.dark:
-        return AppLocalizations.of(context)!.pageAccountThemesDark;
+        return S.of(context).pageAccountThemesDark;
     }
   }
 }

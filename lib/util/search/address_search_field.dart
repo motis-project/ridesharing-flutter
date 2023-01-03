@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/search/address_search_delegate.dart';
 import 'package:flutter_app/util/search/address_suggestion.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddressSearchField extends StatelessWidget {
-  final String labelText;
-  final String hintText;
-  final String validatorEmptyText;
+  final AddressType addressType;
   final TextEditingController controller;
   final void Function(AddressSuggestion) onSelected;
 
   const AddressSearchField({
     super.key,
-    required this.labelText,
-    required this.hintText,
-    required this.validatorEmptyText,
+    required this.addressType,
     required this.controller,
     required this.onSelected,
   });
@@ -23,9 +20,7 @@ class AddressSearchField extends StatelessWidget {
     required void Function(AddressSuggestion) onSelected,
   }) {
     return AddressSearchField(
-      labelText: 'Start',
-      hintText: 'Enter your starting Location',
-      validatorEmptyText: 'Please enter a starting location',
+      addressType: AddressType.start,
       controller: controller,
       onSelected: onSelected,
     );
@@ -36,9 +31,7 @@ class AddressSearchField extends StatelessWidget {
     required void Function(AddressSuggestion) onSelected,
   }) {
     return AddressSearchField(
-      labelText: 'Destination',
-      hintText: 'Enter your destination',
-      validatorEmptyText: 'Please enter a destination',
+      addressType: AddressType.destination,
       controller: controller,
       onSelected: onSelected,
     );
@@ -50,12 +43,12 @@ class AddressSearchField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        labelText: labelText,
-        hintText: hintText,
+        labelText: getLabelText(context),
+        hintText: getHintText(context),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return validatorEmptyText;
+          return getValidatorEmptyText(context);
         }
         return null;
       },
@@ -73,4 +66,33 @@ class AddressSearchField extends StatelessWidget {
       },
     );
   }
+
+  String getLabelText(BuildContext context) {
+    switch (addressType) {
+      case AddressType.start:
+        return S.of(context).formAddressStart;
+      case AddressType.destination:
+        return S.of(context).formAddressDestination;
+    }
+  }
+
+  String getHintText(BuildContext context) {
+    switch (addressType) {
+      case AddressType.start:
+        return S.of(context).formAddressStartHint;
+      case AddressType.destination:
+        return S.of(context).formAddressDestinationHint;
+    }
+  }
+
+  String getValidatorEmptyText(BuildContext context) {
+    switch (addressType) {
+      case AddressType.start:
+        return S.of(context).formAddressStartValidateEmpty;
+      case AddressType.destination:
+        return S.of(context).formAddressDestinationValidateEmpty;
+    }
+  }
 }
+
+enum AddressType { start, destination }

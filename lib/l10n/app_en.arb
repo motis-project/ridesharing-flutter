@@ -1,19 +1,87 @@
 {
   "@@locale": "en",
 
-  "price": "{amount}€",
-  "@price": {
-      "placeholders": {
-          "amount": {
-              "example": "123.45",
-              "description": "amount"
-          }
-      }
+  "cancel": "Cancel",
+  "more": "More",
+  "yes": "Yes",
+  "no": "No",
+  "failureSnackBar": "Something went wrong.",
+
+  "riders": "Riders",
+  "seats": "Seats",
+  "seatsCount": "{count, plural, =1{{count} seat}, other{{count} seats}}",
+  "@seatsCount": {
+    "placeholders": {
+      "count": {}
+    }
   },
-  "cancel": "cancel",
-  "confirm": "confirm",
-  "login": "Login",
-  "register": "Register",
+
+  "authEmailLinkInvalid": "Email link is invalid or has expired.",
+
+  "formEmail": "Email",
+  "formEmailHint": "Enter your email address",
+  "formEmailValidateEmpty": "Please enter your email address",
+  "formEmailValidateInvalid": "Please enter a valid email address",
+  "formPassword": "Password",
+  "formPasswordHint": "Enter your password",
+  "formPasswordValidateEmpty": "Please enter your password",
+  "formPasswordValidateMinLength": "Password must be at least 8 characters",
+  "formPasswordValidateNumber": "Password must contain at least one number",
+  "formPasswordValidateUppercase": "Password must contain at least one uppercase letter",
+  "formPasswordValidateLowercase": "Password must contain at least one lowercase letter",
+  "formPasswordValidateSpecial": "Password must contain at least one special character",
+  "formPasswordConfirm": "Confirm Password",
+  "formPasswordConfirmHint": "Re-enter your password",
+  "formPasswordConfirmValidateEmpty": "Please confirm your password",
+  "formPasswordConfirmValidateMatch": "Passwords do not match",
+  "formDate": "Date",
+  "formTime": "Time",
+  "formTimeValidateEmpty": "Please choose a time",
+  "formTimeValidateFuture": "Please choose a time in the future",
+  "formAddressStart": "Start",
+  "formAddressStartHint": "Enter your starting location",
+  "formAddressStartValidateEmpty": "Please enter your starting location",
+  "formAddressDestination": "Destination",
+  "formAddressDestinationHint": "Enter your destination",
+  "formAddressDestinationValidateEmpty": "Please enter your destination",
+  "formSubmit": "Submit",
+  "formSubmitFail": "Failed",
+  "formSubmitSuccess": "Success",
+
+  "searchAddressEnterMoreCharacters": "Please enter more information to get results",
+
+  "pageWelcomeAnonymousSearch": "Anonymous Search",
+  "pageWelcomeLogin": "Login",
+  "pageWelcomeRegister": "Register",
+
+  "pageRegisterTitle": "Register",
+  "pageRegisterSuccess": "Account created. Please check your email.",
+  "pageRegisterUsername": "Username",
+  "pageRegisterUsernameHint": "We recommend you choose your real name",
+  "pageRegisterUsernameValidateEmpty": "Please enter your username",
+  "pageRegisterButtonCreate": "Create Account",
+  "pageRegisterButtonCreated": "Account created",
+
+  "pageLoginTitle": "Login",
+  "pageLoginFailureCredentials": "Invalid username or password",
+  "pageLoginFailureEmailNotConfirmed": "Please confirm your email address",
+  "pageLoginButtonForgotPassword": "Forgot password?",
+  "pageLoginNoAccount": "No account yet? Register here.",
+
+  "pageForgotPasswordTitle": "Reset Password",
+  "pageForgotPasswordButtonSend": "Send recovery",
+  "pageForgotPasswordButtonSent": "Sent",
+
+  "pageResetPasswordTitle": "Reset Password",
+  "pageResetPasswordButtonReset": "Reset password",
+  "pageResetPasswordHint": "Enter your new password",
+  "pageResetPasswordValidateEmpty": "Please enter your new password",
+  "pageResetPasswordConfirmHint": "Re-enter your new password",
+  "pageResetPasswordConfirmValidateEmpty": "Please confirm your new password",
+
+  "pageHomeTitle": "Home",
+
+  "pageAboutTitle": "About",
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
@@ -21,10 +89,101 @@
   "pageAccountDesign": "Design",
   "pageAccountHelp": "Help",
   "pageAccountAbout": "About",
-
   "pageAccountThemesSystem": "System",
   "pageAccountThemesLight": "Light",
-  "pageAccountThemesDark": "Dark",  
+  "pageAccountThemesDark": "Dark",
+
+  "pageHelpTitle": "Help",
+  "pageHelpContactUs": "Contact Us",
+  "pageHelpWhatIsMotisQuestion": "What can this app do?",
+  "pageHelpWhatIsMotisAnswer": "With the MOTIS Ride App, you can do a lot of useful stuff!",
+  "pageHelpWhereIsAccessibilityQuestion": "Where are the accessibility settings?",
+  "pageHelpWhereIsAccessibilityAnswer": "This app supports a multitude of accessibility settings offered by the OS. Go to your OS's settings to enable Screen Reader or large fonts!",
+
+  "pageReviewCount": "{count, plural, =1{{count} review}, other{{count} reviews}}",
+  "@pageReviewCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "reviewCategoryComfort": "Comfort",
+  "reviewCategorySafety": "Safety",
+  "reviewCategoryReliability": "Reliability",
+  "reviewCategoryHospitality": "Hospitality",
+
+  "pageWriteReviewTitle": "Write Review",
+  "pageWriteReviewReview": "Review",
+  "pageWriteReviewReviewHint": "What did you like or dislike about the ride?",
+  "pageWriteReviewRatingRequired": "Please rate your experience.",
+
+  "modelProfileFeatureNoSmoking": "No Smoking",
+  "modelProfileFeatureSmoking": "Smoking",
+  "modelProfileFeatureNoVaping": "No Vaping",
+  "modelProfileFeatureVaping": "Vaping",
+  "modelProfileFeatureNoPetsAllowed": "No Pets Allowed",
+  "modelProfileFeaturePetsAllowed": "Pets Allowed",
+  "modelProfileFeatureNoChildrenAllowed": "No Children Allowed",
+  "modelProfileFeatureChildrenAllowed": "Children Allowed",
+  "modelProfileFeatureTalkative": "Talkative",
+  "modelProfileFeatureMusic": "Music",
+  "modelProfileFeatureQuiet": "Quiet",
+  "modelProfileFeatureLuxury": "Luxury",
+  "modelProfileFeatureSpeedyDrivingStyle": "Speedy Driving Style",
+  "modelProfileFeatureRelaxedDrivingStyle": "Relaxed Driving Style",
+  "modelProfileFeatureRequires3G": "Requires 3G Certification",
+
+  "pageCreateDriveTitle": "Create Drive",
+  "pageCreateDriveYouAlreadyHaveDrive": "You already have a drive scheduled for this time.",
+  "pageCreateDriveYouAlreadyHaveRide": "You already have a ride scheduled for this time.",
+  "pageCreateDriveButtonCreate": "Create",
+
+  "pageDriveDetailTitle": "Drive Detail",
+  "pageDriveDetailButtonCancel": "Cancel Drive",
+  "pageDriveDetailCancelDialogTitle": "Confirm Cancellation",
+  "pageDriveDetailCancelDialogMessage": "Are you sure you want to cancel this drive?",
+  "pageDriveDetailCancelDialogToast": "Drive cancelled.",
+  "pageDriveDetailBannerCancelled": "You have cancelled this drive.",
+
+  "pageDrivesTitle": "Drives",
+
+  "widgetTripBuilderTabUpcoming": "Upcoming",
+  "widgetTripBuilderTabPast": "Past",
+  "widgetTripBuilderNoUpcoming": "No upcoming {name}.",
+  "@widgetTripBuilderNoUpcoming": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "widgetTripBuilderNoPast": "No past {name}.",
+  "@widgetTripBuilderNoPast": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+
+  "pageSearchRideTitle": "Search Ride",
+  "pageSearchRideButtonSearch": "Search",
+
+  "pageSearchSuggestionsTitle": "Search Suggestions",
+  "pageSearchSuggestionsButtonFilter": "Filter",
+
+  "pageRidesTitle": "Rides",
+
+  "pageRideDetailButtonRequest": "Request Ride",
+  "pageRideDetailButtonCancel": "Cancel Ride",
+  "pageRideDetailButtonRate": "Rate Driver",
+  "pageRideDetailButtonRequested": "Ride Requested",
+  "pageRideDetailCancelDialogTitle": "Confirm Cancellation",
+  "pageRideDetailCancelDialogMessage": "Are you sure you want to cancel this ride?",
+  "pageRideDetailCancelDialogToast": "Ride cancelled.",
+  "pageRideDetailRequestDialogTitle": "Confirm Ride request",
+  "pageRideDetailRequestDialogMessage": "Are you sure you want to request this ride?",
+  "pageRideDetailLoginDialogTitle": "Please login First",
+  "pageRideDetailLoginDialogMessage": "You need to login to request a ride. If you don't have an account yet, please register first.",
+  "pageRideDetailBannerRequested": "You have requested this ride.",
+  "pageRideDetailBannerRejected": "This ride has been rejected.",
+  "pageRideDetailBannerCancelledByDriver": "This ride has been cancelled.",
+  "pageRideDetailBannerCancelledByYou": "You have cancelled this ride.",
 
   "pageDriveChatTitle": "Drive Chat",
   "pageDriveChatEmptyMessage": "No riders or pending rides",
@@ -32,20 +191,12 @@
   "pageDriveChatRequestsHeadline": "Ride requests",
 
   "cardPendingRideApproveDialogTitle": "Confirm ride",
-  "cardPendingRideApproveDialogContent": "Are you sure you want to confirm this ride?",
+  "cardPendingRideApproveDialogMessage": "Are you sure you want to confirm this ride?",
   "cardPendingRideApproveDialogSuccessSnackbar": "Ride confirmed",
   "cardPendingRideApproveDialogErrorSnackbar": "Not enough seats available",
   "cardPendingRideRejectDialogTitle": "Reject Ride",
-  "cardPendingRideRejectDialogContent": "Are you sure you want to reject this ride?",
+  "cardPendingRideRejectDialogMessage": "Are you sure you want to reject this ride?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
-
-  "pageRideDetailCancelDialogTitle": "Confirm Cancellation",
-  "pageRideDetailCancelDialogContent": "Are you sure you want to cancel this ride?",
-  "pageRideDetailCancelDialogSuccessSnackbar": "Ride cancelled",
-  "pageRideDetailRequestlDialogTitle": "Confirm Ride Request",
-  "pageRideDetailRequestlDialogContent": "Are you sure you want to request this ride?",
-  "pageRideDetailLoginlDialogTitle": "Please Login First",
-  "pageRideDetailLoginlDialogContent": "Please login before requesting a ride. if you don't have an account yet, please register first.",
 
   "appName": "Motis Ride-Sharing App"
 }

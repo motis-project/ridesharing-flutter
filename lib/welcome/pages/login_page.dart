@@ -9,6 +9,7 @@ import 'package:flutter_app/welcome/pages/register_page.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: Text(S.of(context).pageLoginTitle),
       ),
       body: const Center(
         child: CustomScrollView(
@@ -72,8 +73,10 @@ class _LoginFormState extends State<LoginForm> {
         fail();
         // looks weird but needed later for i18n
         String text = e.statusCode == '400'
-            ? (e.message.contains("credentials") ? "Invalid credentials" : "Please confirm your email address")
-            : "Something went wrong";
+            ? e.message.contains('credentials')
+                ? S.of(context).pageLoginFailureCredentials
+                : S.of(context).pageLoginFailureEmailNotConfirmed
+            : S.of(context).failureSnackBar;
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(text),
@@ -114,12 +117,12 @@ class _LoginFormState extends State<LoginForm> {
             EmailField(controller: emailController),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: "Password",
-              hintText: "Enter your password",
+              labelText: S.of(context).formPassword,
+              hintText: S.of(context).formPasswordHint,
               controller: passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
+                  return S.of(context).formPasswordValidateEmpty;
                 }
                 return null;
               },
@@ -134,7 +137,7 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 );
               },
-              child: const Text("Forgot password?"),
+              child: Text(S.of(context).pageLoginButtonForgotPassword),
             ),
             Hero(
               tag: "LoginButton",
@@ -152,7 +155,7 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     );
                   },
-                  child: const Text("No account yet? Register"),
+                  child: Text(S.of(context).pageLoginNoAccount),
                 ),
               ),
             )
