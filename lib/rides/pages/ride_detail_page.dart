@@ -47,6 +47,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       rider: rider_id(*)
     )
   ''';
+
   static const String _rideQuery = '''
         *,
         drive: drive_id(
@@ -72,7 +73,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Ride ride;
     if (_ride?.status == RideStatus.preview) {
       ride = _ride!;
-
       Map<String, dynamic> data =
           await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
