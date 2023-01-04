@@ -50,10 +50,8 @@ class RideCardState extends TripCardState<RideCard> {
 
   Future<void> loadRide() async {
     Ride trip = ride!;
-    print("___________Start________");
     Map<String, dynamic> data = await supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
-    print("________passed__________");
     setState(() {
       ride = trip;
       driver = trip.drive!.driver!;
@@ -63,7 +61,7 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildTopRight() {
-    Icon progress;
+    Widget progress;
     switch (ride!.status) {
       case RideStatus.approved:
         progress = const Icon(
@@ -72,10 +70,7 @@ class RideCardState extends TripCardState<RideCard> {
         );
         break;
       case RideStatus.preview:
-        progress = const Icon(
-          Icons.done,
-          color: Colors.grey,
-        );
+        progress = const SizedBox();
         break;
       case RideStatus.pending:
         progress = const Icon(
@@ -113,14 +108,17 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildBottomLeft() {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(driver!.username[0]),
-        ),
-        const SizedBox(width: 5),
-        Text(driver!.username),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            child: Text(driver!.username[0]),
+          ),
+          const SizedBox(width: 5),
+          Text(driver!.username),
+        ],
+      ),
     );
   }
 
@@ -133,13 +131,15 @@ class RideCardState extends TripCardState<RideCard> {
       aggregateReview = AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!);
     }
 
-    return Row(
-      children: [
-        Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
-        const SizedBox(width: 10),
-        CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
     );
+  }
+
+  @override
+  Widget buildRightSide() {
+    return const SizedBox();
   }
 
   @override

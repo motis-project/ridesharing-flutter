@@ -52,6 +52,11 @@ class _DriveCard extends TripCardState<DriveCard> {
 
   @override
   Widget buildBottomRight() {
+    return const SizedBox();
+  }
+
+  @override
+  Widget buildRightSide() {
     return TripOverview.buildSeatIndicator(context, super.trip!);
   }
 
@@ -70,11 +75,11 @@ class _DriveCard extends TripCardState<DriveCard> {
               )
             : _drive!.rides!.any((ride) => ride.status == RideStatus.pending)
                 ? const Icon(
-                    Icons.add_task,
+                    Icons.done_all,
                     color: Colors.grey,
                   )
                 : const Icon(
-                    Icons.add_task,
+                    Icons.done_all,
                     color: Colors.green,
                   );
   }

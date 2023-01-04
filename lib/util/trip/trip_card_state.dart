@@ -34,7 +34,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -60,6 +60,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                   '${localeManager.formatTime(trip!.endTime)}  ${trip!.end}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
+                buildRightSide(),
               ],
             ),
           ),
@@ -90,21 +91,13 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
           padding: const EdgeInsets.all(16.0),
           child: buildDate(),
         ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: buildRoute(context),
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildBottomLeft(),
-              buildBottomRight(),
-            ],
-          ),
+        Padding(padding: const EdgeInsets.all(16.0), child: buildRoute(context)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            buildBottomLeft(),
+            buildBottomRight(),
+          ],
         ),
       ],
     );
@@ -113,4 +106,5 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
   Widget buildBottomLeft();
   Widget buildBottomRight();
   Widget buildTopRight();
+  Widget buildRightSide();
 }

@@ -3,7 +3,6 @@ import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/submit_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({super.key});
@@ -17,7 +16,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.pageSearchRideTitle),
+        title: const Text("Search Ride"),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(),

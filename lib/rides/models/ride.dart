@@ -48,7 +48,7 @@ class Ride extends Trip {
       seats: seats,
       riderId: riderId,
       status: RideStatus.preview,
-      driveId: drive.driverId,
+      driveId: drive.id!,
       drive: drive,
       price: price,
     );
