@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileChip extends StatelessWidget {
   final Profile profile;
@@ -16,7 +17,7 @@ class ProfileChip extends StatelessWidget {
         label: profile.username,
         excludeSemantics: true,
         button: true,
-        tooltip: "See profile",
+        tooltip: S.of(context).seeProfile,
         child: ActionChip(
           avatar: CircleAvatar(
             child: Text(profile.username[0]),

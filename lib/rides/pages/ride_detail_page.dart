@@ -192,9 +192,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Semantics(
-      label: "Reviews",
+      label: S.of(context).pageRideDetailReviews,
       button: true,
-      tooltip: "Show reviews",
+      tooltip: S.of(context).pageRideDetailShowReviews,
       child: Stack(
         children: [
           Column(

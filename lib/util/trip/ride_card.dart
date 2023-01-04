@@ -4,6 +4,7 @@ import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/ride_detail_page.dart';
 
@@ -15,7 +16,7 @@ class RideCard extends TripCard<Ride> {
     return Card(
       child: Semantics(
         button: true,
-        tooltip: "Open details",
+        tooltip: S.of(context).openDetails,
         child: InkWell(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(

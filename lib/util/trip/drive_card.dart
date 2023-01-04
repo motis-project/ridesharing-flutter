@@ -7,6 +7,7 @@ import '../../drives/pages/drive_detail_page.dart';
 import 'package:timelines/timelines.dart';
 
 import '../locale_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
@@ -16,7 +17,7 @@ class DriveCard extends TripCard<Drive> {
     return Card(
       child: Semantics(
         button: true,
-        tooltip: "Open details",
+        tooltip: S.of(context).openDetails,
         child: InkWell(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(

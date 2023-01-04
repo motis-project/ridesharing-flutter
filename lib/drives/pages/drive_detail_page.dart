@@ -218,7 +218,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               position: BadgePosition.topEnd(top: -12),
               child: const Icon(Icons.chat),
             ),
-            tooltip: 'Chat',
+            tooltip: S.of(context).openChat,
           ),
         ],
       ),
@@ -249,8 +249,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               ),
               const SizedBox(width: 4.0),
               Text(stop.place),
-              if (stop.place == _drive!.start) Semantics(label: 'Start of drive'),
-              if (stop.place == _drive!.end) Semantics(label: 'End of drive'),
+              if (stop.place == _drive!.start) Semantics(label: S.of(context).pageDriveDetailLabelStartDrive),
+              if (stop.place == _drive!.end) Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
             ],
           ),
         ),
@@ -266,10 +266,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       Widget container = Semantics(
         button: true,
-        label:
-            "${action.isStart ? "Pick up" : "Drop-off"} ${action.seats} people associated with ${action.profile.username}.",
+        label: action.isStart
+            ? S.of(context).pageDriveDetailLabelPickup(action.seats, action.profile.username)
+            : S.of(context).pageDriveDetailLabelDropoff(action.seats, action.profile.username),
         excludeSemantics: true,
-        tooltip: "Open Chat",
+        tooltip: S.of(context).openChat,
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),

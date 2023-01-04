@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileWidget extends StatelessWidget {
   final Profile profile;
@@ -17,7 +18,7 @@ class ProfileWidget extends StatelessWidget {
       label: profile.username,
       excludeSemantics: true,
       button: true,
-      tooltip: "See profile",
+      tooltip: S.of(context).seeProfile,
       child: Row(
         children: [
           // TODO: Use profile picture

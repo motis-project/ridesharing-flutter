@@ -87,7 +87,9 @@ class TripOverview extends StatelessWidget {
       );
       text = Text(
         "${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}",
-        semanticsLabel: "${maxUsedSeats ?? 'unknown number'} of ${trip.seats} seats",
+        semanticsLabel: maxUsedSeats != null
+            ? S.of(context).labelXOfYseats(maxUsedSeats, trip.seats)
+            : S.of(context).labelUnknownSeats(trip.seats),
       );
     } else {
       seatIcons = List.generate(
