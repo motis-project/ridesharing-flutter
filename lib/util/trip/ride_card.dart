@@ -3,6 +3,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:flutter_app/util/trip/trip_card_state.dart';
 import '../../account/models/profile.dart';
+import '../../account/models/profile_feature.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/pages/ride_detail_page.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
