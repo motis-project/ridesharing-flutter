@@ -111,6 +111,8 @@
   "reviewCategoryReliability": "Reliability",
   "reviewCategoryHospitality": "Hospitality",
 
+  "pageReviewsTitle": "Reviews",
+
   "pageWriteReviewTitle": "Write Review",
   "pageWriteReviewReview": "Review",
   "pageWriteReviewReviewHint": "What did you like or dislike about the ride?",

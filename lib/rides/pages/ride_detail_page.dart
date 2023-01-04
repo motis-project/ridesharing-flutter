@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
+import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/big_button.dart';
 import 'package:motis_mitfahr_app/util/custom_banner.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:motis_mitfahr_app/util/review_detail.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
@@ -103,19 +102,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       Ride ride = _ride!;
 
       Profile driver = ride.drive!.driver!;
-      Widget driverColumn = InkWell(
-        onTap: () {
-          // TODO: Navigate to driver profile
-        },
-        child: Column(
-          children: [
-            ProfileWidget(driver),
-            const SizedBox(height: 10),
-            if (driver.description != null && driver.description!.isNotEmpty) Text(driver.description!),
-          ],
-        ),
-      );
-      widgets.add(driverColumn);
+      widgets.add(ProfileWidget(driver, showDescription: true));
       widgets.add(const Divider(thickness: 1));
 
       widgets.add(_buildReviewsColumn(driver));
@@ -195,63 +182,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       children: [
         Column(
           children: [
-            Row(
-              children: [
-                Text(aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
-                const SizedBox(width: 10),
-                CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
-                Expanded(
-                  child: Text(
-                    S.of(context).pageReviewCount(reviews.length),
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: 5,
-                runSpacing: 5,
-                alignment: WrapAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryComfort),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategorySafety),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryReliability),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(S.of(context).reviewCategoryHospitality),
-                      const SizedBox(width: 10),
-                      CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            aggregateReview.widget(),
             if (reviews.isNotEmpty)
               Column(
                 children: [
@@ -299,7 +230,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // TODO: Navigate to reviews page
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ReviewsPage.fromProfile(driver)));
               },
             ),
           ),

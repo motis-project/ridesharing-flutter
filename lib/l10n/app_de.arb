@@ -102,6 +102,8 @@
   "reviewCategoryReliability": "Verlässlichkeit",
   "reviewCategoryHospitality": "Gastfreundschaft",
 
+  "pageReviewsTitle": "Bewertungen",
+
   "pageWriteReviewTitle": "Bewertung schreiben",
   "pageWriteReviewReview": "Bewertung",
   "pageWriteReviewReviewHint": "Was hat dir an der Fahrt gefallen? Was hat dir weniger gefallen?",

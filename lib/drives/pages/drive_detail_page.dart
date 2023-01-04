@@ -279,7 +279,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                       child: IconWidget(icon: icon, count: action.seats),
                     ),
                   ),
-                  ProfileWidget(profile, size: 15),
+                  ProfileWidget(profile, size: 15, isTappable: false),
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerRight,

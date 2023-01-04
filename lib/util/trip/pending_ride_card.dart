@@ -64,14 +64,9 @@ class PendingRideCard extends TripCard<Ride> {
     return Card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ProfileWidget(trip.rider!),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ProfileWidget(trip.rider!),
           ),
           const Divider(
             thickness: 1,
