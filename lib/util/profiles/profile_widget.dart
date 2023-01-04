@@ -5,16 +5,22 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ProfileWidget extends StatelessWidget {
   final Profile profile;
   final double size;
+  final bool showDescription;
+  final Widget? actionWidget;
+  final bool isTappable;
 
   const ProfileWidget(
     this.profile, {
     super.key,
     this.size = 20,
+    this.showDescription = false,
+    this.actionWidget,
+    this.isTappable = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
+    Widget profileRow = Semantics(
       label: profile.username,
       excludeSemantics: true,
       button: true,
@@ -31,5 +37,28 @@ class ProfileWidget extends StatelessWidget {
         ],
       ),
     );
+    if (actionWidget != null) {
+      profileRow = Stack(
+        children: [profileRow, Positioned(right: 0, child: actionWidget!)],
+      );
+    }
+    if (showDescription && (profile.description?.isNotEmpty ?? false)) {
+      profileRow = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          profileRow,
+          const SizedBox(height: 10),
+          Text(profile.description!),
+        ],
+      );
+    }
+    return isTappable
+        ? InkWell(
+            onTap: () {
+              //TODO Profile page
+            },
+            child: profileRow,
+          )
+        : profileRow;
   }
 }
