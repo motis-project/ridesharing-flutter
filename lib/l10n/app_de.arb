@@ -155,6 +155,7 @@
 
   "pageRidesTitle": "Mitfahrten",
 
+  "pageRideDetailTitle": "Mitfahrt Info",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",
   "pageRideDetailButtonCancel": "Mitfahrt absagen",
   "pageRideDetailButtonRate": "Fahrt bewerten",

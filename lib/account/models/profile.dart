@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
@@ -30,6 +31,8 @@ class Profile extends Model {
     this.reviewsReceived,
     this.profileFeatures,
   });
+
+  get fullName => (surname ?? '') + (name ?? '');
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -96,4 +99,17 @@ enum Gender {
   male,
   female,
   diverse,
+}
+
+extension GenderName on Gender {
+  String getName(BuildContext context) {
+    switch (this) {
+      case Gender.male:
+        return 'Male';
+      case Gender.female:
+        return 'Female';
+      case Gender.diverse:
+        return 'Diverse';
+    }
+  }
 }
