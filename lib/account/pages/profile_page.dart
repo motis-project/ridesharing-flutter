@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/account/pages/edit_account/edit_birth_date_page.dart';
+import 'package:flutter_app/account/pages/edit_account/edit_description_page.dart';
+import 'package:flutter_app/account/pages/edit_account/edit_full_name_page.dart';
+import 'package:flutter_app/account/pages/edit_account/edit_gender_page.dart';
+import 'package:flutter_app/account/pages/edit_account/edit_profile_features_page.dart';
 import 'package:flutter_app/account/widgets/editable_row.dart';
 import 'package:flutter_app/account/widgets/features_column.dart';
 import 'package:flutter_app/account/widgets/reviews_preview.dart';
@@ -9,6 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../util/supabase.dart';
 import '../models/profile.dart';
 import '../widgets/avatar.dart';
+import 'edit_account/edit_username_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final int profileId;
@@ -72,7 +78,11 @@ class _ProfilePageState extends State<ProfilePage> {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 icon: const Icon(Icons.edit),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => EditUsernamePage(_profile!)))
+                      .then((value) => loadProfile());
+                },
               ),
             ),
           ),
@@ -101,7 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
       title: 'Description',
       innerWidget: description,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => EditDescriptionPage(_profile!)))
+            .then((value) => loadProfile());
+      },
     );
   }
 
@@ -109,25 +123,37 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget fullName = _profile!.fullName.isNotEmpty
         ? Text(
             _profile!.fullName,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText("<No full name>");
     return EditableRow(
-        title: 'Full Name', innerWidget: fullName, isEditable: _profile!.isCurrentUser, onPressed: () {});
+      title: 'Full Name',
+      innerWidget: fullName,
+      isEditable: _profile!.isCurrentUser,
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => EditFullNamePage(_profile!)))
+            .then((value) => loadProfile());
+      },
+    );
   }
 
   Widget buildBirthDate() {
     Widget birthDate = _profile!.birthDate != null
         ? Text(
             localeManager.formatDate(_profile!.birthDate!),
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText("<No birth date>");
     return EditableRow(
       title: 'Birth Date',
       innerWidget: birthDate,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => EditBirthDatePage(_profile!)))
+            .then((value) => loadProfile());
+      },
     );
   }
 
@@ -135,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget gender = _profile!.gender != null
         ? Text(
             _profile!.gender!.getName(context),
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText("<No gender>");
 
@@ -143,7 +169,11 @@ class _ProfilePageState extends State<ProfilePage> {
       title: 'Gender',
       innerWidget: gender,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => EditGenderPage(_profile!)))
+            .then((value) => loadProfile());
+      },
     );
   }
 
@@ -152,6 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ? FeaturesColumn(_profile!.profileFeatures!)
         : buildNoInfoText("<No features>");
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -165,7 +196,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.centerRight,
                   child: IconButton(
                     icon: const Icon(Icons.edit),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) => EditProfileFeaturesPage(_profile!)))
+                          .then((value) => loadProfile());
+                    },
                   ),
                 ),
               ),

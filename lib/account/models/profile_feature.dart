@@ -10,6 +10,7 @@ class ProfileFeature extends Model {
   Profile? profile;
 
   Feature feature;
+  int rank;
 
   ProfileFeature({
     super.id,
@@ -17,6 +18,7 @@ class ProfileFeature extends Model {
     required this.profileId,
     this.profile,
     required this.feature,
+    required this.rank,
   });
 
   @override
@@ -27,17 +29,21 @@ class ProfileFeature extends Model {
       profileId: json['profile_id'],
       profile: json['profile'] != null ? Profile.fromJson(json['profile']) : null,
       feature: Feature.values.elementAt(json['feature'] as int),
+      rank: json['rank'],
     );
   }
 
   static List<ProfileFeature> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => ProfileFeature.fromJson(json)).toList();
+    final list = jsonList.map((json) => ProfileFeature.fromJson(json)).toList();
+    list.sort((a, b) => a.rank - b.rank);
+    return list;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'profile_id': profileId,
       'feature': feature.index,
+      'rank': rank,
     };
   }
 }
@@ -135,6 +141,33 @@ extension FeatureExtension on Feature {
         return S.of(context).modelProfileFeatureAccessible;
       case Feature.requires3G:
         return S.of(context).modelProfileFeatureRequires3G;
+    }
+  }
+
+  bool isMutuallyExclusive(Feature other) {
+    switch (this) {
+      case Feature.noSmoking:
+        return other == Feature.smoking;
+      case Feature.smoking:
+        return other == Feature.noSmoking;
+      case Feature.noVaping:
+        return other == Feature.vaping;
+      case Feature.vaping:
+        return other == Feature.noVaping;
+      case Feature.noPetsAllowed:
+        return other == Feature.petsAllowed;
+      case Feature.petsAllowed:
+        return other == Feature.noPetsAllowed;
+      case Feature.noChildrenAllowed:
+        return other == Feature.childrenAllowed;
+      case Feature.childrenAllowed:
+        return other == Feature.noChildrenAllowed;
+      case Feature.relaxedDrivingStyle:
+        return other == Feature.speedyDrivingStyle;
+      case Feature.speedyDrivingStyle:
+        return other == Feature.relaxedDrivingStyle;
+      default:
+        return false;
     }
   }
 }
