@@ -4,6 +4,7 @@ import 'package:flutter_app/account/pages/edit_account/edit_description_page.dar
 import 'package:flutter_app/account/pages/edit_account/edit_full_name_page.dart';
 import 'package:flutter_app/account/pages/edit_account/edit_gender_page.dart';
 import 'package:flutter_app/account/pages/edit_account/edit_profile_features_page.dart';
+import 'package:flutter_app/account/pages/write_report_page.dart';
 import 'package:flutter_app/account/widgets/editable_row.dart';
 import 'package:flutter_app/account/widgets/features_column.dart';
 import 'package:flutter_app/account/widgets/reviews_preview.dart';
@@ -45,8 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
       reviews_received: reviews!reviews_receiver_id_fkey(
         *,
         writer: writer_id(*)
-      )
+      ),
+      reports_received: reports!reports_offender_id_fkey(*)
     ''').eq('id', widget.profileId).single();
+    print(data['reports_received']);
     setState(() {
       _profile = Profile.fromJson(data);
       _fullyLoaded = true;
@@ -273,15 +276,36 @@ class _ProfilePageState extends State<ProfilePage> {
         widgets.addAll([buildFeatures(), const SizedBox(height: 16)]);
       }
       widgets.add(buildReviews());
+      if (!_profile!.isCurrentUser) {
+        bool hasRecentReport = _profile!.reportsReceived!
+            .any((report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
+
+        widgets.addAll([
+          const SizedBox(height: 32),
+          hasRecentReport
+              ? BigButton(text: 'User reported', color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))
+              : BigButton(
+                  text: 'Report user',
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
+                        .then((value) {
+                      loadProfile();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Your report has been sent. We will review it as soon as possible."),
+                        ),
+                      );
+                    });
+                  },
+                  color: Colors.red,
+                ),
+        ]);
+      }
     } else {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    if (!_profile!.isCurrentUser) {
-      widgets.addAll([
-        const SizedBox(height: 32),
-        BigButton(text: 'Report user', onPressed: () {}, color: Colors.red),
-      ]);
-    }
+
     final content = Column(
       children: widgets,
     );
