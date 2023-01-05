@@ -65,10 +65,16 @@ class _ProfilePageState extends State<ProfilePage> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Expanded(child: Container()),
           username,
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {},
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {},
+              ),
+            ),
           ),
         ],
       );
@@ -85,41 +91,66 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildDescription() {
-    Widget description = Text(
-      _profile!.description ?? '',
-      style: Theme.of(context).textTheme.bodyText1,
-    );
+    Widget description = _profile!.description?.isNotEmpty ?? false
+        ? Text(
+            _profile!.description!,
+            style: Theme.of(context).textTheme.bodyText1,
+          )
+        : buildNoInfoText("<No description yet>");
     return EditableRow(
-        title: 'Description', innerWidget: description, isEditable: _profile!.isCurrentUser, onPressed: () {});
+      title: 'Description',
+      innerWidget: description,
+      isEditable: _profile!.isCurrentUser,
+      onPressed: () {},
+    );
   }
 
   Widget buildFullName() {
-    Widget fullName = Text(
-      _profile!.fullName,
-      style: Theme.of(context).textTheme.headline6,
-    );
-    return EditableRow(title: 'Name', innerWidget: fullName, isEditable: _profile!.isCurrentUser, onPressed: () {});
+    Widget fullName = _profile!.fullName.isNotEmpty
+        ? Text(
+            _profile!.fullName,
+            style: Theme.of(context).textTheme.headline6,
+          )
+        : buildNoInfoText("<No full name>");
+    return EditableRow(
+        title: 'Full Name', innerWidget: fullName, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildBirthDate() {
-    Widget birthDate = Text(
-      _profile!.birthDate != null ? localeManager.formatDate(_profile!.birthDate!) : '',
-      style: Theme.of(context).textTheme.headline6,
-    );
+    Widget birthDate = _profile!.birthDate != null
+        ? Text(
+            localeManager.formatDate(_profile!.birthDate!),
+            style: Theme.of(context).textTheme.headline6,
+          )
+        : buildNoInfoText("<No birth date>");
     return EditableRow(
-        title: 'Birth Date', innerWidget: birthDate, isEditable: _profile!.isCurrentUser, onPressed: () {});
+      title: 'Birth Date',
+      innerWidget: birthDate,
+      isEditable: _profile!.isCurrentUser,
+      onPressed: () {},
+    );
   }
 
   Widget buildGender() {
-    Widget gender = Text(
-      _profile!.gender?.getName(context) ?? '',
-      style: Theme.of(context).textTheme.headline6,
+    Widget gender = _profile!.gender != null
+        ? Text(
+            _profile!.gender!.getName(context),
+            style: Theme.of(context).textTheme.headline6,
+          )
+        : buildNoInfoText("<No gender>");
+
+    return EditableRow(
+      title: 'Gender',
+      innerWidget: gender,
+      isEditable: _profile!.isCurrentUser,
+      onPressed: () {},
     );
-    return EditableRow(title: 'Gender', innerWidget: gender, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildFeatures() {
-    Widget features = FeaturesColumn(_profile!.profileFeatures!);
+    Widget features = _profile!.profileFeatures!.isNotEmpty
+        ? FeaturesColumn(_profile!.profileFeatures!)
+        : buildNoInfoText("<No features>");
     return Column(
       children: [
         Row(
@@ -151,8 +182,18 @@ class _ProfilePageState extends State<ProfilePage> {
         'Reviews',
         style: Theme.of(context).textTheme.headline6,
       ),
+      const SizedBox(height: 8),
       ReviewsPreview(_profile!)
     ]);
+  }
+
+  Widget buildNoInfoText(String noInfoText) {
+    return Text(
+      noInfoText,
+      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+          ),
+    );
   }
 
   @override
@@ -161,6 +202,9 @@ class _ProfilePageState extends State<ProfilePage> {
       buildAvatar(),
       const SizedBox(height: 8),
       buildUsername(),
+      if (_profile!.isCurrentUser) ...[
+        buildEmail(),
+      ],
       const SizedBox(height: 8),
       const Divider(),
       const SizedBox(height: 8),
