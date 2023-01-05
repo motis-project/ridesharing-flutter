@@ -130,6 +130,7 @@
   "modelProfileFeatureLuxury": "Luxury",
   "modelProfileFeatureSpeedyDrivingStyle": "Speedy Driving Style",
   "modelProfileFeatureRelaxedDrivingStyle": "Relaxed Driving Style",
+  "modelProfileFeatureAccessible": "Accessible",
   "modelProfileFeatureRequires3G": "Requires 3G Certification",
 
   "pageCreateDriveTitle": "Create Drive",

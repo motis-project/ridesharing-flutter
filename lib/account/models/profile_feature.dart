@@ -59,6 +59,7 @@ enum Feature {
   luxury,
   speedyDrivingStyle,
   relaxedDrivingStyle,
+  accessible,
   requires3G,
 }
 
@@ -93,6 +94,8 @@ extension FeatureExtension on Feature {
         return Icon(Icons.speed, color: Theme.of(context).colorScheme.primary);
       case Feature.relaxedDrivingStyle:
         return Icon(Icons.self_improvement, color: Theme.of(context).colorScheme.primary);
+      case Feature.accessible:
+        return Icon(Icons.accessibility, color: Theme.of(context).colorScheme.primary);
       case Feature.requires3G:
         return Icon(Icons.vaccines, color: Theme.of(context).colorScheme.primary);
     }
@@ -128,6 +131,8 @@ extension FeatureExtension on Feature {
         return S.of(context).modelProfileFeatureSpeedyDrivingStyle;
       case Feature.relaxedDrivingStyle:
         return S.of(context).modelProfileFeatureRelaxedDrivingStyle;
+      case Feature.accessible:
+        return S.of(context).modelProfileFeatureAccessible;
       case Feature.requires3G:
         return S.of(context).modelProfileFeatureRequires3G;
     }

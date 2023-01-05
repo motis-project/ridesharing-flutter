@@ -121,6 +121,7 @@
   "modelProfileFeatureLuxury": "Luxus",
   "modelProfileFeatureSpeedyDrivingStyle": "Schneller Fahrstil",
   "modelProfileFeatureRelaxedDrivingStyle": "Entspannter Fahrstil",
+  "modelProfileFeatureAccessible": "Barrierefrei",
   "modelProfileFeatureRequires3G": "Benötigt 3G-Zertifizierung",
 
   "pageCreateDriveTitle": "Fahrt erstellen",
