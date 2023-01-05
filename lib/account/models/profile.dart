@@ -35,7 +35,12 @@ class Profile extends Model {
     this.profileFeatures,
   });
 
-  get fullName => (surname ?? '') + (name ?? '');
+  get fullName {
+    if (name != null && surname != null) return '$surname $name';
+    if (name != null) return name!;
+    if (surname != null) return surname!;
+    return '';
+  }
 
   get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
 
