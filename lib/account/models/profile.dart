@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/account/models/report.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
@@ -19,6 +20,7 @@ class Profile extends Model {
 
   List<Review>? reviewsReceived;
   List<ProfileFeature>? profileFeatures;
+  List<Report>? reportsReceived;
 
   Profile({
     super.id,
@@ -33,6 +35,7 @@ class Profile extends Model {
     this.avatarUrl,
     this.reviewsReceived,
     this.profileFeatures,
+    this.reportsReceived,
   });
 
   get fullName {
@@ -62,6 +65,9 @@ class Profile extends Model {
           : null,
       profileFeatures: json.containsKey('profile_features')
           ? ProfileFeature.fromJsonList(json['profile_features'].cast<Map<String, dynamic>>())
+          : null,
+      reportsReceived: json.containsKey('reports_received')
+          ? Report.fromJsonList(json['reports_received'].cast<Map<String, dynamic>>())
           : null,
     );
   }
