@@ -60,8 +60,12 @@
 	</array>
 	<key>CFBundleLocalizations</key>
 	<array>
-			<string>en</string>
-			<string>de</string>
+		<string>en</string>
+		<string>de</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string></string>
 </dict>
 </plist>

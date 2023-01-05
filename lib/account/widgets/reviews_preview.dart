@@ -19,9 +19,9 @@ class ReviewsPreview extends StatelessWidget {
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Semantics(
-      label: S.of(context).pageRideDetailReviews,
+      label: S.of(context).reviewsPreviewReviews,
       button: true,
-      tooltip: S.of(context).pageRideDetailShowReviews,
+      tooltip: S.of(context).reviewsPreviewShowReviews,
       child: Stack(
         children: [
           Column(

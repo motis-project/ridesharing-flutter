@@ -9,6 +9,8 @@ import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indica
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../account/widgets/avatar.dart';
+
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});
 
@@ -56,6 +58,28 @@ class SearchCard extends TripCard<Ride> {
       children: [
         Text(localeManager.formatDate(trip.startTime)),
         Text("${trip.price}€"),
+      ],
+    );
+  }
+
+  Widget buildProfile(driver) {
+    return Row(
+      children: [
+        Avatar(driver),
+        const SizedBox(width: 5),
+        Text(driver.username),
+      ],
+    );
+  }
+
+  Widget buildRanking() {
+    return Row(
+      children: const [
+        Text("3"),
+        Icon(
+          Icons.star,
+          color: Colors.amberAccent,
+        ),
       ],
     );
   }

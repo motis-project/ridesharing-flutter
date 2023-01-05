@@ -116,6 +116,9 @@
   "pageReviewsRate": "Bewerten",
   "pageReviewsUpdateRating": "Bewertung aktualisieren",
 
+  "reviewsPreviewReviews" : "Bewertungen",
+  "reviewsPreviewShowReviews" : "Bewertungen anzeigen",
+
   "pageWriteReviewTitle": "Bewertung schreiben",
   "pageWriteReviewReview": "Bewertung",
   "pageWriteReviewReviewHint": "Was hat dir an der Fahrt gefallen? Was hat dir weniger gefallen?",
@@ -172,8 +175,6 @@
   "pageRidesTooltipSearchRide": "Fahrt suchen",
 
   "pageRideDetailTitle": "Mitfahrt Info",
-  "pageRideDetailReviews" : "Bewertungen",
-  "pageRideDetailShowReviews" : "Bewertungen anzeigen",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",
   "pageRideDetailButtonCancel": "Mitfahrt absagen",
   "pageRideDetailButtonRate": "Fahrt bewerten",

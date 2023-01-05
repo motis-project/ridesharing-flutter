@@ -141,6 +141,9 @@
   "pageReviewsRate": "Rate",
   "pageReviewsUpdateRating": "Update rating",
 
+  "reviewsPreviewReviews" : "Reviews",
+  "reviewsPreviewShowReviews" : "Show reviews",
+
   "pageWriteReviewTitle": "Write Review",
   "pageWriteReviewReview": "Review",
   "pageWriteReviewReviewHint": "What did you like or dislike about the ride?",
@@ -219,8 +222,6 @@
   "pageRidesTooltipSearchRide": "Search ride",
 
   "pageRideDetailTitle": "Ride Detail",
-  "pageRideDetailReviews" : "Reviews",
-  "pageRideDetailShowReviews" : "Show reviews",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
   "pageRideDetailButtonRate": "Rate Driver",
