@@ -218,6 +218,7 @@
   "pageRidesTitle": "Rides",
   "pageRidesTooltipSearchRide": "Search ride",
 
+  "pageRideDetailTitle": "Ride Detail",
   "pageRideDetailReviews" : "Reviews",
   "pageRideDetailShowReviews" : "Show reviews",
   "pageRideDetailButtonRequest": "Request Ride",

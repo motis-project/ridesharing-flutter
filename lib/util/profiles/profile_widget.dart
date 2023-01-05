@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../account/pages/profile_page.dart';
+
 class ProfileWidget extends StatelessWidget {
   final Profile profile;
   final double size;
@@ -55,7 +57,7 @@ class ProfileWidget extends StatelessWidget {
     return isTappable
         ? InkWell(
             onTap: () {
-              //TODO Profile page
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)));
             },
             child: profileRow,
           )

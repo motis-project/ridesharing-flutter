@@ -171,6 +171,7 @@
   "pageRidesTitle": "Mitfahrten",
   "pageRidesTooltipSearchRide": "Fahrt suchen",
 
+  "pageRideDetailTitle": "Mitfahrt Info",
   "pageRideDetailReviews" : "Bewertungen",
   "pageRideDetailShowReviews" : "Bewertungen anzeigen",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",

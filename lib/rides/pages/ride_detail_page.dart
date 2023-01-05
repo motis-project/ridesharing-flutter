@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
@@ -13,6 +11,18 @@ import 'package:motis_mitfahr_app/util/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
 import 'package:motis_mitfahr_app/util/review_detail.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
+import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
+import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
+import 'package:motis_mitfahr_app/drives/models/drive.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/big_button.dart';
+import 'package:motis_mitfahr_app/util/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -105,10 +115,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
       widgets.add(ProfileWidget(driver, showDescription: true));
       widgets.add(const Divider(thickness: 1));
 
-      widgets.add(_buildReviewsColumn(driver));
+      widgets.add(ReviewsPreview(driver));
 
       if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
-      widgets.add(_buildFeaturesColumn(driver));
+      widgets.add(FeaturesColumn(driver.profileFeatures!));
 
       if (ride.status != RideStatus.preview && ride.status != RideStatus.pending) {
         widgets.add(const Divider(thickness: 1));
@@ -154,7 +164,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).pageDriveDetailTitle),
+        title: Text(S.of(context).pageRideDetailTitle),
         actions: <Widget>[
           IconButton(
             onPressed: () {},
@@ -172,97 +182,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 child: content,
               ),
             ),
-    );
-  }
-
-  Widget _buildReviewsColumn(Profile driver) {
-    List<Review> reviews = driver.reviewsReceived!..sort((a, b) => a.compareTo(b));
-    AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
-
-    return Semantics(
-      label: S.of(context).pageRideDetailReviews,
-      button: true,
-      tooltip: S.of(context).pageRideDetailShowReviews,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              aggregateReview.widget(),
-              if (reviews.isNotEmpty)
-                ExcludeSemantics(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ShaderMask(
-                        shaderCallback: (rect) => const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.black, Colors.transparent],
-                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
-                        blendMode: BlendMode.dstIn,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 200),
-                          child: ClipRect(
-                            child: SingleChildScrollView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
-                                  min(reviews.length, 2),
-                                  (index) => ReviewDetail(review: reviews[index]),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-            ],
-          ),
-          if (reviews.isNotEmpty)
-            Positioned(
-              bottom: 2,
-              right: 2,
-              child: ExcludeSemantics(
-                child: Text(
-                  S.of(context).more,
-                  style: TextStyle(color: Theme.of(context).primaryColor),
-                ),
-              ),
-            ),
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => ReviewsPage.fromProfile(driver)));
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeaturesColumn(Profile driver) {
-    List<ProfileFeature> profileFeatures = driver.profileFeatures!;
-
-    return ListView.builder(
-      itemBuilder: ((context, index) {
-        Feature feature = profileFeatures[index].feature;
-        return ListTile(
-          leading: feature.getIcon(context),
-          title: Text(feature.getDescription(context)),
-        );
-      }),
-      itemCount: profileFeatures.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
     );
   }
 

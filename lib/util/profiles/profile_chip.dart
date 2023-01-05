@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 
 class ProfileChip extends StatelessWidget {
   final Profile profile;
@@ -26,7 +27,7 @@ class ProfileChip extends StatelessWidget {
           labelPadding: const EdgeInsets.all(5),
           padding: const EdgeInsets.all(5),
           onPressed: () {
-            // TODO: Navigate to profile page
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)));
           },
         ),
       ),
