@@ -15,6 +15,8 @@ class Profile extends Model {
   final String? name;
   final Gender? gender;
 
+  final String? avatarUrl;
+
   List<Review>? reviewsReceived;
   List<ProfileFeature>? profileFeatures;
 
@@ -28,11 +30,14 @@ class Profile extends Model {
     this.surname,
     this.name,
     this.gender,
+    this.avatarUrl,
     this.reviewsReceived,
     this.profileFeatures,
   });
 
   get fullName => (surname ?? '') + (name ?? '');
+
+  get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -46,6 +51,7 @@ class Profile extends Model {
       surname: json['surname'],
       name: json['name'],
       gender: json['gender'] != null ? Gender.values[json['gender']] : null,
+      avatarUrl: json['avatar_url'],
       reviewsReceived: json.containsKey('reviews_received')
           ? Review.fromJsonList(json['reviews_received'].cast<Map<String, dynamic>>())
           : null,
@@ -68,6 +74,7 @@ class Profile extends Model {
       'surname': surname,
       'name': name,
       'gender': gender?.index,
+      'avatar_url': avatarUrl,
     };
   }
 

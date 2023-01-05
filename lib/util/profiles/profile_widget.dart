@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 
 import '../../account/pages/profile_page.dart';
+import '../../account/widgets/avatar.dart';
 
 class ProfileWidget extends StatelessWidget {
   final Profile profile;
@@ -23,11 +24,7 @@ class ProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget profileRow = Row(
       children: [
-        // TODO: Use profile picture
-        CircleAvatar(
-          minRadius: size,
-          child: Text(profile.username[0], style: TextStyle(fontSize: size)),
-        ),
+        Avatar(profile, size: size),
         const SizedBox(width: 5),
         Text(profile.username, style: TextStyle(fontSize: size)),
       ],

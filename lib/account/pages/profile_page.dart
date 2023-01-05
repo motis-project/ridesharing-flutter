@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
 import '../models/profile.dart';
+import '../widgets/avatar.dart';
 
 class ProfilePage extends StatefulWidget {
   final int profileId;
@@ -22,14 +23,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Profile? _profile;
-  late final bool _userIsSelf;
   bool _fullyLoaded = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.profile != null) _profile = widget.profile!;
-    _userIsSelf = widget.profileId == SupabaseManager.getCurrentProfile()!.id;
     loadProfile();
   }
 
@@ -49,15 +48,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildAvatar() {
-    return CircleAvatar(
-      radius: 64,
-      // backgroundImage: NetworkImage(_profile!.avatarUrl ?? ''),
-      child: _userIsSelf
-          ? IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {},
-            )
-          : null,
+    return Avatar(
+      _profile!,
+      size: 64,
+      onUpload: loadProfile,
+      isTappable: true,
     );
   }
 
@@ -66,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _profile!.username,
       style: Theme.of(context).textTheme.headline5,
     );
-    if (_userIsSelf) {
+    if (_profile!.isCurrentUser) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -94,7 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
       _profile!.description ?? '',
       style: Theme.of(context).textTheme.bodyText1,
     );
-    return EditableRow(title: 'Description', innerWidget: description, isEditable: _userIsSelf, onPressed: () {});
+    return EditableRow(
+        title: 'Description', innerWidget: description, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildFullName() {
@@ -102,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _profile!.fullName,
       style: Theme.of(context).textTheme.headline6,
     );
-    return EditableRow(title: 'Name', innerWidget: fullName, isEditable: _userIsSelf, onPressed: () {});
+    return EditableRow(title: 'Name', innerWidget: fullName, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildBirthDate() {
@@ -110,7 +106,8 @@ class _ProfilePageState extends State<ProfilePage> {
       _profile!.birthDate != null ? localeManager.formatDate(_profile!.birthDate!) : '',
       style: Theme.of(context).textTheme.headline6,
     );
-    return EditableRow(title: 'Birth Date', innerWidget: birthDate, isEditable: _userIsSelf, onPressed: () {});
+    return EditableRow(
+        title: 'Birth Date', innerWidget: birthDate, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildGender() {
@@ -118,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _profile!.gender?.getName(context) ?? '',
       style: Theme.of(context).textTheme.headline6,
     );
-    return EditableRow(title: 'Gender', innerWidget: gender, isEditable: _userIsSelf, onPressed: () {});
+    return EditableRow(title: 'Gender', innerWidget: gender, isEditable: _profile!.isCurrentUser, onPressed: () {});
   }
 
   Widget buildFeatures() {
@@ -131,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
               'Features',
               style: Theme.of(context).textTheme.headline6,
             ),
-            if (_userIsSelf)
+            if (_profile!.isCurrentUser)
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -168,39 +165,39 @@ class _ProfilePageState extends State<ProfilePage> {
       const Divider(),
       const SizedBox(height: 8),
     ];
-    if (_userIsSelf || _profile!.fullName.isNotEmpty) {
+    if (_profile!.isCurrentUser || _profile!.fullName.isNotEmpty) {
       widgets.addAll([
         buildFullName(),
         const SizedBox(height: 16),
       ]);
     }
-    if (_userIsSelf || (_profile!.description?.isNotEmpty ?? false)) {
+    if (_profile!.isCurrentUser || (_profile!.description?.isNotEmpty ?? false)) {
       widgets.addAll([
         buildDescription(),
         const SizedBox(height: 16),
       ]);
     }
-    if (_userIsSelf || _profile!.birthDate != null) {
+    if (_profile!.isCurrentUser || _profile!.birthDate != null) {
       widgets.addAll([
         buildBirthDate(),
         const SizedBox(height: 16),
       ]);
     }
-    if (_userIsSelf || _profile!.gender != null) {
+    if (_profile!.isCurrentUser || _profile!.gender != null) {
       widgets.addAll([
         buildGender(),
         const SizedBox(height: 16),
       ]);
     }
     if (_fullyLoaded) {
-      if (_userIsSelf || _profile!.profileFeatures!.isNotEmpty) {
+      if (_profile!.isCurrentUser || _profile!.profileFeatures!.isNotEmpty) {
         widgets.addAll([buildFeatures(), const SizedBox(height: 16)]);
       }
       widgets.add(buildReviews());
     } else {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    if (!_userIsSelf) {
+    if (!_profile!.isCurrentUser) {
       widgets.addAll([
         const SizedBox(height: 32),
         BigButton(text: 'Report user', onPressed: () {}, color: Colors.red),

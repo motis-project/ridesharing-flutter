@@ -67,6 +67,7 @@ dependencies:
   fuzzywuzzy: ^0.2.0
 
   collection: ^1.16.0
+  image_picker: ^0.8.6
 
 dev_dependencies:
   flutter_test:

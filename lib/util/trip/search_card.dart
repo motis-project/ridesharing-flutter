@@ -7,6 +7,8 @@ import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../account/widgets/avatar.dart';
+
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});
 
@@ -61,9 +63,7 @@ class SearchCard extends TripCard<Ride> {
   Widget buildProfile(driver) {
     return Row(
       children: [
-        CircleAvatar(
-          child: Text(driver.username[0]),
-        ),
+        Avatar(driver),
         const SizedBox(width: 5),
         Text(driver.username),
       ],
