@@ -20,46 +20,49 @@ class EditUsernamePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(S.of(context).pageProfileEditUsernameTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                maxLength: 15,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: S.of(context).pageProfileEditUsernameHint,
-                  suffixIcon: _getClearButton(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  maxLength: 15,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: S.of(context).pageProfileEditUsernameHint,
+                    suffixIcon: _getClearButton(context),
+                  ),
+                  controller: _controller,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).pageProfileEditUsernameValidateEmpty;
+                    }
+                    return null;
+                  },
                 ),
-                controller: _controller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return S.of(context).pageProfileEditUsernameValidateEmpty;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              BigButton(
-                onPressed: () => onPressed(context),
-                text: S.of(context).save,
-              ),
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                BigButton(
+                  onPressed: () => onPressed(context),
+                  text: S.of(context).save,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget? _getClearButton() {
+  Widget? _getClearButton(BuildContext context) {
     if (_controller.text == '') {
       return null;
     }
     return IconButton(
+      tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => _controller.clear(),
     );

@@ -49,11 +49,16 @@ class AvatarState extends State<Avatar> {
           Positioned.fill(
             child: Material(
               color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(widget.size ?? 20),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AvatarPicturePage(widget.profile),
+              child: Semantics(
+                label: S.of(context).widgetAvatarDetailsLabel,
+                button: true,
+                tooltip: S.of(context).widgetAvatarDetailsTooltip,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(widget.size ?? 20),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AvatarPicturePage(widget.profile),
+                    ),
                   ),
                 ),
               ),
@@ -67,6 +72,7 @@ class AvatarState extends State<Avatar> {
               radius: 20,
               backgroundColor: Theme.of(context).colorScheme.primary,
               child: IconButton(
+                tooltip: S.of(context).widgetAvatarUploadTooltip,
                 iconSize: 20,
                 onPressed: _isLoading ? null : _upload,
                 icon: const Icon(Icons.camera_alt),

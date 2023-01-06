@@ -7,6 +7,7 @@
   "no": "Nein",
   "approve": "Annehmen",
   "reject": "Ablehnen",
+  "edit": "Bearbeiten",
   "save": "Speichern",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
 
@@ -50,6 +51,7 @@
   "formAddressDestination": "Ziel",
   "formAddressDestinationHint": "Gib dein Ziel ein",
   "formAddressDestinationValidateEmpty": "Bitte gib dein Ziel ein",
+  "formClearInput": "Eingabe entfernen",
   "formSubmit": "Absenden",
   "formSubmitFail": "Fehler",
   "formSubmitSuccess": "Erfolg",
@@ -126,11 +128,17 @@
   "pageProfileEditGenderTitle": "Geschlecht wählen",
   "pageProfileEditGenderPreferNotToSay": "Keine Angabe",
   "pageProfileEditProfileFeaturesTitle": "Ordne deine Profileigenschaften",
+  "pageProfileEditProfileFeaturesHint": "Ziehe Eigenschaften hierher, um sie hinzuzufügen",
+  "pageProfileEditProfileFeaturesSelected": "Ausgewählt",
+  "pageProfileEditProfileFeaturesNotSelected": "Nicht ausgewählt",
   "pageProfileEditProfileFeaturesMutuallyExclusive": "Ausschließende Eigenschaft bereits gewählt: {feature}",
   "pageProfileEditUsernameTitle": "Nutzernamen bearbeiten",
   "pageProfileEditUsernameHint": "Gib deinen Nutzernamen ein",
   "pageProfileEditUsernameValidateEmpty": "Nutzername darf nicht leer sein",
 
+  "widgetAvatarDetailsLabel": "Profilbild",
+  "widgetAvatarDetailsTooltip": "Details anzeigen",
+  "widgetAvatarUploadTooltip": "Profilbild hochladen",
   "widgetAvatarImageCouldNotBeStored": "Bild konnte nicht gespeichert werden.",
 
   "pageHelpTitle": "Hilfe",

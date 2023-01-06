@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditableRow extends StatelessWidget {
   final String title;
@@ -30,6 +31,7 @@ class EditableRow extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
+                    tooltip: S.of(context).edit,
                     icon: const Icon(Icons.edit),
                     onPressed: () => onPressed(),
                   ),
