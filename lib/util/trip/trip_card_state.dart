@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/trip/trip.dart';
-import 'package:flutter_app/util/trip/trip_card.dart';
+import 'package:motis_mitfahr_app/util/trip/trip.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
 import '../custom_timeline_theme.dart';

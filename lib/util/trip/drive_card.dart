@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
-
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
-import 'package:flutter_app/rides/models/ride.dart';
-import 'package:flutter_app/util/trip/trip_card.dart';
-import 'package:flutter_app/util/trip/trip_card_state.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import '../supabase.dart';
-import 'package:flutter_app/util/trip/trip_overview.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});

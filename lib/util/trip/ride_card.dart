@@ -2,14 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
-import 'package:timelines/timelines.dart';
-
-import 'package:flutter_app/rides/models/ride.dart';
-import 'package:flutter_app/util/trip/trip_card.dart';
-import 'package:flutter_app/util/trip/trip_card_state.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../account/models/profile.dart';
 import '../../account/models/profile_feature.dart';
 import '../../drives/models/drive.dart';
@@ -17,7 +11,7 @@ import '../../rides/pages/ride_detail_page.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
-import 'package:flutter_app/account/models/review.dart';
+import 'package:motis_mitfahr_app/account/models/review.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
