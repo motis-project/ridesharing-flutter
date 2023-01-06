@@ -108,9 +108,9 @@ class _ProfilePageState extends State<ProfilePage> {
             _profile!.description!,
             style: Theme.of(context).textTheme.bodyText1,
           )
-        : buildNoInfoText("<No description yet>");
+        : buildNoInfoText(S.of(context).pageProfileDescriptionEmpty);
     return EditableRow(
-      title: 'Description',
+      title: S.of(context).pageProfileDescriptionTitle,
       innerWidget: description,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
@@ -127,9 +127,9 @@ class _ProfilePageState extends State<ProfilePage> {
             _profile!.fullName,
             style: Theme.of(context).textTheme.titleMedium,
           )
-        : buildNoInfoText("<No full name>");
+        : buildNoInfoText(S.of(context).pageProfileFullNameEmpty);
     return EditableRow(
-      title: 'Full Name',
+      title: S.of(context).pageProfileFullNameTitle,
       innerWidget: fullName,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
@@ -146,9 +146,9 @@ class _ProfilePageState extends State<ProfilePage> {
             localeManager.formatDate(_profile!.birthDate!),
             style: Theme.of(context).textTheme.titleMedium,
           )
-        : buildNoInfoText("<No birth date>");
+        : buildNoInfoText(S.of(context).pageProfileBirthDateEmpty);
     return EditableRow(
-      title: 'Birth Date',
+      title: S.of(context).pageProfileBirthDateTitle,
       innerWidget: birthDate,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
@@ -165,10 +165,10 @@ class _ProfilePageState extends State<ProfilePage> {
             _profile!.gender!.getName(context),
             style: Theme.of(context).textTheme.titleMedium,
           )
-        : buildNoInfoText("<No gender>");
+        : buildNoInfoText(S.of(context).pageProfileGenderEmpty);
 
     return EditableRow(
-      title: 'Gender',
+      title: S.of(context).pageProfileGenderTitle,
       innerWidget: gender,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
@@ -182,14 +182,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildFeatures() {
     Widget features = _profile!.profileFeatures!.isNotEmpty
         ? FeaturesColumn(_profile!.profileFeatures!)
-        : buildNoInfoText("<No features>");
+        : buildNoInfoText(S.of(context).pageProfileFeaturesEmpty);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Text(
-              'Features',
+              S.of(context).pageProfileFeaturesTitle,
               style: Theme.of(context).textTheme.headline6,
             ),
             if (_profile!.isCurrentUser)
@@ -216,7 +216,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildReviews() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
-        'Reviews',
+        S.of(context).pageProfileReviewsTitle,
         style: Theme.of(context).textTheme.headline6,
       ),
       const SizedBox(height: 8),
@@ -226,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildNoInfoText(String noInfoText) {
     return Text(
-      noInfoText,
+      "<$noInfoText>",
       style: Theme.of(context).textTheme.bodyText1?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
@@ -282,18 +282,19 @@ class _ProfilePageState extends State<ProfilePage> {
         widgets.addAll([
           const SizedBox(height: 32),
           hasRecentReport
-              ? BigButton(text: 'User reported', color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))
+              ? BigButton(
+                  text: S.of(context).pageProfileButtonReported,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                )
               : BigButton(
-                  text: 'Report user',
+                  text: S.of(context).pageProfileButtonReport,
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
                         .then((value) {
                       loadProfile();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Your report has been sent. We will review it as soon as possible."),
-                        ),
+                        SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
                       );
                     });
                   },

@@ -106,20 +106,10 @@ class AvatarState extends State<Avatar> {
       await supabaseClient.from('profiles').update({"avatar_url": imageUrlResponse}).eq('id', widget.profile.id);
 
       widget.onUpload!();
-    } on StorageException catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Image could not be stored.'),
-          ),
-        );
-      }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Image could not be stored.'),
-          ),
+          SnackBar(content: Text(S.of(context).widgetAvatarImageCouldNotBeStored)),
         );
       }
     }

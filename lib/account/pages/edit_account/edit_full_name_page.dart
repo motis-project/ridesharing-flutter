@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/big_button.dart';
 import '../../models/profile.dart';
@@ -18,7 +19,7 @@ class EditFullNamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit full name'),
+        title: Text(S.of(context).pageProfileEditFullNameTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -27,7 +28,7 @@ class EditFullNamePage extends StatelessWidget {
             TextField(
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                hintText: 'Enter a first name',
+                hintText: S.of(context).pageProfileEditSurnameHint,
                 suffixIcon: _getClearButton(_surnameController),
               ),
               controller: _surnameController,
@@ -38,7 +39,7 @@ class EditFullNamePage extends StatelessWidget {
             TextField(
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                hintText: 'Enter a last name',
+                hintText: S.of(context).pageProfileEditNameHint,
                 suffixIcon: _getClearButton(_nameController),
               ),
               controller: _nameController,
@@ -48,7 +49,7 @@ class EditFullNamePage extends StatelessWidget {
             ),
             BigButton(
               onPressed: () => onPressed(context),
-              text: 'Save',
+              text: S.of(context).save,
             ),
           ],
         ),
