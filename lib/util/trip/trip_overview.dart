@@ -102,11 +102,13 @@ class TripOverview extends StatelessWidget {
       text = Text(S.of(context).seatsCount(trip.seats));
     }
 
-    return Column(
-      children: [
-        Row(children: seatIcons),
-        text,
-      ],
+    return MergeSemantics(
+      child: Column(
+        children: [
+          Row(children: seatIcons),
+          text,
+        ],
+      ),
     );
   }
 }
