@@ -36,12 +36,19 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
           contents: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.access_time_outlined),
-                const SizedBox(width: 4),
-                Text(
-                    "${duration.inHours.toString().padLeft(2, "0")}:${(duration.inMinutes % 60).toString().padLeft(2, "0")}"),
+                SizedBox(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.access_time_outlined),
+                      const SizedBox(width: 4),
+                      Text(
+                          "${duration.inHours.toString().padLeft(2, "0")}:${(duration.inMinutes % 60).toString().padLeft(2, "0")}"),
+                    ],
+                  ),
+                ),
+                buildRightSide(),
               ],
             ),
           ),
@@ -60,7 +67,6 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                   '${localeManager.formatTime(trip!.endTime)}  ${trip!.end}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                buildRightSide(),
               ],
             ),
           ),

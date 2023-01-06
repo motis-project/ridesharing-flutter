@@ -161,7 +161,15 @@ Widget _buildFeaturesColumn(Profile driver) {
 
   @override
   Widget buildRightSide() {
-    return const SizedBox();
+    List<ProfileFeature> profileFeatures = driver!.profileFeatures!;
+    List<Icon> featureicons = <Icon>[];
+    for (int i = 0; i < min(profileFeatures.length, 3); i++) {
+      featureicons.add(profileFeatures[i].feature.getIcon(context));
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: featureicons,
+    );
   }
 
   @override
