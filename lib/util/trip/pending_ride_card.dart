@@ -16,6 +16,11 @@ class PendingRideCard extends TripCard<Ride> {
   const PendingRideCard(super.trip, {super.key, required this.reloadPage, required this.drive});
 
   @override
+  State<PendingRideCard> createState() => _PendingRideCard();
+}
+
+class _PendingRideCard extends State<PendingRideCard> {
+  @override
   Widget build(BuildContext context) {
     Widget timeLine = FixedTimeline(
       theme: CustomTimelineTheme.of(context),
@@ -26,7 +31,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
+                Text('${localeManager.formatTime(widget.trip.startTime)}  ${widget.trip.start}'),
               ],
             ),
           ),
@@ -41,7 +46,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
+                Text('${localeManager.formatTime(widget.trip.endTime)}  ${widget.trip.end}'),
               ],
             ),
           ),
@@ -58,7 +63,7 @@ class PendingRideCard extends TripCard<Ride> {
         Icons.chair,
         color: Theme.of(context).colorScheme.primary,
       );
-      return IconWidget(icon: icon, count: trip.seats);
+      return IconWidget(icon: icon, count: widget.trip.seats);
     }
 
     return Card(
@@ -69,7 +74,7 @@ class PendingRideCard extends TripCard<Ride> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ProfileWidget(trip.rider!),
+                child: ProfileWidget(widget.trip.rider!),
               ),
             ],
           ),
@@ -119,7 +124,7 @@ class PendingRideCard extends TripCard<Ride> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("${trip.price}€"),
+                child: Text("${widget.trip.price}€"),
               ),
             ],
           ),
@@ -129,15 +134,15 @@ class PendingRideCard extends TripCard<Ride> {
   }
 
   void approveRide() async {
-    await supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', trip.id);
+    await supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', widget.trip.id);
     // todo: notify rider
-    reloadPage();
+    widget.reloadPage();
   }
 
   void rejectRide() async {
-    await supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', trip.id);
+    await supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', widget.trip.id);
     //todo: notify rider
-    reloadPage();
+    widget.reloadPage();
   }
 
   showApproveDialog(BuildContext context) {
@@ -155,7 +160,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Text(S.of(context).yes),
             onPressed: () {
               // check if there are enough seats available
-              if (drive.isRidePossible(trip)) {
+              if (widget.drive.isRidePossible(widget.trip)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
