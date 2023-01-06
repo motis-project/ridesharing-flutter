@@ -21,47 +21,50 @@ class EditFullNamePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(S.of(context).pageProfileEditFullNameTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: S.of(context).pageProfileEditSurnameHint,
-                suffixIcon: _getClearButton(_surnameController),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: S.of(context).pageProfileEditSurnameHint,
+                  suffixIcon: _getClearButton(context, _surnameController),
+                ),
+                controller: _surnameController,
               ),
-              controller: _surnameController,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: S.of(context).pageProfileEditNameHint,
-                suffixIcon: _getClearButton(_nameController),
+              const SizedBox(
+                height: 10,
               ),
-              controller: _nameController,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BigButton(
-              onPressed: () => onPressed(context),
-              text: S.of(context).save,
-            ),
-          ],
+              TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: S.of(context).pageProfileEditNameHint,
+                  suffixIcon: _getClearButton(context, _nameController),
+                ),
+                controller: _nameController,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              BigButton(
+                onPressed: () => onPressed(context),
+                text: S.of(context).save,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget? _getClearButton(TextEditingController controller) {
+  Widget? _getClearButton(BuildContext context, TextEditingController controller) {
     if (controller.text == '') {
       return null;
     }
     return IconButton(
+      tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => controller.clear(),
     );

@@ -29,18 +29,30 @@ class _EditGenderPageState extends State<EditGenderPage> {
       appBar: AppBar(
         title: Text(S.of(context).pageProfileEditGenderTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Column(
-          children: [
-            ...List.generate(
-              Gender.values.length + 1,
-              (index) {
-                if (index < Gender.values.length) {
-                  final gender = Gender.values[index];
-                  return RadioListTile(
-                    title: Text(gender.getName(context)),
-                    value: gender,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          child: Column(
+            children: [
+              ...List.generate(
+                Gender.values.length + 1,
+                (index) {
+                  if (index < Gender.values.length) {
+                    final gender = Gender.values[index];
+                    return RadioListTile(
+                      title: Text(gender.getName(context)),
+                      value: gender,
+                      groupValue: _gender,
+                      onChanged: (Gender? value) {
+                        setState(() {
+                          _gender = value;
+                        });
+                      },
+                    );
+                  }
+                  return RadioListTile<Gender?>(
+                    title: Text(S.of(context).pageProfileEditGenderPreferNotToSay),
+                    value: null,
                     groupValue: _gender,
                     onChanged: (Gender? value) {
                       setState(() {
@@ -48,27 +60,17 @@ class _EditGenderPageState extends State<EditGenderPage> {
                       });
                     },
                   );
-                }
-                return RadioListTile<Gender?>(
-                  title: Text(S.of(context).pageProfileEditGenderPreferNotToSay),
-                  value: null,
-                  groupValue: _gender,
-                  onChanged: (Gender? value) {
-                    setState(() {
-                      _gender = value;
-                    });
-                  },
-                );
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BigButton(
-              onPressed: () => onPressed(context),
-              text: S.of(context).save,
-            ),
-          ],
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              BigButton(
+                onPressed: () => onPressed(context),
+                text: S.of(context).save,
+              ),
+            ],
+          ),
         ),
       ),
     );

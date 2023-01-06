@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -44,14 +45,17 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             Flexible(
               child: ReorderableListView(
                 header: _features.isEmpty
-                    ? Container(
-                        width: double.infinity,
-                        height: 60,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).colorScheme.primary),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Center(
-                          child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+                    ? Semantics(
+                        label: S.of(context).pageProfileEditProfileFeaturesHint,
+                        child: Container(
+                          width: double.infinity,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+                          ),
                         ),
                       )
                     : null,
@@ -62,7 +66,10 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     ListTile(
                       key: ValueKey(feature),
                       leading: feature.getIcon(context),
-                      title: Text(feature.getDescription(context)),
+                      title: Semantics(
+                        label: S.of(context).pageProfileEditProfileFeaturesSelected,
+                        child: Text(feature.getDescription(context)),
+                      ),
                       trailing: ReorderableDragStartListener(
                         index: index++,
                         child: const Icon(Icons.drag_handle),
@@ -79,7 +86,10 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                       key: ValueKey(feature),
                       leading: feature.getIcon(context),
-                      title: Text(feature.getDescription(context)),
+                      title: Semantics(
+                        label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
+                        child: Text(feature.getDescription(context)),
+                      ),
                       trailing: ReorderableDragStartListener(
                         index: index++,
                         child: const Icon(Icons.drag_handle),
@@ -113,9 +123,11 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             _features.firstWhereOrNull((feature) => feature.isMutuallyExclusive(newFeature));
         if (mutuallyExclusiveFeature != null) {
           String description = mutuallyExclusiveFeature.getDescription(context);
+          String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+          SemanticsService.announce(text, TextDirection.ltr);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description)),
+              content: Text(text),
             ),
           );
           return;

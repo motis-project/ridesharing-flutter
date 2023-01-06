@@ -19,37 +19,40 @@ class EditDescriptionPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(S.of(context).pageProfileEditDescriptionTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Column(
-          children: [
-            TextField(
-              maxLines: 10,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: S.of(context).pageProfileEditDescriptionHint,
-                suffixIcon: _getClearButton(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          child: Column(
+            children: [
+              TextField(
+                maxLines: 10,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: S.of(context).pageProfileEditDescriptionHint,
+                  suffixIcon: _getClearButton(context),
+                ),
+                controller: _controller,
               ),
-              controller: _controller,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            BigButton(
-              onPressed: () => onPressed(context),
-              text: S.of(context).save,
-            ),
-          ],
+              const SizedBox(
+                height: 10,
+              ),
+              BigButton(
+                onPressed: () => onPressed(context),
+                text: S.of(context).save,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget? _getClearButton() {
+  Widget? _getClearButton(BuildContext context) {
     if (_controller.text == '') {
       return null;
     }
     return IconButton(
+      tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => _controller.clear(),
     );

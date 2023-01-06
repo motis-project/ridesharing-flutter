@@ -5,6 +5,7 @@
   "more": "More",
   "yes": "Yes",
   "no": "No",
+  "edit": "Edit",
   "save": "Save",
   "failureSnackBar": "Something went wrong.",
 
@@ -45,6 +46,7 @@
   "formAddressDestination": "Destination",
   "formAddressDestinationHint": "Enter your destination",
   "formAddressDestinationValidateEmpty": "Please enter your destination",
+  "formClearInput": "Clear input",
   "formSubmit": "Submit",
   "formSubmitFail": "Failed",
   "formSubmitSuccess": "Success",
@@ -119,6 +121,9 @@
   "pageProfileEditGenderTitle": "Choose Gender",
   "pageProfileEditGenderPreferNotToSay": "Prefer not to say",
   "pageProfileEditProfileFeaturesTitle": "Order your profile features",
+  "pageProfileEditProfileFeaturesHint": "Drag your profile features here",
+  "pageProfileEditProfileFeaturesSelected": "Selected",
+  "pageProfileEditProfileFeaturesNotSelected": "Not selected",
   "pageProfileEditProfileFeaturesMutuallyExclusive": "Mutually exclusive feature already selected: {feature}",
   "@pageProfileEditProfileFeaturesMutuallyExclusive": {
     "placeholders": {
@@ -129,6 +134,9 @@
   "pageProfileEditUsernameHint": "Enter your username",
   "pageProfileEditUsernameValidateEmpty": "Username cannot be empty",
 
+  "widgetAvatarDetailsLabel": "Profile picture",
+  "widgetAvatarDetailsTooltip": "See details",
+  "widgetAvatarUploadTooltip": "Upload new picture",
   "widgetAvatarImageCouldNotBeStored": "Image could not be stored.",
 
   "pageHelpTitle": "Help",

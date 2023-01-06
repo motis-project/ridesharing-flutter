@@ -79,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
+                tooltip: S.of(context).edit,
                 icon: const Icon(Icons.edit),
                 onPressed: () {
                   Navigator.of(context)
@@ -183,33 +184,15 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget features = _profile!.profileFeatures!.isNotEmpty
         ? FeaturesColumn(_profile!.profileFeatures!)
         : buildNoInfoText(S.of(context).pageProfileFeaturesEmpty);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              S.of(context).pageProfileFeaturesTitle,
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            if (_profile!.isCurrentUser)
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) => EditProfileFeaturesPage(_profile!)))
-                          .then((value) => loadProfile());
-                    },
-                  ),
-                ),
-              ),
-          ],
-        ),
-        features,
-      ],
+    return EditableRow(
+      title: S.of(context).pageProfileFeaturesTitle,
+      innerWidget: features,
+      isEditable: _profile!.isCurrentUser,
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => EditProfileFeaturesPage(_profile!)))
+            .then((value) => loadProfile());
+      },
     );
   }
 
