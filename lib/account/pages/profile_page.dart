@@ -291,11 +291,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
-                        .then((value) {
-                      loadProfile();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
-                      );
+                        .then((reportSent) {
+                      if (reportSent) {
+                        loadProfile();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
+                        );
+                      }
                     });
                   },
                   color: Colors.red,
