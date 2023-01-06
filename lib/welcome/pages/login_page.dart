@@ -1,12 +1,12 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/email_field.dart';
-import 'package:flutter_app/util/loading_button.dart';
-import 'package:flutter_app/util/password_field.dart';
-import 'package:flutter_app/welcome/pages/forgot_password_page.dart';
-import 'package:flutter_app/welcome/pages/register_page.dart';
-import 'package:flutter_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/email_field.dart';
+import 'package:motis_mitfahr_app/util/loading_button.dart';
+import 'package:motis_mitfahr_app/util/password_field.dart';
+import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
+import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/locale_manager.dart';
-import 'package:flutter_app/util/profiles/profile_widget.dart';
-import 'package:flutter_app/util/supabase.dart';
-import 'package:flutter_app/util/theme_manager.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/theme_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'about_page.dart';

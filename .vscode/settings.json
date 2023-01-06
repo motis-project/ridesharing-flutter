@@ -17,5 +17,5 @@
   "files.watcherExclude": {
     "**/.fvm": true
   },
-  "cmake.sourceDirectory": "${workspaceFolder}/linux"
+  "java.configuration.updateBuildConfiguration": "automatic"
 }

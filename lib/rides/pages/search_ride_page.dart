@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
-import 'package:flutter_app/util/locale_manager.dart';
-import 'package:flutter_app/util/search/address_search_field.dart';
-import 'package:flutter_app/util/submit_button.dart';
+import 'package:motis_mitfahr_app/rides/pages/search_suggestion_page.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/search/address_search_field.dart';
+import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchRidePage extends StatefulWidget {

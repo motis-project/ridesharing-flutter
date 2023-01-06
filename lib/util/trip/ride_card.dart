@@ -1,6 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
+import 'package:timelines/timelines.dart';
+
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
 import 'package:flutter_app/util/trip/trip_card_state.dart';

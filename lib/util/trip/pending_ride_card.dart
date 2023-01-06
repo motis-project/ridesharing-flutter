@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/custom_timeline_theme.dart';
-import 'package:flutter_app/util/icon_widget.dart';
-import 'package:flutter_app/util/profiles/profile_widget.dart';
-import 'package:flutter_app/util/supabase.dart';
-import 'package:flutter_app/util/trip/trip_card.dart';
+import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
+import 'package:motis_mitfahr_app/util/icon_widget.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/drives/models/drive.dart';
-import 'package:flutter_app/util/locale_manager.dart';
-import 'package:flutter_app/util/submit_button.dart';
-import 'package:flutter_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/drives/models/drive.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/submit_button.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

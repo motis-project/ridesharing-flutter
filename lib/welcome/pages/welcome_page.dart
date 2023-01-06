@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/big_button.dart';
-import 'package:flutter_app/welcome/pages/login_page.dart';
-import 'package:flutter_app/welcome/pages/register_page.dart';
+import 'package:motis_mitfahr_app/util/big_button.dart';
+import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
+import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/search_ride_page.dart';
