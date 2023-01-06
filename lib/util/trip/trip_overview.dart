@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/drives/models/drive.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/trip/trip.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TripOverview extends StatelessWidget {
   final Trip trip;
@@ -33,7 +33,7 @@ class TripOverview extends StatelessWidget {
             children: [
               Text(trip.end),
               Text(
-                localeManager.formatTime(trip.startTime),
+                localeManager.formatTime(trip.endTime),
                 style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
               )
             ],
@@ -81,7 +81,7 @@ class TripOverview extends StatelessWidget {
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
         ),
       );
-      text = Text("${maxUsedSeats ?? '?'}/${trip.seats} Seats");
+      text = Text("${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}");
     } else {
       seatIcons = List.generate(
         trip.seats,
@@ -90,14 +90,12 @@ class TripOverview extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
       );
-      text = Text('${trip.seats} ${Intl.plural(trip.seats, one: 'Seat', other: 'Seats')}');
+      text = Text(S.of(context).seatsCount(trip.seats));
     }
 
     return Column(
       children: [
-        Row(
-          children: seatIcons,
-        ),
+        Row(children: seatIcons),
         text,
       ],
     );

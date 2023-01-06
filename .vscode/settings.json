@@ -5,6 +5,9 @@
         120
     ],
   },
+  "[arb]": {
+    "editor.tabSize": 2,
+  },
   "dart.flutterSdkPath": ".fvm/flutter_sdk",
   // Remove .fvm files from search
   "search.exclude": {

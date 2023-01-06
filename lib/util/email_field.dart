@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension EmailValidator on String {
   bool isValidEmail() {
@@ -16,18 +17,18 @@ class EmailField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Email',
-        hintText: 'Enter your email address',
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: S.of(context).formEmail,
+        hintText: S.of(context).formEmailHint,
       ),
       keyboardType: TextInputType.emailAddress,
       controller: controller,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your email';
+          return S.of(context).formEmailValidateEmpty;
         } else if (!value.isValidEmail()) {
-          return 'Please enter a valid email';
+          return S.of(context).formEmailValidateInvalid;
         }
         return null;
       },

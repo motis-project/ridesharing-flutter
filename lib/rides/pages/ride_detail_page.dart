@@ -16,7 +16,10 @@ import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/review_detail.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../welcome/pages/login_page.dart';
+import '../../welcome/pages/register_page.dart';
 
 class RideDetailPage extends StatefulWidget {
   // One of these two must be set
@@ -46,6 +49,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
       rider: rider_id(*)
     )
   ''';
+  static const String _rideQuery = '''
+        *,
+        drive: drive_id(
+          $_driveQuery
+        )
+      ''';
 
   Ride? _ride;
   bool _fullyLoaded = false;
@@ -71,12 +80,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       ride.drive = Drive.fromJson(data);
     } else {
-      Map<String, dynamic> data = await supabaseClient.from('rides').select('''
-        *,
-        drive: drive_id(
-          $_driveQuery
-        )
-      ''').eq('id', widget.id!).single();
+      Map<String, dynamic> data = await supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 
@@ -124,7 +128,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
         Set<Profile> riders =
             ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
-        widgets.add(ProfileWrapList(riders, title: "Riders"));
+        widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
       Widget? primaryButton = _buildPrimaryButton(driver);
@@ -141,13 +145,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Widget content = Column(
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
-          const CustomBanner(kind: CustomBannerKind.warning, text: "You have requested this ride.")
+          CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRequested)
+        else if (_ride != null && _ride!.status == RideStatus.rejected)
+          CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerRejected)
         else if (_ride?.status.isCancelled() ?? false)
           CustomBanner(
             kind: CustomBannerKind.error,
             text: _ride!.status == RideStatus.cancelledByDriver
-                ? "This ride has been cancelled."
-                : "You have cancelled this ride.",
+                ? S.of(context).pageRideDetailBannerCancelledByDriver
+                : S.of(context).pageRideDetailBannerCancelledByYou,
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -161,7 +167,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ride Detail'),
+        title: Text(S.of(context).pageDriveDetailTitle),
         actions: <Widget>[
           IconButton(
             onPressed: () {},
@@ -196,7 +202,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
                 Expanded(
                   child: Text(
-                    "${reviews.length} ${Intl.plural(reviews.length, one: 'review', other: 'reviews')}",
+                    S.of(context).pageReviewCount(reviews.length),
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                     textAlign: TextAlign.right,
                   ),
@@ -214,7 +220,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Comfort"),
+                      Text(S.of(context).reviewCategoryComfort),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.comfortRating),
                     ],
@@ -222,7 +228,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Safety"),
+                      Text(S.of(context).reviewCategorySafety),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.safetyRating)
                     ],
@@ -230,7 +236,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Reliability"),
+                      Text(S.of(context).reviewCategoryReliability),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.reliabilityRating)
                     ],
@@ -238,7 +244,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Hospitality"),
+                      Text(S.of(context).reviewCategoryHospitality),
                       const SizedBox(width: 10),
                       CustomRatingBarIndicator(rating: aggregateReview.hospitalityRating)
                     ],
@@ -284,7 +290,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             bottom: 2,
             right: 2,
             child: Text(
-              "More",
+              S.of(context).more,
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
@@ -322,17 +328,28 @@ class _RideDetailPageState extends State<RideDetailPage> {
   Widget? _buildPrimaryButton(Profile driver) {
     switch (_ride!.status) {
       case RideStatus.preview:
-        return BigButton(text: "REQUEST RIDE", onPressed: () {}, color: Theme.of(context).primaryColor);
+        return BigButton(
+          text: S.of(context).pageRideDetailButtonRequest,
+          onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+          color: Theme.of(context).primaryColor,
+        );
       case RideStatus.approved:
         return _ride!.isFinished
             ? BigButton(
-                text: "RATE DRIVER",
+                text: S.of(context).pageRideDetailButtonRate,
                 onPressed: () => _navigateToRatePage(driver),
                 color: Theme.of(context).primaryColor,
               )
-            : BigButton(text: "CANCEL RIDE", onPressed: _showCancelDialog, color: Theme.of(context).errorColor);
+            : BigButton(
+                text: S.of(context).pageRideDetailButtonCancel,
+                onPressed: _showCancelDialog,
+                color: Theme.of(context).errorColor,
+              );
       case RideStatus.pending:
-        return BigButton(text: "RIDE REQUESTED", color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
+        return BigButton(
+          text: S.of(context).pageRideDetailButtonRequested,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        );
       default:
         return null;
     }
@@ -350,23 +367,23 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Cancellation"),
-        content: const Text("Are you sure you want to cancel this ride?"),
+        title: Text(S.of(context).pageRideDetailCancelDialogTitle),
+        content: Text(S.of(context).pageRideDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: const Text("No"),
+            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Yes"),
+            child: Text(S.of(context).yes),
             onPressed: () {
               _cancelRide();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Ride cancelled"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(S.of(context).pageRideDetailCancelDialogToast),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -379,5 +396,68 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _cancelRide() async {
     await _ride?.cancel();
     setState(() {});
+  }
+
+  _showRequestDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(S.of(context).pageRideDetailRequestDialogTitle),
+        content: Text(S.of(context).pageRideDetailRequestDialogMessage),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              confirmRequest(_ride!);
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void confirmRequest(Ride ride) async {
+    ride.status = RideStatus.pending;
+    final data = await supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    setState(() {
+      _ride = Ride.fromJson(data);
+    });
+    //todo: send notification to driver
+  }
+
+  _showLoginDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(S.of(context).pageRideDetailLoginDialogTitle),
+        content: Text(S.of(context).pageRideDetailLoginDialogMessage),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).cancel),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+              child: Text(S.of(context).pageWelcomeLogin),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+              }),
+          TextButton(
+            child: Text(S.of(context).pageWelcomeRegister),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

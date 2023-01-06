@@ -4,6 +4,7 @@ import 'package:flutter_app/drives/pages/create_drive_page.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_page_builder.dart';
 import '../../util/trip/drive_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DrivesPage extends StatefulWidget {
   const DrivesPage({super.key});
@@ -31,7 +32,7 @@ class _DrivesPageState extends State<DrivesPage> {
   Widget build(BuildContext context) {
     return TripPageBuilder.build<Drive>(
       context,
-      'Drives',
+      S.of(context).pageDrivesTitle,
       _drives,
       (drive) => DriveCard(drive),
       FloatingActionButton(

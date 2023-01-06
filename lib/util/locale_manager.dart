@@ -7,9 +7,9 @@ import 'package:intl/intl.dart';
 LocaleManager localeManager = LocaleManager();
 
 class LocaleManager with ChangeNotifier {
-  final supportedLocales = AppLocalizations.supportedLocales;
+  final supportedLocales = S.supportedLocales;
   final localizationsDelegates = const [
-    AppLocalizations.delegate,
+    S.delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,

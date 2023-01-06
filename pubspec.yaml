@@ -50,6 +50,8 @@ dependencies:
 
   flutter_rating_bar: ^4.0.1
 
+  badges: ^2.0.3
+
   # Internationalization
   intl: ^0.17.0
   flutter_localizations:
@@ -60,6 +62,11 @@ dependencies:
 
   #For the shimmer effect
   shimmer: ^2.0.0
+
+  # Fuzzy search
+  fuzzywuzzy: ^0.2.0
+
+  collection: ^1.16.0
 
 dev_dependencies:
   flutter_test:

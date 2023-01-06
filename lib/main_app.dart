@@ -3,6 +3,7 @@ import 'package:flutter_app/account/pages/account_page.dart';
 import 'package:flutter_app/drives/pages/drives_page.dart';
 import 'package:flutter_app/home_page.dart';
 import 'package:flutter_app/rides/pages/rides_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum TabItem { home, drives, rides, account }
 
@@ -58,22 +59,22 @@ class _MainAppState extends State<MainApp> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+              icon: const Icon(Icons.home),
+              label: S.of(context).pageHomeTitle,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.drive_eta),
-              label: 'Drives',
+              icon: const Icon(Icons.drive_eta),
+              label: S.of(context).pageDrivesTitle,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.chair),
-              label: 'Rides',
+              icon: const Icon(Icons.chair),
+              label: S.of(context).pageRidesTitle,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
+              icon: const Icon(Icons.account_circle),
+              label: S.of(context).pageAccountTitle,
             ),
           ],
           currentIndex: _currentTab.index,

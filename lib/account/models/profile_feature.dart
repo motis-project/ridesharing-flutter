@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/util/own_theme_fields.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
 
@@ -58,6 +59,7 @@ enum Feature {
   luxury,
   speedyDrivingStyle,
   relaxedDrivingStyle,
+  accessible,
   requires3G,
 }
 
@@ -92,6 +94,8 @@ extension FeatureExtension on Feature {
         return Icon(Icons.speed, color: Theme.of(context).colorScheme.primary);
       case Feature.relaxedDrivingStyle:
         return Icon(Icons.self_improvement, color: Theme.of(context).colorScheme.primary);
+      case Feature.accessible:
+        return Icon(Icons.accessibility, color: Theme.of(context).colorScheme.primary);
       case Feature.requires3G:
         return Icon(Icons.vaccines, color: Theme.of(context).colorScheme.primary);
     }
@@ -100,35 +104,37 @@ extension FeatureExtension on Feature {
   String getDescription(BuildContext context) {
     switch (this) {
       case Feature.noSmoking:
-        return 'No smoking';
+        return S.of(context).modelProfileFeatureNoSmoking;
       case Feature.smoking:
-        return 'Smoking';
+        return S.of(context).modelProfileFeatureSmoking;
       case Feature.noVaping:
-        return 'No vaping';
+        return S.of(context).modelProfileFeatureNoVaping;
       case Feature.vaping:
-        return 'Vaping';
+        return S.of(context).modelProfileFeatureVaping;
       case Feature.noPetsAllowed:
-        return 'No pets allowed';
+        return S.of(context).modelProfileFeatureNoPetsAllowed;
       case Feature.petsAllowed:
-        return 'Pets allowed';
+        return S.of(context).modelProfileFeaturePetsAllowed;
       case Feature.noChildrenAllowed:
-        return 'No children allowed';
+        return S.of(context).modelProfileFeatureNoChildrenAllowed;
       case Feature.childrenAllowed:
-        return 'Children allowed';
+        return S.of(context).modelProfileFeatureChildrenAllowed;
       case Feature.talkative:
-        return 'Talkative';
+        return S.of(context).modelProfileFeatureTalkative;
       case Feature.music:
-        return 'Music';
+        return S.of(context).modelProfileFeatureMusic;
       case Feature.quiet:
-        return 'Quiet';
+        return S.of(context).modelProfileFeatureQuiet;
       case Feature.luxury:
-        return 'Luxury';
+        return S.of(context).modelProfileFeatureLuxury;
       case Feature.speedyDrivingStyle:
-        return 'Speedy driving style';
+        return S.of(context).modelProfileFeatureSpeedyDrivingStyle;
       case Feature.relaxedDrivingStyle:
-        return 'Relaxed driving style';
+        return S.of(context).modelProfileFeatureRelaxedDrivingStyle;
+      case Feature.accessible:
+        return S.of(context).modelProfileFeatureAccessible;
       case Feature.requires3G:
-        return 'Requires 3G certification';
+        return S.of(context).modelProfileFeatureRequires3G;
     }
   }
 }

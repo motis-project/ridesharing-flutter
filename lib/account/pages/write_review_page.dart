@@ -7,6 +7,7 @@ import 'package:flutter_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:flutter_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WriteReviewPage extends StatefulWidget {
   final Profile profile;
@@ -80,11 +81,11 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                       width: 300,
                       child: TextField(
                         controller: _textController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Review',
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: S.of(context).pageWriteReviewReview,
+                          hintText: S.of(context).pageWriteReviewReviewHint,
                           alignLabelWithHint: true,
-                          hintText: 'What did you like or dislike about the ride?',
                         ),
                         textAlignVertical: TextAlignVertical.top,
                         maxLines: 5,
@@ -108,10 +109,26 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       width: double.infinity,
       child: Column(
         children: [
-          _buildCategoryReviewRow('Comfort', _review!.comfortRating, onComfortRatingUpdate),
-          _buildCategoryReviewRow('Safety', _review!.safetyRating, onSafetyRatingUpdate),
-          _buildCategoryReviewRow('Reliability', _review!.reliabilityRating, onReliabilityRatingUpdate),
-          _buildCategoryReviewRow('Hospitality', _review!.hospitalityRating, onHospitalityRatingUpdate),
+          _buildCategoryReviewRow(
+            S.of(context).reviewCategoryComfort,
+            _review!.comfortRating,
+            onComfortRatingUpdate,
+          ),
+          _buildCategoryReviewRow(
+            S.of(context).reviewCategorySafety,
+            _review!.safetyRating,
+            onSafetyRatingUpdate,
+          ),
+          _buildCategoryReviewRow(
+            S.of(context).reviewCategoryReliability,
+            _review!.reliabilityRating,
+            onReliabilityRatingUpdate,
+          ),
+          _buildCategoryReviewRow(
+            S.of(context).reviewCategoryHospitality,
+            _review!.hospitalityRating,
+            onHospitalityRatingUpdate,
+          ),
         ],
       ),
     );
@@ -171,7 +188,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       });
       Duration duration = const Duration(seconds: 1);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Please rate the ride'),
+        content: Text(S.of(context).pageWriteReviewRatingRequired),
         duration: duration,
       ));
       await Future.delayed(duration);

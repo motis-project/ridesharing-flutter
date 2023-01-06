@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/util/submit_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
@@ -9,35 +10,34 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
-  List<Widget> faqCards = const [
-    FAQCard(
-      question: "What can this app do?",
-      answer: "With the MOTIS Ride App, you can do a lot of useful stuff!",
-    ),
-    FAQCard(
-      question: "Where are the accessibility settings?",
-      answer:
-          "This app supports a multitude of accessibility settings offered by the OS. Go to your OS's settings to enable Screen Reader or large fonts!",
-    ),
-  ];
+  List<Widget> getFaqCards() => [
+        FAQCard(
+          question: S.of(context).pageHelpWhatIsMotisQuestion,
+          answer: S.of(context).pageHelpWhatIsMotisAnswer,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpWhereIsAccessibilityQuestion,
+          answer: S.of(context).pageHelpWhereIsAccessibilityAnswer,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Help'),
+        title: Text(S.of(context).pageHelpTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: ListView(
-          children: faqCards +
+          children: getFaqCards() +
               [
                 const Divider(
                   thickness: 1,
                 ),
                 SubmitButton(
-                  text: "Contact us",
-                  onPressed: () => print("Contact"),
+                  text: S.of(context).pageHelpContactUs,
+                  onPressed: () => print("Contact TODO"),
                 ),
               ],
         ),

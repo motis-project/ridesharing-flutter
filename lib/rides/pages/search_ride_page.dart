@@ -3,6 +3,7 @@ import 'package:flutter_app/rides/pages/search_suggestion_page.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/search/address_search_field.dart';
 import 'package:flutter_app/util/submit_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({super.key});
@@ -16,7 +17,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search Ride"),
+        title: Text(S.of(context).pageSearchRideTitle),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(),
@@ -40,7 +41,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
-  late final DateTime _firstDate;
   late DateTime _selectedDate;
   late int _dropdownValue;
 
@@ -49,7 +49,6 @@ class _SearchRideFormState extends State<SearchRideForm> {
   @override
   initState() {
     super.initState();
-    _firstDate = DateTime.now();
     _selectedDate = DateTime.now();
     _dropdownValue = list.first;
   }
@@ -82,11 +81,13 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _showDatePicker() {
+    DateTime firstDate = DateTime.now();
+
     showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: _firstDate,
-      lastDate: _firstDate.add(const Duration(days: 30)),
+      firstDate: firstDate,
+      lastDate: firstDate.add(const Duration(days: 30)),
     ).then((value) {
       setState(() {
         if (value != null) {
@@ -99,15 +100,16 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   String? _timeValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a time';
+      return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(_firstDate)) {
-      return 'Please enter a valid time';
+    if (_selectedDate.isBefore(DateTime.now())) {
+      return S.of(context).formTimeValidateFuture;
     }
     return null;
   }
 
   void _onSubmit() async {
+    //todo: pressing search button
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -122,9 +124,9 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
     return Expanded(
       child: TextFormField(
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Seats",
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formDate,
         ),
         readOnly: true,
         onTap: _showDatePicker,
@@ -138,9 +140,9 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
     return Expanded(
       child: TextFormField(
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Time",
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formTime,
         ),
         readOnly: true,
         onTap: _showTimePicker,
@@ -158,9 +160,9 @@ class _SearchRideFormState extends State<SearchRideForm> {
         child: DropdownButtonFormField<int>(
           value: _dropdownValue,
           icon: const Icon(Icons.arrow_downward),
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: "Seats",
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: S.of(context).seats,
           ),
           onChanged: (int? value) {
             setState(() {
@@ -207,11 +209,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            //Search
             Hero(
               tag: "SearchButton",
               child: SubmitButton(
-                text: "Search",
+                text: S.of(context).pageSearchRideButtonSearch,
                 onPressed: _onSubmit,
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_app/util/model.dart';
 
 abstract class Trip extends Model {
@@ -23,5 +24,9 @@ abstract class Trip extends Model {
 
   bool overlapsWith(Trip other) {
     return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
+  }
+
+  bool overlapsWithTimeRange(DateTimeRange range) {
+    return startTime.isBefore(range.end) && endTime.isAfter(range.start);
   }
 }

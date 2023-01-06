@@ -85,6 +85,11 @@ class Profile extends Model {
 
     return Profile.fromJson(query);
   }
+
+  AggregateReview getAggregateReview() {
+    List<Review> reviews = reviewsReceived ?? [];
+    return AggregateReview.fromReviews(reviews);
+  }
 }
 
 enum Gender {

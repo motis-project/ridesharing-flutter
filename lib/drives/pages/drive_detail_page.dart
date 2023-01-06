@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/account/models/profile.dart';
 import 'package:flutter_app/drives/models/drive.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/big_button.dart';
 import 'package:flutter_app/util/custom_banner.dart';
 import 'package:flutter_app/util/custom_timeline_theme.dart';
+import 'package:flutter_app/util/icon_widget.dart';
 import 'package:flutter_app/util/locale_manager.dart';
 import 'package:flutter_app/util/own_theme_fields.dart';
 import 'package:flutter_app/util/profiles/profile_widget.dart';
@@ -12,6 +14,9 @@ import 'package:flutter_app/util/profiles/profile_wrap_list.dart';
 import 'package:flutter_app/util/supabase.dart';
 import 'package:flutter_app/util/trip/trip_overview.dart';
 import 'package:timelines/timelines.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'drive_chat_page.dart';
 
 class DriveDetailPage extends StatefulWidget {
   final int id;
@@ -77,8 +82,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         place: drive.end,
         time: drive.endTime,
       ));
-
-      for (Ride ride in drive.rides!) {
+      List<Ride> approvedRides = drive.approvedRides!;
+      for (Ride ride in approvedRides) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -152,16 +157,16 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       widgets.add(timeline);
 
-      if (drive.rides!.isNotEmpty) {
+      if (approvedRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
-        Set<Profile> riders = drive.rides!.map((ride) => ride.rider!).toSet();
-        widgets.add(ProfileWrapList(riders, title: 'Riders'));
+        Set<Profile> riders = approvedRides.map((ride) => ride.rider!).toSet();
+        widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
       if (!(_drive!.isFinished || _drive!.cancelled)) {
         widgets.add(const SizedBox(height: 10));
         Widget deleteButton = BigButton(
-          text: "CANCEL DRIVE",
+          text: S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
           color: Theme.of(context).errorColor,
         );
@@ -176,9 +181,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     Widget content = Column(
       children: [
         if (_drive?.cancelled ?? false)
-          const CustomBanner(
+          CustomBanner(
             kind: CustomBannerKind.error,
-            text: "You have cancelled this drive.",
+            text: S.of(context).pageDriveDetailBannerCancelled,
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -192,12 +197,28 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Drive Detail'),
+        title: Text(S.of(context).pageDriveDetailTitle),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.chat),
-          )
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DriveChatPage(
+                  drive: _drive!,
+                ),
+              ),
+            ).then((value) => loadDrive()),
+            icon: Badge(
+              badgeContent: Text(
+                _drive?.pendingRides?.length.toString() ?? '',
+                style: const TextStyle(color: Colors.white),
+                textScaleFactor: 1.0,
+              ),
+              showBadge: _drive?.pendingRides?.isNotEmpty ?? false,
+              position: BadgePosition.topEnd(top: -12),
+              child: const Icon(Icons.chat),
+            ),
+          ),
         ],
       ),
       body: _drive == null
@@ -255,16 +276,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: action.seats <= 2
-                            ? List.generate(action.seats, (index) => icon)
-                            : [
-                                icon,
-                                const SizedBox(width: 2),
-                                Text("x${action.seats}"),
-                              ],
-                      ),
+                      child: IconWidget(icon: icon, count: action.seats),
                     ),
                   ),
                   ProfileWidget(profile, size: 15),
@@ -298,23 +310,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm Cancellation"),
-        content: const Text("Are you sure you want to cancel this drive?"),
+        title: Text(S.of(context).pageDriveDetailCancelDialogTitle),
+        content: Text(S.of(context).pageDriveDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
-            child: const Text("No"),
+            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text("Yes"),
+            child: Text(S.of(context).yes),
             onPressed: () {
               _cancelDrive();
 
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Drive cancelled"),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(S.of(context).pageDriveDetailCancelDialogToast),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
