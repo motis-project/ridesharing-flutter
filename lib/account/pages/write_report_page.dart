@@ -75,17 +75,17 @@ class _WriteReportPageState extends State<WriteReportPage> {
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: _textController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Report",
-                      hintText: "Please outline the reason for the report",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).pageWriteReportField,
+                      hintText: S.of(context).pageWriteReportFieldHint,
                       alignLabelWithHint: true,
                     ),
                     textAlignVertical: TextAlignVertical.top,
                     maxLines: 5,
                     validator: (value) {
                       if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
-                        return "Please enter a reason for the report";
+                        return S.of(context).pageWriteReportFieldValidateEmpty;
                       }
                       return null;
                     },

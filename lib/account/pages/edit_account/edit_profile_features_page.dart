@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/big_button.dart';
 import '../../models/profile.dart';
@@ -34,7 +35,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order your profile features'),
+        title: Text(S.of(context).pageProfileEditProfileFeaturesTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -92,7 +93,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             ),
             BigButton(
               onPressed: () => onPressed(context),
-              text: 'Save',
+              text: S.of(context).save,
             ),
           ],
         ),
@@ -111,10 +112,10 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
         Feature? mutuallyExclusiveFeature =
             _features.firstWhereOrNull((feature) => feature.isMutuallyExclusive(newFeature));
         if (mutuallyExclusiveFeature != null) {
+          String description = mutuallyExclusiveFeature.getDescription(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                  "Mutually exclusive feature already selected: ${mutuallyExclusiveFeature.getDescription(context)}"),
+              content: Text(S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description)),
             ),
           );
           return;

@@ -3,6 +3,7 @@ import 'package:motis_mitfahr_app/account/models/report.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
 
@@ -123,11 +124,11 @@ extension GenderName on Gender {
   String getName(BuildContext context) {
     switch (this) {
       case Gender.male:
-        return 'Male';
+        return S.of(context).modelProfileGenderMale;
       case Gender.female:
-        return 'Female';
+        return S.of(context).modelProfileGenderFemale;
       case Gender.diverse:
-        return 'Diverse';
+        return S.of(context).modelProfileGenderDiverse;
     }
   }
 }

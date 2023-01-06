@@ -5,6 +5,7 @@
   "more": "More",
   "yes": "Yes",
   "no": "No",
+  "save": "Save",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",
@@ -93,6 +94,43 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",
 
+  "pageProfileDescriptionTitle": "Description",
+  "pageProfileDescriptionEmpty": "No description",
+  "pageProfileFullNameTitle": "Full Name",
+  "pageProfileFullNameEmpty": "No full name",
+  "pageProfileBirthDateTitle": "Birth Date",
+  "pageProfileBirthDateEmpty": "No birth date",
+  "pageProfileGenderTitle": "Gender",
+  "pageProfileGenderEmpty": "No gender",
+  "pageProfileFeaturesTitle": "Features",
+  "pageProfileFeaturesEmpty": "No features",
+  "pageProfileReviewsTitle": "Reviews",
+  "pageProfileButtonReport": "Report User",
+  "pageProfileButtonReported": "User reported",
+  "pageProfileButtonMessage": "Your report has been sent. We will review it as soon as possible.",
+
+  "pageProfileEditBirthDateTitle": "Edit Birth Date",
+  "pageProfileEditBirthDateHint": "Enter your birth date",
+  "pageProfileEditDescriptionTitle": "Edit Description",
+  "pageProfileEditDescriptionHint": "Enter a description",
+  "pageProfileEditFullNameTitle": "Edit Full Name",
+  "pageProfileEditSurnameHint": "Enter your first name",
+  "pageProfileEditNameHint": "Enter your last name",
+  "pageProfileEditGenderTitle": "Choose Gender",
+  "pageProfileEditGenderPreferNotToSay": "Prefer not to say",
+  "pageProfileEditProfileFeaturesTitle": "Order your profile features",
+  "pageProfileEditProfileFeaturesMutuallyExclusive": "Mutually exclusive feature already selected: {feature}",
+  "@pageProfileEditProfileFeaturesMutuallyExclusive": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "pageProfileEditUsernameTitle": "Edit Username",
+  "pageProfileEditUsernameHint": "Enter your username",
+  "pageProfileEditUsernameValidateEmpty": "Username cannot be empty",
+
+  "widgetAvatarImageCouldNotBeStored": "Image could not be stored.",
+
   "pageHelpTitle": "Help",
   "pageHelpContactUs": "Contact Us",
   "pageHelpWhatIsMotisQuestion": "What can this app do?",
@@ -119,6 +157,21 @@
   "pageWriteReviewReview": "Review",
   "pageWriteReviewReviewHint": "What did you like or dislike about the ride?",
   "pageWriteReviewRatingRequired": "Please rate your experience.",
+
+  "pageWriteReportField": "Report",
+  "pageWriteReportFieldHint": "Please outline the reason for the report",
+  "pageWriteReportFieldValidateEmpty": "Please enter a reason for the report",
+
+  "modelProfileGenderMale": "Male",
+  "modelProfileGenderFemale": "Female",
+  "modelProfileGenderDiverse": "Diverse",
+
+  "modelReportCategoryDidNotShowUp": "Did not show up",
+  "modelReportCategoryDidNotPay": "Did not pay the agreed amount",
+  "modelReportCategoryDidNotFollowRules": "Did not follow rules",
+  "modelReportCategoryWasAggressive": "Was aggressive",
+  "modelReportCategoryUsedBadLanguage": "Used bad language",
+  "modelReportCategoryOther": "Other reason",
 
   "modelProfileFeatureNoSmoking": "No Smoking",
   "modelProfileFeatureSmoking": "Smoking",

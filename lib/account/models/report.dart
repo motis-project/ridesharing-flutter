@@ -85,21 +85,19 @@ extension ReportCategoryExtension on ReportCategory {
   }
 
   String getDescription(BuildContext context) {
-    return "TODO";
-
-    // switch (this) {
-    //   case ReportCategory.didNotShowUp:
-    //     return AppLocalizations.of(context)!.didNotShowUp;
-    //   case ReportCategory.didNotPay:
-    //     return AppLocalizations.of(context)!.didNotPay;
-    //   case ReportCategory.didNotFollowRules:
-    //     return AppLocalizations.of(context)!.didNotFollowRules;
-    //   case ReportCategory.wasAggressive:
-    //     return AppLocalizations.of(context)!.wasAggressive;
-    //   case ReportCategory.usedBadLanguage:
-    //     return AppLocalizations.of(context)!.usedBadLanguage;
-    //   case ReportCategory.other:
-    //     return AppLocalizations.of(context)!.other;
-    // }
+    switch (this) {
+      case ReportCategory.didNotShowUp:
+        return S.of(context).modelReportCategoryDidNotShowUp;
+      case ReportCategory.didNotPay:
+        return S.of(context).modelReportCategoryDidNotPay;
+      case ReportCategory.didNotFollowRules:
+        return S.of(context).modelReportCategoryDidNotFollowRules;
+      case ReportCategory.wasAggressive:
+        return S.of(context).modelReportCategoryWasAggressive;
+      case ReportCategory.usedBadLanguage:
+        return S.of(context).modelReportCategoryUsedBadLanguage;
+      case ReportCategory.other:
+        return S.of(context).modelReportCategoryOther;
+    }
   }
 }

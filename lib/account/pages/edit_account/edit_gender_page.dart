@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/big_button.dart';
 import '../../models/profile.dart';
@@ -26,7 +27,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose gender'),
+        title: Text(S.of(context).pageProfileEditGenderTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -49,7 +50,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                   );
                 }
                 return RadioListTile<Gender?>(
-                  title: const Text("Prefer not to say"),
+                  title: Text(S.of(context).pageProfileEditGenderPreferNotToSay),
                   value: null,
                   groupValue: _gender,
                   onChanged: (Gender? value) {
@@ -65,7 +66,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
             ),
             BigButton(
               onPressed: () => onPressed(context),
-              text: 'Save',
+              text: S.of(context).save,
             ),
           ],
         ),

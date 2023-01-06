@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/big_button.dart';
 import '../../models/profile.dart';
@@ -17,7 +18,7 @@ class EditUsernamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit username'),
+        title: Text(S.of(context).pageProfileEditUsernameTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -29,13 +30,13 @@ class EditUsernamePage extends StatelessWidget {
                 maxLength: 15,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  hintText: 'Enter a username',
+                  hintText: S.of(context).pageProfileEditUsernameHint,
                   suffixIcon: _getClearButton(),
                 ),
                 controller: _controller,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Username cannot be empty';
+                    return S.of(context).pageProfileEditUsernameValidateEmpty;
                   }
                   return null;
                 },
@@ -45,7 +46,7 @@ class EditUsernamePage extends StatelessWidget {
               ),
               BigButton(
                 onPressed: () => onPressed(context),
-                text: 'Save',
+                text: S.of(context).save,
               ),
             ],
           ),
