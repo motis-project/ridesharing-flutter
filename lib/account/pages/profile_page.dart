@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/pages/edit_account/edit_birth_date_page.dart';
-import 'package:flutter_app/account/pages/edit_account/edit_description_page.dart';
-import 'package:flutter_app/account/pages/edit_account/edit_full_name_page.dart';
-import 'package:flutter_app/account/pages/edit_account/edit_gender_page.dart';
-import 'package:flutter_app/account/pages/edit_account/edit_profile_features_page.dart';
-import 'package:flutter_app/account/pages/write_report_page.dart';
-import 'package:flutter_app/account/widgets/editable_row.dart';
-import 'package:flutter_app/account/widgets/features_column.dart';
-import 'package:flutter_app/account/widgets/reviews_preview.dart';
-import 'package:flutter_app/util/big_button.dart';
-import 'package:flutter_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/account/pages/edit_account/edit_birth_date_page.dart';
+import 'package:motis_mitfahr_app/account/pages/edit_account/edit_description_page.dart';
+import 'package:motis_mitfahr_app/account/pages/edit_account/edit_full_name_page.dart';
+import 'package:motis_mitfahr_app/account/pages/edit_account/edit_gender_page.dart';
+import 'package:motis_mitfahr_app/account/pages/edit_account/edit_profile_features_page.dart';
+import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
+import 'package:motis_mitfahr_app/account/widgets/editable_row.dart';
+import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
+import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
+import 'package:motis_mitfahr_app/util/big_button.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
@@ -49,7 +49,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       reports_received: reports!reports_offender_id_fkey(*)
     ''').eq('id', widget.profileId).single();
-    print(data['reports_received']);
     setState(() {
       _profile = Profile.fromJson(data);
       _fullyLoaded = true;

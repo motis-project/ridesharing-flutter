@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
