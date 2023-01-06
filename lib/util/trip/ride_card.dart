@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/rides/models/ride.dart';
 import 'package:flutter_app/util/trip/trip_card.dart';
@@ -137,6 +139,25 @@ class RideCardState extends TripCardState<RideCard> {
       child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
     );
   }
+
+  /*
+Widget _buildFeaturesColumn(Profile driver) {
+    List<ProfileFeature> profileFeatures = driver.profileFeatures!;
+
+    return ListView.builder(
+      itemBuilder: ((context, index) {
+        Feature feature = profileFeatures[index].feature;
+        return ListTile(
+          leading: feature.getIcon(context),
+          title: Text(feature.getDescription(context)),
+        );
+      }),
+      itemCount: profileFeatures.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+    );
+  }
+  */
 
   @override
   Widget buildRightSide() {
