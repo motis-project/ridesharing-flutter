@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/model.dart';
+import 'package:motis_mitfahr_app/util/model.dart';
 
 abstract class Trip extends Model {
   final String start;

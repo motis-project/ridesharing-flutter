@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/drives/models/drive.dart';
-import 'package:flutter_app/drives/pages/create_drive_page.dart';
-import 'package:flutter_app/util/supabase.dart';
-import 'package:flutter_app/util/trip/trip_page_builder.dart';
+import 'package:motis_mitfahr_app/drives/models/drive.dart';
+import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_page_builder.dart';
 import '../../util/trip/drive_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

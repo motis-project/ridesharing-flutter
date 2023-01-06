@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/locale_manager.dart';
-import 'package:flutter_app/util/search/address_search_delegate.dart';
-import 'package:flutter_app/util/trip/search_card.dart';
+import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
+import 'package:motis_mitfahr_app/util/trip/search_card.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';

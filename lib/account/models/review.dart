@@ -1,4 +1,4 @@
-import 'package:flutter_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 
 import '../../util/model.dart';
 

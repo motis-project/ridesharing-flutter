@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/util/own_theme_fields.dart';
+import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
 
 class CustomBanner extends StatelessWidget {
   final CustomBannerKind kind;

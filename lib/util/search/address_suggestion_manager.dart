@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:flutter_app/util/search/address_suggestion.dart';
-import 'package:flutter_app/util/storage_manager.dart';
-import 'package:flutter_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/search/address_suggestion.dart';
+import 'package:motis_mitfahr_app/util/storage_manager.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
 
