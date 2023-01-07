@@ -1,7 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../account/models/profile.dart';
 
-var supabaseClient = Supabase.instance.client;
+SupabaseClient supabaseClient = Supabase.instance.client;
 
 class SupabaseManager {
   static Profile? _currentProfile;
