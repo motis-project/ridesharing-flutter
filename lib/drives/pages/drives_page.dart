@@ -44,8 +44,10 @@ class _DrivesPageState extends State<DrivesPage> {
   }
 
   void onPressed() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const CreateDrivePage()),
-    );
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(builder: (context) => const CreateDrivePage()),
+        )
+        .then((value) => setState(() {}));
   }
 }

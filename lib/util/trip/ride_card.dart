@@ -55,9 +55,11 @@ class RideCardState extends TripCardState<RideCard> {
     Ride trip = ride!;
     Map<String, dynamic> data = await supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
+    print(trip.status.toString());
     setState(() {
       ride = trip;
       driver = trip.drive!.driver!;
+      super.trip = ride;
       fullyLoaded = true;
     });
   }
@@ -140,25 +142,6 @@ class RideCardState extends TripCardState<RideCard> {
     );
   }
 
-  /*
-Widget _buildFeaturesColumn(Profile driver) {
-    List<ProfileFeature> profileFeatures = driver.profileFeatures!;
-
-    return ListView.builder(
-      itemBuilder: ((context, index) {
-        Feature feature = profileFeatures[index].feature;
-        return ListTile(
-          leading: feature.getIcon(context),
-          title: Text(feature.getDescription(context)),
-        );
-      }),
-      itemCount: profileFeatures.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-    );
-  }
-  */
-
   @override
   Widget buildRightSide() {
     List<ProfileFeature> profileFeatures = driver!.profileFeatures!;
@@ -178,11 +161,19 @@ Widget _buildFeaturesColumn(Profile driver) {
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
-              onTap: () => Navigator.of(context).push(
+              onTap: () => Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => RideDetailPage.fromRide(ride!),
                 ),
-              ),
+              )
+                  .then((value) {
+                print("___________check__________");
+                setState(() {
+                  fullyLoaded = false;
+                });
+                loadRide();
+              }),
               child: buildCardInfo(context),
             ),
           );

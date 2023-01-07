@@ -15,16 +15,16 @@ class DriveCard extends TripCard<Drive> {
 }
 
 class _DriveCard extends TripCardState<DriveCard> {
-  Drive? _drive;
-  bool _fullyLoaded = false;
+  Drive? drive;
+  bool fullyLoaded = false;
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      _drive = widget.trip;
-      super.trip = _drive;
+      drive = widget.trip;
+      super.trip = drive;
     });
     loadDrive();
   }
@@ -39,9 +39,9 @@ class _DriveCard extends TripCardState<DriveCard> {
     ''').eq('id', widget.trip.id).single();
 
     setState(() {
-      _drive = Drive.fromJson(data);
-      super.trip = _drive;
-      _fullyLoaded = true;
+      drive = Drive.fromJson(data);
+      super.trip = drive;
+      fullyLoaded = true;
     });
   }
 
@@ -63,17 +63,17 @@ class _DriveCard extends TripCardState<DriveCard> {
   // Notification
   @override
   Widget buildTopRight() {
-    return _drive!.cancelled
+    return drive!.cancelled
         ? const Icon(
             Icons.block,
             color: Colors.red,
           )
-        : _drive!.rides!.any((ride) => ride.status == RideStatus.cancelledByRider)
+        : drive!.rides!.any((ride) => ride.status == RideStatus.cancelledByRider)
             ? const Icon(
                 Icons.warning,
                 color: Colors.orange,
               )
-            : _drive!.rides!.any((ride) => ride.status == RideStatus.pending)
+            : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
                 ? const Icon(
                     Icons.done_all,
                     color: Colors.grey,
@@ -86,15 +86,22 @@ class _DriveCard extends TripCardState<DriveCard> {
 
   @override
   Widget build(BuildContext context) {
-    return !_fullyLoaded
+    return !fullyLoaded
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
-              onTap: () => Navigator.of(context).push(
+              onTap: () => Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
-                  builder: (context) => DriveDetailPage.fromDrive(_drive),
+                  builder: (context) => DriveDetailPage.fromDrive(drive),
                 ),
-              ),
+              )
+                  .then((value) {
+                setState(() {
+                  fullyLoaded = false;
+                });
+                loadDrive();
+              }),
               child: buildCardInfo(context),
             ),
           );
