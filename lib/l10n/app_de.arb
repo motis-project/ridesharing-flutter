@@ -148,6 +148,7 @@
 
   "pageSearchSuggestionsTitle": "Vorschläge",
   "pageSearchSuggestionsButtonFilter": "Filter",
+  "pageSearchSuggestionsNoRidesFound": "Es werden keine passenden Fahrten angeboten",
 
   "pageRidesTitle": "Mitfahrten",
 

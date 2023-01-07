@@ -42,6 +42,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
     _destinationController.text = widget.end;
+    _dateController.text = localeManager.formatDate(widget.date);
+    _timeController.text = localeManager.formatTime(widget.date);
     loadRides();
   }
 
@@ -101,6 +103,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
+        .eq('end', _destinationController.text)
+        .gte("start_time", _selectedDate)
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
@@ -173,8 +177,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildDatePicker() {
-    _dateController.text = localeManager.formatDate(widget.date);
-
     return TextFormField(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
@@ -190,8 +192,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildTimePicker() {
-    _timeController.text = localeManager.formatTime(widget.date);
-
     return TextFormField(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
@@ -256,18 +256,23 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildSearchCardList() {
     return _rideSuggestions == null
         ? const Center(child: CircularProgressIndicator())
-        : Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                final ride = _rideSuggestions![index];
-                return RideCard(ride);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 10);
-              },
-              itemCount: _rideSuggestions!.length,
-            ),
-          );
+        : _rideSuggestions!.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: Text(S.of(context).pageSearchSuggestionsNoRidesFound)),
+              )
+            : (Expanded(
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    final ride = _rideSuggestions![index];
+                    return RideCard(ride);
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 10);
+                  },
+                  itemCount: _rideSuggestions!.length,
+                ),
+              ));
   }
 
   Widget buildFilterPicker() {
