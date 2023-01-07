@@ -62,7 +62,6 @@ enum Feature {
   talkative,
   music,
   quiet,
-  luxury,
   speedyDrivingStyle,
   relaxedDrivingStyle,
   accessible,
@@ -94,8 +93,6 @@ extension FeatureExtension on Feature {
         return Icon(Icons.music_note, color: Theme.of(context).colorScheme.primary);
       case Feature.quiet:
         return Icon(Icons.volume_off, color: Theme.of(context).colorScheme.primary);
-      case Feature.luxury:
-        return Icon(Icons.minor_crash, color: Theme.of(context).colorScheme.primary);
       case Feature.speedyDrivingStyle:
         return Icon(Icons.speed, color: Theme.of(context).colorScheme.primary);
       case Feature.relaxedDrivingStyle:
@@ -131,8 +128,6 @@ extension FeatureExtension on Feature {
         return S.of(context).modelProfileFeatureMusic;
       case Feature.quiet:
         return S.of(context).modelProfileFeatureQuiet;
-      case Feature.luxury:
-        return S.of(context).modelProfileFeatureLuxury;
       case Feature.speedyDrivingStyle:
         return S.of(context).modelProfileFeatureSpeedyDrivingStyle;
       case Feature.relaxedDrivingStyle:
