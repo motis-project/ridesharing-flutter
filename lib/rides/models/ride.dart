@@ -124,29 +124,27 @@ class Ride extends Trip {
   }
 
   static Future<List<Ride>> getRidesOfUser(int userId) async {
-    return Ride.fromJsonList(await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId));
+    return Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
   Future<Drive> getDrive() async {
-    drive ??= Drive.fromJson(await SupabaseManager.supabaseClient.from('drives').select().eq('id', driveId).single());
+    drive ??= Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
     return drive!;
   }
 
   Future<Profile> getDriver() async {
     Drive drive = await getDrive();
-    return Profile.fromJson(
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('id', drive.driverId).single());
+    return Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', drive.driverId).single());
   }
 
   Future<Profile> getRider() async {
-    rider ??=
-        Profile.fromJson(await SupabaseManager.supabaseClient.from('profiles').select().eq('id', riderId).single());
+    rider ??= Profile.fromJson(await supabaseClient.from('profiles').select().eq('id', riderId).single());
     return rider!;
   }
 
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
-    await SupabaseManager.supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
+    await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
   }
 
   @override

@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter_app/util/supabase.dart';
 import 'package:supabase/supabase.dart';
 import 'package:test/test.dart';
-
-import 'driveTest.mocks.dart';
 
 class MockServer {
   static const customApiKey = 'customApiKey';
@@ -24,6 +20,7 @@ class MockServer {
         throw 'Proper header not set';
       }
       final url = request.uri.toString();
+      //print(url);
       if (url.startsWith("/rest")) {
         final foundApiKey = headers.value('apikey');
         expect(foundApiKey, apiKey);
@@ -40,7 +37,6 @@ class MockServer {
   }
 
   static initialize() async {
-    SupabaseManager.setSupabaseManagerManager(MockSupabaseManagerManager());
     mockServer = await HttpServer.bind('localhost', 0);
     client = SupabaseClient(
       'http://${mockServer.address.host}:${mockServer.port}',

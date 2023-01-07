@@ -63,7 +63,7 @@ class _LoginFormState extends State<LoginForm> {
         _state = ButtonState.loading;
       });
       try {
-        await SupabaseManager.supabaseClient.auth.signInWithPassword(
+        await supabaseClient.auth.signInWithPassword(
           email: emailController.text,
           password: passwordController.text,
         );

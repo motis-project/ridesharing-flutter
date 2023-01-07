@@ -78,7 +78,7 @@ class Drive extends Trip {
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
     return Drive.fromJsonList(
-      await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', '1'),
+      await supabaseClient.from('drives').select().eq('driver_id', '1'),
     );
   }
 

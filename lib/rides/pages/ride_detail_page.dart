@@ -74,12 +74,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
     if (_ride?.status == RideStatus.preview) {
       ride = _ride!;
       Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
+          await supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
       ride.drive = Drive.fromJson(data);
     } else {
-      Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
+      Map<String, dynamic> data = await supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 
@@ -263,7 +262,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   void confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    final data = await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    final data = await supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
     setState(() {
       _ride = Ride.fromJson(data);
     });

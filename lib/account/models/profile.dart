@@ -100,8 +100,7 @@ class Profile extends Model {
   }
 
   static Future<Profile?> getProfileFromAuthId(String authId) async {
-    Map<String, dynamic>? query =
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('auth_id', authId).maybeSingle();
+    Map<String, dynamic>? query = await supabaseClient.from('profiles').select().eq('auth_id', authId).maybeSingle();
     if (query == null) {
       return null;
     }

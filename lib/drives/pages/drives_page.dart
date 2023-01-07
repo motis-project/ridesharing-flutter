@@ -19,7 +19,7 @@ class _DrivesPageState extends State<DrivesPage> {
   @override
   void initState() {
     int userId = SupabaseManager.getCurrentProfile()!.id!;
-    _drives = SupabaseManager.supabaseClient
+    _drives = supabaseClient
         .from('drives')
         .stream(primaryKey: ['id'])
         .eq('driver_id', userId)
