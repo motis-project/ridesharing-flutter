@@ -48,6 +48,6 @@ class _DrivesPageState extends State<DrivesPage> {
         .push(
           MaterialPageRoute(builder: (context) => const CreateDrivePage()),
         )
-        .then((value) => setState(() {}));
+        .then((value) => initState());
   }
 }

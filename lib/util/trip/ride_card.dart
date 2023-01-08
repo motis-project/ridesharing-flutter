@@ -163,17 +163,11 @@ class RideCardState extends TripCardState<RideCard> {
             child: InkWell(
               onTap: () => Navigator.of(context)
                   .push(
-                MaterialPageRoute(
-                  builder: (context) => RideDetailPage.fromRide(ride!),
-                ),
-              )
-                  .then((value) {
-                print("___________check__________");
-                setState(() {
-                  fullyLoaded = false;
-                });
-                loadRide();
-              }),
+                    MaterialPageRoute(
+                      builder: (context) => RideDetailPage.fromRide(ride!),
+                    ),
+                  )
+                  .then((value) => initState()),
               child: buildCardInfo(context),
             ),
           );

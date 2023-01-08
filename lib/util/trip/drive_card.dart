@@ -92,16 +92,11 @@ class _DriveCard extends TripCardState<DriveCard> {
             child: InkWell(
               onTap: () => Navigator.of(context)
                   .push(
-                MaterialPageRoute(
-                  builder: (context) => DriveDetailPage.fromDrive(drive),
-                ),
-              )
-                  .then((value) {
-                setState(() {
-                  fullyLoaded = false;
-                });
-                loadDrive();
-              }),
+                    MaterialPageRoute(
+                      builder: (context) => DriveDetailPage.fromDrive(drive),
+                    ),
+                  )
+                  .then((value) => initState()),
               child: buildCardInfo(context),
             ),
           );

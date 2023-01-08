@@ -43,7 +43,7 @@ class _RidesPageState extends State<RidesPage> {
               .push(
                 MaterialPageRoute(builder: (context) => const SearchRidePage()),
               )
-              .then((value) => setState(() {}));
+              .then((value) => initState());
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.search),
