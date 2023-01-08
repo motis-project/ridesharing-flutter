@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'mockServer.dart';
+import 'mock_server.dart';
 
 // DIe Klasse UrlProccessor muss zu begin jeder Testdatei implementiert werden und die Methode processUrl überschrieben werden
 // Wird die Methode ProcessUrl aufgrufen, wird für den dort definierten Fall (in dem Beispiel client.from('drives').select('driver_id,seats')) die Antwort definiert

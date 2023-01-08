@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import 'package:timelines/timelines.dart';
+
 import '../locale_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

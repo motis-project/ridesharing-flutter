@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../account/models/profile.dart';
 
 SupabaseClient supabaseClient = Supabase.instance.client;
