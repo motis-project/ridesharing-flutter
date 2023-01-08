@@ -55,7 +55,6 @@ class RideCardState extends TripCardState<RideCard> {
     Ride trip = ride!;
     Map<String, dynamic> data = await supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
-    print(trip.status.toString());
     setState(() {
       ride = trip;
       driver = trip.drive!.driver!;
