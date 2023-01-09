@@ -10,6 +10,7 @@ class ProfileWidget extends StatelessWidget {
   final bool showDescription;
   final Widget? actionWidget;
   final bool isTappable;
+  final Function(dynamic)? onPop;
 
   const ProfileWidget(
     this.profile, {
@@ -18,6 +19,7 @@ class ProfileWidget extends StatelessWidget {
     this.showDescription = false,
     this.actionWidget,
     this.isTappable = true,
+    this.onPop,
   });
 
   @override
@@ -47,7 +49,9 @@ class ProfileWidget extends StatelessWidget {
     return isTappable
         ? InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)))
+                  .then((value) => onPop?.call(value));
             },
             child: profileRow,
           )
