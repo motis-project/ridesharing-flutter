@@ -75,7 +75,7 @@ class AvatarState extends State<Avatar> {
                 tooltip: S.of(context).widgetAvatarUploadTooltip,
                 iconSize: 20,
                 onPressed: _isLoading ? null : _upload,
-                icon: const Icon(Icons.camera_alt),
+                icon: const Icon(Icons.photo_library),
               ),
             ),
           ),
