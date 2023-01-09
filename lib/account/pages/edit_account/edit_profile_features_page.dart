@@ -49,8 +49,9 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                           width: double.infinity,
                           height: 60,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Theme.of(context).colorScheme.primary),
-                              borderRadius: BorderRadius.circular(10)),
+                            border: Border.all(color: Theme.of(context).colorScheme.primary),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: Center(
                             child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                           ),
@@ -64,7 +65,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                   if (index < _features.length) {
                     Feature feature = _features[index];
                     return ListTile(
-                      key: ValueKey(feature),
+                      key: ValueKey(index),
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesSelected,
@@ -96,7 +97,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     Feature feature = _otherFeatures[index - _features.length - 1];
                     return ListTile(
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                      key: ValueKey(feature),
+                      key: ValueKey(index),
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
@@ -193,9 +194,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
         String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
         SemanticsService.announce(text, TextDirection.ltr);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(text),
-          ),
+          SnackBar(content: Text(text)),
         );
         return;
       }
