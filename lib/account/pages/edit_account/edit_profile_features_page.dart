@@ -32,8 +32,6 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
 
   @override
   Widget build(BuildContext context) {
-    int index = 0;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageProfileEditProfileFeaturesTitle),
@@ -43,7 +41,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
         child: Column(
           children: [
             Flexible(
-              child: ReorderableListView(
+              child: ReorderableListView.builder(
                 header: _features.isEmpty
                     ? Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesHint,
@@ -61,28 +59,42 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     : null,
                 shrinkWrap: true,
                 onReorder: onReorder,
-                children: [
-                  for (Feature feature in _features)
-                    ListTile(
+                itemCount: Feature.values.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < _features.length) {
+                    Feature feature = _features[index];
+                    return ListTile(
                       key: ValueKey(feature),
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesSelected,
                         child: Text(feature.getDescription(context)),
                       ),
-                      trailing: ReorderableDragStartListener(
-                        index: index++,
-                        child: const Icon(Icons.drag_handle),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            onPressed: () => _removeFeature(index),
+                            icon: const Icon(Icons.remove_circle_outline),
+                          ),
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.drag_handle),
+                          ),
+                        ],
                       ),
-                    ),
-                  const IgnorePointer(
-                    key: ValueKey('divider'),
-                    child: Divider(
-                      thickness: 5,
-                    ),
-                  ),
-                  for (Feature feature in _otherFeatures)
-                    ListTile(
+                    );
+                  } else if (index == _features.length) {
+                    return const IgnorePointer(
+                      key: ValueKey('divider'),
+                      child: Divider(
+                        thickness: 5,
+                      ),
+                    );
+                  } else {
+                    Feature feature = _otherFeatures[index - _features.length - 1];
+                    return ListTile(
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                       key: ValueKey(feature),
                       leading: feature.getIcon(context),
@@ -90,12 +102,23 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                         label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
                         child: Text(feature.getDescription(context)),
                       ),
-                      trailing: ReorderableDragStartListener(
-                        index: index++,
-                        child: const Icon(Icons.drag_handle),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            onPressed: () => _addFeature(index),
+                            icon: const Icon(Icons.add_circle_outline),
+                          ),
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.drag_handle),
+                          ),
+                        ],
                       ),
-                    ),
-                ],
+                    );
+                  }
+                },
               ),
             ),
             const SizedBox(
@@ -115,32 +138,12 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     int dividerIndex = _features.length;
 
     setState(() {
-      // Adding a new feature
       if (newIndex <= dividerIndex && oldIndex > dividerIndex) {
-        int indexInOtherFeatures = oldIndex - dividerIndex - 1;
-        Feature newFeature = _otherFeatures[indexInOtherFeatures];
-        Feature? mutuallyExclusiveFeature =
-            _features.firstWhereOrNull((feature) => feature.isMutuallyExclusive(newFeature));
-        if (mutuallyExclusiveFeature != null) {
-          String description = mutuallyExclusiveFeature.getDescription(context);
-          String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
-          SemanticsService.announce(text, TextDirection.ltr);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(text),
-            ),
-          );
-          return;
-        }
-
-        _features.insert(newIndex, _otherFeatures.removeAt(oldIndex - dividerIndex - 1));
-        return;
+        return _addFeature(oldIndex, newIndex: newIndex);
       }
 
-      // Removing a feature
       if (newIndex > dividerIndex && oldIndex < dividerIndex) {
-        _otherFeatures.insert(newIndex - dividerIndex - 1, _features.removeAt(oldIndex));
-        return;
+        return _removeFeature(oldIndex, newIndex: newIndex);
       }
 
       if (newIndex > oldIndex) {
@@ -158,6 +161,51 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
         final feature = _otherFeatures.removeAt(oldIndex - dividerIndex - 1);
         _otherFeatures.insert(newIndex - dividerIndex - 1, feature);
         return;
+      }
+    });
+  }
+
+  void _removeFeature(int index, {int? newIndex}) {
+    int dividerIndex = _features.length;
+
+    setState(() {
+      Feature oldFeature = _features.removeAt(index);
+
+      if (newIndex != null) {
+        int indexInOtherFeatures = newIndex - dividerIndex - 1;
+        _otherFeatures.insert(indexInOtherFeatures, oldFeature);
+      } else {
+        _otherFeatures.add(oldFeature);
+      }
+    });
+  }
+
+  void _addFeature(int index, {int? newIndex}) {
+    int dividerIndex = _features.length;
+    int indexInOtherFeatures = index - dividerIndex - 1;
+
+    setState(() {
+      Feature newFeature = _otherFeatures[indexInOtherFeatures];
+      Feature? mutuallyExclusiveFeature =
+          _features.firstWhereOrNull((feature) => feature.isMutuallyExclusive(newFeature));
+      if (mutuallyExclusiveFeature != null) {
+        String description = mutuallyExclusiveFeature.getDescription(context);
+        String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+        SemanticsService.announce(text, TextDirection.ltr);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
+        return;
+      }
+
+      _otherFeatures.removeAt(indexInOtherFeatures);
+
+      if (newIndex != null) {
+        _features.insert(newIndex, newFeature);
+      } else {
+        _features.add(newFeature);
       }
     });
   }
