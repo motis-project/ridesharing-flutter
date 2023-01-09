@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileChip extends StatelessWidget {
   final Profile profile;
@@ -12,16 +13,22 @@ class ProfileChip extends StatelessWidget {
     // TODO: Use profile picture
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: ActionChip(
-        avatar: CircleAvatar(
-          child: Text(profile.username[0]),
+      child: Semantics(
+        label: profile.username,
+        excludeSemantics: true,
+        button: true,
+        tooltip: S.of(context).seeProfile,
+        child: ActionChip(
+          avatar: CircleAvatar(
+            child: Text(profile.username[0]),
+          ),
+          label: Text(profile.username),
+          labelPadding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
+          onPressed: () {
+            // TODO: Navigate to profile page
+          },
         ),
-        label: Text(profile.username),
-        labelPadding: const EdgeInsets.all(5),
-        padding: const EdgeInsets.all(5),
-        onPressed: () {
-          // TODO: Navigate to profile page
-        },
       ),
     );
   }

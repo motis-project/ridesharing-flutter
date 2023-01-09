@@ -15,28 +15,32 @@ class TripOverview extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(trip.start),
-              Text(
-                localeManager.formatTime(trip.startTime),
-                style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
-              )
-            ],
+          child: MergeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(trip.start),
+                Text(
+                  localeManager.formatTime(trip.startTime),
+                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+                )
+              ],
+            ),
           ),
         ),
         const Icon(Icons.arrow_forward_rounded),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(trip.end),
-              Text(
-                localeManager.formatTime(trip.endTime),
-                style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
-              )
-            ],
+          child: MergeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(trip.end),
+                Text(
+                  localeManager.formatTime(trip.endTime),
+                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+                )
+              ],
+            ),
           ),
         ),
       ],
@@ -81,7 +85,12 @@ class TripOverview extends StatelessWidget {
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
         ),
       );
-      text = Text("${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}");
+      text = Text(
+        "${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}",
+        semanticsLabel: maxUsedSeats != null
+            ? S.of(context).labelXOfYseats(maxUsedSeats, trip.seats)
+            : S.of(context).labelUnknownSeats(trip.seats),
+      );
     } else {
       seatIcons = List.generate(
         trip.seats,
@@ -93,11 +102,13 @@ class TripOverview extends StatelessWidget {
       text = Text(S.of(context).seatsCount(trip.seats));
     }
 
-    return Column(
-      children: [
-        Row(children: seatIcons),
-        text,
-      ],
+    return MergeSemantics(
+      child: Column(
+        children: [
+          Row(children: seatIcons),
+          text,
+        ],
+      ),
     );
   }
 }

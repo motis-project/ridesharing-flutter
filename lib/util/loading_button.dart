@@ -53,9 +53,20 @@ class _LoadingButtonState extends State<LoadingButton> {
       onPressed: widget.onPressed,
       state: widget.state,
       textStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: getTextColor(context),
         fontWeight: FontWeight.w500,
       ),
     );
+  }
+
+  Color getTextColor(BuildContext context) {
+    switch (widget.state) {
+      case ButtonState.fail:
+        return Theme.of(context).colorScheme.onError;
+      case ButtonState.success:
+        return Theme.of(context).own().onSuccess;
+      default:
+        return Theme.of(context).colorScheme.onPrimary;
+    }
   }
 }

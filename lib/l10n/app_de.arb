@@ -5,11 +5,21 @@
   "more": "Mehr",
   "yes": "Ja",
   "no": "Nein",
+  "approve": "Annehmen",
+  "reject": "Ablehnen",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
 
   "riders": "Mitfahrer",
   "seats": "Plätze",
   "seatsCount": "{count, plural, =1{{count} Platz}, other{{count} Plätze}}",
+  "labelXOfYseats": "{seats} von {maxSeats} Plätzen",
+  "labelUnknownSeats": "Unbekannte Anzahl von {maxSeats} Plätzen",
+
+  "openChat": "Chat öffnen",
+  "openDetails": "Details öffnen",
+  "seeProfile": "Profil ansehen",
+
+  "ratingBarSemantics": "{rating} Sterne",
 
   "authEmailLinkInvalid": "Email-Link ist ungültig oder abgelaufen.",
 
@@ -130,6 +140,10 @@
   "pageCreateDriveButtonCreate": "Erstellen",
 
   "pageDriveDetailTitle": "Fahrt Info",
+  "pageDriveDetailLabelStartDrive": "Start der Fahrt",
+  "pageDriveDetailLabelEndDrive": "Ende der Fahrt",
+  "pageDriveDetailLabelPickup": "{seats, plural, =1{{user} abholen}, other{{seats} Personen abholen, die mit {user} fahren}",
+  "pageDriveDetailLabelDropoff": "{seats, plural, =1{{user} absetzen}, other{{seats} Personen absetzen, die mit {user} fahren}",
   "pageDriveDetailButtonCancel": "Fahrt absagen",
   "pageDriveDetailCancelDialogTitle": "Absage bestätigen",
   "pageDriveDetailCancelDialogMessage": "Bist du sicher, dass du diese Fahrt absagen möchtest?",
@@ -137,6 +151,7 @@
   "pageDriveDetailBannerCancelled": "Du hast diese Fahrt abgesagt.",
 
   "pageDrivesTitle": "Fahrten",
+  "pageDrivesTooltipOfferRide": "Fahrt anbieten",
 
   "widgetTripBuilderTabUpcoming": "Zukünftig",
   "widgetTripBuilderTabPast": "Vergangen",
@@ -150,7 +165,10 @@
   "pageSearchSuggestionsButtonFilter": "Filter",
 
   "pageRidesTitle": "Mitfahrten",
+  "pageRidesTooltipSearchRide": "Fahrt suchen",
 
+  "pageRideDetailReviews" : "Bewertungen",
+  "pageRideDetailShowReviews" : "Bewertungen anzeigen",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",
   "pageRideDetailButtonCancel": "Mitfahrt absagen",
   "pageRideDetailButtonRate": "Fahrt bewerten",

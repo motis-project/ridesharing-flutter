@@ -5,6 +5,8 @@
   "more": "More",
   "yes": "Yes",
   "no": "No",
+  "approve": "Approve",
+  "reject": "Reject",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",
@@ -13,6 +15,30 @@
   "@seatsCount": {
     "placeholders": {
       "count": {}
+    }
+  },
+  "labelXOfYseats": "{seats} of {maxSeats} seats",
+  "@labelXOfYseats": {
+    "placeholders": {
+      "seats": {},
+      "maxSeats": {}
+    }
+  },
+  "labelUnknownSeats": "unknown number of {maxSeats} seats",
+  "@labelUnknownSeats": {
+    "placeholders": {
+      "maxSeats": {}
+    }
+  },
+
+  "openChat": "Open Chat",
+  "openDetails": "Open Details",
+  "seeProfile": "See profile",
+
+  "ratingBarSemantics": "{rating} stars",
+  "@ratingBarSemantics": {
+    "placeholders": {
+      "rating": {}
     }
   },
 
@@ -139,6 +165,22 @@
   "pageCreateDriveButtonCreate": "Create",
 
   "pageDriveDetailTitle": "Drive Detail",
+  "pageDriveDetailLabelStartDrive": "Start of drive",
+  "pageDriveDetailLabelEndDrive": "End of drive",
+  "pageDriveDetailLabelPickup": "{seats, plural, =1{Pick up {user}}, other{Pick up {seats} people associated with {user}}",
+  "@pageDriveDetailLabelPickup": {
+    "placeholders": {
+      "seats": {},
+      "user": {}
+    }
+  },
+  "pageDriveDetailLabelDropoff": "{seats, plural, =1{Drop off {user}}, other{Drop off {seats} people associated with {user}}",
+  "@pageDriveDetailLabelDropoff": {
+    "placeholders": {
+      "seats": {},
+      "user": {}
+    }
+  },
   "pageDriveDetailButtonCancel": "Cancel Drive",
   "pageDriveDetailCancelDialogTitle": "Confirm Cancellation",
   "pageDriveDetailCancelDialogMessage": "Are you sure you want to cancel this drive?",
@@ -146,6 +188,7 @@
   "pageDriveDetailBannerCancelled": "You have cancelled this drive.",
 
   "pageDrivesTitle": "Drives",
+  "pageDrivesTooltipOfferRide": "Offer ride",
 
   "widgetTripBuilderTabUpcoming": "Upcoming",
   "widgetTripBuilderTabPast": "Past",
@@ -169,7 +212,10 @@
   "pageSearchSuggestionsButtonFilter": "Filter",
 
   "pageRidesTitle": "Rides",
+  "pageRidesTooltipSearchRide": "Search ride",
 
+  "pageRideDetailReviews" : "Reviews",
+  "pageRideDetailShowReviews" : "Show reviews",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
   "pageRideDetailButtonRate": "Rate Driver",

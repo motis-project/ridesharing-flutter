@@ -94,6 +94,7 @@ class PendingRideCard extends TripCard<Ride> {
                     child: IconButton(
                       onPressed: (() => showApproveDialog(context)),
                       icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+                      tooltip: S.of(context).approve,
                     ),
                   ),
                   Padding(
@@ -101,6 +102,7 @@ class PendingRideCard extends TripCard<Ride> {
                     child: IconButton(
                       onPressed: (() => showRejectDialog(context)),
                       icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+                      tooltip: S.of(context).reject,
                     ),
                   )
                 ],

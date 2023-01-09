@@ -38,6 +38,7 @@ class _RidesPageState extends State<RidesPage> {
       _rides, //trips
       (ride) => RideCard(ride),
       FloatingActionButton(
+        tooltip: S.of(context).pageRidesTooltipSearchRide,
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SearchRidePage()),

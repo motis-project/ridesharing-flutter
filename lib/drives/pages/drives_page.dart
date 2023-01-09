@@ -36,6 +36,7 @@ class _DrivesPageState extends State<DrivesPage> {
       _drives,
       (drive) => DriveCard(drive),
       FloatingActionButton(
+        tooltip: S.of(context).pageDrivesTooltipOfferRide,
         onPressed: onPressed,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
