@@ -5,13 +5,15 @@
   "more": "Mehr",
   "yes": "Ja",
   "no": "Nein",
+  "approve": "Annehmen",
+  "reject": "Ablehnen",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
 
   "riders": "Mitfahrer",
   "seats": "Plätze",
   "seatsCount": "{count, plural, =1{{count} Platz}, other{{count} Plätze}}",
-  "labelXOfYseats": "{seats, plural, =1{Einer}, other{{seats}}} von {maxSeats} Sitzen",
-  "labelUnknownSeats": "Unbekannte Anzahl von {maxSeats} Sitzen",
+  "labelXOfYseats": "{seats} von {maxSeats} Plätzen",
+  "labelUnknownSeats": "Unbekannte Anzahl von {maxSeats} Plätzen",
 
   "openChat": "Chat öffnen",
   "openDetails": "Details öffnen",

@@ -5,6 +5,8 @@
   "more": "More",
   "yes": "Yes",
   "no": "No",
+  "approve": "Approve",
+  "reject": "Reject",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",

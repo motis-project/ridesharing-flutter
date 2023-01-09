@@ -172,6 +172,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.chat),
+            tooltip: S.of(context).openChat,
           )
         ],
       ),
