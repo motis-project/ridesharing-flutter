@@ -63,18 +63,18 @@
   "pageWelcomeRegister": "Registrieren",
 
   "pageRegisterTitle": "Registrieren",
-  "pageRegisterSuccess": "Konto erfolgreich erstellt. Bitte bestätige deine E-Mail-Adresse.",
+  "pageRegisterSuccess": "Account erfolgreich erstellt. Bitte bestätige deine E-Mail-Adresse.",
   "pageRegisterUsername": "Nutzername",
   "pageRegisterUsernameHint": "Wir empfehlen deinen Vornamen",
   "pageRegisterUsernameValidateEmpty": "Bitte gib deinen Nutzernamen ein",
-  "pageRegisterButtonCreate": "Konto erstellen",
-  "pageRegisterButtonCreated": "Konto erstellt",
+  "pageRegisterButtonCreate": "Account erstellen",
+  "pageRegisterButtonCreated": "Account erstellt",
 
   "pageLoginTitle": "Login",
   "pageLoginFailureCredentials": "Falsche E-Mail-Adresse oder Passwort",
   "pageLoginFailureEmailNotConfirmed": "Bitte bestätige deine E-Mail-Adresse",
   "pageLoginButtonForgotPassword": "Passwort vergessen?",
-  "pageLoginNoAccount": "Noch kein Konto? Hier registrieren",
+  "pageLoginNoAccount": "Noch keinen Account? Hier registrieren",
 
   "pageForgotPasswordTitle": "Passwort vergessen",
   "pageForgotPasswordButtonSend": "Senden",
@@ -92,7 +92,7 @@
 
   "pageAboutTitle": "Über uns",
 
-  "pageAccountTitle": "Konto",
+  "pageAccountTitle": "Account",
   "pageAccountSignOut": "Ausloggen",
   "pageAccountLanguage": "Sprache",
   "pageAccountDesign": "Design",
@@ -241,7 +241,7 @@
   "pageRideDetailRequestDialogTitle": "Mitfahrt anfragen",
   "pageRideDetailRequestDialogMessage": "Bist du sicher, dass du diese Mitfahrt anfragen möchtest?",
   "pageRideDetailLoginDialogTitle": "Bitte zuerst einloggen",
-  "pageRideDetailLoginDialogMessage": "Du musst eingeloggt sein, um eine Mitfahrt anzufragen. Wenn du noch kein Konto hast, kannst du es hier erstellen.",
+  "pageRideDetailLoginDialogMessage": "Du musst eingeloggt sein, um eine Mitfahrt anzufragen. Wenn du noch keinen Account hast, kannst du ihn hier erstellen.",
   "pageRideDetailLoginDialogLogin": "Einloggen",
   "pageRideDetailBannerRequested": "Du hast diese Mitfahrt angefragt.",
   "pageRideDetailBannerRejected": "Diese Mitfahrt wurde abgelehnt.",
