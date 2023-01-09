@@ -77,6 +77,8 @@ class EditFullNamePage extends StatelessWidget {
       'surname': surname,
       'name': name,
     }).eq('id', profile.id);
+    SupabaseManager.reloadCurrentProfile();
+
     Navigator.of(context).pop();
   }
 }

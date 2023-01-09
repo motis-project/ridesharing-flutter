@@ -63,6 +63,8 @@ class EditDescriptionPage extends StatelessWidget {
     await supabaseClient.from('profiles').update({
       'description': text,
     }).eq('id', profile.id);
+    SupabaseManager.reloadCurrentProfile();
+
     Navigator.of(context).pop();
   }
 }
