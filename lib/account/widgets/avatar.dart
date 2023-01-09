@@ -111,6 +111,7 @@ class AvatarState extends State<Avatar> {
 
       await supabaseClient.from('profiles').update({"avatar_url": imageUrlResponse}).eq('id', widget.profile.id);
 
+      SupabaseManager.reloadCurrentProfile();
       widget.onUpload!();
     } catch (error) {
       if (mounted) {

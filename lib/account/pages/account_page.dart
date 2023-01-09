@@ -103,6 +103,7 @@ class _AccountPageState extends State<AccountPage> {
                 icon: const Icon(Icons.logout),
                 label: Text(S.of(context).pageAccountSignOut),
               ),
+              onPop: (_) => setState(() {}),
             ),
           ),
           ListTile(
