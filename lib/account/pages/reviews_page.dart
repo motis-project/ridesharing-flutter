@@ -55,8 +55,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
     setState(() {
       _profile = Profile.fromJson(profileData);
       List<Ride> rides = Ride.fromJsonList(commonRidesData);
-      _hasReviewed =
-          _profile!.reviewsReceived!.any((review) => review.writer!.id == SupabaseManager.getCurrentProfile()!.id);
+      _hasReviewed = _profile!.reviewsReceived!.any((review) => review.writer!.isCurrentUser);
       _reviewable = rides.any((ride) => ride.isFinished && ride.status == RideStatus.approved);
     });
   }
