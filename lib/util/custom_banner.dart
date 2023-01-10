@@ -24,7 +24,7 @@ class CustomBanner extends StatelessWidget {
   }
 }
 
-enum CustomBannerKind { warning, error }
+enum CustomBannerKind { warning, error, pending }
 
 extension CustomBannerKindExtensions on CustomBannerKind {
   Color getBackgroundColor(BuildContext context) {
@@ -33,6 +33,8 @@ extension CustomBannerKindExtensions on CustomBannerKind {
         return Theme.of(context).own().warning;
       case CustomBannerKind.error:
         return Theme.of(context).colorScheme.error;
+      case CustomBannerKind.pending:
+        return Theme.of(context).own().pending;
     }
   }
 
@@ -42,6 +44,8 @@ extension CustomBannerKindExtensions on CustomBannerKind {
         return Theme.of(context).own().onWarning;
       case CustomBannerKind.error:
         return Theme.of(context).colorScheme.onError;
+      case CustomBannerKind.pending:
+        return Theme.of(context).own().onPending;
     }
   }
 }

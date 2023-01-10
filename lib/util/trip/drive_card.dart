@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/util/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
@@ -6,6 +7,7 @@ import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
@@ -68,10 +70,7 @@ class _DriveCard extends TripCardState<DriveCard> {
       if (ride.status == RideStatus.pending) numberofPendingRequests++;
     }
     return drive!.cancelled
-        ? const Icon(
-            Icons.block,
-            color: Colors.red,
-          )
+        ? const SizedBox()
         : numberofPendingRequests > 0
             ? Row(
                 children: [
@@ -102,5 +101,13 @@ class _DriveCard extends TripCardState<DriveCard> {
               child: buildCardInfo(context),
             ),
           );
+  }
+
+  @override
+  Widget buildbanner() {
+    if (drive!.cancelled) {
+      return CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageDriveDetailBannerCancelled);
+    }
+    return const SizedBox();
   }
 }

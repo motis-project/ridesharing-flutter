@@ -88,26 +88,23 @@ class _PendingRideCard extends State<PendingRideCard> {
               Expanded(
                 child: Column(
                   children: [
-                    timeLine,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: timeLine,
+                    ),
                   ],
                 ),
               ),
               ButtonBar(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showApproveDialog(context)),
-                      icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
-                    ),
+                  IconButton(
+                    onPressed: (() => showApproveDialog(context)),
+                    icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showRejectDialog(context)),
-                      icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
-                    ),
-                  )
+                  IconButton(
+                    onPressed: (() => showRejectDialog(context)),
+                    icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+                  ),
                 ],
               ),
             ],

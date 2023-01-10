@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../account/models/profile.dart';
@@ -12,6 +13,7 @@ import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
@@ -65,46 +67,8 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildTopRight() {
-    Widget progress;
-    switch (ride!.status) {
-      case RideStatus.approved:
-        progress = const Icon(
-          Icons.done_all,
-          color: Colors.green,
-        );
-        break;
-      case RideStatus.preview:
-        progress = const SizedBox();
-        break;
-      case RideStatus.pending:
-        progress = const Icon(
-          Icons.done_all,
-          color: Colors.grey,
-        );
-        break;
-      case RideStatus.rejected:
-        progress = const Icon(
-          Icons.remove_done,
-          color: Colors.red,
-        );
-        break;
-      case RideStatus.cancelledByDriver:
-        progress = const Icon(
-          Icons.block,
-          color: Colors.red,
-        );
-        break;
-      case RideStatus.cancelledByRider:
-        progress = const Icon(
-          Icons.block,
-          color: Colors.red,
-        );
-        break;
-    }
     return Row(
       children: [
-        progress,
-        const SizedBox(width: 4),
         Text("${ride!.price}€"),
       ],
     );
@@ -113,7 +77,7 @@ class RideCardState extends TripCardState<RideCard> {
   @override
   Widget buildBottomLeft() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Row(
         children: [
           CircleAvatar(
@@ -136,7 +100,7 @@ class RideCardState extends TripCardState<RideCard> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
     );
   }
@@ -168,5 +132,25 @@ class RideCardState extends TripCardState<RideCard> {
               child: buildCardInfo(context),
             ),
           );
+  }
+
+  /*
+  if(ride!.status == RideStatus.cancelledByDriver)
+          CustomBanner(kind: CustomBannerKind.warning, text: Text("Drive has been cancelled"));
+*/
+  @override
+  Widget buildbanner() {
+    switch (ride!.status) {
+      case RideStatus.pending:
+        return CustomBanner(kind: CustomBannerKind.pending, text: S.of(context).pageRideDetailBannerRequested);
+      case RideStatus.rejected:
+        return CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRejected);
+      case RideStatus.cancelledByDriver:
+        return CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerCancelledByDriver);
+      case RideStatus.cancelledByRider:
+        return CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerCancelledByYou);
+      default:
+        return const SizedBox();
+    }
   }
 }

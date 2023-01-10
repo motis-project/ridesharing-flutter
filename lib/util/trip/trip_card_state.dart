@@ -59,7 +59,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -79,12 +79,21 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
-  Widget buildDate() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildTop() {
+    return Stack(
+      fit: StackFit.loose,
       children: [
-        Text(localeManager.formatDate(trip!.startTime)),
-        buildTopRight(),
+        buildbanner(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(localeManager.formatDate(trip!.startTime)),
+              buildTopRight(),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -93,11 +102,8 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: buildDate(),
-        ),
-        Padding(padding: const EdgeInsets.all(16.0), child: buildRoute(context)),
+        buildTop(),
+        Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 8), child: buildRoute(context)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -109,6 +115,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
+  Widget buildbanner();
   Widget buildBottomLeft();
   Widget buildBottomRight();
   Widget buildTopRight();
