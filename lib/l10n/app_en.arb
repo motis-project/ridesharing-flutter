@@ -138,6 +138,8 @@
   "reviewCategoryHospitality": "Hospitality",
 
   "pageReviewsTitle": "Reviews",
+  "pageReviewsRate": "Rate",
+  "pageReviewsUpdateRating": "Update rating",
 
   "pageWriteReviewTitle": "Write Review",
   "pageWriteReviewReview": "Review",

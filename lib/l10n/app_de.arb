@@ -113,6 +113,8 @@
   "reviewCategoryHospitality": "Gastfreundschaft",
 
   "pageReviewsTitle": "Bewertungen",
+  "pageReviewsRate": "Bewerten",
+  "pageReviewsUpdateRating": "Bewertung aktualisieren",
 
   "pageWriteReviewTitle": "Bewertung schreiben",
   "pageWriteReviewReview": "Bewertung",
