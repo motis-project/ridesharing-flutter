@@ -111,6 +111,7 @@
   "pageHomeTitle": "Home",
 
   "pageAboutTitle": "About",
+  "pageAboutLogoSemantics": "MOTIS Logo",
   "pageAboutVersion": "Version {version}",
   "@pageAboutVersion": {
     "placeholders": {

@@ -91,6 +91,7 @@
   "pageHomeTitle": "Home",
 
   "pageAboutTitle": "Über uns",
+  "pageAboutLogoSemantics": "MOTIS Logo",
   "pageAboutVersion": "Version {version}",
   "pageAboutBuildNumber": "Build-Nummer: {number}",
   "pageAboutBuildSignature": "Build-Signatur: {signature}",

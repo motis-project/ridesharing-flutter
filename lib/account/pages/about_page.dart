@@ -4,6 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+const String githubLink = 'https://github.com/MOTIS-Mitfahr-App/flutter-app';
+const String websiteLink = 'https://motis-project.de/';
+
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
 
@@ -26,6 +29,10 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle packageInfoStyle = Theme.of(context)
+        .textTheme
+        .subtitle2!
+        .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageAboutTitle),
@@ -42,31 +49,22 @@ class _AboutPageState extends State<AboutPage> {
                   Expanded(child: Container()),
                   Text(
                     S.of(context).appName,
-                    style: Theme.of(context).primaryTextTheme.displaySmall,
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
                   if (_packageInfo != null) ...[
                     Text(
                       S.of(context).pageAboutVersion(_packageInfo!.version),
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle2!
-                          .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                      style: packageInfoStyle,
                       textAlign: TextAlign.center,
                     ),
                     Text(
                       S.of(context).pageAboutBuildNumber(_packageInfo!.buildNumber),
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle2!
-                          .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                      style: packageInfoStyle,
                       textAlign: TextAlign.center,
                     ),
                     Text(
                       S.of(context).pageAboutBuildSignature(_packageInfo!.buildSignature),
-                      style: Theme.of(context)
-                          .primaryTextTheme
-                          .subtitle2!
-                          .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                      style: packageInfoStyle,
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -74,7 +72,7 @@ class _AboutPageState extends State<AboutPage> {
                     'assets/logo.svg',
                     width: MediaQuery.of(context).size.width / 2,
                     height: MediaQuery.of(context).size.width / 2,
-                    semanticsLabel: 'MOTIS Logo',
+                    semanticsLabel: S.of(context).pageAboutLogoSemantics,
                   ),
                   Text(
                     S.of(context).pageAboutText,
@@ -86,18 +84,18 @@ class _AboutPageState extends State<AboutPage> {
                       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                         TextButton(
                           onPressed: () async => await launchUrlString(
-                            'https://github.com/MOTIS-Mitfahr-App/flutter-app',
+                            githubLink,
                             mode: LaunchMode.externalApplication,
                           ),
                           child: Text(S.of(context).pageAboutGithub),
                         ),
                         TextButton(
-                          onPressed: () async => await launchUrlString('https://motis-project.de/'),
+                          onPressed: () async => await launchUrlString(websiteLink),
                           child: Text(S.of(context).pageAboutWebsite),
                         ),
                         TextButton(
                           // TODO Terms of service
-                          onPressed: () async => await launchUrlString('https://motis-project.de/'),
+                          onPressed: () async => await launchUrlString(websiteLink),
                           child: Text(S.of(context).pageAboutTermsOfService),
                         ),
                       ]),
