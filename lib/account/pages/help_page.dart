@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
@@ -12,12 +14,60 @@ class HelpPage extends StatefulWidget {
 class _HelpPageState extends State<HelpPage> {
   List<Widget> getFaqCards() => [
         FAQCard(
-          question: S.of(context).pageHelpWhatIsMotisQuestion,
-          answer: S.of(context).pageHelpWhatIsMotisAnswer,
+          question: S.of(context).pageHelpQuestion1,
+          answer: S.of(context).pageHelpAnswer1,
         ),
         FAQCard(
-          question: S.of(context).pageHelpWhereIsAccessibilityQuestion,
-          answer: S.of(context).pageHelpWhereIsAccessibilityAnswer,
+          question: S.of(context).pageHelpQuestion2,
+          answer: S.of(context).pageHelpAnswer2,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion3,
+          answer: S.of(context).pageHelpAnswer3,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion4,
+          answer: S.of(context).pageHelpAnswer4,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion5,
+          answer: S.of(context).pageHelpAnswer5,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion6,
+          answer: S.of(context).pageHelpAnswer6,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion7,
+          answer: S.of(context).pageHelpAnswer7,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion8,
+          answer: S.of(context).pageHelpAnswer8,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion9,
+          answer: S.of(context).pageHelpAnswer9,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion10,
+          answer: S.of(context).pageHelpAnswer10,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion11,
+          answer: S.of(context).pageHelpAnswer11,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion12,
+          answer: S.of(context).pageHelpAnswer12,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion13,
+          answer: S.of(context).pageHelpAnswer13,
+        ),
+        FAQCard(
+          question: S.of(context).pageHelpQuestion14,
+          answer: S.of(context).pageHelpAnswer14,
         ),
       ];
 
@@ -37,8 +87,8 @@ class _HelpPageState extends State<HelpPage> {
                 ),
                 Button.submit(
                   S.of(context).pageHelpContactUs,
-                  //TODO Open email program
-                  onPressed: () {},
+                  onPressed: () => launchUrlString(
+                      'mailto:motismitfahrapp@gmail.com?subject=${S.of(context).pageHelpEmailSubject(SupabaseManager.getCurrentProfile()!.id!)}'),
                 ),
               ],
         ),
