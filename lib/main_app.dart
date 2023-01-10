@@ -42,11 +42,8 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print("Deciding");
         final isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
-        print(isFirstRouteInCurrentTab);
         if (isFirstRouteInCurrentTab) {
-          print(_currentTab == TabItem.home);
           if (_currentTab == TabItem.home) {
             return true;
           }
