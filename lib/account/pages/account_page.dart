@@ -84,10 +84,14 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void initState() {
     //I don't know why this isn't propagated through, for localeManager we just need to call setState in main...
-    themeManager.addListener(
-      () => setState(() {}),
-    );
+    themeManager.addListener(refresh);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    themeManager.removeListener(refresh);
+    super.dispose();
   }
 
   @override
@@ -141,4 +145,6 @@ class _AccountPageState extends State<AccountPage> {
       ),
     );
   }
+
+  void refresh() => setState(() {});
 }
