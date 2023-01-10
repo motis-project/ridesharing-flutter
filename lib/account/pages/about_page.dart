@@ -49,7 +49,8 @@ class _AboutPageState extends State<AboutPage> {
                   Expanded(child: Container()),
                   Text(
                     S.of(context).appName,
-                    style: Theme.of(context).textTheme.displaySmall,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
                   ),
                   if (_packageInfo != null) ...[
                     Text(
