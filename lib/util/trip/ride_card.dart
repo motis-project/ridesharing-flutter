@@ -96,7 +96,7 @@ class RideCardState extends TripCardState<RideCard> {
         break;
       case RideStatus.cancelledByRider:
         progress = const Icon(
-          Icons.done_all,
+          Icons.block,
           color: Colors.red,
         );
         break;
@@ -105,7 +105,7 @@ class RideCardState extends TripCardState<RideCard> {
       children: [
         progress,
         const SizedBox(width: 4),
-        Text("${ride!.price}\u{20AC} "),
+        Text("${ride!.price}€"),
       ],
     );
   }
@@ -160,13 +160,11 @@ class RideCardState extends TripCardState<RideCard> {
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
-              onTap: () => Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                      builder: (context) => RideDetailPage.fromRide(ride!),
-                    ),
-                  )
-                  .then((value) => initState()),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => RideDetailPage.fromRide(ride!),
+                ),
+              ),
               child: buildCardInfo(context),
             ),
           );

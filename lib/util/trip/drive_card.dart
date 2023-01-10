@@ -63,25 +63,29 @@ class _DriveCard extends TripCardState<DriveCard> {
   // Notification
   @override
   Widget buildTopRight() {
+    int numberofPendingRequests = 0;
+    for (var ride in drive!.rides!) {
+      if (ride.status == RideStatus.pending) numberofPendingRequests++;
+    }
     return drive!.cancelled
         ? const Icon(
             Icons.block,
             color: Colors.red,
           )
-        : drive!.rides!.any((ride) => ride.status == RideStatus.cancelledByRider)
-            ? const Icon(
-                Icons.warning,
-                color: Colors.orange,
-              )
-            : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
-                ? const Icon(
+        : numberofPendingRequests > 0
+            ? Row(
+                children: [
+                  Text("+ $numberofPendingRequests "),
+                  const Icon(
                     Icons.done_all,
                     color: Colors.grey,
-                  )
-                : const Icon(
-                    Icons.done_all,
-                    color: Colors.green,
-                  );
+                  ),
+                ],
+              )
+            : const Icon(
+                Icons.done_all,
+                color: Colors.green,
+              );
   }
 
   @override
@@ -90,13 +94,11 @@ class _DriveCard extends TripCardState<DriveCard> {
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
-              onTap: () => Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                      builder: (context) => DriveDetailPage.fromDrive(drive),
-                    ),
-                  )
-                  .then((value) => initState()),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => DriveDetailPage.fromDrive(drive),
+                ),
+              ),
               child: buildCardInfo(context),
             ),
           );

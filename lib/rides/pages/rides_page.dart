@@ -39,11 +39,9 @@ class _RidesPageState extends State<RidesPage> {
       (ride) => RideCard(ride),
       FloatingActionButton(
         onPressed: () {
-          Navigator.of(context)
-              .push(
-                MaterialPageRoute(builder: (context) => const SearchRidePage()),
-              )
-              .then((value) => initState());
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SearchRidePage()),
+          );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.search),
