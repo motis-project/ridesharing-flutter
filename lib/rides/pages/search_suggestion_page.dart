@@ -64,8 +64,11 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       lastDate: firstDate.add(const Duration(days: 30)),
     ).then((value) {
       if (value != null) {
-        _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-        _dateController.text = localeManager.formatDate(_selectedDate);
+        setState(() {
+          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
+          _dateController.text = localeManager.formatDate(_selectedDate);
+        });
+        if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
     });
   }
@@ -79,13 +82,17 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       },
     ).then((value) {
       if (value != null) {
-        _selectedDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-        _timeController.text = localeManager.formatTime(_selectedDate);
+        setState(() {
+          _selectedDate =
+              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
+          _timeController.text = localeManager.formatTime(_selectedDate);
+        });
+        if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
     });
   }
 
-  String? _timeValidator(String? value) {
+  String? _dateTimeValidator(String? value) {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
@@ -173,7 +180,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildDatePicker() {
-    _dateController.text = localeManager.formatDate(widget.date);
+    _dateController.text = localeManager.formatDate(_selectedDate);
 
     return Semantics(
       button: true,
@@ -183,17 +190,14 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           labelText: S.of(context).formDate,
         ),
         readOnly: true,
-        onTap: () {
-          _showDatePicker;
-          loadRides();
-        },
+        onTap: _showDatePicker,
         controller: _dateController,
       ),
     );
   }
 
   Widget buildTimePicker() {
-    _timeController.text = localeManager.formatTime(widget.date);
+    _timeController.text = localeManager.formatTime(_selectedDate);
 
     return Semantics(
       button: true,
@@ -201,14 +205,12 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: S.of(context).formTime,
+          errorText: _dateTimeValidator(_timeController.text),
         ),
         readOnly: true,
-        onTap: () {
-          _showTimePicker;
-          loadRides();
-        },
+        onTap: _showTimePicker,
         controller: _timeController,
-        validator: _timeValidator,
+        validator: _dateTimeValidator,
       ),
     );
   }
