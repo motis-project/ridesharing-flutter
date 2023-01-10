@@ -67,6 +67,9 @@ dependencies:
   fuzzywuzzy: ^0.2.0
 
   collection: ^1.16.0
+  flutter_svg: ^1.1.6
+  url_launcher: ^6.1.7
+  package_info_plus: ^3.0.2
   image_picker: ^0.8.6
 
 dev_dependencies:
