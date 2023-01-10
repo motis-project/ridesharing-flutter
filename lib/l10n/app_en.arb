@@ -122,6 +122,9 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",
 
+  "pageProfileUpdateProfilePictureTitle": "Update profile picture",
+  "pageProfileUpdateProfilePictureFromGallery": "From Gallery",
+  "pageProfileUpdateProfilePictureDelete": "Delete",
   "pageProfileDescriptionTitle": "Description",
   "pageProfileDescriptionEmpty": "No description",
   "pageProfileFullNameTitle": "Full Name",

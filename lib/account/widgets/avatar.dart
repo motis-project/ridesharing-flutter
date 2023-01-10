@@ -12,13 +12,15 @@ class Avatar extends StatefulWidget {
     this.profile, {
     super.key,
     this.isTappable = false,
-    this.onUpload,
+    this.actionIcon = const Icon(Icons.photo_library),
+    this.onAction,
     this.size,
   });
 
   final bool isTappable;
   final Profile profile;
-  final Function? onUpload;
+  final Icon? actionIcon;
+  final VoidCallback? onAction;
   final double? size;
 
   @override
@@ -26,8 +28,6 @@ class Avatar extends StatefulWidget {
 }
 
 class AvatarState extends State<Avatar> {
-  bool _isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -64,7 +64,7 @@ class AvatarState extends State<Avatar> {
               ),
             ),
           ),
-        if (widget.onUpload != null && widget.profile.isCurrentUser)
+        if (widget.onAction != null && widget.profile.isCurrentUser)
           Positioned(
             right: 0,
             bottom: 0,
@@ -74,53 +74,12 @@ class AvatarState extends State<Avatar> {
               child: IconButton(
                 tooltip: S.of(context).widgetAvatarUploadTooltip,
                 iconSize: 20,
-                onPressed: _isLoading ? null : _upload,
+                onPressed: widget.onAction,
                 icon: const Icon(Icons.photo_library),
               ),
             ),
           ),
       ],
     );
-  }
-
-  Future<void> _upload() async {
-    final picker = ImagePicker();
-    final imageFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 300,
-      maxHeight: 300,
-    );
-    if (imageFile == null) {
-      return;
-    }
-    setState(() => _isLoading = true);
-
-    try {
-      final bytes = await imageFile.readAsBytes();
-      final fileExt = imageFile.path.split('.').last;
-      final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
-
-      await supabaseClient.storage.from('avatars').uploadBinary(
-            fileName,
-            bytes,
-            fileOptions: FileOptions(contentType: imageFile.mimeType),
-          );
-
-      final imageUrlResponse =
-          await supabaseClient.storage.from('avatars').createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
-
-      await supabaseClient.from('profiles').update({"avatar_url": imageUrlResponse}).eq('id', widget.profile.id);
-
-      SupabaseManager.reloadCurrentProfile();
-      widget.onUpload!();
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).widgetAvatarImageCouldNotBeStored)),
-        );
-      }
-    }
-
-    setState(() => _isLoading = false);
   }
 }
