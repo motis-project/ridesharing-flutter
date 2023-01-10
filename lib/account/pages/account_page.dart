@@ -16,10 +16,6 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  void signOut() {
-    supabaseClient.auth.signOut();
-  }
-
   void showDesignDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -86,11 +82,7 @@ class _AccountPageState extends State<AccountPage> {
             child: ProfileWidget(
               SupabaseManager.getCurrentProfile()!,
               size: 25,
-              actionWidget: TextButton.icon(
-                onPressed: signOut,
-                icon: const Icon(Icons.logout),
-                label: Text(S.of(context).pageAccountSignOut),
-              ),
+              actionWidget: const Icon(Icons.chevron_right),
               onPop: (_) => setState(() {}),
             ),
           ),
