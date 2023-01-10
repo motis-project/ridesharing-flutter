@@ -300,6 +300,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_profile?.username ?? ''),
+        actions: _profile != null && _profile!.isCurrentUser
+            ? [
+                TextButton.icon(
+                  onPressed: signOut,
+                  icon: const Icon(Icons.logout),
+                  label: Text(S.of(context).pageAccountSignOut),
+                ),
+              ]
+            : null,
       ),
       body: _profile == null
           ? const Center(child: CircularProgressIndicator())
@@ -396,6 +405,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     SupabaseManager.reloadCurrentProfile();
     loadProfile();
+  }
+
+  void signOut() {
+    supabaseClient.auth.signOut();
   }
 }
 

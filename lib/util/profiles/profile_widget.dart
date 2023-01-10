@@ -40,7 +40,7 @@ class ProfileWidget extends StatelessWidget {
     );
     if (actionWidget != null) {
       profileRow = Stack(
-        children: [profileRow, Positioned(right: 0, child: actionWidget!)],
+        children: [profileRow, Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget!))],
       );
     }
     if (showDescription && (profile.description?.isNotEmpty ?? false)) {
