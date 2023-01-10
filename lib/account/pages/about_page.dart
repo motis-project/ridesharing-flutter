@@ -70,10 +70,12 @@ class _AboutPageState extends State<AboutPage> {
                       textAlign: TextAlign.center,
                     ),
                   ],
-                  SvgPicture.asset('assets/logo.svg',
-                      width: MediaQuery.of(context).size.width / 2,
-                      height: MediaQuery.of(context).size.width / 2,
-                      semanticsLabel: 'MOTIS Logo'),
+                  SvgPicture.asset(
+                    'assets/logo.svg',
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: MediaQuery.of(context).size.width / 2,
+                    semanticsLabel: 'MOTIS Logo',
+                  ),
                   Text(
                     S.of(context).pageAboutText,
                     textAlign: TextAlign.center,
@@ -84,8 +86,9 @@ class _AboutPageState extends State<AboutPage> {
                       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                         TextButton(
                           onPressed: () async => await launchUrlString(
-                              'https://github.com/MOTIS-Mitfahr-App/flutter-app',
-                              mode: LaunchMode.externalApplication),
+                            'https://github.com/MOTIS-Mitfahr-App/flutter-app',
+                            mode: LaunchMode.externalApplication,
+                          ),
                           child: Text(S.of(context).pageAboutGithub),
                         ),
                         TextButton(
