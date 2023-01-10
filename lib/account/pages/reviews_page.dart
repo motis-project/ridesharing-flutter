@@ -26,6 +26,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
   late final int _profileId;
   Profile? _profile;
   bool _reviewable = false;
+  bool _hasReviewed = false;
 
   @override
   void initState() {
@@ -54,6 +55,8 @@ class _ReviewsPageState extends State<ReviewsPage> {
     setState(() {
       _profile = Profile.fromJson(profileData);
       List<Ride> rides = Ride.fromJsonList(commonRidesData);
+      _hasReviewed =
+          _profile!.reviewsReceived!.any((review) => review.writer!.id == SupabaseManager.getCurrentProfile()!.id);
       _reviewable = rides.any((ride) => ride.isFinished && ride.status == RideStatus.approved);
     });
   }
@@ -61,7 +64,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
   @override
   Widget build(BuildContext context) {
     BigButton reviewButton = BigButton(
-      text: S.of(context).pageRideDetailButtonRate,
+      text: _hasReviewed ? S.of(context).pageReviewsUpdateRating : S.of(context).pageReviewsRate,
       onPressed: () => _navigateToRatePage(),
       color: Theme.of(context).primaryColor,
     );
