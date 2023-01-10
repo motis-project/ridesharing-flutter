@@ -92,6 +92,9 @@
   "pageAccountThemesLight": "Hell",
   "pageAccountThemesDark": "Dunkel",
 
+  "pageProfileUpdateProfilePictureTitle": "Profilbild aktualisieren",
+  "pageProfileUpdateProfilePictureFromGallery": "Bild auswählen",
+  "pageProfileUpdateProfilePictureDelete": "Löschen",
   "pageProfileDescriptionTitle": "Beschreibung",
   "pageProfileDescriptionEmpty": "Keine Beschreibung",
   "pageProfileFullNameTitle": "Name",

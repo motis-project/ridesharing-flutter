@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_birth_date_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_description_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_full_name_page.dart';
@@ -11,6 +12,7 @@ import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:motis_mitfahr_app/util/big_button.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/supabase.dart';
 import '../models/profile.dart';
@@ -31,6 +33,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Profile? _profile;
   bool _fullyLoaded = false;
+  bool _isLoadingProfilePicture = false;
 
   @override
   void initState() {
@@ -59,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Avatar(
       _profile!,
       size: 64,
-      onUpload: loadProfile,
+      onAction: _isLoadingProfilePicture ? null : _updateProfilePictureDialog,
       isTappable: true,
     );
   }
@@ -309,4 +312,91 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
     );
   }
+
+  Future<void> _updateProfilePictureDialog() async {
+    setState(() => _isLoadingProfilePicture = true);
+    if (_profile!.avatarUrl == null) {
+      _uploadProfilePicture();
+      setState(() => _isLoadingProfilePicture = false);
+      return;
+    }
+    switch (await showDialog<ProfilePictureUpdateMethod>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(S.of(context).pageProfileUpdateProfilePictureTitle),
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, ProfilePictureUpdateMethod.fromGallery);
+                },
+                child: Text(S.of(context).pageProfileUpdateProfilePictureFromGallery),
+              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, ProfilePictureUpdateMethod.delete);
+                },
+                child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
+              ),
+            ],
+          );
+        })) {
+      case ProfilePictureUpdateMethod.fromGallery:
+        _uploadProfilePicture();
+        break;
+      case ProfilePictureUpdateMethod.delete:
+        _deleteProfilePicture();
+        break;
+      case null:
+        break;
+    }
+    setState(() => _isLoadingProfilePicture = false);
+  }
+
+  Future<void> _uploadProfilePicture() async {
+    final picker = ImagePicker();
+    final imageFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
+    if (imageFile == null) {
+      return;
+    }
+
+    try {
+      final bytes = await imageFile.readAsBytes();
+      final fileExt = imageFile.path.split('.').last;
+      final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
+
+      await supabaseClient.storage.from('avatars').uploadBinary(
+            fileName,
+            bytes,
+            fileOptions: FileOptions(contentType: imageFile.mimeType),
+          );
+
+      final imageUrlResponse =
+          await supabaseClient.storage.from('avatars').createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
+
+      await supabaseClient.from('profiles').update({"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
+
+      SupabaseManager.reloadCurrentProfile();
+      loadProfile();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(S.of(context).widgetAvatarImageCouldNotBeStored)),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteProfilePicture() async {
+    await supabaseClient.from('profiles').update({"avatar_url": null}).eq('id', _profile!.id);
+
+    SupabaseManager.reloadCurrentProfile();
+    loadProfile();
+  }
 }
+
+enum ProfilePictureUpdateMethod { delete, fromGallery }
