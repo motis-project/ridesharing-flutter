@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/report.dart';
-import 'package:motis_mitfahr_app/util/loading_button.dart';
+import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';

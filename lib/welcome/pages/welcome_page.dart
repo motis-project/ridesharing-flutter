@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/big_button.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/search_ride_page.dart';
+import '../../util/buttons/button.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -69,21 +69,10 @@ class _WelcomePageState extends State<WelcomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Hero(
-            tag: "SearchButton",
-            transitionOnUserGestures: true,
-            child: BigButton(
-              text: S.of(context).pageWelcomeAnonymousSearch,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SearchRidePage()),
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          Hero(
             tag: "LoginButton",
             transitionOnUserGestures: true,
-            child: BigButton(
-              text: S.of(context).pageWelcomeLogin,
+            child: Button(
+              S.of(context).pageWelcomeLogin,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const LoginPage()),
               ),
@@ -93,13 +82,28 @@ class _WelcomePageState extends State<WelcomePage> {
           Hero(
             tag: "RegisterButton",
             transitionOnUserGestures: true,
-            child: BigButton(
-              text: S.of(context).pageWelcomeRegister,
+            child: Button(
+              S.of(context).pageWelcomeRegister,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const RegisterPage()),
               ),
             ),
-          )
+          ),
+          const SizedBox(height: 15),
+          Hero(
+            tag: "SearchButton",
+            transitionOnUserGestures: true,
+            child: Button(
+              S.of(context).pageWelcomeAnonymousSearch,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SearchRidePage(
+                    anonymous: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

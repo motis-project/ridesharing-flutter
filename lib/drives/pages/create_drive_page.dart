@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/models/ride.dart';
 import '../../account/models/profile.dart';
+import '../../util/buttons/button.dart';
 import '../../util/search/address_search_field.dart';
 import '../../util/search/address_suggestion.dart';
 import '../pages/drive_detail_page.dart';
@@ -22,13 +22,16 @@ class CreateDrivePage extends StatefulWidget {
 class _CreateDrivePageState extends State<CreateDrivePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).pageCreateDriveTitle),
-      ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        child: SingleChildScrollView(child: CreateDriveForm()),
+    return Hero(
+      tag: 'DriveFAB',
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).pageCreateDriveTitle),
+        ),
+        body: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: SingleChildScrollView(child: CreateDriveForm()),
+        ),
       ),
     );
   }
@@ -44,8 +47,10 @@ class CreateDriveForm extends StatefulWidget {
 class _CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
+  // ignore: unused_field
   AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  // ignore: unused_field
   AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
@@ -255,8 +260,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               ],
             ),
           ),
-          SubmitButton(
-            text: S.of(context).pageCreateDriveButtonCreate,
+          Button.submit(
+            S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
           ),
         ],

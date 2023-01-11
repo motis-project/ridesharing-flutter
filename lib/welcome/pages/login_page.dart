@@ -2,9 +2,9 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:motis_mitfahr_app/util/email_field.dart';
-import 'package:motis_mitfahr_app/util/loading_button.dart';
-import 'package:motis_mitfahr_app/util/password_field.dart';
+import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
+import 'package:motis_mitfahr_app/util/fields/email_field.dart';
+import 'package:motis_mitfahr_app/util/fields/password_field.dart';
 import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';

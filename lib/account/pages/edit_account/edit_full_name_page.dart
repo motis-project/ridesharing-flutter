@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../util/big_button.dart';
 import '../../models/profile.dart';
 
 class EditFullNamePage extends StatelessWidget {
@@ -48,9 +48,9 @@ class EditFullNamePage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              BigButton(
+              Button(
+                S.of(context).save,
                 onPressed: () => onPressed(context),
-                text: S.of(context).save,
               ),
             ],
           ),

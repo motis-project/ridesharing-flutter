@@ -9,7 +9,7 @@ import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/editable_row.dart';
 import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
 import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
-import 'package:motis_mitfahr_app/util/big_button.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -268,12 +268,11 @@ class _ProfilePageState extends State<ProfilePage> {
         widgets.addAll([
           const SizedBox(height: 32),
           hasRecentReport
-              ? BigButton(
-                  text: S.of(context).pageProfileButtonReported,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              ? Button.disabled(
+                  S.of(context).pageProfileButtonReported,
                 )
-              : BigButton(
-                  text: S.of(context).pageProfileButtonReport,
+              : Button.error(
+                  S.of(context).pageProfileButtonReport,
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
@@ -286,7 +285,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                     });
                   },
-                  color: Colors.red,
                 ),
         ]);
       }
