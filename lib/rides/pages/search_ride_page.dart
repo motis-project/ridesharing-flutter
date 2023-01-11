@@ -102,7 +102,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now())) {
+    if (_selectedDate.isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;

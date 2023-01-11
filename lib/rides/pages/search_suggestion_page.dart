@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
 import 'package:motis_mitfahr_app/util/trip/ride_card.dart';
@@ -96,7 +97,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now())) {
+    if (_selectedDate.isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -104,25 +105,21 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
+    int riderid = SupabaseManager.getCurrentProfile()?.id ?? -1;
     List<dynamic> data = await supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .eq('end', _destinationController.text)
+        .eq('cancelled', false)
+        .gte('seats', _dropdownValue)
         .gte("start_time", _selectedDate)
+        //todo: filter driver_id with riderid
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
-        .map((drive) => Ride.previewFromDrive(
-              drive,
-              _startController.text,
-              _destinationController.text,
-              drive.startTime,
-              drive.endTime,
-              _dropdownValue,
-              SupabaseManager.getCurrentProfile()?.id ?? -1,
-              10.25,
-            ))
+        .map((drive) => Ride.previewFromDrive(drive, _startController.text, _destinationController.text,
+            drive.startTime, drive.endTime, _dropdownValue, riderid, 10.25))
         .toList();
     setState(() {
       _rideSuggestions = rides;
