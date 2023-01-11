@@ -147,13 +147,18 @@ class Ride extends Trip {
     await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
   }
 
+  Future<void> withdraw() async {
+    status = RideStatus.withdrawnByRider;
+    await supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
+  }
+
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
   }
 }
 
-enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cancelledByRider }
+enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cancelledByRider, withdrawnByRider }
 
 extension RideStatusExtension on RideStatus {
   bool isCancelled() {
