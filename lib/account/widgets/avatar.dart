@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/pages/avatar_picture_page.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../util/supabase.dart';
 import '../models/profile.dart';
 
 class Avatar extends StatefulWidget {
