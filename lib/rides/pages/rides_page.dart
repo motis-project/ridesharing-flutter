@@ -21,7 +21,7 @@ class _RidesPageState extends State<RidesPage> {
   void initState() {
     //todo: method to get userId
     int userId = SupabaseManager.getCurrentProfile()!.id!;
-    _rides = supabaseClient
+    _rides = SupabaseManager.supabaseClient
         .from('rides')
         .stream(primaryKey: ['id'])
         .eq('rider_id', userId)

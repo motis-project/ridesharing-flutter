@@ -45,7 +45,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await supabaseClient.from('drives').select('''
+    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,

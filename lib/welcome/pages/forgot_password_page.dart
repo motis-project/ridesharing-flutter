@@ -61,7 +61,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         _state = ButtonState.loading;
       });
 
-      supabaseClient.auth.resetPasswordForEmail(
+      SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
         emailController.text,
         redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
       );

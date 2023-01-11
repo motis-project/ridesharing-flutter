@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:mockito/mockito.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'mock_server.dart';
@@ -16,7 +18,7 @@ void main() {
   setUp(() async {
     await MockServer.initialize();
     MockServer.handleRequests(driveProcesor);
-    supabaseClient = MockServer.client;
+    SupabaseManager.setClient(MockServer.client);
   });
   //tearDown muss in jeder Testklasse einmal aufgerufen werden
   tearDown(() async {
@@ -29,15 +31,24 @@ void main() {
         {'drive_id': 1, 'seats': 2},
         {'drive_id': 2, 'seats': 1},
       ]));
-      final data = await supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
+      final data = await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
       print(data);
     });
     test('test without explicit URL', () async {
       when(driveProcesor.processUrl(any)).thenReturn(jsonEncode([
-        {'drive_id': 1, 'seats': 2},
-        {'drive_id': 2, 'seats': 1},
+        {
+          'id': 1,
+          'driver_id': 1,
+          'created_at': DateTime(2022, 09, 12, 12).toString(),
+          'start': 'Darmstadt',
+          'start_time': DateTime(2022, 09, 12, 16).toString(),
+          'end': 'Frankfurt',
+          'end_time': DateTime(2022, 09, 12, 20).toString(),
+          'seats': 2,
+          'cancelled': false,
+        }
       ]));
-      final data = await supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
+      final data = await Drive.getDrivesOfUser(1);
       print(data);
     });
   });

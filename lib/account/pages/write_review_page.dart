@@ -37,7 +37,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   void loadReview() async {
-    Map<String, dynamic>? data = await supabaseClient
+    Map<String, dynamic>? data = await SupabaseManager.supabaseClient
         .from('reviews')
         .select('*')
         .eq('receiver_id', widget.profile.id)
@@ -202,9 +202,9 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       _state = ButtonState.loading;
     });
     if (_review!.id == null) {
-      await supabaseClient.from('reviews').insert(_review!.toJson());
+      await SupabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
     } else {
-      await supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
+      await SupabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
     }
     setState(() {
       _state = ButtonState.success;

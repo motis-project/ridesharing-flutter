@@ -56,7 +56,7 @@ class _RegisterFormState extends State<RegisterForm> {
         setState(() {
           _state = ButtonState.loading;
         });
-        res = await supabaseClient.auth.signUp(
+        res = await SupabaseManager.supabaseClient.auth.signUp(
           password: passwordController.text,
           email: emailController.text,
           emailRedirectTo: 'io.supabase.flutter://login-callback/',
@@ -70,7 +70,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
       if (user != null) {
         try {
-          await supabaseClient.from('profiles').insert({
+          await SupabaseManager.supabaseClient.from('profiles').insert({
             'auth_id': user.id,
             'email': user.email,
             'username': usernameController.text,
