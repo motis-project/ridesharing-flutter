@@ -197,7 +197,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
         );
       default:
-        return null;
+        return BigButton(
+          text: 'Delete Ride',
+          onPressed: _showDeleteDialog,
+          color: Theme.of(context).errorColor,
+        );
     }
   }
 
@@ -259,6 +263,33 @@ class _RideDetailPageState extends State<RideDetailPage> {
             child: Text(S.of(context).yes),
             onPressed: () {
               confirmRequest(_ride!);
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void noShowRide() async {
+    await supabaseClient.from('rides').update({'show': false}).eq('id', widget.ride!.id);
+  }
+
+  _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Delete Ride"),
+        content: const Text('Are you sure you want to delete this Ride'),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              noShowRide();
               Navigator.of(dialogContext).pop();
             },
           ),

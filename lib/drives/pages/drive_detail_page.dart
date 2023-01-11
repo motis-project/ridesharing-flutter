@@ -163,16 +163,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
+      widgets.add(const SizedBox(height: 10));
+      Widget bottomButton;
       if (!(_drive!.isFinished || _drive!.cancelled)) {
-        widgets.add(const SizedBox(height: 10));
-        Widget deleteButton = BigButton(
+        bottomButton = BigButton(
           text: S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
           color: Theme.of(context).errorColor,
         );
-        widgets.add(deleteButton);
-        widgets.add(const SizedBox(height: 5));
+      } else {
+        bottomButton = BigButton(
+          text: 'Delete Drive',
+          onPressed: _showDeleteDialog,
+          color: Theme.of(context).errorColor,
+        );
       }
+      widgets.add(bottomButton);
+      widgets.add(const SizedBox(height: 5));
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -317,6 +324,34 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     }
 
     return list;
+  }
+
+  void noShowDrive() async {
+    await supabaseClient.from('drives').update({'show': false}).eq('id', widget.drive!.id);
+  }
+
+  _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Delete Drive"),
+        content: const Text('Are you sure you want to delete this Drive'),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              noShowDrive();
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void _showCancelDialog() {

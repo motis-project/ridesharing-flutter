@@ -15,32 +15,24 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
-  Ride({
-    super.id,
-    super.createdAt,
-    required super.start,
-    required super.startTime,
-    required super.end,
-    required super.endTime,
-    required super.seats,
-    this.price,
-    required this.status,
-    required this.driveId,
-    this.drive,
-    required this.riderId,
-    this.rider,
-  });
+  Ride(
+      {super.id,
+      super.createdAt,
+      required super.start,
+      required super.startTime,
+      required super.end,
+      required super.endTime,
+      required super.seats,
+      this.price,
+      required this.status,
+      required this.driveId,
+      this.drive,
+      required this.riderId,
+      this.rider,
+      super.show});
 
-  factory Ride.previewFromDrive(
-    Drive drive,
-    String start,
-    String end,
-    DateTime startTime,
-    DateTime endTime,
-    int seats,
-    int riderId,
-    double price,
-  ) {
+  factory Ride.previewFromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
+      int riderId, double price) {
     return Ride(
       start: start,
       end: end,
@@ -58,20 +50,20 @@ class Ride extends Trip {
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      start: json['start'],
-      startTime: DateTime.parse(json['start_time']),
-      end: json['end'],
-      endTime: DateTime.parse(json['end_time']),
-      seats: json['seats'],
-      price: json['price'],
-      status: RideStatus.values[json['status']],
-      riderId: json['rider_id'],
-      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
-      driveId: json['drive_id'],
-      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-    );
+        id: json['id'],
+        createdAt: DateTime.parse(json['created_at']),
+        start: json['start'],
+        startTime: DateTime.parse(json['start_time']),
+        end: json['end'],
+        endTime: DateTime.parse(json['end_time']),
+        seats: json['seats'],
+        price: json['price'],
+        status: RideStatus.values[json['status']],
+        riderId: json['rider_id'],
+        rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
+        driveId: json['drive_id'],
+        drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+        show: json['show']);
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {

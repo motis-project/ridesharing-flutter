@@ -8,7 +8,6 @@ import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../account/models/profile.dart';
 import '../../account/models/profile_feature.dart';
 import '../../drives/models/drive.dart';
-import 'package:timelines/timelines.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/ride_detail_page.dart';
@@ -16,7 +15,6 @@ import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
@@ -96,8 +94,13 @@ class RideCardState extends TripCardState<RideCard> {
   @override
   Widget buildBottomRight() {
     List<Review>? reviews = ride!.drive!.driver!.reviewsReceived;
-    AggregateReview aggregateReview =
-        AggregateReview(rating: 0, comfortRating: 0, safetyRating: 0, reliabilityRating: 0, hospitalityRating: 0);
+    AggregateReview aggregateReview = AggregateReview(
+        rating: 0,
+        comfortRating: 0,
+        safetyRating: 0,
+        reliabilityRating: 0,
+        hospitalityRating: 0,
+        numberOfReviews: reviews!.length);
     if (reviews != null) {
       aggregateReview = AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!);
     }
