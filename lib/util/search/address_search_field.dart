@@ -44,7 +44,6 @@ class AddressSearchField extends StatelessWidget {
       label: getLabelText(context),
       tooltip: getHintText(context),
       excludeSemantics: true,
-      readOnly: true,
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
@@ -52,6 +51,7 @@ class AddressSearchField extends StatelessWidget {
           labelText: getLabelText(context),
           hintText: getHintText(context),
         ),
+        readOnly: true,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return getValidatorEmptyText(context);
