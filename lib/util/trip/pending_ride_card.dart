@@ -14,6 +14,7 @@ class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;
   final Drive drive;
   const PendingRideCard(super.trip, {super.key, required this.reloadPage, required this.drive});
+  final Duration extraTime = const Duration(minutes: 5);
 
   @override
   State<PendingRideCard> createState() => _PendingRideCard();
@@ -71,7 +72,14 @@ class _PendingRideCard extends State<PendingRideCard> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ProfileWidget(trip.rider!),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ProfileWidget(widget.trip.rider!),
+                Text(
+                    "+ ${widget.extraTime.inHours.toString().padLeft(2, "0")}:${(widget.extraTime.inMinutes % 60).toString().padLeft(2, "0")}"),
+              ],
+            ),
           ),
           const Divider(
             thickness: 1,
@@ -92,22 +100,16 @@ class _PendingRideCard extends State<PendingRideCard> {
               ),
               ButtonBar(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showApproveDialog(context)),
-                      icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
-                      tooltip: S.of(context).approve,
-                    ),
+                  IconButton(
+                    onPressed: (() => showApproveDialog(context)),
+                    icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+                    tooltip: S.of(context).approve,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showRejectDialog(context)),
-                      icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
-                      tooltip: S.of(context).reject,
-                    ),
-                  )
+                  IconButton(
+                    onPressed: (() => showRejectDialog(context)),
+                    icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+                    tooltip: S.of(context).reject,
+                  ),
                 ],
               ),
             ],
