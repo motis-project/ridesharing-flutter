@@ -117,16 +117,13 @@ class _DriveChatPageState extends State<DriveChatPage> {
             onTap: () => print("Hey"),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ProfileWidget(riders.elementAt(index)),
-                  const Icon(
-                    Icons.chat,
-                    color: Colors.black,
-                    size: 36.0,
-                  ),
-                ],
+              child: ProfileWidget(
+                riders.elementAt(index),
+                actionWidget: const Icon(
+                  Icons.chat,
+                  color: Colors.black,
+                  size: 36.0,
+                ),
               ),
             ),
           ),

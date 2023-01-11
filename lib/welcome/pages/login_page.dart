@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:motis_mitfahr_app/util/email_field.dart';
 import 'package:motis_mitfahr_app/util/loading_button.dart';
 import 'package:motis_mitfahr_app/util/password_field.dart';
@@ -77,6 +78,8 @@ class _LoginFormState extends State<LoginForm> {
                 ? S.of(context).pageLoginFailureCredentials
                 : S.of(context).pageLoginFailureEmailNotConfirmed
             : S.of(context).failureSnackBar;
+
+        SemanticsService.announce(text, TextDirection.ltr);
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(text),

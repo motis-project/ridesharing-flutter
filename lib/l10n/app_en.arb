@@ -5,6 +5,10 @@
   "more": "More",
   "yes": "Yes",
   "no": "No",
+  "approve": "Approve",
+  "reject": "Reject",
+  "edit": "Edit",
+  "save": "Save",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",
@@ -13,6 +17,30 @@
   "@seatsCount": {
     "placeholders": {
       "count": {}
+    }
+  },
+  "labelXOfYseats": "{seats} of {maxSeats} seats",
+  "@labelXOfYseats": {
+    "placeholders": {
+      "seats": {},
+      "maxSeats": {}
+    }
+  },
+  "labelUnknownSeats": "unknown number of {maxSeats} seats",
+  "@labelUnknownSeats": {
+    "placeholders": {
+      "maxSeats": {}
+    }
+  },
+
+  "openChat": "Open Chat",
+  "openDetails": "Open Details",
+  "seeProfile": "See profile",
+
+  "ratingBarSemantics": "{rating} stars",
+  "@ratingBarSemantics": {
+    "placeholders": {
+      "rating": {}
     }
   },
 
@@ -44,6 +72,7 @@
   "formAddressDestination": "Destination",
   "formAddressDestinationHint": "Enter your destination",
   "formAddressDestinationValidateEmpty": "Please enter your destination",
+  "formClearInput": "Clear input",
   "formSubmit": "Submit",
   "formSubmitFail": "Failed",
   "formSubmitSuccess": "Success",
@@ -94,6 +123,52 @@
   "pageAccountThemesLight": "Light",
   "pageAccountThemesDark": "Dark",
 
+  "pageProfileUpdateProfilePictureTitle": "Update profile picture",
+  "pageProfileUpdateProfilePictureFromGallery": "From Gallery",
+  "pageProfileUpdateProfilePictureDelete": "Delete",
+  "pageProfileDescriptionTitle": "Description",
+  "pageProfileDescriptionEmpty": "No description",
+  "pageProfileFullNameTitle": "Full Name",
+  "pageProfileFullNameEmpty": "No full name",
+  "pageProfileBirthDateTitle": "Birth Date",
+  "pageProfileBirthDateEmpty": "No birth date",
+  "pageProfileGenderTitle": "Gender",
+  "pageProfileGenderEmpty": "No gender",
+  "pageProfileFeaturesTitle": "Features",
+  "pageProfileFeaturesEmpty": "No features",
+  "pageProfileReviewsTitle": "Reviews",
+  "pageProfileButtonReport": "Report User",
+  "pageProfileButtonReported": "User reported",
+  "pageProfileButtonMessage": "Your report has been sent. We will review it as soon as possible.",
+
+  "pageProfileEditBirthDateTitle": "Edit Birth Date",
+  "pageProfileEditBirthDateHint": "Enter your birth date",
+  "pageProfileEditDescriptionTitle": "Edit Description",
+  "pageProfileEditDescriptionHint": "Enter a description",
+  "pageProfileEditFullNameTitle": "Edit Full Name",
+  "pageProfileEditSurnameHint": "Enter your first name",
+  "pageProfileEditNameHint": "Enter your last name",
+  "pageProfileEditGenderTitle": "Choose Gender",
+  "pageProfileEditGenderPreferNotToSay": "Prefer not to say",
+  "pageProfileEditProfileFeaturesTitle": "Order your profile features",
+  "pageProfileEditProfileFeaturesHint": "Drag your profile features here",
+  "pageProfileEditProfileFeaturesSelected": "Selected",
+  "pageProfileEditProfileFeaturesNotSelected": "Not selected",
+  "pageProfileEditProfileFeaturesMutuallyExclusive": "Mutually exclusive feature already selected: {feature}",
+  "@pageProfileEditProfileFeaturesMutuallyExclusive": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "pageProfileEditUsernameTitle": "Edit Username",
+  "pageProfileEditUsernameHint": "Enter your username",
+  "pageProfileEditUsernameValidateEmpty": "Username cannot be empty",
+
+  "widgetAvatarDetailsLabel": "Profile picture",
+  "widgetAvatarDetailsTooltip": "See details",
+  "widgetAvatarUploadTooltip": "Upload new picture",
+  "widgetAvatarImageCouldNotBeStored": "Image could not be stored.",
+
   "pageHelpTitle": "Help",
   "pageHelpContactUs": "Contact Us",
   "pageHelpWhatIsMotisQuestion": "What can this app do?",
@@ -112,10 +187,32 @@
   "reviewCategoryReliability": "Reliability",
   "reviewCategoryHospitality": "Hospitality",
 
+  "pageReviewsTitle": "Reviews",
+  "pageReviewsRate": "Rate",
+  "pageReviewsUpdateRating": "Update rating",
+
+  "reviewsPreviewReviews" : "Reviews",
+  "reviewsPreviewShowReviews" : "Show reviews",
+
   "pageWriteReviewTitle": "Write Review",
   "pageWriteReviewReview": "Review",
   "pageWriteReviewReviewHint": "What did you like or dislike about the ride?",
   "pageWriteReviewRatingRequired": "Please rate your experience.",
+
+  "pageWriteReportField": "Report",
+  "pageWriteReportFieldHint": "Please outline the reason for the report",
+  "pageWriteReportFieldValidateEmpty": "Please enter a reason for the report",
+
+  "modelProfileGenderMale": "Male",
+  "modelProfileGenderFemale": "Female",
+  "modelProfileGenderDiverse": "Diverse",
+
+  "modelReportCategoryDidNotShowUp": "Did not show up",
+  "modelReportCategoryDidNotPay": "Did not pay the agreed amount",
+  "modelReportCategoryDidNotFollowRules": "Did not follow rules",
+  "modelReportCategoryWasAggressive": "Was aggressive",
+  "modelReportCategoryUsedBadLanguage": "Used bad language",
+  "modelReportCategoryOther": "Other reason",
 
   "modelProfileFeatureNoSmoking": "No Smoking",
   "modelProfileFeatureSmoking": "Smoking",
@@ -128,7 +225,6 @@
   "modelProfileFeatureTalkative": "Talkative",
   "modelProfileFeatureMusic": "Music",
   "modelProfileFeatureQuiet": "Quiet",
-  "modelProfileFeatureLuxury": "Luxury",
   "modelProfileFeatureSpeedyDrivingStyle": "Speedy Driving Style",
   "modelProfileFeatureRelaxedDrivingStyle": "Relaxed Driving Style",
   "modelProfileFeatureAccessible": "Accessible",
@@ -140,6 +236,22 @@
   "pageCreateDriveButtonCreate": "Create",
 
   "pageDriveDetailTitle": "Drive Detail",
+  "pageDriveDetailLabelStartDrive": "Start of drive",
+  "pageDriveDetailLabelEndDrive": "End of drive",
+  "pageDriveDetailLabelPickup": "{seats, plural, =1{Pick up {user}}, other{Pick up {seats} people associated with {user}}",
+  "@pageDriveDetailLabelPickup": {
+    "placeholders": {
+      "seats": {},
+      "user": {}
+    }
+  },
+  "pageDriveDetailLabelDropoff": "{seats, plural, =1{Drop off {user}}, other{Drop off {seats} people associated with {user}}",
+  "@pageDriveDetailLabelDropoff": {
+    "placeholders": {
+      "seats": {},
+      "user": {}
+    }
+  },
   "pageDriveDetailButtonCancel": "Cancel Drive",
   "pageDriveDetailCancelDialogTitle": "Confirm Cancellation",
   "pageDriveDetailCancelDialogMessage": "Are you sure you want to cancel this drive?",
@@ -147,6 +259,7 @@
   "pageDriveDetailBannerCancelled": "You have cancelled this drive.",
 
   "pageDrivesTitle": "Drives",
+  "pageDrivesTooltipOfferRide": "Offer ride",
 
   "widgetTripBuilderTabUpcoming": "Upcoming",
   "widgetTripBuilderTabPast": "Past",
@@ -171,7 +284,9 @@
   "pageSearchSuggestionsNoRidesFound": "There are no fitting rides available",
 
   "pageRidesTitle": "Rides",
+  "pageRidesTooltipSearchRide": "Search ride",
 
+  "pageRideDetailTitle": "Ride Detail",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
   "pageRideDetailButtonRate": "Rate Driver",

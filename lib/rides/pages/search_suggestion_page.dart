@@ -42,8 +42,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _dropdownValue = widget.seats;
     _startController.text = widget.start;
     _destinationController.text = widget.end;
-    _dateController.text = localeManager.formatDate(widget.date);
-    _timeController.text = localeManager.formatTime(widget.date);
     loadRides();
   }
 
@@ -66,8 +64,11 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       lastDate: firstDate.add(const Duration(days: 30)),
     ).then((value) {
       if (value != null) {
-        _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-        _dateController.text = localeManager.formatDate(_selectedDate);
+        setState(() {
+          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
+          _dateController.text = localeManager.formatDate(_selectedDate);
+        });
+        if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
     });
   }
@@ -81,13 +82,17 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       },
     ).then((value) {
       if (value != null) {
-        _selectedDate = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-        _timeController.text = localeManager.formatTime(_selectedDate);
+        setState(() {
+          _selectedDate =
+              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
+          _timeController.text = localeManager.formatTime(_selectedDate);
+        });
+        if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
     });
   }
 
-  String? _timeValidator(String? value) {
+  String? _dateTimeValidator(String? value) {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
@@ -177,33 +182,38 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildDatePicker() {
-    return TextFormField(
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: S.of(context).formDate,
+    _dateController.text = localeManager.formatDate(_selectedDate);
+
+    return Semantics(
+      button: true,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formDate,
+        ),
+        readOnly: true,
+        onTap: _showDatePicker,
+        controller: _dateController,
       ),
-      readOnly: true,
-      onTap: () {
-        _showDatePicker;
-        loadRides();
-      },
-      controller: _dateController,
     );
   }
 
   Widget buildTimePicker() {
-    return TextFormField(
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: S.of(context).formTime,
+    _timeController.text = localeManager.formatTime(_selectedDate);
+
+    return Semantics(
+      button: true,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formTime,
+          errorText: _dateTimeValidator(_timeController.text),
+        ),
+        readOnly: true,
+        onTap: _showTimePicker,
+        controller: _timeController,
+        validator: _dateTimeValidator,
       ),
-      readOnly: true,
-      onTap: () {
-        _showTimePicker;
-        loadRides();
-      },
-      controller: _timeController,
-      validator: _timeValidator,
     );
   }
 

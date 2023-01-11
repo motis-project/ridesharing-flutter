@@ -69,14 +69,9 @@ class _PendingRideCard extends State<PendingRideCard> {
     return Card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ProfileWidget(widget.trip.rider!),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ProfileWidget(trip.rider!),
           ),
           const Divider(
             thickness: 1,
@@ -97,14 +92,22 @@ class _PendingRideCard extends State<PendingRideCard> {
               ),
               ButtonBar(
                 children: [
-                  IconButton(
-                    onPressed: (() => showApproveDialog(context)),
-                    icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: (() => showApproveDialog(context)),
+                      icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+                      tooltip: S.of(context).approve,
+                    ),
                   ),
-                  IconButton(
-                    onPressed: (() => showRejectDialog(context)),
-                    icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
-                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: (() => showRejectDialog(context)),
+                      icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+                      tooltip: S.of(context).reject,
+                    ),
+                  )
                 ],
               ),
             ],

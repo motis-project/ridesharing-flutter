@@ -8,6 +8,10 @@ import '../../drives/pages/drive_detail_page.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
+
+import '../locale_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
