@@ -117,7 +117,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
             child: ProfileWidget(
               riders.elementAt(index),
               //TODO go to chat
-              customAction: () {},
+              onTap: () {},
               actionWidget: const Icon(
                 Icons.chat,
                 color: Colors.black,
