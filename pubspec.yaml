@@ -62,7 +62,6 @@ dependencies:
 
   #For the shimmer effect
   shimmer: ^2.0.0
-  mocktail: ^0.3.0
 
   # Fuzzy search
   fuzzywuzzy: ^0.2.0

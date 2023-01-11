@@ -490,13 +490,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.3.2"
-  mocktail:
-    dependency: "direct main"
-    description:
-      name: mocktail
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   node_preamble:
     dependency: transitive
     description:
@@ -860,7 +853,7 @@ packages:
     source: hosted
     version: "1.2.1"
   test:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: test
       url: "https://pub.dartlang.org"
