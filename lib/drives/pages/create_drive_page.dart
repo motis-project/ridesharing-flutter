@@ -99,8 +99,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         final Profile driver = SupabaseManager.getCurrentProfile()!;
 
-        print("$_startSuggestion $_destinationSuggestion");
-
         bool hasDrive =
             await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasDrive && mounted) {
@@ -120,8 +118,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
         Drive drive = Drive(
           driverId: driver.id!,
-          start: _startController.text,
-          end: _destinationController.text,
+          start: _startSuggestion!.name,
+          startPosition: _startSuggestion!.position,
+          end: _destinationSuggestion!.name,
+          endPosition: _destinationSuggestion!.position,
           seats: _dropdownValue,
           startTime: _selectedDate,
           endTime: endTime,

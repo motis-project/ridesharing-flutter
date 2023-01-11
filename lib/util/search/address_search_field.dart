@@ -44,6 +44,7 @@ class AddressSearchField extends StatelessWidget {
       label: getLabelText(context),
       tooltip: getHintText(context),
       excludeSemantics: true,
+      readOnly: true,
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(

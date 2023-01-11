@@ -5,6 +5,8 @@ import 'package:motis_mitfahr_app/util/search/address_search_field.dart';
 import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/search/address_suggestion.dart';
+
 class SearchRidePage extends StatefulWidget {
   const SearchRidePage({super.key});
 
@@ -37,7 +39,9 @@ class SearchRideForm extends StatefulWidget {
 class _SearchRideFormState extends State<SearchRideForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
+  late AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  late AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
@@ -109,12 +113,16 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _onSubmit() async {
-    //todo: pressing search button
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) => SearchSuggestionPage(
-                _startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
+          builder: (context) => SearchSuggestionPage(
+            _startSuggestion!,
+            _destinationSuggestion!,
+            _selectedDate,
+            _dropdownValue,
+          ),
+        ),
       );
     }
   }
@@ -196,12 +204,16 @@ class _SearchRideFormState extends State<SearchRideForm> {
           children: [
             AddressSearchField.start(
               controller: _startController,
-              onSelected: (suggestion) {},
+              onSelected: (suggestion) {
+                _startSuggestion = suggestion;
+              },
             ),
             const SizedBox(height: 15),
             AddressSearchField.destination(
               controller: _destinationController,
-              onSelected: (suggestion) {},
+              onSelected: (suggestion) {
+                _destinationSuggestion = suggestion;
+              },
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 15),
