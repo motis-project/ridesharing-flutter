@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:mockito/annotations.dart';
 import 'package:supabase/supabase.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 class MockServer {
   static const customApiKey = 'customApiKey';
@@ -17,7 +17,7 @@ class MockServer {
   static Future<void> handleRequests(UrlProcessor processor, {String? expectedFilter}) async {
     await for (final HttpRequest request in mockServer) {
       final url = request.uri.toString();
-      //print(url);
+      // print(url);
       if (url.startsWith("/rest")) {
         if (expectedFilter != null) {
           expect(url.contains(expectedFilter), isTrue);

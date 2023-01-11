@@ -30,7 +30,6 @@ void main() {
         {'drive_id': 2, 'seats': 1},
       ]));
       final data = await supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
-      // expect((data as List).length, 2);
       print(data);
     });
     test('test without explicit URL', () async {
@@ -39,7 +38,6 @@ void main() {
         {'drive_id': 2, 'seats': 1},
       ]));
       final data = await supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
-      // expect((data as List).length, 2);
       print(data);
     });
   });
