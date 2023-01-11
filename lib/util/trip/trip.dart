@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/model.dart';
+import 'package:motis_mitfahr_app/util/search/position.dart';
 
 abstract class Trip extends Model {
   final String start;
+  final Position startPosition;
   final DateTime startTime;
   final String end;
+  final Position endPosition;
   final DateTime endTime;
 
   final int seats;
@@ -13,8 +16,10 @@ abstract class Trip extends Model {
     super.id,
     super.createdAt,
     required this.start,
+    required this.startPosition,
     required this.startTime,
     required this.end,
+    required this.endPosition,
     required this.endTime,
     required this.seats,
   });

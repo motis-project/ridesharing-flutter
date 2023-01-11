@@ -4,6 +4,8 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../../util/search/position.dart';
+
 class Drive extends Trip {
   bool cancelled;
 
@@ -16,8 +18,10 @@ class Drive extends Trip {
     super.id,
     super.createdAt,
     required super.start,
+    required super.startPosition,
     required super.startTime,
     required super.end,
+    required super.endPosition,
     required super.endTime,
     required super.seats,
     this.cancelled = false,
@@ -32,8 +36,10 @@ class Drive extends Trip {
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
       start: json['start'],
+      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
       startTime: DateTime.parse(json['start_time']),
       end: json['end'],
+      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       cancelled: json['cancelled'],
@@ -50,8 +56,12 @@ class Drive extends Trip {
   Map<String, dynamic> toJson() {
     return {
       'start': start,
+      'start_lat': startPosition.lat,
+      'start_lng': startPosition.lng,
       'start_time': startTime.toString(),
       'end': end,
+      'end_lat': endPosition.lat,
+      'end_lng': endPosition.lng,
       'end_time': endTime.toString(),
       'cancelled': cancelled,
       'seats': seats,
