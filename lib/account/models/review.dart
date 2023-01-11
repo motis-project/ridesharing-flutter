@@ -1,4 +1,5 @@
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
 
 import '../../util/model.dart';
 
@@ -96,13 +97,20 @@ class AggregateReview {
   double reliabilityRating;
   double hospitalityRating;
 
+  int numberOfReviews;
+
   AggregateReview({
     required this.rating,
     required this.comfortRating,
     required this.safetyRating,
     required this.reliabilityRating,
     required this.hospitalityRating,
+    required this.numberOfReviews,
   });
+
+  AggregateReviewWidget widget() {
+    return AggregateReviewWidget(this);
+  }
 
   factory AggregateReview.fromReviews(List<Review> reviews) {
     double rating =
@@ -136,6 +144,7 @@ class AggregateReview {
       safetyRating: safetyRating,
       reliabilityRating: reliabilityRating,
       hospitalityRating: averageRating,
+      numberOfReviews: reviews.length,
     );
   }
 }

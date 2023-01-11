@@ -16,10 +16,6 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  void signOut() {
-    supabaseClient.auth.signOut();
-  }
-
   void showDesignDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -93,24 +89,13 @@ class _AccountPageState extends State<AccountPage> {
       ),
       body: ListView(
         children: [
-          InkWell(
-            onTap: () => {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ProfileWidget(
-                    SupabaseManager.getCurrentProfile()!,
-                    size: 25,
-                  ),
-                  TextButton.icon(
-                    onPressed: signOut,
-                    icon: const Icon(Icons.logout),
-                    label: Text(S.of(context).pageAccountSignOut),
-                  ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: ProfileWidget(
+              SupabaseManager.getCurrentProfile()!,
+              size: 25,
+              actionWidget: const Icon(Icons.chevron_right),
+              onPop: (_) => setState(() {}),
             ),
           ),
           ListTile(
