@@ -77,7 +77,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
   }
 
   void onPressed(context) async {
-    await supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update({
       'gender': _gender?.index,
     }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();
