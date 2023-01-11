@@ -23,15 +23,21 @@ class _HelpPageState extends State<HelpPage> {
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion3,
-          answer: S.of(context).pageHelpAnswer3,
+          answer: S
+              .of(context)
+              .pageHelpAnswer3(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryDidNotPay),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion4,
-          answer: S.of(context).pageHelpAnswer4,
+          answer: S
+              .of(context)
+              .pageHelpAnswer4(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryDidNotShowUp),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion5,
-          answer: S.of(context).pageHelpAnswer5,
+          answer: S
+              .of(context)
+              .pageHelpAnswer5(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryOther),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion6,
@@ -39,27 +45,28 @@ class _HelpPageState extends State<HelpPage> {
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion7,
-          answer: S.of(context).pageHelpAnswer7,
+          //TODO Withdraw button text here if PR is merged
+          answer: S.of(context).pageHelpAnswer7(S.of(context).cancel),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion8,
-          answer: S.of(context).pageHelpAnswer8,
+          answer: S.of(context).pageHelpAnswer8(S.of(context).pageProfileButtonReport),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion9,
-          answer: S.of(context).pageHelpAnswer9,
+          answer: S.of(context).pageHelpAnswer9(S.of(context).pageAccountTitle),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion10,
-          answer: S.of(context).pageHelpAnswer10,
+          answer: S.of(context).pageHelpAnswer10(S.of(context).pageDrivesTitle),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion11,
-          answer: S.of(context).pageHelpAnswer11,
+          answer: S.of(context).pageHelpAnswer11(S.of(context).pageRidesTitle),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion12,
-          answer: S.of(context).pageHelpAnswer12,
+          answer: S.of(context).pageHelpAnswer12(S.of(context).pageRideDetailButtonRate),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion13,
@@ -67,7 +74,7 @@ class _HelpPageState extends State<HelpPage> {
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion14,
-          answer: S.of(context).pageHelpAnswer14,
+          answer: S.of(context).pageHelpAnswer14(S.of(context).pageHelpContactUs),
         ),
       ];
 
