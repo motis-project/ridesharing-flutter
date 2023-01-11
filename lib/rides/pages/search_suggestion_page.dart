@@ -134,7 +134,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   //todo: filter
-  void filter() {
+  void _showFilterDialog() {
     loadRides();
   }
 
@@ -143,22 +143,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       TimelineTile(
         contents: Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildLocationPicker(isStart: true),
-              const SizedBox(width: 20),
-              SizedBox(
-                width: 65,
-                child: buildTimePicker(),
-              ),
-              const SizedBox(width: 5),
-              SizedBox(
-                width: 110,
-                child: buildDatePicker(),
-              ),
-            ],
-          ),
+          child: buildLocationPicker(isStart: true),
         ),
         node: const TimelineNode(
           indicator: CustomOutlinedDotIndicator(),
@@ -168,14 +153,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       TimelineTile(
         contents: Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildLocationPicker(isStart: false),
-              const SizedBox(width: 90),
-              buildSeatsPicker(),
-            ],
-          ),
+          child: buildLocationPicker(isStart: false),
         ),
         node: const TimelineNode(
           indicator: CustomOutlinedDotIndicator(),
@@ -188,16 +166,18 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildDatePicker() {
     _dateController.text = localeManager.formatDate(_selectedDate);
 
-    return Semantics(
-      button: true,
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: S.of(context).formDate,
+    return Expanded(
+      child: Semantics(
+        button: true,
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: S.of(context).formDate,
+          ),
+          readOnly: true,
+          onTap: _showDatePicker,
+          controller: _dateController,
         ),
-        readOnly: true,
-        onTap: _showDatePicker,
-        controller: _dateController,
       ),
     );
   }
@@ -205,18 +185,20 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildTimePicker() {
     _timeController.text = localeManager.formatTime(_selectedDate);
 
-    return Semantics(
-      button: true,
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: S.of(context).formTime,
-          errorText: _dateTimeValidator(_timeController.text),
+    return Expanded(
+      child: Semantics(
+        button: true,
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: S.of(context).formTime,
+            errorText: _dateTimeValidator(_timeController.text),
+          ),
+          readOnly: true,
+          onTap: _showTimePicker,
+          controller: _timeController,
+          validator: _dateTimeValidator,
         ),
-        readOnly: true,
-        onTap: _showTimePicker,
-        controller: _timeController,
-        validator: _dateTimeValidator,
       ),
     );
   }
@@ -248,28 +230,26 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildLocationPicker({bool isStart = true}) {
     TextEditingController controller = isStart ? _startController : _destinationController;
 
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: () async {
-          final AddressSuggestion? suggestion = await showSearch<AddressSuggestion?>(
-            context: context,
-            delegate: AddressSearchDelegate(),
-            query: controller.text,
-          );
-          if (suggestion != null) {
-            controller.text = suggestion.name;
-            if (isStart) {
-              _startSuggestion = suggestion;
-            } else {
-              _destinationSuggestion = suggestion;
-            }
-            loadRides();
+    return ElevatedButton(
+      onPressed: () async {
+        final AddressSuggestion? suggestion = await showSearch<AddressSuggestion?>(
+          context: context,
+          delegate: AddressSearchDelegate(),
+          query: controller.text,
+        );
+        if (suggestion != null) {
+          controller.text = suggestion.name;
+          if (isStart) {
+            _startSuggestion = suggestion;
+          } else {
+            _destinationSuggestion = suggestion;
           }
-        },
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(controller.text),
-        ),
+          loadRides();
+        }
+      },
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(controller.text),
       ),
     );
   }
@@ -292,15 +272,22 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildFilterPicker() {
-    return SizedBox(
-      height: 20,
-      child: ElevatedButton(
-        onPressed: () => filter(),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(S.of(context).pageSearchSuggestionsButtonFilter),
-        ),
-      ),
+    return IconButton(
+      onPressed: _showFilterDialog,
+      icon: const Icon(Icons.tune),
+      tooltip: "Filter",
+    );
+  }
+
+  Widget buildDateSeatsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        buildDatePicker(),
+        buildTimePicker(),
+        const SizedBox(width: 50),
+        buildSeatsPicker(),
+      ],
     );
   }
 
@@ -309,15 +296,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageSearchSuggestionsTitle),
+        actions: [buildFilterPicker()],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             buildSearchFieldViewer(),
-            const SizedBox(height: 5),
-            buildFilterPicker(),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
+            buildDateSeatsRow(),
+            const Divider(thickness: 1),
             buildSearchCardList(),
           ],
         ),
