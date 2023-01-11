@@ -134,12 +134,7 @@ class Drive extends Trip {
   Future<void> cancel() async {
     cancelled = true;
     await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    //cancel all pending and approved rides for this drive.
-    await supabaseClient
-        .from('rides')
-        .update({'status': RideStatus.cancelledByDriver.index})
-        .eq('drive_id', id)
-        .or('status.eq.${RideStatus.pending.index},status.eq.${RideStatus.approved.index}');
+    //the rides get updated automatically by a supabase function.
   }
 
   @override
