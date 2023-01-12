@@ -22,7 +22,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
               children: [
                 Text(
                   '${localeManager.formatTime(trip!.startTime)}  ${trip!.start}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),
@@ -65,7 +65,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
               children: [
                 Text(
                   '${localeManager.formatTime(trip!.endTime)}  ${trip!.end}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),
