@@ -128,7 +128,7 @@ class AddressSuggestionManager {
 
     if (query == '') return _historySuggestions.take(15).toList();
 
-    List<ExtractedResult<AddressSuggestion>> fuzyyResults = extractTop<AddressSuggestion>(
+    List<ExtractedResult<AddressSuggestion>> fuzzyResults = extractTop<AddressSuggestion>(
       query: query,
       choices: _historySuggestions,
       getter: (suggestion) => suggestion.toString(),
@@ -136,9 +136,14 @@ class AddressSuggestionManager {
       cutoff: _fuzzySearchCutoff,
     ).toList();
 
-    fuzyyResults.sort((a, b) => a.compareTo(b));
+    fuzzyResults.sort((a, b) {
+      int scoreDifference = b.score - a.score;
+      int timeDifference = a.choice.lastUsed.millisecondsSinceEpoch - b.choice.lastUsed.millisecondsSinceEpoch;
 
-    return fuzyyResults.map((result) => result.choice).toList();
+      return scoreDifference + timeDifference ~/ 100000000;
+    });
+
+    return fuzzyResults.map((result) => result.choice).toList();
   }
 
   Future<List<AddressSuggestion>> getStationSuggestions(String query) async {
@@ -173,14 +178,5 @@ class AddressSuggestionManager {
 
   String getStorageKey() {
     return "$_storageKey.${SupabaseManager.getCurrentProfile()?.id}";
-  }
-}
-
-extension Score on ExtractedResult<AddressSuggestion> {
-  int compareTo(ExtractedResult<AddressSuggestion> other) {
-    int scoreDifference = score - other.score;
-    int timeDifference = other.choice.lastUsed.millisecondsSinceEpoch - choice.lastUsed.millisecondsSinceEpoch;
-
-    return scoreDifference * 100 + timeDifference ~/ 1000;
   }
 }
