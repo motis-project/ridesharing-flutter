@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
@@ -60,6 +61,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   late int _minReliabilityRating;
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
+  late SearchSuggestionSorting _sorting;
   final _maxDeviationController = TextEditingController();
 
   void setDefaultFilterValues() {
@@ -70,6 +72,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _minHospitalityRating = 1;
     _selectedFeatures = [];
     _maxDeviationController.text = "12";
+    _sorting = SearchSuggestionSorting.relevance;
   }
 
   List<Ride>? _rideSuggestions;
@@ -147,11 +150,13 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
-    List<dynamic> data = await SupabaseManager.supabaseClient
-        .from('drives')
-        .select('*, driver:driver_id (*)')
-        .eq('start', _startController.text)
-        .order('start_time', ascending: true);
+    List<dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+          *,
+          driver:driver_id (
+            *,
+            profile_features (*)
+          )
+        ''').eq('start', _startController.text);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
         .map((drive) => Ride.previewFromDrive(
@@ -289,27 +294,40 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildSearchCardList() {
-    return _rideSuggestions == null
-        ? const Center(child: CircularProgressIndicator())
-        : Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                final ride = _rideSuggestions![index];
-                return SearchCard(ride);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 10);
-              },
-              itemCount: _rideSuggestions!.length,
-            ),
-          );
-  }
-
-  Widget buildFilterPicker() {
-    return IconButton(
-      onPressed: _showFilterDialog,
-      icon: const Icon(Icons.tune),
-      tooltip: "Filter",
+    if (_rideSuggestions == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    List<Ride> filteredSuggestions = _applyFilters(_rideSuggestions!);
+    Widget list;
+    if (filteredSuggestions.isEmpty) {
+      list = Center(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              Image.asset('assets/shrug.png'),
+              Text(
+                S.of(context).pageSearchSuggestionsEmpty,
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      list = ListView.separated(
+        itemBuilder: (context, index) {
+          final ride = filteredSuggestions[index];
+          return SearchCard(ride);
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(height: 10);
+        },
+        itemCount: filteredSuggestions.length,
+      );
+    }
+    return Expanded(
+      child: RefreshIndicator(onRefresh: loadRides, child: list),
     );
   }
 
@@ -347,136 +365,200 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
+  Widget buildFilterPicker() {
+    return IconButton(
+      onPressed: _showFilterDialog,
+      icon: const Icon(Icons.tune),
+      tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
+    );
+  }
+
+  Widget filterCategory(String title, Widget content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        content,
+      ],
+    );
+  }
+
+  Widget _buildRatingFilter(void Function(void Function()) innerSetState) {
+    return filterCategory(
+      S.of(context).pageSearchSuggestionsFilterMinimumRating,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomRatingBar(
+            size: CustomRatingBarSize.large,
+            rating: _minRating,
+            onRatingUpdate: (newRating) => innerSetState(
+              () => _minRating = newRating.toInt(),
+            ),
+          ),
+          if (_isRatingExpanded) ...[
+            Text(S.of(context).reviewCategoryComfort),
+            CustomRatingBar(
+              size: CustomRatingBarSize.medium,
+              rating: _minComfortRating,
+              onRatingUpdate: (newRating) => innerSetState(
+                () => _minComfortRating = newRating.toInt(),
+              ),
+            ),
+            Text(S.of(context).reviewCategorySafety),
+            CustomRatingBar(
+              size: CustomRatingBarSize.medium,
+              rating: _minSafetyRating,
+              onRatingUpdate: (newRating) => innerSetState(
+                () => _minSafetyRating = newRating.toInt(),
+              ),
+            ),
+            Text(S.of(context).reviewCategoryReliability),
+            CustomRatingBar(
+              size: CustomRatingBarSize.medium,
+              rating: _minReliabilityRating,
+              onRatingUpdate: (newRating) => innerSetState(
+                () => _minReliabilityRating = newRating.toInt(),
+              ),
+            ),
+            Text(S.of(context).reviewCategoryHospitality),
+            CustomRatingBar(
+              size: CustomRatingBarSize.medium,
+              rating: _minHospitalityRating,
+              onRatingUpdate: (newRating) => innerSetState(
+                () => _minHospitalityRating = newRating.toInt(),
+              ),
+            ),
+          ],
+          TextButton(
+            onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
+            child: Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturesFilter(void Function(void Function()) innerSetState) {
+    List<Feature> shownFeatures = _isFeatureListExpanded ? Feature.values : _commonFeatures;
+    return filterCategory(
+      S.of(context).pageSearchSuggestionsFilterFeatures,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            runSpacing: -10,
+            children: List.generate(
+              shownFeatures.length,
+              (index) {
+                Feature feature = shownFeatures[index];
+                return FilterChip(
+                  avatar: feature.getIcon(context),
+                  label: Text(feature.getDescription(context)),
+                  selected: _selectedFeatures.contains(feature),
+                  onSelected: (selected) {
+                    if (_selectedFeatures.contains(feature)) {
+                      innerSetState(() => _selectedFeatures.remove(feature));
+                    } else {
+                      Feature? mutuallyExclusiveFeature = _selectedFeatures
+                          .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
+                      if (mutuallyExclusiveFeature != null) {
+                        String description = mutuallyExclusiveFeature.getDescription(context);
+                        String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+                        SemanticsService.announce(text, TextDirection.ltr);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(text)),
+                        );
+                        return;
+                      }
+                      innerSetState(() => _selectedFeatures.add(feature));
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+          TextButton(
+            onPressed: () => innerSetState(() => _isFeatureListExpanded = !_isFeatureListExpanded),
+            child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeviationFilter() {
+    return filterCategory(
+      S.of(context).pageSearchSuggestionsFilterDeviation,
+      Row(
+        children: [
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: TextField(
+              controller: _maxDeviationController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            ),
+          ),
+          Text(S.of(context).pageSearchSuggestionsFilterDeviationHours),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSortingFilter(void Function(void Function()) innerSetState) {
+    return filterCategory(
+      S.of(context).pageSearchSuggestionsFilterSorting,
+      DropdownButton(
+        value: _sorting,
+        items: SearchSuggestionSorting.values
+            .map(
+              (sorting) => DropdownMenuItem(
+                value: sorting,
+                child: Text(sorting.getDescription(context)),
+              ),
+            )
+            .toList(),
+        onChanged: (SearchSuggestionSorting? value) => innerSetState(
+          () => _sorting = value!,
+        ),
+      ),
+    );
+  }
+
   void _showFilterDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setState) {
-          List<Feature> shownFeatures = _isFeatureListExpanded ? Feature.values : _commonFeatures;
+        builder: (context, innerSetState) {
           return AlertDialog(
             content: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Minimum rating",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  CustomRatingBar(
-                    size: CustomRatingBarSize.large,
-                    rating: _minRating,
-                    onRatingUpdate: (newRating) => setState(
-                      () => _minRating = newRating.toInt(),
-                    ),
-                  ),
-                  if (_isRatingExpanded) ...[
-                    Text("Comfort"),
-                    CustomRatingBar(
-                      size: CustomRatingBarSize.medium,
-                      rating: _minComfortRating,
-                      onRatingUpdate: (newRating) => setState(
-                        () => _minComfortRating = newRating.toInt(),
-                      ),
-                    ),
-                    Text("Safety"),
-                    CustomRatingBar(
-                      size: CustomRatingBarSize.medium,
-                      rating: _minSafetyRating,
-                      onRatingUpdate: (newRating) => setState(
-                        () => _minSafetyRating = newRating.toInt(),
-                      ),
-                    ),
-                    Text("Reliability"),
-                    CustomRatingBar(
-                      size: CustomRatingBarSize.medium,
-                      rating: _minReliabilityRating,
-                      onRatingUpdate: (newRating) => setState(
-                        () => _minReliabilityRating = newRating.toInt(),
-                      ),
-                    ),
-                    Text("Hospitality"),
-                    CustomRatingBar(
-                      size: CustomRatingBarSize.medium,
-                      rating: _minHospitalityRating,
-                      onRatingUpdate: (newRating) => setState(
-                        () => _minHospitalityRating = newRating.toInt(),
-                      ),
-                    ),
-                  ],
-                  TextButton(
-                    onPressed: () => setState(() => _isRatingExpanded = !_isRatingExpanded),
-                    child: Text(_isRatingExpanded ? "Retract" : "Expand"),
-                  ),
-                  Text(
-                    "Features",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Wrap(
-                    children: List.generate(
-                      shownFeatures.length,
-                      (index) {
-                        Feature feature = shownFeatures[index];
-                        return InputChip(
-                          avatar: feature.getIcon(context),
-                          label: Text(feature.getDescription(context)),
-                          selected: _selectedFeatures.contains(feature),
-                          onSelected: (selected) {
-                            if (_selectedFeatures.contains(feature)) {
-                              setState(() => _selectedFeatures.remove(feature));
-                            } else {
-                              Feature? mutuallyExclusiveFeature = _selectedFeatures
-                                  .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
-                              if (mutuallyExclusiveFeature != null) {
-                                String description = mutuallyExclusiveFeature.getDescription(context);
-                                String text =
-                                    S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
-                                SemanticsService.announce(text, TextDirection.ltr);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(text)),
-                                );
-                                return;
-                              }
-                              setState(() => _selectedFeatures.add(feature));
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => setState(() => _isFeatureListExpanded = !_isFeatureListExpanded),
-                    child: Text(_isFeatureListExpanded ? "Retract" : "Expand"),
-                  ),
-                  Text(
-                    "Maximum deviation from selected time",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: TextField(
-                          controller: _maxDeviationController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
-                      ),
-                      Text("hours"),
-                    ],
-                  ),
+                  _buildRatingFilter(innerSetState),
+                  _buildFeaturesFilter(innerSetState),
+                  _buildDeviationFilter(),
+                  _buildSortingFilter(innerSetState),
                 ],
               ),
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("Reset to default"),
-                onPressed: () => setState(() => setDefaultFilterValues()),
+                child: Text(S.of(context).pageSearchSuggestionsFilterResetToDefault),
+                onPressed: () => innerSetState(() => setDefaultFilterValues()),
               ),
               TextButton(
                 child: Text(S.of(context).okay),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  setState(() {});
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           );
@@ -484,5 +566,53 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       ),
     );
     loadRides();
+  }
+
+  List<Ride> _applyFilters(List<Ride> rideSuggestions) {
+    return rideSuggestions
+        .where(
+          (Ride ride) {
+            Profile driver = ride.drive!.driver!;
+            bool ratingSatisfied = driver.getAggregateReview().rating >= _minRating &&
+                driver.getAggregateReview().comfortRating >= _minComfortRating &&
+                driver.getAggregateReview().safetyRating >= _minSafetyRating &&
+                driver.getAggregateReview().reliabilityRating >= _minReliabilityRating &&
+                driver.getAggregateReview().hospitalityRating >= _minHospitalityRating;
+            bool featuresSatisfied = Set.of(driver.profileFeatures!).containsAll(_selectedFeatures);
+            bool maxDeviationSatisfied =
+                _selectedDate.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
+            return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
+          },
+        )
+        .sorted(_sorting.sortFunction(_selectedDate))
+        .toList();
+  }
+}
+
+enum SearchSuggestionSorting { relevance, time, price }
+
+extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
+  String getDescription(BuildContext context) {
+    switch (this) {
+      case SearchSuggestionSorting.relevance:
+        return S.of(context).pageSearchSuggestionsSortingRelevance;
+      case SearchSuggestionSorting.time:
+        return S.of(context).pageSearchSuggestionsSortingTime;
+      case SearchSuggestionSorting.price:
+        return S.of(context).pageSearchSuggestionsSortingPrice;
+    }
+  }
+
+  int Function(Ride, Ride) sortFunction(DateTime date) {
+    timeFunc(Ride ride1, Ride ride2) => date.difference(ride1.startTime).compareTo(date.difference(ride2.startTime));
+    priceFunc(Ride ride1, Ride ride2) => ride1.price!.compareTo(ride2.price!);
+    switch (this) {
+      case SearchSuggestionSorting.relevance:
+        return (ride1, ride2) => timeFunc(ride1, ride2) + priceFunc(ride1, ride2);
+      case SearchSuggestionSorting.time:
+        return timeFunc;
+      case SearchSuggestionSorting.price:
+        return priceFunc;
+    }
   }
 }
