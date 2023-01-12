@@ -9,7 +9,7 @@ abstract class Trip extends Model {
   final String end;
   final Position endPosition;
   final DateTime endTime;
-  final bool show;
+  final bool hideinListView;
 
   final int seats;
 
@@ -23,7 +23,7 @@ abstract class Trip extends Model {
     required this.endPosition,
     required this.endTime,
     required this.seats,
-    this.show = true,
+    this.hideinListView = false,
   });
 
   bool get isFinished => endTime.isBefore(DateTime.now());
@@ -35,5 +35,15 @@ abstract class Trip extends Model {
 
   bool overlapsWithTimeRange(DateTimeRange range) {
     return startTime.isBefore(range.end) && endTime.isAfter(range.start);
+  }
+
+  bool isDifferentFrom(Trip other) {
+    return start != other.start ||
+        startPosition != other.startPosition ||
+        startTime != other.startTime ||
+        end != other.end ||
+        endPosition != other.endPosition ||
+        endTime != other.endTime ||
+        seats != other.seats;
   }
 }

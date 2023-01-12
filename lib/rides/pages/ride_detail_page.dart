@@ -190,10 +190,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
           backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
         );
       default:
-        return BigButton(
-          text: 'Delete Ride',
+        return Button.error(
+          'Delete Ride',
           onPressed: _showDeleteDialog,
-          color: Theme.of(context).errorColor,
         );
     }
   }
@@ -265,7 +264,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void noShowRide() async {
-    await supabaseClient.from('rides').update({'show': false}).eq('id', widget.ride!.id);
+    await supabaseClient.from('rides').update({'hide_in_listview': true}).eq('id', widget.ride!.id);
   }
 
   _showDeleteDialog() {

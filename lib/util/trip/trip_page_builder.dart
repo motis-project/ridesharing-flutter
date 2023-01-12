@@ -38,14 +38,15 @@ class TripPageBuilder {
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
                 filterTrips: (trips) =>
-                    trips.where((trip) => trip.show && trip.endTime.isAfter(DateTime.now())).toList(),
+                    trips.where((trip) => !trip.hideinListView && trip.endTime.isAfter(DateTime.now())).toList(),
                 tripCard: tripCard,
               ),
               TripStreamBuilder<T>(
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
-                filterTrips: (trips) =>
-                    trips.reversed.where((trip) => trip.show && trip.endTime.isBefore(DateTime.now())).toList(),
+                filterTrips: (trips) => trips.reversed
+                    .where((trip) => !trip.hideinListView && trip.endTime.isBefore(DateTime.now()))
+                    .toList(),
                 tripCard: tripCard,
               ),
             ],

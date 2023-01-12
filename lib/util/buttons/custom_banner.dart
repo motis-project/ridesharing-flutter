@@ -10,6 +10,7 @@ class CustomBanner extends StatelessWidget {
 
   factory CustomBanner.error(text) => CustomBanner(text, displayColorKind: DisplayColorKind.error);
   factory CustomBanner.warning(text) => CustomBanner(text, displayColorKind: DisplayColorKind.warning);
+  factory CustomBanner.pending(text) => CustomBanner(text, displayColorKind: DisplayColorKind.disabled);
 
   @override
   Widget build(BuildContext context) {

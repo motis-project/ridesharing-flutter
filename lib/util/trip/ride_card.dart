@@ -1,14 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../account/models/profile.dart';
 import '../../account/models/profile_feature.dart';
 import '../../drives/models/drive.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/ride_detail_page.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
@@ -79,15 +80,7 @@ class RideCardState extends TripCardState<RideCard> {
   Widget buildBottomLeft() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Row(
-        children: [
-          CircleAvatar(
-            child: Text(driver!.username[0]),
-          ),
-          const SizedBox(width: 5),
-          Text(driver!.username),
-        ],
-      ),
+      child: ProfileWidget(driver!),
     );
   }
 
@@ -107,7 +100,7 @@ class RideCardState extends TripCardState<RideCard> {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.large),
+      child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.medium),
     );
   }
 
@@ -130,33 +123,20 @@ class RideCardState extends TripCardState<RideCard> {
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => RideDetailPage.fromRide(ride!),
-                ),
-              ),
-              child: buildCardInfo(context),
-            ),
+                onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => RideDetailPage.fromRide(ride!),
+                      ),
+                    ),
+                child: ride!.status.isCancelled()
+                    ? Stack(
+                        children: [CustomBanner.error('cancelled'), buildCardInfo(context)],
+                      )
+                    : (ride!.status == RideStatus.pending)
+                        ? Stack(
+                            children: [CustomBanner.pending('pending'), buildCardInfo(context)],
+                          )
+                        : buildCardInfo(context)),
           );
-  }
-
-  /*
-  if(ride!.status == RideStatus.cancelledByDriver)
-          CustomBanner(kind: CustomBannerKind.warning, text: Text("Drive has been cancelled"));
-*/
-  @override
-  Widget buildbanner() {
-    switch (ride!.status) {
-      case RideStatus.pending:
-        return CustomBanner(kind: CustomBannerKind.pending, text: S.of(context).pageRideDetailBannerRequested);
-      case RideStatus.rejected:
-        return CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRejected);
-      case RideStatus.cancelledByDriver:
-        return CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerCancelledByDriver);
-      case RideStatus.cancelledByRider:
-        return CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerCancelledByYou);
-      default:
-        return const SizedBox();
-    }
   }
 }

@@ -166,21 +166,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       widgets.add(const SizedBox(height: 10));
       Widget bottomButton;
       if (!(_drive!.isFinished || _drive!.cancelled)) {
-        bottomButton = BigButton(
-          text: S.of(context).pageDriveDetailButtonCancel,
-      if (!(_drive!.isFinished || _drive!.cancelled)) {
-        widgets.add(const SizedBox(height: 10));
-        Widget deleteButton = Button(
+        bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
-          backgroundColor: Theme.of(context).colorScheme.error,
         );
       } else {
-        bottomButton = BigButton(
-          text: 'Delete Drive',
-          onPressed: _showDeleteDialog,
-          color: Theme.of(context).errorColor,
-        );
+        bottomButton = Button.error('Delete Drive', onPressed: _showDeleteDialog);
       }
       widgets.add(bottomButton);
       widgets.add(const SizedBox(height: 5));
@@ -330,10 +321,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   void noShowDrive() async {
-    await supabaseClient.from('drives').update({'show': false}).eq('id', widget.drive!.id);
+    await supabaseClient.from('drives').update({'hide_in_listview': true}).eq('id', widget.drive!.id);
   }
 
-  _showDeleteDialog() {
+  void _showDeleteDialog() {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -355,6 +346,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
+  }
+
+  void _cancelDrive() async {
+    await _drive?.cancel();
+    setState(() {});
   }
 
   void _showCancelDialog() {
@@ -385,11 +381,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
-  }
-
-  void _cancelDrive() async {
-    await _drive?.cancel();
-    setState(() {});
   }
 }
 

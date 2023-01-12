@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
 import 'package:motis_mitfahr_app/util/trip/ride_card.dart';

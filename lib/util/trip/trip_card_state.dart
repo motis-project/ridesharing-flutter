@@ -80,21 +80,15 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
   }
 
   Widget buildTop() {
-    return Stack(
-      fit: StackFit.loose,
-      children: [
-        buildbanner(),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(localeManager.formatDate(trip!.startTime)),
-              buildTopRight(),
-            ],
-          ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(localeManager.formatDate(trip!.startTime)),
+          buildTopRight(),
+        ],
+      ),
     );
   }
 
@@ -115,7 +109,6 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
-  Widget buildbanner();
   Widget buildBottomLeft();
   Widget buildBottomRight();
   Widget buildTopRight();
