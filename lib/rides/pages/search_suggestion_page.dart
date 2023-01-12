@@ -149,7 +149,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   //todo: get possible Rides from Algorithm
-  void loadRides() async {
+  Future<void> loadRides() async {
     List<dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
