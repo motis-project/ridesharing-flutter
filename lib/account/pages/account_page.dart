@@ -40,7 +40,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: Text(S.of(context).okay),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -72,7 +72,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: Text(S.of(context).okay),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

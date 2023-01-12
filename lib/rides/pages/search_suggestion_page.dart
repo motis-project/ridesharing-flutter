@@ -1,5 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
+import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
 import 'package:motis_mitfahr_app/util/trip/search_card.dart';
 import 'package:timelines/timelines.dart';
@@ -35,6 +41,37 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   final List<int> list = List.generate(10, (index) => index + 1);
 
+  //Filter
+  static const List<Feature> _commonFeatures = [
+    Feature.noSmoking,
+    Feature.noVaping,
+    Feature.petsAllowed,
+    Feature.childrenAllowed,
+    Feature.talkative,
+    Feature.relaxedDrivingStyle,
+  ];
+
+  bool _isRatingExpanded = false;
+  bool _isFeatureListExpanded = false;
+
+  late int _minRating;
+  late int _minComfortRating;
+  late int _minSafetyRating;
+  late int _minReliabilityRating;
+  late int _minHospitalityRating;
+  late List<Feature> _selectedFeatures;
+  final _maxDeviationController = TextEditingController();
+
+  void setDefaultFilterValues() {
+    _minRating = 1;
+    _minComfortRating = 1;
+    _minSafetyRating = 1;
+    _minReliabilityRating = 1;
+    _minHospitalityRating = 1;
+    _selectedFeatures = [];
+    _maxDeviationController.text = "12";
+  }
+
   List<Ride>? _rideSuggestions;
 
   @override
@@ -46,6 +83,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _startController.text = widget.startSuggestion.name;
     _destinationSuggestion = widget.endSuggestion;
     _destinationController.text = widget.endSuggestion.name;
+    setDefaultFilterValues();
     loadRides();
   }
 
@@ -55,6 +93,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _timeController.dispose();
     _startController.dispose();
     _destinationController.dispose();
+    _maxDeviationController.dispose();
     super.dispose();
   }
 
@@ -131,11 +170,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     setState(() {
       _rideSuggestions = rides;
     });
-  }
-
-  //todo: filter
-  void _showFilterDialog() {
-    loadRides();
   }
 
   FixedTimeline buildSearchFieldViewer() {
@@ -311,5 +345,144 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         ),
       ),
     );
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => StatefulBuilder(
+        builder: (context, setState) {
+          List<Feature> shownFeatures = _isFeatureListExpanded ? Feature.values : _commonFeatures;
+          return AlertDialog(
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Minimum rating",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  CustomRatingBar(
+                    size: CustomRatingBarSize.large,
+                    rating: _minRating,
+                    onRatingUpdate: (newRating) => setState(
+                      () => _minRating = newRating.toInt(),
+                    ),
+                  ),
+                  if (_isRatingExpanded) ...[
+                    Text("Comfort"),
+                    CustomRatingBar(
+                      size: CustomRatingBarSize.medium,
+                      rating: _minComfortRating,
+                      onRatingUpdate: (newRating) => setState(
+                        () => _minComfortRating = newRating.toInt(),
+                      ),
+                    ),
+                    Text("Safety"),
+                    CustomRatingBar(
+                      size: CustomRatingBarSize.medium,
+                      rating: _minSafetyRating,
+                      onRatingUpdate: (newRating) => setState(
+                        () => _minSafetyRating = newRating.toInt(),
+                      ),
+                    ),
+                    Text("Reliability"),
+                    CustomRatingBar(
+                      size: CustomRatingBarSize.medium,
+                      rating: _minReliabilityRating,
+                      onRatingUpdate: (newRating) => setState(
+                        () => _minReliabilityRating = newRating.toInt(),
+                      ),
+                    ),
+                    Text("Hospitality"),
+                    CustomRatingBar(
+                      size: CustomRatingBarSize.medium,
+                      rating: _minHospitalityRating,
+                      onRatingUpdate: (newRating) => setState(
+                        () => _minHospitalityRating = newRating.toInt(),
+                      ),
+                    ),
+                  ],
+                  TextButton(
+                    onPressed: () => setState(() => _isRatingExpanded = !_isRatingExpanded),
+                    child: Text(_isRatingExpanded ? "Retract" : "Expand"),
+                  ),
+                  Text(
+                    "Features",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Wrap(
+                    children: List.generate(
+                      shownFeatures.length,
+                      (index) {
+                        Feature feature = shownFeatures[index];
+                        return InputChip(
+                          avatar: feature.getIcon(context),
+                          label: Text(feature.getDescription(context)),
+                          selected: _selectedFeatures.contains(feature),
+                          onSelected: (selected) {
+                            if (_selectedFeatures.contains(feature)) {
+                              setState(() => _selectedFeatures.remove(feature));
+                            } else {
+                              Feature? mutuallyExclusiveFeature = _selectedFeatures
+                                  .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
+                              if (mutuallyExclusiveFeature != null) {
+                                String description = mutuallyExclusiveFeature.getDescription(context);
+                                String text =
+                                    S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+                                SemanticsService.announce(text, TextDirection.ltr);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(text)),
+                                );
+                                return;
+                              }
+                              setState(() => _selectedFeatures.add(feature));
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => setState(() => _isFeatureListExpanded = !_isFeatureListExpanded),
+                    child: Text(_isFeatureListExpanded ? "Retract" : "Expand"),
+                  ),
+                  Text(
+                    "Maximum deviation from selected time",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: TextField(
+                          controller: _maxDeviationController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                      Text("hours"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Reset to default"),
+                onPressed: () => setState(() => setDefaultFilterValues()),
+              ),
+              TextButton(
+                child: Text(S.of(context).okay),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    loadRides();
   }
 }
