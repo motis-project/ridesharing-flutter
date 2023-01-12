@@ -3,7 +3,6 @@ import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
-import '../../util/trip/pending_ride_card.dart';
 import '../../util/supabase.dart';
 import '../models/drive.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -58,15 +57,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
           widgets.addAll(riderColumn);
         }
         widgets.add(const SizedBox(height: 10.0));
-        if (pendingRides.isNotEmpty) {
-          List<Widget> pendingRidesColumn = [
-            const SizedBox(height: 5.0),
-            Text(S.of(context).pageDriveChatRequestsHeadline, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 10.0),
-          ];
-          pendingRidesColumn.addAll(_pendingRidesList(pendingRides));
-          widgets.addAll(pendingRidesColumn);
-        }
       }
     } else {
       widgets.add(const SizedBox(height: 10));
@@ -89,21 +79,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
         ),
       ),
     );
-  }
-
-  List<Widget> _pendingRidesList(List<Ride> pendingRides) {
-    List<Widget> pendingRidesColumn = [];
-    if (pendingRides.isNotEmpty) {
-      pendingRidesColumn = List.generate(
-        pendingRides.length,
-        (index) => PendingRideCard(
-          pendingRides.elementAt(index),
-          reloadPage: loadDrive,
-          drive: _drive!,
-        ),
-      );
-    }
-    return pendingRidesColumn;
   }
 
   Widget _riderList(Set<Profile> riders) {
