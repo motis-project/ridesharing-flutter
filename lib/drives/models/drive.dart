@@ -4,6 +4,8 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../../util/search/position.dart';
+
 class Drive extends Trip {
   bool cancelled;
 
@@ -12,35 +14,41 @@ class Drive extends Trip {
 
   final List<Ride>? rides;
 
-  Drive(
-      {super.id,
-      super.createdAt,
-      required super.start,
-      required super.startTime,
-      required super.end,
-      required super.endTime,
-      required super.seats,
-      this.cancelled = false,
-      required this.driverId,
-      this.driver,
-      this.rides,
-      super.show});
+  Drive({
+    super.id,
+    super.createdAt,
+    required super.start,
+    required super.startPosition,
+    required super.startTime,
+    required super.end,
+    required super.endPosition,
+    required super.endTime,
+    required super.seats,
+    this.cancelled = false,
+    required this.driverId,
+    this.driver,
+    this.rides,
+    super.show
+  });
 
   @override
   factory Drive.fromJson(Map<String, dynamic> json) {
     return Drive(
-        id: json['id'],
-        createdAt: DateTime.parse(json['created_at']),
-        start: json['start'],
-        startTime: DateTime.parse(json['start_time']),
-        end: json['end'],
-        endTime: DateTime.parse(json['end_time']),
-        seats: json['seats'],
-        cancelled: json['cancelled'],
-        driverId: json['driver_id'],
-        driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
-        rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
-        show: json['show']);
+      id: json['id'],
+      createdAt: DateTime.parse(json['created_at']),
+      start: json['start'],
+      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
+      startTime: DateTime.parse(json['start_time']),
+      end: json['end'],
+      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
+      endTime: DateTime.parse(json['end_time']),
+      seats: json['seats'],
+      cancelled: json['cancelled'],
+      driverId: json['driver_id'],
+      driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
+      rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
+      show: json['show']
+    );
   }
 
   static List<Drive> fromJsonList(List<dynamic> jsonList) {
@@ -50,8 +58,12 @@ class Drive extends Trip {
   Map<String, dynamic> toJson() {
     return {
       'start': start,
+      'start_lat': startPosition.lat,
+      'start_lng': startPosition.lng,
       'start_time': startTime.toString(),
       'end': end,
+      'end_lat': endPosition.lat,
+      'end_lng': endPosition.lng,
       'end_time': endTime.toString(),
       'cancelled': cancelled,
       'seats': seats,
@@ -134,12 +146,7 @@ class Drive extends Trip {
   Future<void> cancel() async {
     cancelled = true;
     await supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    //cancel all pending and approved rides for this drive.
-    await supabaseClient
-        .from('rides')
-        .update({'status': RideStatus.cancelledByDriver.index})
-        .eq('drive_id', id)
-        .or('status.eq.${RideStatus.pending.index},status.eq.${RideStatus.approved.index}');
+    //the rides get updated automatically by a supabase function.
   }
 
   @override

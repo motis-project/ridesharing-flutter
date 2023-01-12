@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/big_button.dart';
-import 'package:motis_mitfahr_app/util/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
+import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
 import 'package:motis_mitfahr_app/util/icon_widget.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
@@ -168,8 +168,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       if (!(_drive!.isFinished || _drive!.cancelled)) {
         bottomButton = BigButton(
           text: S.of(context).pageDriveDetailButtonCancel,
+      if (!(_drive!.isFinished || _drive!.cancelled)) {
+        widgets.add(const SizedBox(height: 10));
+        Widget deleteButton = Button(
+          S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
-          color: Theme.of(context).errorColor,
+          backgroundColor: Theme.of(context).colorScheme.error,
         );
       } else {
         bottomButton = BigButton(
@@ -188,9 +192,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     Widget content = Column(
       children: [
         if (_drive?.cancelled ?? false)
-          CustomBanner(
-            kind: CustomBannerKind.error,
-            text: S.of(context).pageDriveDetailBannerCancelled,
+          CustomBanner.error(
+            S.of(context).pageDriveDetailBannerCancelled,
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -265,7 +268,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
 
     final startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
-    final endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).errorColor);
+    final endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
     for (int index = 0, length = stop.actions.length; index < length; index++) {
       final action = stop.actions[index];
       final icon = action.isStart ? startIcon : endIcon;

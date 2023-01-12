@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
+import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/big_button.dart';
-import 'package:motis_mitfahr_app/util/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
+import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
+import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
@@ -128,13 +131,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Widget content = Column(
       children: [
         if (_ride != null && _ride!.status == RideStatus.pending)
-          CustomBanner(kind: CustomBannerKind.warning, text: S.of(context).pageRideDetailBannerRequested)
+          CustomBanner.warning(S.of(context).pageRideDetailBannerRequested)
         else if (_ride != null && _ride!.status == RideStatus.rejected)
-          CustomBanner(kind: CustomBannerKind.error, text: S.of(context).pageRideDetailBannerRejected)
+          CustomBanner.error(S.of(context).pageRideDetailBannerRejected)
         else if (_ride?.status.isCancelled() ?? false)
-          CustomBanner(
-            kind: CustomBannerKind.error,
-            text: _ride!.status == RideStatus.cancelledByDriver
+          CustomBanner.error(
+            _ride!.status == RideStatus.cancelledByDriver
                 ? S.of(context).pageRideDetailBannerCancelledByDriver
                 : S.of(context).pageRideDetailBannerCancelledByYou,
           ),
@@ -174,27 +176,18 @@ class _RideDetailPageState extends State<RideDetailPage> {
   Widget? _buildPrimaryButton(Profile driver) {
     switch (_ride!.status) {
       case RideStatus.preview:
-        return BigButton(
-          text: S.of(context).pageRideDetailButtonRequest,
+        return Button(
+          S.of(context).pageRideDetailButtonRequest,
           onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
-          color: Theme.of(context).primaryColor,
         );
       case RideStatus.approved:
         return _ride!.isFinished
-            ? BigButton(
-                text: S.of(context).pageRideDetailButtonRate,
-                onPressed: () => _navigateToRatePage(driver),
-                color: Theme.of(context).primaryColor,
-              )
-            : BigButton(
-                text: S.of(context).pageRideDetailButtonCancel,
-                onPressed: _showCancelDialog,
-                color: Theme.of(context).errorColor,
-              );
+            ? Button(S.of(context).pageRideDetailButtonRate, onPressed: () => _navigateToRatePage(driver))
+            : Button.error(S.of(context).pageRideDetailButtonCancel, onPressed: _showCancelDialog);
       case RideStatus.pending:
-        return BigButton(
-          text: S.of(context).pageRideDetailButtonRequested,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        return Button(
+          S.of(context).pageRideDetailButtonRequested,
+          backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
         );
       default:
         return BigButton(

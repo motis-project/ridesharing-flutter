@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/model.dart';
+import 'package:motis_mitfahr_app/util/search/position.dart';
 
 abstract class Trip extends Model {
   final String start;
+  final Position startPosition;
   final DateTime startTime;
   final String end;
+  final Position endPosition;
   final DateTime endTime;
   final bool show;
 
   final int seats;
 
-  Trip(
-      {super.id,
-      super.createdAt,
-      required this.start,
-      required this.startTime,
-      required this.end,
-      required this.endTime,
-      required this.seats,
-      this.show = true});
+  Trip({
+    super.id,
+    super.createdAt,
+    required this.start,
+    required this.startPosition,
+    required this.startTime,
+    required this.end,
+    required this.endPosition,
+    required this.endTime,
+    required this.seats,
+    this.show = true,
+  });
 
   bool get isFinished => endTime.isBefore(DateTime.now());
   bool get isOngoing => startTime.isBefore(DateTime.now()) && endTime.isAfter(DateTime.now());

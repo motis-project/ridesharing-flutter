@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_suggestion_page.dart';
+import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_field.dart';
-import 'package:motis_mitfahr_app/util/submit_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/search/address_suggestion.dart';
+
 class SearchRidePage extends StatefulWidget {
-  const SearchRidePage({super.key});
+  final bool anonymous;
+
+  const SearchRidePage({super.key, this.anonymous = false});
 
   @override
   State<SearchRidePage> createState() => _SearchRidePageState();
@@ -15,20 +19,31 @@ class SearchRidePage extends StatefulWidget {
 class _SearchRidePageState extends State<SearchRidePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Widget scaffold = Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageSearchRideTitle),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(),
-        child: SingleChildScrollView(child: SearchRideForm()),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(),
+        child: SingleChildScrollView(
+            child: SearchRideForm(
+          anonymous: widget.anonymous,
+        )),
       ),
     );
+    return widget.anonymous
+        ? scaffold
+        : Hero(
+            tag: 'RideFAB',
+            child: scaffold,
+          );
   }
 }
 
 class SearchRideForm extends StatefulWidget {
-  const SearchRideForm({super.key});
+  final bool anonymous;
+
+  const SearchRideForm({super.key, this.anonymous = false});
 
   @override
   State<SearchRideForm> createState() => _SearchRideFormState();
@@ -37,7 +52,9 @@ class SearchRideForm extends StatefulWidget {
 class _SearchRideFormState extends State<SearchRideForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
+  late AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  late AddressSuggestion? _destinationSuggestion;
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
@@ -102,19 +119,23 @@ class _SearchRideFormState extends State<SearchRideForm> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
+    if (_selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
   }
 
   void _onSubmit() async {
-    //todo: pressing search button
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) => SearchSuggestionPage(
-                _startController.text, _destinationController.text, _selectedDate, _dropdownValue)),
+          builder: (context) => SearchSuggestionPage(
+            _startSuggestion!,
+            _destinationSuggestion!,
+            _selectedDate,
+            _dropdownValue,
+          ),
+        ),
       );
     }
   }
@@ -188,6 +209,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   @override
   Widget build(BuildContext context) {
+    Widget submitButton = Button.submit(
+      S.of(context).pageSearchRideButtonSearch,
+      onPressed: _onSubmit,
+    );
     return Form(
       key: _formKey,
       child: Padding(
@@ -196,12 +221,16 @@ class _SearchRideFormState extends State<SearchRideForm> {
           children: [
             AddressSearchField.start(
               controller: _startController,
-              onSelected: (suggestion) {},
+              onSelected: (suggestion) {
+                _startSuggestion = suggestion;
+              },
             ),
             const SizedBox(height: 15),
             AddressSearchField.destination(
               controller: _destinationController,
-              onSelected: (suggestion) {},
+              onSelected: (suggestion) {
+                _destinationSuggestion = suggestion;
+              },
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -215,13 +244,13 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            Hero(
-              tag: "SearchButton",
-              child: SubmitButton(
-                text: S.of(context).pageSearchRideButtonSearch,
-                onPressed: _onSubmit,
-              ),
-            ),
+            //Search
+            widget.anonymous
+                ? Hero(
+                    tag: "SearchButton",
+                    child: submitButton,
+                  )
+                : submitButton,
           ],
         ),
       ),

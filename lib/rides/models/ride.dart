@@ -4,6 +4,7 @@ import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import '../../drives/models/drive.dart';
+import '../../util/search/position.dart';
 
 class Ride extends Trip {
   final double? price;
@@ -15,28 +16,43 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
-  Ride(
-      {super.id,
-      super.createdAt,
-      required super.start,
-      required super.startTime,
-      required super.end,
-      required super.endTime,
-      required super.seats,
-      this.price,
-      required this.status,
-      required this.driveId,
-      this.drive,
-      required this.riderId,
-      this.rider,
-      super.show});
+  Ride({
+    super.id,
+    super.createdAt,
+    required super.start,
+    required super.startPosition,
+    required super.startTime,
+    required super.end,
+    required super.endPosition,
+    required super.endTime,
+    required super.seats,
+    this.price,
+    required this.status,
+    required this.driveId,
+    this.drive,
+    required this.riderId,
+    this.rider,
+    super.show
+  });
 
-  factory Ride.previewFromDrive(Drive drive, String start, String end, DateTime startTime, DateTime endTime, int seats,
-      int riderId, double price) {
+  factory Ride.previewFromDrive(
+    Drive drive,
+    String start,
+    Position startPosition,
+    DateTime startTime,
+    String end,
+    Position endPosition,
+    DateTime endTime,
+    int seats,
+    int riderId,
+    double price,
+  ) {
     return Ride(
       start: start,
-      end: end,
+      startPosition: startPosition,
       startTime: startTime,
+      end: end,
+      endPosition: endPosition,
       endTime: endTime,
       seats: seats,
       riderId: riderId,
@@ -50,20 +66,23 @@ class Ride extends Trip {
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
-        id: json['id'],
-        createdAt: DateTime.parse(json['created_at']),
-        start: json['start'],
-        startTime: DateTime.parse(json['start_time']),
-        end: json['end'],
-        endTime: DateTime.parse(json['end_time']),
-        seats: json['seats'],
-        price: json['price'],
-        status: RideStatus.values[json['status']],
-        riderId: json['rider_id'],
-        rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
-        driveId: json['drive_id'],
-        drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-        show: json['show']);
+      id: json['id'],
+      createdAt: DateTime.parse(json['created_at']),
+      start: json['start'],
+      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
+      startTime: DateTime.parse(json['start_time']),
+      end: json['end'],
+      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
+      endTime: DateTime.parse(json['end_time']),
+      seats: json['seats'],
+      price: json['price'],
+      status: RideStatus.values[json['status']],
+      riderId: json['rider_id'],
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
+      driveId: json['drive_id'],
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+      show: json['show']
+    );
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {
@@ -73,8 +92,12 @@ class Ride extends Trip {
   Map<String, dynamic> toJson() {
     return {
       'start': start,
+      'start_lat': startPosition.lat,
+      'start_lng': startPosition.lng,
       'start_time': startTime.toString(),
       'end': end,
+      'end_lat': endPosition.lat,
+      'end_lng': endPosition.lng,
       'end_time': endTime.toString(),
       'seats': seats,
       'price': price,

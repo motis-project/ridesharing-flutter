@@ -12,10 +12,10 @@ import '../models/ride.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchSuggestionPage extends StatefulWidget {
-  const SearchSuggestionPage(this.start, this.end, this.date, this.seats, {super.key});
+  const SearchSuggestionPage(this.startSuggestion, this.endSuggestion, this.date, this.seats, {super.key});
 
-  final String start;
-  final String end;
+  final AddressSuggestion startSuggestion;
+  final AddressSuggestion endSuggestion;
   final int seats;
   final DateTime date;
 
@@ -25,7 +25,9 @@ class SearchSuggestionPage extends StatefulWidget {
 
 class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   final TextEditingController _startController = TextEditingController();
+  late AddressSuggestion _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
+  late AddressSuggestion _destinationSuggestion;
 
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
@@ -41,8 +43,10 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     super.initState();
     _selectedDate = widget.date;
     _dropdownValue = widget.seats;
-    _startController.text = widget.start;
-    _destinationController.text = widget.end;
+    _startSuggestion = widget.startSuggestion;
+    _startController.text = widget.startSuggestion.name;
+    _destinationSuggestion = widget.endSuggestion;
+    _destinationController.text = widget.endSuggestion.name;
     loadRides();
   }
 
@@ -97,7 +101,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
+    if (_selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -118,8 +122,18 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
-        .map((drive) => Ride.previewFromDrive(drive, _startController.text, _destinationController.text,
-            drive.startTime, drive.endTime, _dropdownValue, riderid, 10.25))
+        .map((drive) => Ride.previewFromDrive(
+              drive,
+              _startSuggestion.name,
+              _startSuggestion.position,
+              drive.startTime,
+              _destinationSuggestion.name,
+              _destinationSuggestion.position,
+              drive.endTime,
+              _dropdownValue,
+              riderid,
+              10.25,
+            ))
         .toList();
     setState(() {
       _rideSuggestions = rides;
@@ -139,7 +153,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildLocationPicker(_startController),
+              buildLocationPicker(isStart: true),
               const SizedBox(width: 20),
               SizedBox(
                 width: 65,
@@ -164,7 +178,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildLocationPicker(_destinationController),
+              buildLocationPicker(isStart: false),
               const SizedBox(width: 90),
               buildSeatsPicker(),
             ],
@@ -238,7 +252,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget buildLocationPicker(TextEditingController controller) {
+  Widget buildLocationPicker({bool isStart = true}) {
+    TextEditingController controller = isStart ? _startController : _destinationController;
+
     return Expanded(
       child: ElevatedButton(
         onPressed: () async {
@@ -249,6 +265,11 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           );
           if (suggestion != null) {
             controller.text = suggestion.name;
+            if (isStart) {
+              _startSuggestion = suggestion;
+            } else {
+              _destinationSuggestion = suggestion;
+            }
             loadRides();
           }
         },
