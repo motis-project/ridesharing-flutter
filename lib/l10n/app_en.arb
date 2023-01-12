@@ -392,6 +392,8 @@
   "pageSearchSuggestionsTooltipFilter": "Filter",
   "pageSearchSuggestionsFilterMinimumRating": "Minimum rating",
   "pageSearchSuggestionsFilterFeatures": "Features",
+  "pageSearchSuggestionsFilterFeaturesSelectTooltip": "Select",
+  "pageSearchSuggestionsFilterFeaturesDeselectTooltip": "Deselect",
   "pageSearchSuggestionsFilterDeviation": "Maximum deviation from selected time",
   "pageSearchSuggestionsFilterDeviationHours": "hours",
   "pageSearchSuggestionsFilterSorting": "Sorting",

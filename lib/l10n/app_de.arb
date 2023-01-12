@@ -267,6 +267,8 @@
   "pageSearchSuggestionsTooltipFilter": "Filter",
   "pageSearchSuggestionsFilterMinimumRating": "Mindeste Bewertung",
   "pageSearchSuggestionsFilterFeatures": "Features",
+  "pageSearchSuggestionsFilterFeaturesSelectTooltip": "Auswählen",
+  "pageSearchSuggestionsFilterFeaturesDeselectTooltip": "Abwählen ",
   "pageSearchSuggestionsFilterDeviation": "Maximale Abweichung von ausgewählter Zeit",
   "pageSearchSuggestionsFilterDeviationHours": "Stunden",
   "pageSearchSuggestionsFilterSorting": "Sortierung",

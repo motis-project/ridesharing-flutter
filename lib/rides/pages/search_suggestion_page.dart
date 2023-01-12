@@ -455,12 +455,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               shownFeatures.length,
               (index) {
                 Feature feature = shownFeatures[index];
+                bool featureSelected = _selectedFeatures.contains(feature);
                 return FilterChip(
                   avatar: feature.getIcon(context),
                   label: Text(feature.getDescription(context)),
                   selected: _selectedFeatures.contains(feature),
+                  tooltip: featureSelected
+                      ? S.of(context).pageSearchSuggestionsFilterFeaturesDeselectTooltip
+                      : S.of(context).pageSearchSuggestionsFilterFeaturesSelectTooltip,
                   onSelected: (selected) {
-                    if (_selectedFeatures.contains(feature)) {
+                    if (featureSelected) {
                       innerSetState(() => _selectedFeatures.remove(feature));
                     } else {
                       Feature? mutuallyExclusiveFeature = _selectedFeatures
