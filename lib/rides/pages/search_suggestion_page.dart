@@ -154,7 +154,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           *,
           driver:driver_id (
             *,
-            profile_features (*)
+            profile_features (*),
+            reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
         ''').eq('start', _startController.text);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
@@ -569,7 +570,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         },
       ),
     );
-    loadRides();
   }
 
   List<Ride> _applyFilters(List<Ride> rideSuggestions) {
