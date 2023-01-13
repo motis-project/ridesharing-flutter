@@ -283,6 +283,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             onPressed: () {
               noShowRide();
               Navigator.of(dialogContext).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],

@@ -15,8 +15,6 @@ class DrivesPage extends StatefulWidget {
 
 class _DrivesPageState extends State<DrivesPage> {
   late final Stream<List<Drive>> _drives;
-  late final List<Drive> _loadedDrives;
-  bool _fullyloaded = false;
 
   @override
   void initState() {
@@ -30,36 +28,6 @@ class _DrivesPageState extends State<DrivesPage> {
 
     super.initState();
   }
-
-  Future<void> loadDrives(List<Map<String, dynamic>> drives) async {
-    List<Drive> loadedDrives = [];
-    for (Map<String, dynamic> drive in drives) {
-      Map<String, dynamic> data = await supabaseClient.from('drives').select('''
-        *,
-        rides(
-          *,
-          rider: rider_id(*)
-        )
-      ''').eq('id', drive['id']).single();
-      loadedDrives.add(Drive.fromJson(data));
-    }
-    setState(() {
-      _loadedDrives = loadedDrives;
-    });
-  }
-
-  // Future<void> loadDetails() async {
-  //   _drives.map((drive) async {
-  //   Map<String, dynamic> data = await supabaseClient.from('drives').select('''
-  //     *,
-  //     rides(
-  //       *,
-  //       rider: rider_id(*)
-  //     )
-  //   ''').eq('id', drive.id).single();
-  //   return Drive.fromJson(data);
-  //   })
-  // }
 
   @override
   Widget build(BuildContext context) {

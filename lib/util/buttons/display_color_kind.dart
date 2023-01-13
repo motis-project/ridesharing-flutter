@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
 
-enum DisplayColorKind { primary, secondary, success, warning, error, disabled }
+enum DisplayColorKind { primary, secondary, success, warning, error, disabled, translucenterror }
 
 extension DisplayColorKindExtensions on DisplayColorKind {
   Color getBackgroundColor(BuildContext context) {
@@ -18,6 +18,8 @@ extension DisplayColorKindExtensions on DisplayColorKind {
         return Theme.of(context).colorScheme.error;
       case DisplayColorKind.disabled:
         return Theme.of(context).disabledColor;
+      case DisplayColorKind.translucenterror:
+        return Theme.of(context).colorScheme.error.withOpacity(0.625);
     }
   }
 
@@ -34,6 +36,8 @@ extension DisplayColorKindExtensions on DisplayColorKind {
       case DisplayColorKind.error:
         return Theme.of(context).colorScheme.onError;
       case DisplayColorKind.disabled:
+        return Theme.of(context).colorScheme.onPrimary;
+      case DisplayColorKind.translucenterror:
         return Theme.of(context).colorScheme.onPrimary;
     }
   }

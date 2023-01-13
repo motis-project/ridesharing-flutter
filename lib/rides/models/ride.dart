@@ -127,6 +127,23 @@ class Ride extends Trip {
     return Ride.fromJsonList(await supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
+  @override
+  bool isDifferentFrom(Trip other) {
+    if (other is! Ride) return true;
+    Ride ride = other;
+    return start != ride.start ||
+        startPosition != ride.startPosition ||
+        startTime != ride.startTime ||
+        end != ride.end ||
+        endPosition != ride.endPosition ||
+        endTime != ride.endTime ||
+        seats != ride.seats ||
+        status != ride.status ||
+        driveId != ride.driveId ||
+        price != ride.price ||
+        rider != ride.rider;
+  }
+
   Future<Drive> getDrive() async {
     drive ??= Drive.fromJson(await supabaseClient.from('drives').select().eq('id', driveId).single());
     return drive!;

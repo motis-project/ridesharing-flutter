@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
+import '../buttons/custom_banner.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 
@@ -30,6 +31,7 @@ class _DriveCard extends TripCardState<DriveCard> {
     loadDrive();
   }
 
+  // todo: changes when rides.status changes
   @override
   void didUpdateWidget(DriveCard oldWidget) {
     if (trip!.isDifferentFrom(widget.trip)) {
@@ -76,28 +78,23 @@ class _DriveCard extends TripCardState<DriveCard> {
     for (var ride in drive!.rides!) {
       if (ride.status == RideStatus.pending) numberofPendingRequests++;
     }
-    return drive!.cancelled
-        ? const Icon(
-            Icons.block,
-            color: Colors.red,
+    return numberofPendingRequests > 0
+        ? Badge(
+            badgeContent: Text(
+              numberofPendingRequests.toString(),
+              style: const TextStyle(color: Colors.white),
+              textScaleFactor: 1.0,
+            ),
+            position: BadgePosition.topEnd(top: -12),
+            child: const Icon(
+              Icons.done_all,
+              color: Colors.grey,
+            ),
           )
-        : numberofPendingRequests > 0
-            ? Badge(
-                badgeContent: Text(
-                  numberofPendingRequests.toString(),
-                  style: const TextStyle(color: Colors.white),
-                  textScaleFactor: 1.0,
-                ),
-                position: BadgePosition.topEnd(top: -12),
-                child: const Icon(
-                  Icons.done_all,
-                  color: Colors.grey,
-                ),
-              )
-            : const Icon(
-                Icons.done_all,
-                color: Colors.green,
-              );
+        : const Icon(
+            Icons.done_all,
+            color: Colors.green,
+          );
   }
 
   @override
@@ -111,7 +108,20 @@ class _DriveCard extends TripCardState<DriveCard> {
                   builder: (context) => DriveDetailPage.fromDrive(drive),
                 ),
               ),
-              child: buildCardInfo(context),
+              child: drive!.cancelled
+                  ? Stack(
+                      children: [
+                        Container(
+                          foregroundDecoration: const BoxDecoration(
+                            color: Colors.grey,
+                            backgroundBlendMode: BlendMode.saturation,
+                          ),
+                          child: buildCardInfo(context),
+                        ),
+                        CustomBanner.translucenterror('cancelled'),
+                      ],
+                    )
+                  : buildCardInfo(context),
             ),
           );
   }
