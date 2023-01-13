@@ -7,16 +7,12 @@ class OwnThemeFields {
   final Color warning;
   final Color onWarning;
 
-  final Color pending;
-  final Color onPending;
-
-  const OwnThemeFields(
-      {this.success = Colors.green,
-      this.onSuccess = Colors.white,
-      this.warning = Colors.orange,
-      this.onWarning = Colors.white,
-      this.pending = Colors.grey,
-      this.onPending = Colors.white});
+  const OwnThemeFields({
+    this.success = Colors.green,
+    this.onSuccess = Colors.white,
+    this.warning = Colors.orange,
+    this.onWarning = Colors.white,
+  });
 }
 
 extension ThemeDataExtensions on ThemeData {

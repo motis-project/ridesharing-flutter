@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
@@ -15,6 +14,7 @@ import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
+import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
@@ -76,9 +76,15 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildTopRight() {
+    RideStatus status = ride!.status;
     return Row(
       children: [
-        Text("${ride!.price}€"),
+        status == RideStatus.approved
+            ? Icon(Icons.done_all, color: Theme.of(context).own().success)
+            : status == RideStatus.pending
+                ? Icon(Icons.done_all, color: Theme.of(context).disabledColor)
+                : const SizedBox(),
+        Text(" ${ride!.price}€"),
       ],
     );
   }
@@ -93,21 +99,11 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildBottomRight() {
-    List<Review>? reviews = ride!.drive!.driver!.reviewsReceived;
-    AggregateReview aggregateReview = AggregateReview(
-        rating: 0,
-        comfortRating: 0,
-        safetyRating: 0,
-        reliabilityRating: 0,
-        hospitalityRating: 0,
-        numberOfReviews: reviews!.length);
-    if (reviews != null) {
-      aggregateReview = AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!);
-    }
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: CustomRatingBarIndicator(rating: aggregateReview.rating, size: CustomRatingBarSize.medium),
+      child: CustomRatingBarIndicator(
+          rating: AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!).rating,
+          size: CustomRatingBarSize.medium),
     );
   }
 
@@ -135,24 +131,20 @@ class RideCardState extends TripCardState<RideCard> {
                         builder: (context) => RideDetailPage.fromRide(ride!),
                       ),
                     ),
-                child: ride!.status.isCancelled()
-                    ? Stack(
-                        children: [
-                          Container(
+                child: ride!.status.isCancelled() || ride!.status == RideStatus.rejected
+                    ? Stack(alignment: AlignmentDirectional.topEnd, children: [
+                        Container(
                             foregroundDecoration: const BoxDecoration(
                               color: Colors.grey,
                               backgroundBlendMode: BlendMode.saturation,
                             ),
-                            child: buildCardInfo(context),
-                          ),
-                          CustomBanner.translucenterror('cancelled'),
-                        ],
-                      )
-                    : (ride!.status == RideStatus.pending)
-                        ? Stack(
-                            children: [CustomBanner.pending('pending'), buildCardInfo(context)],
-                          )
-                        : buildCardInfo(context)),
+                            child: buildCardInfo(context)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 12),
+                          child: Icon(Icons.block, color: Theme.of(context).errorColor),
+                        )
+                      ])
+                    : buildCardInfo(context)),
           );
   }
 }

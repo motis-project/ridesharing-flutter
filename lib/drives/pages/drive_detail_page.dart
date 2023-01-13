@@ -171,7 +171,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           onPressed: _showCancelDialog,
         );
       } else {
-        bottomButton = Button.error('Delete Drive', onPressed: _showDeleteDialog);
+        bottomButton = Button.error(S.of(context).pageDriveDetailDeleteDrive, onPressed: _showDeleteDialog);
       }
       widgets.add(bottomButton);
       widgets.add(const SizedBox(height: 5));
@@ -328,8 +328,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Delete Drive"),
-        content: const Text('Are you sure you want to delete this Drive'),
+        title: Text(S.of(context).pageDriveDetailDeleteDrive),
+        content: Text(S.of(context).pageDriveDetailDeleteDriveDialog),
         actions: <Widget>[
           TextButton(
             child: Text(S.of(context).no),

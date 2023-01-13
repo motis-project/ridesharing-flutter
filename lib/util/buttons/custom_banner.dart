@@ -9,10 +9,7 @@ class CustomBanner extends StatelessWidget {
   const CustomBanner(this.text, {super.key, this.displayColorKind = DisplayColorKind.primary});
 
   factory CustomBanner.error(text) => CustomBanner(text, displayColorKind: DisplayColorKind.error);
-  factory CustomBanner.translucenterror(text) =>
-      CustomBanner(text, displayColorKind: DisplayColorKind.translucenterror);
   factory CustomBanner.warning(text) => CustomBanner(text, displayColorKind: DisplayColorKind.warning);
-  factory CustomBanner.pending(text) => CustomBanner(text, displayColorKind: DisplayColorKind.disabled);
 
   @override
   Widget build(BuildContext context) {

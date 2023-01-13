@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
-import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/buttons/button.dart';
 import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
@@ -191,7 +188,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
         );
       default:
         return Button.error(
-          'Delete Ride',
+          S.of(context).pageRideDetailDeleteRide,
           onPressed: _showDeleteDialog,
         );
     }
@@ -271,8 +268,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Delete Ride"),
-        content: const Text('Are you sure you want to delete this Ride'),
+        title: Text(S.of(context).pageRideDetailDeleteRide),
+        content: Text(S.of(context).pageRideDetailDeteRideDialog),
         actions: <Widget>[
           TextButton(
             child: Text(S.of(context).no),

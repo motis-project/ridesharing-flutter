@@ -1,13 +1,12 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
-import '../buttons/custom_banner.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
+import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
@@ -74,27 +73,17 @@ class _DriveCard extends TripCardState<DriveCard> {
   // Notification
   @override
   Widget buildTopRight() {
-    int numberofPendingRequests = 0;
-    for (var ride in drive!.rides!) {
-      if (ride.status == RideStatus.pending) numberofPendingRequests++;
-    }
-    return numberofPendingRequests > 0
-        ? Badge(
-            badgeContent: Text(
-              numberofPendingRequests.toString(),
-              style: const TextStyle(color: Colors.white),
-              textScaleFactor: 1.0,
-            ),
-            position: BadgePosition.topEnd(top: -12),
-            child: const Icon(
-              Icons.done_all,
-              color: Colors.grey,
-            ),
-          )
-        : const Icon(
-            Icons.done_all,
-            color: Colors.green,
-          );
+    return drive!.cancelled
+        ? const SizedBox()
+        : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
+            ? Icon(
+                Icons.done_all,
+                color: Theme.of(context).disabledColor,
+              )
+            : Icon(
+                Icons.done_all,
+                color: Theme.of(context).own().success,
+              );
   }
 
   @override
@@ -102,6 +91,7 @@ class _DriveCard extends TripCardState<DriveCard> {
     return !fullyLoaded
         ? const Center(child: CircularProgressIndicator())
         : Card(
+            color: Theme.of(context).cardColor,
             child: InkWell(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -109,18 +99,18 @@ class _DriveCard extends TripCardState<DriveCard> {
                 ),
               ),
               child: drive!.cancelled
-                  ? Stack(
-                      children: [
-                        Container(
+                  ? Stack(alignment: AlignmentDirectional.topEnd, children: [
+                      Container(
                           foregroundDecoration: const BoxDecoration(
                             color: Colors.grey,
                             backgroundBlendMode: BlendMode.saturation,
                           ),
-                          child: buildCardInfo(context),
-                        ),
-                        CustomBanner.translucenterror('cancelled'),
-                      ],
-                    )
+                          child: buildCardInfo(context)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Icon(Icons.block, color: Theme.of(context).errorColor),
+                      )
+                    ])
                   : buildCardInfo(context),
             ),
           );
