@@ -12,12 +12,11 @@ import 'mock_server.mocks.dart';
 // Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  MockUrlProcessor driveProcesor = MockUrlProcessor();
+  MockUrlProcessor driveProcessor = MockUrlProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
     await MockServer.initialize();
-    MockServer.handleRequests(driveProcesor);
-    SupabaseManager.setClient(MockServer.client);
+    MockServer.handleRequests(driveProcessor);
   });
   //tearDown muss in jeder Testklasse einmal aufgerufen werden
   tearDown(() async {
@@ -26,7 +25,7 @@ void main() {
 
   group('basic test', () {
     test('test with explicit URL', () async {
-      when(driveProcesor.processUrl('/rest/v1/drives?select=driver_id%2Cseats&driver_id=eq.1')).thenReturn(jsonEncode([
+      when(driveProcessor.processUrl('/rest/v1/drives?select=driver_id%2Cseats&driver_id=eq.1')).thenReturn(jsonEncode([
         {'drive_id': 1, 'seats': 2},
         {'drive_id': 2, 'seats': 1},
       ]));
@@ -34,14 +33,18 @@ void main() {
       print(data);
     });
     test('test without explicit URL', () async {
-      when(driveProcesor.processUrl(any)).thenReturn(jsonEncode([
+      when(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
         {
           'id': 1,
           'driver_id': 1,
           'created_at': DateTime(2022, 09, 12, 12).toString(),
           'start': 'Darmstadt',
+          'start_lat': 49.222,
+          'start_lng': 49.222,
           'start_time': DateTime(2022, 09, 12, 16).toString(),
           'end': 'Frankfurt',
+          'end_lat': 50.110,
+          'end_lng': 49.222,
           'end_time': DateTime(2022, 09, 12, 20).toString(),
           'seats': 2,
           'cancelled': false,
@@ -49,6 +52,7 @@ void main() {
       ]));
       final data = await Drive.getDrivesOfUser(1);
       print(data);
+      expect(data.first.driverId, 1);
     });
   });
 }

@@ -144,7 +144,7 @@ class Drive extends Trip {
   Future<void> cancel() async {
     cancelled = true;
     await SupabaseManager.supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
-    //the rides get SupabaseManager.updated automatically by a supabase function.
+    //the rides get updated automatically by a supabase function.
   }
 
   @override

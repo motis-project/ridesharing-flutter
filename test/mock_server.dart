@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:mockito/annotations.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:supabase/supabase.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockServer {
-  static const customApiKey = 'customApiKey';
   static const apiKey = 'supabaseKey';
-
   static late SupabaseClient client;
   static late HttpServer mockServer;
   static final Set<String> listeners = {};
@@ -40,17 +39,12 @@ class MockServer {
         'X-Client-Info': 'supabase-flutter/0.0.0',
       },
     );
+    SupabaseManager.setClient(MockServer.client);
   }
 
   static void tearDown() async {
-    listener?.cancel();
-    listeners.clear();
-
     // Wait for the realtime updates to come through
     await Future.delayed(const Duration(milliseconds: 100));
-
-    await webSocket?.close();
-    await mockServer.close();
   }
 }
 
