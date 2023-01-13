@@ -4,6 +4,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
+import 'package:motis_mitfahr_app/rides/widgets/search_suggestion_filter.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
@@ -42,38 +43,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   final List<int> list = List.generate(10, (index) => index + 1);
 
-  //Filter
-  static const List<Feature> _commonFeatures = [
-    Feature.noSmoking,
-    Feature.noVaping,
-    Feature.petsAllowed,
-    Feature.childrenAllowed,
-    Feature.talkative,
-    Feature.relaxedDrivingStyle,
-  ];
-
-  bool _isRatingExpanded = false;
-  bool _isFeatureListExpanded = false;
-
-  late int _minRating;
-  late int _minComfortRating;
-  late int _minSafetyRating;
-  late int _minReliabilityRating;
-  late int _minHospitalityRating;
-  late List<Feature> _selectedFeatures;
-  late SearchSuggestionSorting _sorting;
-  final _maxDeviationController = TextEditingController();
-
-  void setDefaultFilterValues() {
-    _minRating = 1;
-    _minComfortRating = 1;
-    _minSafetyRating = 1;
-    _minReliabilityRating = 1;
-    _minHospitalityRating = 1;
-    _selectedFeatures = [];
-    _maxDeviationController.text = "12";
-    _sorting = SearchSuggestionSorting.relevance;
-  }
+  final SearchSuggestionFilter _filter = SearchSuggestionFilter();
 
   List<Ride>? _rideSuggestions;
 
@@ -86,7 +56,6 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _startController.text = widget.startSuggestion.name;
     _destinationSuggestion = widget.endSuggestion;
     _destinationController.text = widget.endSuggestion.name;
-    setDefaultFilterValues();
     loadRides();
   }
 
@@ -96,7 +65,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     _timeController.dispose();
     _startController.dispose();
     _destinationController.dispose();
-    _maxDeviationController.dispose();
+    _filter.dispose();
     super.dispose();
   }
 
@@ -298,7 +267,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     if (_rideSuggestions == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    List<Ride> filteredSuggestions = _applyFilters(_rideSuggestions!);
+    List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
     Widget list;
     if (filteredSuggestions.isEmpty) {
       list = Center(
@@ -368,255 +337,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   Widget buildFilterPicker() {
     return IconButton(
-      onPressed: _showFilterDialog,
+      onPressed: () => _filter.dialog(context, setState),
       icon: const Icon(Icons.tune),
       tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
     );
-  }
-
-  Widget filterCategory(String title, Widget content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        content,
-      ],
-    );
-  }
-
-  Widget _buildRatingFilter(void Function(void Function()) innerSetState) {
-    return filterCategory(
-      S.of(context).pageSearchSuggestionsFilterMinimumRating,
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomRatingBar(
-            size: CustomRatingBarSize.large,
-            rating: _minRating,
-            onRatingUpdate: (newRating) => innerSetState(
-              () => _minRating = newRating.toInt(),
-            ),
-          ),
-          if (_isRatingExpanded) ...[
-            Text(S.of(context).reviewCategoryComfort),
-            CustomRatingBar(
-              size: CustomRatingBarSize.medium,
-              rating: _minComfortRating,
-              onRatingUpdate: (newRating) => innerSetState(
-                () => _minComfortRating = newRating.toInt(),
-              ),
-            ),
-            Text(S.of(context).reviewCategorySafety),
-            CustomRatingBar(
-              size: CustomRatingBarSize.medium,
-              rating: _minSafetyRating,
-              onRatingUpdate: (newRating) => innerSetState(
-                () => _minSafetyRating = newRating.toInt(),
-              ),
-            ),
-            Text(S.of(context).reviewCategoryReliability),
-            CustomRatingBar(
-              size: CustomRatingBarSize.medium,
-              rating: _minReliabilityRating,
-              onRatingUpdate: (newRating) => innerSetState(
-                () => _minReliabilityRating = newRating.toInt(),
-              ),
-            ),
-            Text(S.of(context).reviewCategoryHospitality),
-            CustomRatingBar(
-              size: CustomRatingBarSize.medium,
-              rating: _minHospitalityRating,
-              onRatingUpdate: (newRating) => innerSetState(
-                () => _minHospitalityRating = newRating.toInt(),
-              ),
-            ),
-          ],
-          TextButton(
-            onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
-            child: Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeaturesFilter(void Function(void Function()) innerSetState) {
-    List<Feature> shownFeatures = _isFeatureListExpanded ? Feature.values : _commonFeatures;
-    return filterCategory(
-      S.of(context).pageSearchSuggestionsFilterFeatures,
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            runSpacing: -10,
-            children: List.generate(
-              shownFeatures.length,
-              (index) {
-                Feature feature = shownFeatures[index];
-                bool featureSelected = _selectedFeatures.contains(feature);
-                return FilterChip(
-                  avatar: feature.getIcon(context),
-                  label: Text(feature.getDescription(context)),
-                  selected: _selectedFeatures.contains(feature),
-                  tooltip: featureSelected
-                      ? S.of(context).pageSearchSuggestionsFilterFeaturesDeselectTooltip
-                      : S.of(context).pageSearchSuggestionsFilterFeaturesSelectTooltip,
-                  onSelected: (selected) {
-                    if (featureSelected) {
-                      innerSetState(() => _selectedFeatures.remove(feature));
-                    } else {
-                      Feature? mutuallyExclusiveFeature = _selectedFeatures
-                          .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
-                      if (mutuallyExclusiveFeature != null) {
-                        String description = mutuallyExclusiveFeature.getDescription(context);
-                        String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
-                        SemanticsService.announce(text, TextDirection.ltr);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(text)),
-                        );
-                        return;
-                      }
-                      innerSetState(() => _selectedFeatures.add(feature));
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-          TextButton(
-            onPressed: () => innerSetState(() => _isFeatureListExpanded = !_isFeatureListExpanded),
-            child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeviationFilter() {
-    return filterCategory(
-      S.of(context).pageSearchSuggestionsFilterDeviation,
-      Row(
-        children: [
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: TextField(
-              controller: _maxDeviationController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-          ),
-          Text(S.of(context).pageSearchSuggestionsFilterDeviationHours),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSortingFilter(void Function(void Function()) innerSetState) {
-    return filterCategory(
-      S.of(context).pageSearchSuggestionsFilterSorting,
-      DropdownButton(
-        value: _sorting,
-        items: SearchSuggestionSorting.values
-            .map(
-              (sorting) => DropdownMenuItem(
-                value: sorting,
-                child: Text(sorting.getDescription(context)),
-              ),
-            )
-            .toList(),
-        onChanged: (SearchSuggestionSorting? value) => innerSetState(
-          () => _sorting = value!,
-        ),
-      ),
-    );
-  }
-
-  void _showFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, innerSetState) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildRatingFilter(innerSetState),
-                  _buildFeaturesFilter(innerSetState),
-                  _buildDeviationFilter(),
-                  _buildSortingFilter(innerSetState),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(S.of(context).pageSearchSuggestionsFilterResetToDefault),
-                onPressed: () => innerSetState(() => setDefaultFilterValues()),
-              ),
-              TextButton(
-                child: Text(S.of(context).okay),
-                onPressed: () {
-                  setState(() {});
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  List<Ride> _applyFilters(List<Ride> rideSuggestions) {
-    return rideSuggestions
-        .where(
-          (Ride ride) {
-            Profile driver = ride.drive!.driver!;
-            bool ratingSatisfied = driver.getAggregateReview().rating >= _minRating &&
-                driver.getAggregateReview().comfortRating >= _minComfortRating &&
-                driver.getAggregateReview().safetyRating >= _minSafetyRating &&
-                driver.getAggregateReview().reliabilityRating >= _minReliabilityRating &&
-                driver.getAggregateReview().hospitalityRating >= _minHospitalityRating;
-            bool featuresSatisfied = Set.of(driver.profileFeatures!).containsAll(_selectedFeatures);
-            bool maxDeviationSatisfied =
-                _selectedDate.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
-            return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
-          },
-        )
-        .sorted(_sorting.sortFunction(_selectedDate))
-        .toList();
-  }
-}
-
-enum SearchSuggestionSorting { relevance, time, price }
-
-extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
-  String getDescription(BuildContext context) {
-    switch (this) {
-      case SearchSuggestionSorting.relevance:
-        return S.of(context).pageSearchSuggestionsSortingRelevance;
-      case SearchSuggestionSorting.time:
-        return S.of(context).pageSearchSuggestionsSortingTime;
-      case SearchSuggestionSorting.price:
-        return S.of(context).pageSearchSuggestionsSortingPrice;
-    }
-  }
-
-  int Function(Ride, Ride) sortFunction(DateTime date) {
-    timeFunc(Ride ride1, Ride ride2) => date.difference(ride1.startTime).compareTo(date.difference(ride2.startTime));
-    priceFunc(Ride ride1, Ride ride2) => ride1.price!.compareTo(ride2.price!);
-    switch (this) {
-      case SearchSuggestionSorting.relevance:
-        return (ride1, ride2) => timeFunc(ride1, ride2) + priceFunc(ride1, ride2);
-      case SearchSuggestionSorting.time:
-        return timeFunc;
-      case SearchSuggestionSorting.price:
-        return priceFunc;
-    }
   }
 }
