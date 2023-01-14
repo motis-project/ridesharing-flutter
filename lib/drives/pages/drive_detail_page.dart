@@ -321,7 +321,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   void noShowDrive() async {
-    await supabaseClient.from('drives').update({'hide_in_listview': true}).eq('id', widget.drive!.id);
+    await supabaseClient.from('drives').update({'hide_in_list_view': true}).eq('id', widget.drive!.id);
   }
 
   void _showDeleteDialog() {

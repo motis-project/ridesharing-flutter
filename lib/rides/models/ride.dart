@@ -80,7 +80,7 @@ class Ride extends Trip {
         rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
         driveId: json['drive_id'],
         drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-        hideinListView: json['hide_in_listview']);
+        hideinListView: json['hide_in_list_view']);
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {
