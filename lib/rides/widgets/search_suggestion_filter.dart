@@ -220,38 +220,43 @@ class SearchSuggestionFilter {
   void dialog(BuildContext context, void Function(void Function()) setState) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, innerSetState) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildRatingFilter(context, innerSetState),
-                  _buildFeaturesFilter(context, innerSetState),
-                  _buildDeviationFilter(
-                    context,
+      builder: (BuildContext context) => ScaffoldMessenger(
+        child: StatefulBuilder(
+          builder: (context, innerSetState) {
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AlertDialog(
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildRatingFilter(context, innerSetState),
+                      _buildFeaturesFilter(context, innerSetState),
+                      _buildDeviationFilter(
+                        context,
+                      ),
+                      _buildSortingFilter(context, innerSetState),
+                    ],
                   ),
-                  _buildSortingFilter(context, innerSetState),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(S.of(context).searchSuggestionsFilterResetToDefault),
+                    onPressed: () => innerSetState(() => setDefaultFilterValues()),
+                  ),
+                  TextButton(
+                    child: Text(S.of(context).okay),
+                    onPressed: () {
+                      setState(() {});
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ],
               ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(S.of(context).searchSuggestionsFilterResetToDefault),
-                onPressed: () => innerSetState(() => setDefaultFilterValues()),
-              ),
-              TextButton(
-                child: Text(S.of(context).okay),
-                onPressed: () {
-                  setState(() {});
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
