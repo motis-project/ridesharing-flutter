@@ -91,6 +91,14 @@
   "pageHomeTitle": "Home",
 
   "pageAboutTitle": "Über uns",
+  "pageAboutLogoSemantics": "MOTIS Logo",
+  "pageAboutVersion": "Version {version}",
+  "pageAboutBuildNumber": "Build-Nummer: {number}",
+  "pageAboutBuildSignature": "Build-Signatur: {signature}",
+  "pageAboutText": "Diese App wurde von einer Gruppe Studierender an der TU Darmstadt programmiert. Bitte beachten Sie, dass wir keine rechtliche Haftung für von Nutzenden gepostete Inhalte übernehmen und nicht garantieren, dass die App sicher ist.",
+  "pageAboutGithub": "GitHub",
+  "pageAboutWebsite": "Website",
+  "pageAboutTermsOfService": "Nutzungsbedingungen",
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Ausloggen",

@@ -111,6 +111,29 @@
   "pageHomeTitle": "Home",
 
   "pageAboutTitle": "About",
+  "pageAboutLogoSemantics": "MOTIS Logo",
+  "pageAboutVersion": "Version {version}",
+  "@pageAboutVersion": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "pageAboutBuildNumber": "Build number: {number}",
+  "@pageAboutBuildNumber": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "pageAboutBuildSignature": "Build signature: {signature}",
+  "@pageAboutBuildSignature": {
+    "placeholders": {
+      "signature": {}
+    }
+  },
+  "pageAboutText": "This app was coded by a group of students at TU Darmstadt. Please note that we do not accept legal reliability for any content posted by users and do not guarantee that the app is secure.",
+  "pageAboutGithub": "GitHub",
+  "pageAboutWebsite": "Website",
+  "pageAboutTermsOfService": "Terms of service",
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
