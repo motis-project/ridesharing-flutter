@@ -274,9 +274,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               if (_rideSuggestions!.isNotEmpty)
-                Text(
-                  S.of(context).pageSearchSuggestionsRelaxRestrictions,
-                  style: Theme.of(context).textTheme.titleMedium,
+                Semantics(
+                  button: true,
+                  tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
+                  child: InkWell(
+                    onTap: () => _filter.dialog(context, setState),
+                    child: Text(
+                      S.of(context).pageSearchSuggestionsRelaxRestrictions,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
                 )
               else
                 Text(
@@ -328,7 +335,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
             const SizedBox(height: 10),
             buildDateSeatsRow(),
             const SizedBox(height: 5),
-            _filter.getRow(context, setState),
+            _filter.buildIndicatorRow(context, setState),
             const Divider(thickness: 1),
             buildSearchCardList(),
           ],

@@ -122,8 +122,12 @@ class SearchSuggestionFilter {
   }
 
   Widget _buildFeaturesFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    List<Feature> shownFeatures =
-        _isFeatureListExpanded ? Feature.values : {..._commonFeatures, ..._selectedFeatures}.toList();
+    List<Feature> shownFeatures;
+    if (_isFeatureListExpanded) {
+      shownFeatures = {..._selectedFeatures, ...Feature.values}.toList();
+    } else {
+      shownFeatures = _selectedFeatures.isNotEmpty ? _selectedFeatures : _commonFeatures;
+    }
     return _filterCategory(
       context,
       S.of(context).searchSuggestionsFilterFeatures,
@@ -272,13 +276,13 @@ class SearchSuggestionFilter {
     ]);
   }
 
-  Widget getRow(BuildContext context, void Function(void Function()) setState) {
+  Widget buildIndicatorRow(BuildContext context, void Function(void Function()) setState) {
     bool isRatingDefault = _minRating == _defaultRating &&
         _minComfortRating == _defaultRating &&
         _minSafetyRating == _defaultRating &&
         _minReliabilityRating == _defaultRating &&
         _minHospitalityRating == _defaultRating;
-    bool isFeaturesDefault = _selectedFeatures == _defaultFeatures;
+    bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
     bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
 
     List<Widget> widgets = [];
@@ -290,7 +294,7 @@ class SearchSuggestionFilter {
             _minSafetyRating != _defaultRating ||
             _minReliabilityRating != _defaultRating ||
             _minHospitalityRating != _defaultRating) {
-          ratingWidgets.add(const SizedBox(width: 6));
+          ratingWidgets.add(const SizedBox(width: 4));
         }
       }
       if (_minComfortRating != _defaultRating) {
@@ -339,7 +343,7 @@ class SearchSuggestionFilter {
       }
       int numDividers = ratingWidgets.length - 1;
       for (int i = 0; i < numDividers; i++) {
-        ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 5));
+        ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 10));
       }
       Widget ratingsRow = Row(children: ratingWidgets);
       widgets.add(ratingsRow);
@@ -363,24 +367,30 @@ class SearchSuggestionFilter {
       widgets.insert(i * 2 + 1, const VerticalDivider(indent: 5, endIndent: 5));
     }
     return IntrinsicHeight(
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => dialog(context, setState),
-            icon: const Icon(Icons.tune),
-            tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
-          ),
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: widgets,
+      child: Semantics(
+        button: true,
+        tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
+        child: InkWell(
+          onTap: () => dialog(context, setState),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(6),
+                child: Icon(Icons.tune),
+              ),
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: widgets,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
