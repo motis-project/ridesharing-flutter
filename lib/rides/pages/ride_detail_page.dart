@@ -186,7 +186,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             ? Button(S.of(context).pageRideDetailButtonRate, onPressed: () => _navigateToRatePage(driver))
             : Button.error(S.of(context).pageRideDetailButtonCancel, onPressed: _showCancelDialog);
       case RideStatus.pending:
-        return Button(
+        return Button.error(
           S.of(context).pageRideDetailButtonWithdraw,
           onPressed: _showWithdrawDialog,
         );
