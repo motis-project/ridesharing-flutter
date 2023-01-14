@@ -1,13 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/rides/widgets/search_suggestion_filter.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
 import 'package:motis_mitfahr_app/util/trip/search_card.dart';
 import 'package:timelines/timelines.dart';
@@ -316,10 +309,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).pageSearchSuggestionsTitle),
-        actions: [buildFilterPicker()],
-      ),
+      appBar: AppBar(title: Text(S.of(context).pageSearchSuggestionsTitle)),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -327,19 +317,13 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
             buildSearchFieldViewer(),
             const SizedBox(height: 10),
             buildDateSeatsRow(),
+            const SizedBox(height: 5),
+            _filter.getRow(context, setState),
             const Divider(thickness: 1),
             buildSearchCardList(),
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildFilterPicker() {
-    return IconButton(
-      onPressed: () => _filter.dialog(context, setState),
-      icon: const Icon(Icons.tune),
-      tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
     );
   }
 }

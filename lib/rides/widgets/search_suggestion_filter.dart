@@ -19,6 +19,10 @@ class SearchSuggestionFilter {
     Feature.talkative,
     Feature.relaxedDrivingStyle,
   ];
+  static const int _defaultRating = 1;
+  static const List<Feature> _defaultFeatures = [];
+  static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
+  static const String _defaultDeviation = "12";
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -33,14 +37,14 @@ class SearchSuggestionFilter {
   final _maxDeviationController = TextEditingController();
 
   void setDefaultFilterValues() {
-    _minRating = 1;
-    _minComfortRating = 1;
-    _minSafetyRating = 1;
-    _minReliabilityRating = 1;
-    _minHospitalityRating = 1;
-    _selectedFeatures = [];
-    _maxDeviationController.text = "12";
-    _sorting = SearchSuggestionSorting.relevance;
+    _minRating = _defaultRating;
+    _minComfortRating = _defaultRating;
+    _minSafetyRating = _defaultRating;
+    _minReliabilityRating = _defaultRating;
+    _minHospitalityRating = _defaultRating;
+    _selectedFeatures = [..._defaultFeatures];
+    _maxDeviationController.text = _defaultDeviation;
+    _sorting = _defaultSorting;
   }
 
   SearchSuggestionFilter() {
@@ -247,6 +251,130 @@ class SearchSuggestionFilter {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSmallRatingIndicator(int rating, {Icon? icon}) {
+    return Row(children: [
+      if (icon != null) ...[icon, const SizedBox(width: 3)],
+      Text(rating.toString()),
+      const Icon(
+        Icons.star,
+        color: Colors.amber,
+      )
+    ]);
+  }
+
+  Widget getRow(BuildContext context, void Function(void Function()) setState) {
+    bool isRatingDefault = _minRating == _defaultRating &&
+        _minComfortRating == _defaultRating &&
+        _minSafetyRating == _defaultRating &&
+        _minReliabilityRating == _defaultRating &&
+        _minHospitalityRating == _defaultRating;
+    bool isFeaturesDefault = _selectedFeatures == _defaultFeatures;
+    bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
+
+    List<Widget> widgets = [];
+    if (!isRatingDefault) {
+      List<Widget> ratingWidgets = [];
+      if (_minRating != _defaultRating) {
+        ratingWidgets.add(_buildSmallRatingIndicator(_minRating));
+        if (_minComfortRating != _defaultRating ||
+            _minSafetyRating != _defaultRating ||
+            _minReliabilityRating != _defaultRating ||
+            _minHospitalityRating != _defaultRating) {
+          ratingWidgets.add(const SizedBox(width: 6));
+        }
+      }
+      if (_minComfortRating != _defaultRating) {
+        ratingWidgets.add(
+          _buildSmallRatingIndicator(
+            _minComfortRating,
+            icon: Icon(
+              Icons.chair,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        );
+      }
+      if (_minSafetyRating != _defaultRating) {
+        ratingWidgets.add(
+          _buildSmallRatingIndicator(
+            _minSafetyRating,
+            icon: Icon(
+              Icons.health_and_safety,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        );
+      }
+      if (_minReliabilityRating != _defaultRating) {
+        ratingWidgets.add(
+          _buildSmallRatingIndicator(
+            _minReliabilityRating,
+            icon: Icon(
+              Icons.timer,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        );
+      }
+      if (_minHospitalityRating != _defaultRating) {
+        ratingWidgets.add(
+          _buildSmallRatingIndicator(
+            _minHospitalityRating,
+            icon: Icon(
+              Icons.favorite,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        );
+      }
+      int numDividers = ratingWidgets.length - 1;
+      for (int i = 0; i < numDividers; i++) {
+        ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 5));
+      }
+      Widget ratingsRow = Row(children: ratingWidgets);
+      widgets.add(ratingsRow);
+    }
+    if (!isFeaturesDefault) {
+      Widget featuresRow = Row(children: _selectedFeatures.map((feature) => feature.getIcon(context)).toList());
+      widgets.add(featuresRow);
+    }
+    if (!isDeviationDefault) {
+      Widget deviationWidget = Row(
+        children: [const Icon(Icons.schedule), const SizedBox(width: 6), Text("± ${_maxDeviationController.text}")],
+      );
+      widgets.add(deviationWidget);
+    }
+    Widget sortingWidget = Row(
+      children: [const Icon(Icons.sort), Text(_sorting.getDescription(context))],
+    );
+    widgets.add(sortingWidget);
+    int numDividers = widgets.length - 1;
+    for (int i = 0; i < numDividers; i++) {
+      widgets.insert(i * 2 + 1, const VerticalDivider(indent: 5, endIndent: 5));
+    }
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => dialog(context, setState),
+            icon: const Icon(Icons.tune),
+            tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
+          ),
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: widgets,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
