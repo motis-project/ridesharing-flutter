@@ -8,12 +8,6 @@ LocaleManager localeManager = LocaleManager();
 
 class LocaleManager with ChangeNotifier {
   final supportedLocales = S.supportedLocales;
-  final localizationsDelegates = const [
-    S.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ];
   late Locale currentLocale;
 
   Future<void> loadCurrentLocale() async {

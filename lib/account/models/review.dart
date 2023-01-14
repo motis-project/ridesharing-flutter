@@ -4,6 +4,8 @@ import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.
 import '../../util/model.dart';
 
 class Review extends Model implements Comparable<Review> {
+  static const int maxRating = 5;
+
   int rating;
   int? comfortRating;
   int? safetyRating;
@@ -54,6 +56,7 @@ class Review extends Model implements Comparable<Review> {
     return jsonList.map((json) => Review.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'rating': rating,
@@ -78,10 +81,6 @@ class Review extends Model implements Comparable<Review> {
     } else {
       return other.createdAt!.compareTo(createdAt!);
     }
-  }
-
-  List<Map<String, dynamic>> toJsonList(List<Review> reviews) {
-    return reviews.map((review) => review.toJson()).toList();
   }
 
   @override

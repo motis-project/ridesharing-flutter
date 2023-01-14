@@ -77,6 +77,7 @@ class Profile extends Model {
     return jsonList.map((json) => Profile.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'username': username,
@@ -88,10 +89,6 @@ class Profile extends Model {
       'gender': gender?.index,
       'avatar_url': avatarUrl,
     };
-  }
-
-  List<Map<String, dynamic>> toJsonList(List<Profile> profiles) {
-    return profiles.map((profile) => profile.toJson()).toList();
   }
 
   @override
@@ -107,11 +104,6 @@ class Profile extends Model {
     }
 
     return Profile.fromJson(query);
-  }
-
-  AggregateReview getAggregateReview() {
-    List<Review> reviews = reviewsReceived ?? [];
-    return AggregateReview.fromReviews(reviews);
   }
 }
 

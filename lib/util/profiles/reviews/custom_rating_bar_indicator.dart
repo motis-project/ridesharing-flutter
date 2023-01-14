@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,7 +24,7 @@ class CustomRatingBarIndicator extends StatelessWidget {
           Icons.star,
           color: Colors.amber,
         ),
-        itemCount: 5,
+        itemCount: Review.maxRating,
         itemSize: size.itemSize,
         direction: Axis.horizontal,
       ),

@@ -7,6 +7,10 @@ class SupabaseManager {
 
   static Profile? getCurrentProfile() => _currentProfile;
 
+  static void setCurrentProfile(Profile? profile) {
+    _currentProfile = profile;
+  }
+
   static SupabaseClient supabaseClient = Supabase.instance.client;
 
   static void setClient(SupabaseClient client) {
@@ -22,12 +26,12 @@ class SupabaseManager {
           .maybeSingle();
 
       if (response == null) {
-        _currentProfile = null;
+        setCurrentProfile(null);
       } else {
-        _currentProfile = Profile.fromJson(response);
+        setCurrentProfile(Profile.fromJson(response));
       }
     } catch (e) {
-      _currentProfile = null;
+      setCurrentProfile(null);
     }
   }
 }

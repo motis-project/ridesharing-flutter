@@ -87,6 +87,7 @@ class Ride extends Trip {
     return jsonList.map((json) => Ride.fromJson(json as Map<String, dynamic>)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'start': start,
@@ -103,10 +104,6 @@ class Ride extends Trip {
       'drive_id': driveId,
       'rider_id': riderId,
     };
-  }
-
-  List<Map<String, dynamic>> toJsonList(List<Ride> rides) {
-    return rides.map((ride) => ride.toJson()).toList();
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
