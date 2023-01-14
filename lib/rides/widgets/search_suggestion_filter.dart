@@ -122,7 +122,8 @@ class SearchSuggestionFilter {
   }
 
   Widget _buildFeaturesFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    List<Feature> shownFeatures = _isFeatureListExpanded ? Feature.values : _commonFeatures;
+    List<Feature> shownFeatures =
+        _isFeatureListExpanded ? Feature.values : {..._commonFeatures, ..._selectedFeatures}.toList();
     return _filterCategory(
       context,
       S.of(context).searchSuggestionsFilterFeatures,
