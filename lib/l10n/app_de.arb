@@ -264,9 +264,11 @@
 
   "pageSearchSuggestionsTitle": "Vorschläge",
   "pageSearchSuggestionsEmpty": "Nichts zu sehen",
+  "pageSearchSuggestionsRelaxRestrictions": "Lockern Sie Ihre Suchbeschränkungen.",
+  "pageSearchSuggestionsNoResults": "Es tut uns leid, wir konnten für diese Route keine Mitfahrgelegenheit finden.",
   "pageSearchSuggestionsTooltipFilter": "Filter",
 
-  "searchSuggestionsFilterMinimumRating": "Mindeste Bewertung",
+  "searchSuggestionsFilterMinimumRating": "Mindest-Bewertung",
   "searchSuggestionsFilterFeatures": "Features",
   "searchSuggestionsFilterFeaturesSelectTooltip": "Auswählen",
   "searchSuggestionsFilterFeaturesDeselectTooltip": "Abwählen ",

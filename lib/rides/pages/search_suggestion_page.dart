@@ -271,8 +271,18 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               Image.asset('assets/shrug.png'),
               Text(
                 S.of(context).pageSearchSuggestionsEmpty,
-                style: Theme.of(context).textTheme.displaySmall,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
+              if (_rideSuggestions!.isNotEmpty)
+                Text(
+                  S.of(context).pageSearchSuggestionsRelaxRestrictions,
+                  style: Theme.of(context).textTheme.titleMedium,
+                )
+              else
+                Text(
+                  S.of(context).pageSearchSuggestionsNoResults,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
             ],
           ),
         ),

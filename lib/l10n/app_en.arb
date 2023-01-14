@@ -389,6 +389,8 @@
 
   "pageSearchSuggestionsTitle": "Search Suggestions",
   "pageSearchSuggestionsEmpty": "Nothing to see",
+  "pageSearchSuggestionsRelaxRestrictions": "Relax your search restrictions.",
+  "pageSearchSuggestionsNoResults": "We're sorry, we couldn't find a ride for this route.",
   "pageSearchSuggestionsTooltipFilter": "Filter",
 
   "searchSuggestionsFilterFeaturesSelectTooltip": "Select",
