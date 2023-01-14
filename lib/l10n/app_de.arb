@@ -312,7 +312,7 @@
   "pageRideDetailButtonHide": "Mitfahrt löschen",
   "pageRideDetailHideDialog": "Bist du sicher, dass du die Mitfahrt löschen möchtest?",
 
-  "pageDriveChatTitle": "Fahrt Chat",
+  "pageDriveChatTitle": "Chats",
   "pageDriveChatEmptyMessage": "Keine Mitfahrer oder Anfragen",
   "pageDriveChatRiderHeadline": "Mitfahrer",
   "pageDriveChatRequestsHeadline": "Mitfahrtanfragen",
@@ -324,6 +324,11 @@
   "cardPendingRideRejectDialogTitle": "Mitfahrt ablehnen",
   "cardPendingRideRejectDialogMessage": "Bist du sicher, dass du diese Mitfahrt ablehnen möchtest?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Mitfahrt abgelehnt",
+
+  "pageChatEmptyMessage": "Hier kannst du eine Konversation starten:)",
+  "pageChatMessageBarHint": "Schreibe eine Nachricht",
+
+
 
   "appName": "Motis Mitfahr-App"
 }

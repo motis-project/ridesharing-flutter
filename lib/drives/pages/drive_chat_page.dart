@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
-import '../../util/profiles/profile_widget.dart';
 import '../../util/supabase.dart';
 import '../models/drive.dart';
 
@@ -16,8 +14,7 @@ class DriveChatPage extends StatefulWidget {
 }
 
 class _DriveChatPageState extends State<DriveChatPage> {
-  late Drive _drive;
-  bool _fullyLoaded = false;
+  Drive? _drive;
 
   @override
   void initState() {
@@ -25,42 +22,28 @@ class _DriveChatPageState extends State<DriveChatPage> {
     setState(() {
       _drive = widget.drive;
     });
-    loadDrive();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> widgets = <Widget>[];
-    if (_fullyLoaded) {
-      final Set<Profile> riders = _drive.approvedRides!.map((Ride ride) => ride.rider!).toSet();
-      final List<Ride> pendingRides = _drive.pendingRides!.toList();
-      if (riders.isEmpty && pendingRides.isEmpty) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(S.of(context).pageDriveChatTitle),
-          ),
-          body: Center(
-            child: Text(S.of(context).pageDriveChatEmptyMessage),
-          ),
-        );
-      } else {
-        if (riders.isNotEmpty) {
-          final List<Widget> riderColumn = <Widget>[
-            const SizedBox(height: 5.0),
-            Text(
-              S.of(context).pageDriveChatRiderHeadline,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 10.0),
-            _riderList(riders),
-          ];
-          widgets.addAll(riderColumn);
-        }
-        widgets.add(const SizedBox(height: 10.0));
-      }
+    final List<Widget> widgets = [];
+    final Set<Ride> approvedRides = _drive!.approvedRides!.toSet();
+    final List<Ride> pendingRides = _drive!.pendingRides!.toList();
+    if (approvedRides.isEmpty && pendingRides.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).pageDriveChatTitle),
+        ),
+        body: Center(
+          child: Text(S.of(context).pageDriveChatEmptyMessage),
+        ),
+      );
     } else {
-      widgets.add(const SizedBox(height: 10));
-      widgets.add(const Center(child: CircularProgressIndicator()));
+      if (approvedRides.isNotEmpty) {
+        final List<Widget> riderColumn = approvedRides.map((Ride ride) => _buildChatWidget(ride)).toList();
+        widgets.addAll(riderColumn);
+      }
+      widgets.add(const SizedBox(height: 10.0));
     }
     return Scaffold(
       appBar: AppBar(
@@ -81,42 +64,45 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  Widget _riderList(Set<Profile> riders) {
-    Widget ridersColumn = Container();
-    if (riders.isNotEmpty) {
-      ridersColumn = Column(
-        children: List<Padding>.generate(
-          riders.length,
-          (int index) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-            child: ProfileWidget(
-              riders.elementAt(index),
-              //TODO go to chat
-              onTap: () {},
-              actionWidget: const Icon(
-                Icons.chat,
-                color: Colors.black,
-                size: 36.0,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-    return ridersColumn;
-  }
-
   Future<void> loadDrive() async {
     final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,
-        rider: rider_id(*)
+        rider: rider_id(*),
+        messages(*)
       )
     ''').eq('id', widget.drive.id).single();
     setState(() {
       _drive = Drive.fromJson(data);
-      _fullyLoaded = true;
     });
+  }
+
+  Widget _buildChatWidget(Ride ride) {
+    ride.messages!.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    final Message? lastMessage = ride.messages!.isEmpty ? null : ride.messages!.first;
+    return Card(
+      child: InkWell(
+        child: ListTile(
+          leading: Avatar(ride.rider!),
+          title: Text(ride.rider!.username),
+          subtitle: lastMessage == null ? null : Text(lastMessage.content),
+          trailing: lastMessage == null ? null : Text(localeManager.formatTime(lastMessage.createdAt!)),
+          onTap: () {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ChatPage(
+                      ride.id!,
+                      ride.rider!,
+                      // ride.messages!,
+                    ),
+                  ),
+                )
+                .then((value) => loadDrive());
+          },
+        ),
+      ),
+    );
   }
 }

@@ -426,7 +426,7 @@
   "pageRideDetailButtonHide": "Delete Ride",
   "pageRideDetailHideDialog": "Are you sure you want to delete this ride?",
 
-  "pageDriveChatTitle": "Drive Chat",
+  "pageDriveChatTitle": "Chats",
   "pageDriveChatEmptyMessage": "No riders or pending rides",
   "pageDriveChatRiderHeadline": "Riders",
   "pageDriveChatRequestsHeadline": "Ride requests",
@@ -438,6 +438,9 @@
   "cardPendingRideRejectDialogTitle": "Reject Ride",
   "cardPendingRideRejectDialogMessage": "Are you sure you want to reject this ride?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
+
+  "pageChatEmptyMessage": "Start your Conversation now :)",
+  "pageChatMessageBarHint": "Write a Message",
 
   "appName": "Motis Ride-Sharing App"
 }

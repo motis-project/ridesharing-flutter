@@ -17,6 +17,8 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
+  List<Message>? messages;
+
   Ride({
     super.id,
     super.createdAt,
@@ -34,6 +36,7 @@ class Ride extends Trip {
     this.drive,
     required this.riderId,
     this.rider,
+    this.messages,
   });
 
   factory Ride.previewFromDrive(
@@ -83,6 +86,7 @@ class Ride extends Trip {
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+      messages: json.containsKey('messages') ? Message.fromJsonList(json['messages'] as List<dynamic>) : null,
     );
   }
 

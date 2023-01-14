@@ -50,8 +50,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       *,
       rides(
         *,
-        rider: rider_id(*)
+        rider: rider_id(*),
+        messages(*)
       )
+      
     ''').eq('id', widget.id).single();
 
     setState(() {
