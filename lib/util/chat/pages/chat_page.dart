@@ -21,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    _messagesStream = supabaseClient
+    _messagesStream = SupabaseManager.supabaseClient
         .from('messages')
         .stream(primaryKey: ['id'])
         .eq('ride_id', widget.rideId)
@@ -163,7 +163,7 @@ class _MessageBarState extends State<_MessageBar> {
     }
     _textController.clear();
     try {
-      await supabaseClient.from('messages').insert({
+      await SupabaseManager.supabaseClient.from('messages').insert({
         'sender_id': myUserId,
         'content': text,
         'ride_id': widget.rideId,

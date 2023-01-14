@@ -56,8 +56,8 @@ class Message extends Model {
   }
 
   Future<void> markAsRead() async {
-    this.read = true;
-    await supabaseClient.from('messages').update({'read': true}).eq('id', id);
+    read = true;
+    await SupabaseManager.supabaseClient.from('messages').update({'read': true}).eq('id', id);
   }
 
   @override
