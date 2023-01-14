@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "47.0.0"
+    version: "50.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.7.0"
+    version: "5.2.0"
   app_links:
     dependency: transitive
     description:
@@ -105,14 +105,14 @@ packages:
       name: build_resolvers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.10"
+    version: "2.1.0"
   build_runner:
     dependency: "direct dev"
     description:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.3"
   build_runner_core:
     dependency: transitive
     description:
@@ -293,7 +293,7 @@ packages:
       name: frontend_server_client
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.3"
+    version: "3.2.0"
   functions_client:
     dependency: transitive
     description:
