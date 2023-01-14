@@ -38,6 +38,7 @@ dependencies:
 
   # The adapter for supabase
   supabase_flutter: ^1.2.2
+  supabase: ^1.3.0
 
   # Handling .env files
   flutter_dotenv: ^5.0.2

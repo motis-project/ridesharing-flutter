@@ -18,20 +18,32 @@ void main() {
     await MockServer.initialize();
     MockServer.handleRequests(driveProcessor);
   });
-  //tearDown muss in jeder Testklasse einmal aufgerufen werden
-  tearDown(() async {
-    MockServer.tearDown();
-  });
 
   group('basic test', () {
     test('test with explicit URL', () async {
       when(driveProcessor.processUrl('/rest/v1/drives?select=driver_id%2Cseats&driver_id=eq.1')).thenReturn(jsonEncode([
-        {'drive_id': 1, 'seats': 2},
-        {'drive_id': 2, 'seats': 1},
+        {
+          'id': 1,
+          'driver_id': 1,
+          'created_at': DateTime(2022, 09, 12, 12).toString(),
+          'start': 'Darmstadt',
+          'start_lat': 49.222,
+          'start_lng': 49.222,
+          'start_time': DateTime(2022, 09, 12, 16).toString(),
+          'end': 'Frankfurt',
+          'end_lat': 50.110,
+          'end_lng': 49.222,
+          'end_time': DateTime(2022, 09, 12, 20).toString(),
+          'seats': 2,
+          'cancelled': false,
+        }
       ]));
-      final data = await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
-      print(data);
+      final List<dynamic> data =
+          await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
+      Drive drive = Drive.fromJson(data[0]);
+      expect(drive.driverId, 1);
     });
+
     test('test without explicit URL', () async {
       when(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
         {
