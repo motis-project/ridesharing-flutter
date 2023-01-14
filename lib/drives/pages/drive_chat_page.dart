@@ -112,17 +112,16 @@ class _DriveChatPageState extends State<DriveChatPage> {
       ridersColumn = Column(
         children: List.generate(
           riders.length,
-          (index) => InkWell(
-            onTap: () => print("Hey"),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-              child: ProfileWidget(
-                riders.elementAt(index),
-                actionWidget: const Icon(
-                  Icons.chat,
-                  color: Colors.black,
-                  size: 36.0,
-                ),
+          (index) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+            child: ProfileWidget(
+              riders.elementAt(index),
+              //TODO go to chat
+              onTap: () {},
+              actionWidget: const Icon(
+                Icons.chat,
+                color: Colors.black,
+                size: 36.0,
               ),
             ),
           ),
