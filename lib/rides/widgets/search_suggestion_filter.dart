@@ -420,8 +420,8 @@ extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
   }
 
   int Function(Ride, Ride) sortFunction(DateTime date) {
-    timeFunc(Ride ride1, Ride ride2) => date.difference(ride1.startTime).compareTo(date.difference(ride2.startTime));
-    priceFunc(Ride ride1, Ride ride2) => ride1.price!.compareTo(ride2.price!);
+    timeFunc(Ride ride1, Ride ride2) => (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
+    priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {
       case SearchSuggestionSorting.relevance:
         return (ride1, ride2) => timeFunc(ride1, ride2) + priceFunc(ride1, ride2);
