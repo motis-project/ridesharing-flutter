@@ -133,7 +133,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await supabaseClient.from('drives').select('''
+    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,

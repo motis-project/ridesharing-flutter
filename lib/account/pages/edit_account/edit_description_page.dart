@@ -60,7 +60,7 @@ class EditDescriptionPage extends StatelessWidget {
 
   void onPressed(context) async {
     String? text = _controller.text == '' ? null : _controller.text;
-    await supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update({
       'description': text,
     }).eq('id', profile.id);
     SupabaseManager.reloadCurrentProfile();

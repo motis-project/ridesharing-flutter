@@ -216,13 +216,13 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       final feature = _features[index];
 
       if (!previousFeatures.contains(feature)) {
-        await supabaseClient.from('profile_features').insert({
+        await SupabaseManager.supabaseClient.from('profile_features').insert({
           'profile_id': widget.profile.id,
           'feature': feature.index,
           'rank': index,
         });
       } else {
-        await supabaseClient
+        await SupabaseManager.supabaseClient
             .from('profile_features')
             .update({'rank': index})
             .eq('profile_id', widget.profile.id)
@@ -231,7 +231,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     }
     final removedFeatures = previousFeatures.where((e) => !_features.contains(e)).toList();
     for (Feature feature in removedFeatures) {
-      await supabaseClient
+      await SupabaseManager.supabaseClient
           .from('profile_features')
           .delete()
           .eq('profile_id', widget.profile.id)

@@ -108,7 +108,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
-    List<dynamic> data = await supabaseClient
+    List<dynamic> data = await SupabaseManager.supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)

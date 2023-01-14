@@ -90,7 +90,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
 
   void onPressed() async {
     final date = _date == null ? null : _date!.toString();
-    await supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update({
       'birth_date': date,
     }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();

@@ -73,7 +73,7 @@ class EditFullNamePage extends StatelessWidget {
   void onPressed(context) async {
     String? surname = _surnameController.text == '' ? null : _surnameController.text;
     String? name = _nameController.text == '' ? null : _nameController.text;
-    await supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update({
       'surname': surname,
       'name': name,
     }).eq('id', profile.id);
