@@ -122,7 +122,7 @@ void main() {
   });
 
   group('Profile.fromJsonList', () {
-    test('parses a list of profiles from json', () async {
+    test('parses a list of profiles from json', () {
       Map<String, dynamic> json = {
         "id": 1,
         "created_at": "2021-01-01T00:00:00.000Z",
@@ -135,6 +135,11 @@ void main() {
       expect(profiles.first.id, json["id"]);
       expect(profiles[1].createdAt, DateTime.parse(json["created_at"]));
       expect(profiles.last.username, json["username"]);
+    });
+
+    test('can handle an empty list', () {
+      List<Profile> profiles = Profile.fromJsonList([]);
+      expect(profiles, []);
     });
   });
 
