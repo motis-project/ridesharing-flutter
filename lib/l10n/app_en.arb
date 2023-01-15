@@ -230,7 +230,7 @@
   "pageHelpQuestion6": "My ride was rejected. What can I do?",
   "pageHelpAnswer6": "We're sorry for the inconvenience. Unfortunately, you will have to look for another ride.",
   "pageHelpQuestion7": "The driver isn't reacting to my request. What can I do?",
-  "pageHelpAnswer7": "We're sorry for the inconvenience. If you tap on the drive, you can take the request back using the \"{withdrawButtonText}\" button at the bottom. Then, you can look for a new ride.",
+  "pageHelpAnswer7": "We're sorry for the inconvenience. Please tap on the ride and withdraw your request using the \"{withdrawButtonText}\" button at the bottom. You can look for a new ride using the ride search.",
   "@pageHelpAnswer7": {
     "placeholders": {
       "withdrawButtonText": {}

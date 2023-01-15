@@ -168,7 +168,7 @@
   "pageHelpQuestion6": "Meine Mitfahrt wurde abgelehnt. Was kann ich machen?",
   "pageHelpAnswer6": "Wir entschuldigen uns für die Unannehmlichkeiten. Leider musst du dich nach einer anderen Fahrt umsehen.",
   "pageHelpQuestion7": "Der Fahrer reagiert nicht auf meine Anfrage. Was kann ich machen?",
-  "pageHelpAnswer7": "Wir entschuldigen uns für die Unannehmlichkeiten. Wenn du auf die Fahrt tippst, kannst du die Anfrage über die \"{withdrawButtonText}\"-Schaltfläche unten zurücknehmen. Dann kannst du nach einer neuen Fahrt suchen.",
+  "pageHelpAnswer7": "Wir entschuldigen uns für die Unannehmlichkeiten. Bitte tippe auf die Mitfahrt und nehme deine Anfrage über die \"{withdrawButtonText}\"-Schaltfläche unten zurück. Du kannst über unsere Mitfahrtsuche nach einer neuen Mitfahrgelegenheit suchen.",
   "pageHelpQuestion8": "Mein Fahrer/meine Mitfahrer benehmen sich schlecht. Was kann ich machen?",
   "pageHelpAnswer8": "Wir entschuldigen uns für die Unannehmlichkeiten. Wir sind nicht verantwortlich für die Handlungen unserer Benutzer. Wenn andere Benutzer Schimpfworte verwenden oder sich aggressiv, beleidigend oder anderweitig unangemessen verhalten, melde sie bitte über die Schaltfläche \"{reportButtonText}\" in ihrem Profil. Stelle sicher, dass du den richtigen Grund auswählst.",
   "pageHelpQuestion9": "Wo kann ich mein Profil bearbeiten?",
