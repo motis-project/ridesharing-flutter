@@ -176,9 +176,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             ),
           ),
           const SizedBox(height: 10.0),
+          ..._pendingRidesList(pendingRides)
         ];
-        pendingRidesColumn.addAll(_pendingRidesList(pendingRides));
-        widgets.addAll(pendingRidesColumn);
       }
 
       if (!(_drive!.isFinished || _drive!.cancelled)) {
