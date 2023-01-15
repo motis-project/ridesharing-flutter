@@ -92,7 +92,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
   @override
   Widget build(BuildContext context) {
     return !fullyLoaded
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: SizedBox())
         : Card(
             color: pickColor(),
             child: InkWell(

@@ -131,7 +131,7 @@ class _RideCardState extends TripCardState<RideCard> {
   @override
   Widget build(BuildContext context) {
     return !_fullyLoaded
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: SizedBox())
         : Card(
             color: pickColor(),
             child: InkWell(
