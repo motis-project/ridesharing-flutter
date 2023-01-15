@@ -378,7 +378,7 @@ class SearchSuggestionFilter {
     widgets.add(sortingWidget);
     int numDividers = widgets.length - 1;
     for (int i = 0; i < numDividers; i++) {
-      widgets.insert(i * 2 + 1, const VerticalDivider(indent: 5, endIndent: 5));
+      widgets.insert(i * 2 + 1, const VerticalDivider(thickness: 2));
     }
     return IntrinsicHeight(
       child: Semantics(
