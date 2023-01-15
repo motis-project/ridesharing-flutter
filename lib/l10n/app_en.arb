@@ -111,6 +111,29 @@
   "pageHomeTitle": "Home",
 
   "pageAboutTitle": "About",
+  "pageAboutLogoSemantics": "MOTIS Logo",
+  "pageAboutVersion": "Version {version}",
+  "@pageAboutVersion": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "pageAboutBuildNumber": "Build number: {number}",
+  "@pageAboutBuildNumber": {
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "pageAboutBuildSignature": "Build signature: {signature}",
+  "@pageAboutBuildSignature": {
+    "placeholders": {
+      "signature": {}
+    }
+  },
+  "pageAboutText": "This app was coded by a group of students at TU Darmstadt. Please note that we do not accept legal reliability for any content posted by users and do not guarantee that the app is secure.",
+  "pageAboutGithub": "GitHub",
+  "pageAboutWebsite": "Website",
+  "pageAboutTermsOfService": "Terms of service",
 
   "pageAccountTitle": "Account",
   "pageAccountSignOut": "Sign Out",
@@ -291,13 +314,16 @@
   "pageRideDetailTitle": "Ride Detail",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
+  "pageRideDetailButtonWithdraw": "Withdraw request",
   "pageRideDetailButtonRate": "Rate Driver",
-  "pageRideDetailButtonRequested": "Ride Requested",
   "pageRideDetailCancelDialogTitle": "Confirm Cancellation",
   "pageRideDetailCancelDialogMessage": "Are you sure you want to cancel this ride?",
   "pageRideDetailCancelDialogToast": "Ride cancelled.",
   "pageRideDetailRequestDialogTitle": "Confirm Ride request",
   "pageRideDetailRequestDialogMessage": "Are you sure you want to request this ride?",
+  "pageRideDetailWithdrawDialogTitle": "Confirm Withdrawal",
+  "pageRideDetailWithdrawDialogMessage": "Are you sure you want to withdraw the request?",
+  "pageRideDetailWithdrawDialogToast": "Request withdrawn.",
   "pageRideDetailLoginDialogTitle": "Please login First",
   "pageRideDetailLoginDialogMessage": "You need to login to request a ride. If you don't have an account yet, please register first.",
   "pageRideDetailBannerRequested": "You have requested this ride.",

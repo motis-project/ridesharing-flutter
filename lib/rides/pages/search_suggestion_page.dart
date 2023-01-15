@@ -108,13 +108,11 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
-    int riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
-    List<dynamic> data = await supabaseClient
+    List<dynamic> data = await SupabaseManager.supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
         .eq('cancelled', false)
-        //todo: filter driver_id with riderid
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
@@ -127,7 +125,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               _destinationSuggestion.position,
               drive.endTime,
               _dropdownValue,
-              riderId,
+              SupabaseManager.getCurrentProfile()?.id ?? -1,
               10.25,
             ))
         .toList();
@@ -278,18 +276,20 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildSearchCardList() {
-    return Expanded(
-      child: ListView.separated(
-        itemBuilder: (context, index) {
-          final ride = _rideSuggestions![index];
-          return RideCard(ride);
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(height: 10);
-        },
-        itemCount: _rideSuggestions!.length,
-      ),
-    );
+    return _rideSuggestions == null
+        ? const Center(child: CircularProgressIndicator())
+        : Expanded(
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+                final ride = _rideSuggestions![index];
+                return RideCard(ride);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 10);
+              },
+              itemCount: _rideSuggestions!.length,
+            ),
+          );
   }
 
   Widget buildFilterPicker() {

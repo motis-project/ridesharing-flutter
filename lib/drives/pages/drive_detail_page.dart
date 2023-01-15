@@ -45,7 +45,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await supabaseClient.from('drives').select('''
+    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,
@@ -280,6 +280,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
+              //TODO go to chat
               onTap: () {},
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),

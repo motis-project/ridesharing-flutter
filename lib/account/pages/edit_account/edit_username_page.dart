@@ -72,7 +72,7 @@ class EditUsernamePage extends StatelessWidget {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    await supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update({
       'username': _controller.text,
     }).eq('id', profile.id);
     SupabaseManager.reloadCurrentProfile();

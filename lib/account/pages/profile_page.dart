@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> loadProfile() async {
-    Map<String, dynamic> data = await supabaseClient.from('profiles').select('''
+    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
       *,
       profile_features (*),
       reviews_received: reviews!reviews_receiver_id_fkey(
@@ -376,16 +376,19 @@ class _ProfilePageState extends State<ProfilePage> {
       final fileExt = imageFile.path.split('.').last;
       final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
 
-      await supabaseClient.storage.from('avatars').uploadBinary(
+      await SupabaseManager.supabaseClient.storage.from('avatars').uploadBinary(
             fileName,
             bytes,
             fileOptions: FileOptions(contentType: imageFile.mimeType),
           );
 
-      final imageUrlResponse =
-          await supabaseClient.storage.from('avatars').createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
+      final imageUrlResponse = await SupabaseManager.supabaseClient.storage
+          .from('avatars')
+          .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
 
-      await supabaseClient.from('profiles').update({"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
+      await SupabaseManager.supabaseClient
+          .from('profiles')
+          .update({"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
 
       SupabaseManager.reloadCurrentProfile();
       loadProfile();
@@ -399,14 +402,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _deleteProfilePicture() async {
-    await supabaseClient.from('profiles').update({"avatar_url": null}).eq('id', _profile!.id);
+    await SupabaseManager.supabaseClient.from('profiles').update({"avatar_url": null}).eq('id', _profile!.id);
 
     SupabaseManager.reloadCurrentProfile();
     loadProfile();
   }
 
   void signOut() {
-    supabaseClient.auth.signOut();
+    SupabaseManager.supabaseClient.auth.signOut();
   }
 }
 

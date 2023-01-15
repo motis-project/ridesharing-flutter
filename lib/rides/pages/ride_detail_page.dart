@@ -71,11 +71,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
       ride = _ride!;
 
       Map<String, dynamic> data =
-          await supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
+          await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
       ride.drive = Drive.fromJson(data);
     } else {
-      Map<String, dynamic> data = await supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
+      Map<String, dynamic> data =
+          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
       ride = Ride.fromJson(data);
     }
 
@@ -106,7 +107,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
       widgets.add(FeaturesColumn(driver.profileFeatures!));
 
-      if (ride.status != RideStatus.preview && ride.status != RideStatus.pending) {
+      if (ride.status == RideStatus.approved || ride.status == RideStatus.cancelledByDriver) {
         widgets.add(const Divider(thickness: 1));
 
         Set<Profile> riders =
@@ -173,6 +174,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   Widget? _buildPrimaryButton(Profile driver) {
     switch (_ride!.status) {
       case RideStatus.preview:
+      case RideStatus.withdrawnByRider:
         return Button(
           S.of(context).pageRideDetailButtonRequest,
           onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
@@ -182,9 +184,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
             ? Button(S.of(context).pageRideDetailButtonRate, onPressed: () => _navigateToRatePage(driver))
             : Button.error(S.of(context).pageRideDetailButtonCancel, onPressed: _showCancelDialog);
       case RideStatus.pending:
-        return Button(
-          S.of(context).pageRideDetailButtonRequested,
-          backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        return Button.error(
+          S.of(context).pageRideDetailButtonWithdraw,
+          onPressed: _showWithdrawDialog,
         );
       default:
         return Button.error(
@@ -290,11 +292,46 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   void confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    final data = await supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    final data = await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
     setState(() {
       _ride = Ride.fromJson(data);
     });
     //todo: send notification to driver
+  }
+
+  void _showWithdrawDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(S.of(context).pageRideDetailWithdrawDialogTitle),
+        content: Text(S.of(context).pageRideDetailWithdrawDialogMessage),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              _withdrawRide();
+
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(S.of(context).pageRideDetailWithdrawDialogToast),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _withdrawRide() async {
+    await _ride?.withdraw();
+    setState(() {});
   }
 
   _showLoginDialog() {

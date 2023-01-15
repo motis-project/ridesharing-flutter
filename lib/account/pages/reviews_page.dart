@@ -41,13 +41,13 @@ class _ReviewsPageState extends State<ReviewsPage> {
   }
 
   Future<void> load() async {
-    Map<String, dynamic> profileData = await supabaseClient.from('profiles').select('''
+    Map<String, dynamic> profileData = await SupabaseManager.supabaseClient.from('profiles').select('''
       *,
       reviews_received: reviews!reviews_receiver_id_fkey(
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
-    List<dynamic> commonRidesData = await supabaseClient.from('rides').select('''
+    List<dynamic> commonRidesData = await SupabaseManager.supabaseClient.from('rides').select('''
           *,
           drive: drives!inner(*)
         ''').eq('rider_id', SupabaseManager.getCurrentProfile()!.id).eq('drive.driver_id', _profileId);

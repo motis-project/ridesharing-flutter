@@ -120,7 +120,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
       text: _textController.text,
     );
 
-    await supabaseClient.from('reports').insert(report.toJson());
+    await SupabaseManager.supabaseClient.from('reports').insert(report.toJson());
 
     setState(() {
       _state = ButtonState.success;

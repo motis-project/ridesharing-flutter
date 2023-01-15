@@ -13,7 +13,6 @@ class ProfileChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Use profile picture
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Semantics(

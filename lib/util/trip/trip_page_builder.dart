@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_stream_builder.dart';
@@ -37,15 +38,22 @@ class TripPageBuilder {
               TripStreamBuilder<T>(
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
-                filterTrips: (trips) =>
-                    trips.where((trip) => !trip.hideInListView && trip.endTime.isAfter(DateTime.now())).toList(),
+                filterTrips: (trips) => trips
+                    .where((trip) =>
+                        trip.endTime.isAfter(DateTime.now()) &&
+                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider))
+                        && !trip.hideInListView
+                    .toList(),
                 tripCard: tripCard,
               ),
               TripStreamBuilder<T>(
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
                 filterTrips: (trips) => trips.reversed
-                    .where((trip) => !trip.hideInListView && trip.endTime.isBefore(DateTime.now()))
+                    .where((trip) =>
+                        trip.endTime.isBefore(DateTime.now()) &&
+                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider))
+                        && !trip.hideInListView
                     .toList(),
                 tripCard: tripCard,
               ),
