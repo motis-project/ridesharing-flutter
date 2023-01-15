@@ -84,7 +84,17 @@ class _DriveChatPageState extends State<DriveChatPage> {
           leading: Avatar(ride.rider!),
           title: Text(ride.rider!.username),
           subtitle: lastMessage == null ? null : Text(lastMessage.content),
-          trailing: lastMessage == null ? null : Text(localeManager.formatTime(lastMessage.createdAt!)),
+          trailing: ride.getUnreadMessagesCount() == 0
+              ? null
+              : Container(
+                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      ride.getUnreadMessagesCount().toString(),
+                    ),
+                  ),
+                ),
           onTap: () {
             Navigator.of(context)
                 .push(

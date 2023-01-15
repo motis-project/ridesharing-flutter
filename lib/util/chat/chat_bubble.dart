@@ -22,8 +22,7 @@ class ChatBubble extends StatelessWidget {
         ? Icon(
             Icons.done_all,
             size: 18,
-            // ignore: prefer_const_constructors
-            color: read ? Theme.of(context).primaryColor : Colors.amber,
+            color: read ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
           )
         : null;
 
@@ -33,7 +32,7 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: CustomPaint(
           painter: ChatBubblePainter(
-            color: isSender ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3) : Theme.of(context).primaryColor,
+            color: isSender ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1) : Theme.of(context).primaryColor,
             alignment: isSender ? Alignment.topRight : Alignment.topLeft,
             tail: tail,
           ),
