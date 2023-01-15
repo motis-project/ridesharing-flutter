@@ -261,7 +261,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void hideRide() async {
-    await supabaseClient.from('rides').update({'hide_in_listview': true}).eq('id', widget.ride!.id);
+    await supabaseClient.from('rides').update({'hide_in_list_view': true}).eq('id', widget.ride!.id);
   }
 
   _showDeleteDialog() {

@@ -83,7 +83,9 @@ class _RideCardState extends TripCardState<RideCard> {
             ? Icon(Icons.done_all, color: Theme.of(context).own().success)
             : status == RideStatus.pending
                 ? Icon(Icons.done_all, color: Theme.of(context).disabledColor)
-                : const SizedBox(),
+                : status == RideStatus.preview
+                    ? const SizedBox()
+                    : Icon(Icons.block, color: Theme.of(context).errorColor),
         Text(" ${_ride!.price}€"),
       ],
     );
@@ -120,31 +122,25 @@ class _RideCardState extends TripCardState<RideCard> {
     );
   }
 
+  Color pickColor() {
+    return _ride!.status.isCancelled() || _ride!.status == RideStatus.rejected
+        ? Theme.of(context).disabledColor.withOpacity(0.05)
+        : Theme.of(context).cardColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return !_fullyLoaded
         ? const Center(child: CircularProgressIndicator())
         : Card(
+            color: pickColor(),
             child: InkWell(
                 onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => RideDetailPage.fromRide(_ride!),
                       ),
                     ),
-                child: _ride!.status.isCancelled() || _ride!.status == RideStatus.rejected
-                    ? Stack(alignment: AlignmentDirectional.topEnd, children: [
-                        Container(
-                            foregroundDecoration: const BoxDecoration(
-                              color: Colors.grey,
-                              backgroundBlendMode: BlendMode.saturation,
-                            ),
-                            child: buildCardInfo(context)),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 12),
-                          child: Icon(Icons.block, color: Theme.of(context).errorColor),
-                        )
-                      ])
-                    : buildCardInfo(context)),
+                child: buildCardInfo(context)),
           );
   }
 }

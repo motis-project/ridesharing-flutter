@@ -47,7 +47,7 @@ class Drive extends Trip {
       driverId: json['driver_id'],
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
-      hideInListView: json['hide_in_listview'],
+      hideInListView: json['hide_in_list_view'],
     );
   }
 
