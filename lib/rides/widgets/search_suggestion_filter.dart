@@ -26,7 +26,7 @@ class SearchSuggestionFilter {
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
-  List<Feature> _retractedAdditionalFeatures = [..._commonFeatures];
+  late List<Feature> _retractedAdditionalFeatures;
 
   late int _minRating;
   late int _minComfortRating;
@@ -38,6 +38,8 @@ class SearchSuggestionFilter {
   final _maxDeviationController = TextEditingController();
 
   void setDefaultFilterValues() {
+    _retractedAdditionalFeatures = [..._commonFeatures];
+
     _minRating = _defaultRating;
     _minComfortRating = _defaultRating;
     _minSafetyRating = _defaultRating;
@@ -137,6 +139,7 @@ class SearchSuggestionFilter {
         children: [
           Wrap(
             runSpacing: -10,
+            spacing: 2,
             children: List.generate(
               shownFeatures.length,
               (index) {
@@ -383,23 +386,26 @@ class SearchSuggestionFilter {
         tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
         child: InkWell(
           onTap: () => dialog(context, setState),
-          child: Row(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(6),
-                child: Icon(Icons.tune),
-              ),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: widgets,
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Row(
+              children: [
+                const Icon(Icons.tune),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: widgets,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

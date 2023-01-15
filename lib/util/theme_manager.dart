@@ -7,7 +7,9 @@ ThemeManager themeManager = ThemeManager();
 
 class ThemeManager with ChangeNotifier {
   final ThemeData lightTheme = ThemeData.light().copyWith(useMaterial3: true)..addOwn(const OwnThemeFields());
-  final ThemeData darkTheme = ThemeData.dark().copyWith(useMaterial3: true)
+  final ThemeData darkTheme = ThemeData.dark().copyWith(
+      useMaterial3: true,
+      chipTheme: ThemeData.dark().chipTheme.copyWith(selectedColor: ThemeData.dark().highlightColor))
     ..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
   late ThemeMode currentThemeMode;
