@@ -15,19 +15,19 @@ class ReviewFactory extends ModelFactory<Review> {
     NullableParameter<int>? reliabilityRating,
     NullableParameter<int>? hospitalityRating,
     NullableParameter<String>? text,
-    int? offenderId,
-    NullableParameter<Profile>? offender,
+    int? writerId,
+    NullableParameter<Profile>? writer,
     int? receiverId,
     NullableParameter<Profile>? receiver,
     bool createDependencies = true,
   }) {
-    assert(offenderId == null || offender?.value == null || offender!.value?.id == offenderId);
+    assert(writerId == null || writer?.value == null || writer!.value?.id == writerId);
     assert(receiverId == null || receiver?.value == null || receiver!.value?.id == receiverId);
 
     Profile? generatedWriter =
-        offender == null ? ProfileFactory().generateFake(id: offenderId, createDependencies: false) : offender.value;
+        getNullableParameterOr(writer, ProfileFactory().generateFake(id: writerId, createDependencies: false));
     Profile? generatedReceiver =
-        receiver == null ? ProfileFactory().generateFake(id: receiverId, createDependencies: false) : receiver.value;
+        getNullableParameterOr(receiver, ProfileFactory().generateFake(id: receiverId, createDependencies: false));
 
     return Review(
       id: id ?? randomId,

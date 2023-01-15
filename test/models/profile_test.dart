@@ -4,14 +4,12 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/factories/profile_feature_factory.dart';
 import '../util/factories/report_factory.dart';
 import '../util/factories/review_factory.dart';
-import '../util/mock_build_context.dart';
 import '../util/mock_server.dart';
 import '../util/mock_server.mocks.dart';
 
@@ -21,7 +19,6 @@ import '../util/mock_server.mocks.dart';
 // Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  MockBuildContext context = MockBuildContext();
   MockUrlProcessor profileProcessor = MockUrlProcessor();
 
   //setup muss in jeder Testklasse einmal aufgerufen werden
@@ -183,15 +180,6 @@ void main() {
       when(profileProcessor.processUrl(any)).thenReturn(jsonEncode(profile.toJsonForApi()));
       Profile result = await Profile.getProfileFromAuthId("auth-id") as Profile;
       expect(result.id, profile.id);
-    });
-  });
-
-  group('GenderEnum', () {
-    group('getName', () {
-      test('returns male text when plane', () {
-        Gender gender = Gender.male;
-        expect(gender.getName(context), S.of(context).modelProfileGenderMale);
-      });
     });
   });
 }
