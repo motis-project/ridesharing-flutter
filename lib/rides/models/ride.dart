@@ -86,7 +86,7 @@ class Ride extends Trip {
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-      messages: json.containsKey('messages') ? Message.fromJsonList(json['messages'] as List<dynamic>) : null,
+      messages: json.containsKey('messages') ? Message.fromJsonList(json['messages']) : null,
     );
   }
 
@@ -180,7 +180,9 @@ class Ride extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    return messages!.where((message) => !message.read).length;
+    return messages!
+        .where((message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
+        .length;
   }
 
   @override

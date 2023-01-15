@@ -75,7 +75,7 @@ class _ChatPageState extends State<ChatPage> {
                         )
                       : ListView(
                           reverse: true,
-                          children: _buildChatBubbles(messages, widget.profile),
+                          children: _buildChatBubbles(messages),
                         ),
                 ),
                 MessageBar(widget.rideId),
@@ -89,7 +89,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  List<Widget> _buildChatBubbles(List<Message> messages, Profile? otherProfile) {
+  List<Widget> _buildChatBubbles(List<Message> messages) {
     List<Widget> chatBubbles = [];
     Profile ownProfile = SupabaseManager.getCurrentProfile()!;
     Message currentMessage = messages.first;

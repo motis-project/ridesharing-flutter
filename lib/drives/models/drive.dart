@@ -149,6 +149,10 @@ class Drive extends Trip {
     //the rides get updated automatically by a supabase function.
   }
 
+  int getUnreadMessagesCount() {
+    return approvedRides!.fold(0, (value, ride) => value + ride.getUnreadMessagesCount());
+  }
+
   @override
   String toString() {
     return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';

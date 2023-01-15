@@ -65,15 +65,13 @@ class _MessageBarState extends State<MessageBar> {
 
   void _submitMessage() async {
     final text = _textController.text;
-    int myUserId = SupabaseManager.getCurrentProfile()!.id!;
-    // final myUserId = supabase.auth.currentUser!.id;
     if (text.isEmpty) {
       return;
     }
     _textController.clear();
     try {
       await SupabaseManager.supabaseClient.from('messages').insert({
-        'sender_id': myUserId,
+        'sender_id': SupabaseManager.getCurrentProfile()!.id!,
         'content': text,
         'ride_id': widget.rideId,
       });

@@ -47,13 +47,7 @@ class Message extends Model {
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Message> messages) {
-    return messages.map((message) => message.toJson()).toList();
-  }
-
-  bool isFromCurrentUser() {
-    return senderId == SupabaseManager.getCurrentProfile()?.id;
-  }
+  bool get isFromCurrentUser => senderId == SupabaseManager.getCurrentProfile()?.id;
 
   Future<void> markAsRead() async {
     read = true;

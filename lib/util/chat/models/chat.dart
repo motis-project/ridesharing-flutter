@@ -46,10 +46,6 @@ class Chat extends Model {
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Chat> chats) {
-    return chats.map((chat) => chat.toJson()).toList();
-  }
-
   @override
   String toString() {
     return 'Chat{id: $id, createdAt: $createdAt, rideId: $rideId, lastMessage: $lastMessage}';

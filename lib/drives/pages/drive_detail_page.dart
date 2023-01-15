@@ -235,7 +235,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: _fullyLoaded
+        actions: _fullyLoaded && _drive!.approvedRides!.isNotEmpty
             ? <Widget>[
                 IconButton(
                   onPressed: () => Navigator.push(
@@ -248,11 +248,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   ).then((value) => loadDrive()),
                   icon: Badge(
                     badgeContent: Text(
-                      _getNewMessagesCount(_drive!).toString(),
+                      _drive!.getUnreadMessagesCount().toString(),
                       style: const TextStyle(color: Colors.white),
                       textScaleFactor: 1.0,
                     ),
-                    showBadge: _getNewMessagesCount(_drive!) != 0,
+                    showBadge: _drive!.getUnreadMessagesCount() != 0,
                     position: BadgePosition.topEnd(top: -12),
                     child: const Icon(Icons.chat),
                   ),
@@ -470,15 +470,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
-  }
-
-  int _getNewMessagesCount(Drive drive) {
-    final List<Ride> approvedRides = drive.approvedRides!;
-    int count = 0;
-    for (final Ride ride in approvedRides) {
-      count += ride.getUnreadMessagesCount();
-    }
-    return count;
   }
 
   List<Widget> _pendingRidesList(List<Ride> pendingRides) {

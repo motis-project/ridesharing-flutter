@@ -28,8 +28,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
   Widget build(BuildContext context) {
     final List<Widget> widgets = [];
     final Set<Ride> approvedRides = _drive!.approvedRides!.toSet();
-    final List<Ride> pendingRides = _drive!.pendingRides!.toList();
-    if (approvedRides.isEmpty && pendingRides.isEmpty) {
+    if (approvedRides.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           title: Text(S.of(context).pageDriveChatTitle),
