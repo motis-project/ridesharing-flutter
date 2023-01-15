@@ -26,6 +26,7 @@ class SearchSuggestionFilter {
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
+  List<Feature> _retractedAdditionalFeatures = [..._commonFeatures];
 
   late int _minRating;
   late int _minComfortRating;
@@ -126,7 +127,7 @@ class SearchSuggestionFilter {
     if (_isFeatureListExpanded) {
       shownFeatures = {..._selectedFeatures, ...Feature.values}.toList();
     } else {
-      shownFeatures = _selectedFeatures.isNotEmpty ? _selectedFeatures : _commonFeatures;
+      shownFeatures = {..._selectedFeatures, ..._retractedAdditionalFeatures}.toList();
     }
     return _filterCategory(
       context,
@@ -150,7 +151,10 @@ class SearchSuggestionFilter {
                       : S.of(context).searchSuggestionsFilterFeaturesSelectTooltip,
                   onSelected: (selected) {
                     if (featureSelected) {
-                      innerSetState(() => _selectedFeatures.remove(feature));
+                      innerSetState(() {
+                        _selectedFeatures.remove(feature);
+                        if (!_isFeatureListExpanded) _retractedAdditionalFeatures.insert(0, feature);
+                      });
                     } else {
                       Feature? mutuallyExclusiveFeature = _selectedFeatures
                           .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
@@ -171,7 +175,14 @@ class SearchSuggestionFilter {
             ),
           ),
           TextButton(
-            onPressed: () => innerSetState(() => _isFeatureListExpanded = !_isFeatureListExpanded),
+            onPressed: () => innerSetState(() {
+              _isFeatureListExpanded = !_isFeatureListExpanded;
+              if (_selectedFeatures.isNotEmpty) {
+                _retractedAdditionalFeatures = [];
+              } else {
+                _retractedAdditionalFeatures = [..._commonFeatures];
+              }
+            }),
             child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
           ),
         ],
@@ -405,7 +416,9 @@ class SearchSuggestionFilter {
                 driver.getAggregateReview().safetyRating >= _minSafetyRating &&
                 driver.getAggregateReview().reliabilityRating >= _minReliabilityRating &&
                 driver.getAggregateReview().hospitalityRating >= _minHospitalityRating;
-            bool featuresSatisfied = Set.of(driver.profileFeatures!).containsAll(_selectedFeatures);
+            List<Feature> driverFeatures =
+                driver.profileFeatures!.map((profileFeature) => profileFeature.feature).toList();
+            bool featuresSatisfied = Set.of(driverFeatures).containsAll(_selectedFeatures);
             bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
             return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
