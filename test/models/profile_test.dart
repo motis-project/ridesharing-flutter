@@ -155,6 +155,7 @@ void main() {
       expect(json["name"], profile.name);
       expect(json["gender"], profile.gender?.index);
       expect(json["avatar_url"], profile.avatarUrl);
+      expect(json.keys.length, 8);
     });
   });
 
