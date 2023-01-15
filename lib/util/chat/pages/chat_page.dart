@@ -55,8 +55,23 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 Expanded(
                   child: messages.isEmpty
-                      ? Center(
-                          child: Text(S.of(context).pageChatEmptyMessage),
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/chat_shrug.png',
+                              scale: 8,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              S.of(context).pageChatEmptyTitle,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              S.of(context).pageChatEmptyMessage,
+                            ),
+                          ],
                         )
                       : ListView(
                           reverse: true,

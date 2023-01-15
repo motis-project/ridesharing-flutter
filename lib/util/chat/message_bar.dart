@@ -16,32 +16,35 @@ class _MessageBarState extends State<MessageBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  maxLines: null,
-                  autofocus: true,
-                  controller: _textController,
-                  decoration: InputDecoration(
-                    hintText: S.of(context).pageChatMessageBarHint,
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(8),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+      child: Material(
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    keyboardType: TextInputType.text,
+                    maxLines: null,
+                    autofocus: true,
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      hintText: S.of(context).pageChatMessageBarHint,
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.all(8),
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                onPressed: () => _submitMessage(),
-                icon: const Icon(Icons.send),
-              ),
-            ],
+                IconButton(
+                  onPressed: () => _submitMessage(),
+                  icon: const Icon(Icons.send),
+                ),
+              ],
+            ),
           ),
         ),
       ),

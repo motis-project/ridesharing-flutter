@@ -439,6 +439,7 @@
   "cardPendingRideRejectDialogMessage": "Are you sure you want to reject this ride?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Ride rejected",
 
+  "pageChatEmptyTitle": "Nothing to see here",
   "pageChatEmptyMessage": "Start your Conversation now :)",
   "pageChatMessageBarHint": "Write a Message",
 

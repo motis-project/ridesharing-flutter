@@ -325,7 +325,8 @@
   "cardPendingRideRejectDialogMessage": "Bist du sicher, dass du diese Mitfahrt ablehnen möchtest?",
   "cardPendingRideRejectDialogSuccessSnackBar": "Mitfahrt abgelehnt",
 
-  "pageChatEmptyMessage": "Hier kannst du eine Konversation starten:)",
+  "pageChatEmptyTitle": "Nichts zu sehen",
+  "pageChatEmptyMessage": "Starte jetzt eine Konversation:)",
   "pageChatMessageBarHint": "Schreibe eine Nachricht",
 
 
