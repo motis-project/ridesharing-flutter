@@ -20,13 +20,13 @@ class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
 
   @override
-  State<RideCard> createState() => RideCardState();
+  State<RideCard> createState() => _RideCardState();
 }
 
-class RideCardState extends TripCardState<RideCard> {
-  Ride? ride;
-  bool fullyLoaded = false;
-  Profile? driver;
+class _RideCardState extends TripCardState<RideCard> {
+  Ride? _ride;
+  bool _fullyLoaded = false;
+  Profile? _driver;
 
   static const String _driveQuery = '''
     *,
@@ -48,15 +48,15 @@ class RideCardState extends TripCardState<RideCard> {
   void initState() {
     super.initState();
     setState(() {
-      ride = widget.trip;
-      super.trip = ride;
+      _ride = widget.trip;
+      super.trip = _ride;
     });
     loadRide();
   }
 
   @override
   void didUpdateWidget(RideCard oldWidget) {
-    if (trip!.isDifferentFrom(widget.trip)) {
+    if (!trip!.equals(widget.trip)) {
       loadRide();
     }
     super.didUpdateWidget(oldWidget);
@@ -67,16 +67,16 @@ class RideCardState extends TripCardState<RideCard> {
     Map<String, dynamic> data = await supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
     setState(() {
-      ride = trip;
-      driver = trip.drive!.driver!;
-      super.trip = ride;
-      fullyLoaded = true;
+      _ride = trip;
+      _driver = trip.drive!.driver!;
+      super.trip = _ride;
+      _fullyLoaded = true;
     });
   }
 
   @override
   Widget buildTopRight() {
-    RideStatus status = ride!.status;
+    RideStatus status = _ride!.status;
     return Row(
       children: [
         status == RideStatus.approved
@@ -84,7 +84,7 @@ class RideCardState extends TripCardState<RideCard> {
             : status == RideStatus.pending
                 ? Icon(Icons.done_all, color: Theme.of(context).disabledColor)
                 : const SizedBox(),
-        Text(" ${ride!.price}€"),
+        Text(" ${_ride!.price}€"),
       ],
     );
   }
@@ -93,7 +93,7 @@ class RideCardState extends TripCardState<RideCard> {
   Widget buildBottomLeft() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: ProfileWidget(driver!),
+      child: ProfileWidget(_driver!),
     );
   }
 
@@ -102,14 +102,14 @@ class RideCardState extends TripCardState<RideCard> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: CustomRatingBarIndicator(
-          rating: AggregateReview.fromReviews(ride!.drive!.driver!.reviewsReceived!).rating,
+          rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
           size: CustomRatingBarSize.medium),
     );
   }
 
   @override
   Widget buildRightSide() {
-    List<ProfileFeature> profileFeatures = driver!.profileFeatures!;
+    List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
     List<Icon> featureicons = <Icon>[];
     for (int i = 0; i < min(profileFeatures.length, 3); i++) {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
@@ -122,16 +122,16 @@ class RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget build(BuildContext context) {
-    return !fullyLoaded
+    return !_fullyLoaded
         ? const Center(child: CircularProgressIndicator())
         : Card(
             child: InkWell(
                 onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => RideDetailPage.fromRide(ride!),
+                        builder: (context) => RideDetailPage.fromRide(_ride!),
                       ),
                     ),
-                child: ride!.status.isCancelled() || ride!.status == RideStatus.rejected
+                child: _ride!.status.isCancelled() || _ride!.status == RideStatus.rejected
                     ? Stack(alignment: AlignmentDirectional.topEnd, children: [
                         Container(
                             foregroundDecoration: const BoxDecoration(

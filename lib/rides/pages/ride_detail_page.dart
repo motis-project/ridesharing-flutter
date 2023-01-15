@@ -260,7 +260,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void noShowRide() async {
+  void hideRide() async {
     await supabaseClient.from('rides').update({'hide_in_listview': true}).eq('id', widget.ride!.id);
   }
 
@@ -278,7 +278,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
           TextButton(
             child: Text(S.of(context).yes),
             onPressed: () {
-              noShowRide();
+              hideRide();
               Navigator.of(dialogContext).pop();
               Navigator.of(context).pop();
             },

@@ -12,10 +12,10 @@ class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
 
   @override
-  State<DriveCard> createState() => _DriveCard();
+  State<DriveCard> createState() => _DriveCardState();
 }
 
-class _DriveCard extends TripCardState<DriveCard> {
+class _DriveCardState extends TripCardState<DriveCard> {
   Drive? drive;
   bool fullyLoaded = false;
 
@@ -30,10 +30,9 @@ class _DriveCard extends TripCardState<DriveCard> {
     loadDrive();
   }
 
-  // todo: changes when rides.status changes
   @override
   void didUpdateWidget(DriveCard oldWidget) {
-    if (trip!.isDifferentFrom(widget.trip)) {
+    if (!trip!.equals(widget.trip)) {
       loadDrive();
     }
     super.didUpdateWidget(oldWidget);
@@ -67,7 +66,7 @@ class _DriveCard extends TripCardState<DriveCard> {
 
   @override
   Widget buildRightSide() {
-    return TripOverview.buildSeatIndicator(context, super.trip!);
+    return TripOverview(super.trip!).buildSeatIndicator(context, super.trip!);
   }
 
   // Notification

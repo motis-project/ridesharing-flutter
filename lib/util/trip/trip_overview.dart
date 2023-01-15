@@ -70,12 +70,12 @@ class TripOverview extends StatelessWidget {
     return overview;
   }
 
-  static Widget buildSeatIndicator(BuildContext context, Trip trip) {
+  Widget buildSeatIndicator(BuildContext context, Trip trip) {
     List<Widget> seatIcons;
     Widget text;
 
     if (trip is Drive) {
-      int? maxUsedSeats = (trip as Drive).getMaxUsedSeats();
+      int? maxUsedSeats = trip.getMaxUsedSeats();
       seatIcons = List.generate(
         trip.seats,
         (index) => Icon(

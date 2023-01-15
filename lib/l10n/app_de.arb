@@ -10,9 +10,6 @@
   "edit": "Bearbeiten",
   "save": "Speichern",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
-  "cancelled": "abgebrochen",
-  "pending": "angefragt",
-  "delete": "Löschen",
 
   "riders": "Mitfahrer",
   "seats": "Plätze",
@@ -258,7 +255,7 @@
   "pageRideDetailBannerCancelledByDriver": "Diese Mitfahrt wurde abgesagt.",
   "pageRideDetailBannerCancelledByYou": "Du hast diese Mitfahrt abgesagt.",
   "pageRideDetailDeleteRide": "Mitfahrt löschen",
-  "pageRideDetailDeteRideDialog": "Wollen Sie wirklich die Mitfahrt löschen?",
+  "pageRideDetailDeteRideDialog": "Willst du wirklich die Mitfahrt löschen?",
 
   "pageDriveChatTitle": "Fahrt Chat",
   "pageDriveChatEmptyMessage": "Keine Mitfahrer oder Anfragen",

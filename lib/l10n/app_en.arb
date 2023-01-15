@@ -10,9 +10,6 @@
   "edit": "Edit",
   "save": "Save",
   "failureSnackBar": "Something went wrong.",
-  "cancelled": "cancelled",
-  "pending": "pending",
-  "delete": "delete",
 
   "riders": "Riders",
   "seats": "Seats",

@@ -108,15 +108,12 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   void loadRides() async {
-    int riderid = SupabaseManager.getCurrentProfile()?.id ?? -1;
+    int riderId = SupabaseManager.getCurrentProfile()?.id ?? -1;
     List<dynamic> data = await supabaseClient
         .from('drives')
         .select('*, driver:driver_id (*)')
         .eq('start', _startController.text)
-        .eq('end', _destinationController.text)
         .eq('cancelled', false)
-        .gte('seats', _dropdownValue)
-        .gte("start_time", _selectedDate)
         //todo: filter driver_id with riderid
         .order('start_time', ascending: true);
     List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
@@ -130,7 +127,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               _destinationSuggestion.position,
               drive.endTime,
               _dropdownValue,
-              riderid,
+              riderId,
               10.25,
             ))
         .toList();
@@ -281,25 +278,18 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildSearchCardList() {
-    return _rideSuggestions == null
-        ? const Center(child: CircularProgressIndicator())
-        : _rideSuggestions!.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(child: Text(S.of(context).pageSearchSuggestionsNoRidesFound)),
-              )
-            : (Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final ride = _rideSuggestions![index];
-                    return RideCard(ride);
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(height: 10);
-                  },
-                  itemCount: _rideSuggestions!.length,
-                ),
-              ));
+    return Expanded(
+      child: ListView.separated(
+        itemBuilder: (context, index) {
+          final ride = _rideSuggestions![index];
+          return RideCard(ride);
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(height: 10);
+        },
+        itemCount: _rideSuggestions!.length,
+      ),
+    );
   }
 
   Widget buildFilterPicker() {

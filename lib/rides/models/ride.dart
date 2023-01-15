@@ -16,23 +16,24 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
-  Ride(
-      {super.id,
-      super.createdAt,
-      required super.start,
-      required super.startPosition,
-      required super.startTime,
-      required super.end,
-      required super.endPosition,
-      required super.endTime,
-      required super.seats,
-      this.price,
-      required this.status,
-      required this.driveId,
-      this.drive,
-      required this.riderId,
-      this.rider,
-      super.hideinListView});
+  Ride({
+    super.id,
+    super.createdAt,
+    required super.start,
+    required super.startPosition,
+    required super.startTime,
+    required super.end,
+    required super.endPosition,
+    required super.endTime,
+    required super.seats,
+    this.price,
+    required this.status,
+    required this.driveId,
+    this.drive,
+    required this.riderId,
+    this.rider,
+    super.hideInListView,
+  });
 
   factory Ride.previewFromDrive(
     Drive drive,
@@ -65,22 +66,23 @@ class Ride extends Trip {
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
-        id: json['id'],
-        createdAt: DateTime.parse(json['created_at']),
-        start: json['start'],
-        startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
-        startTime: DateTime.parse(json['start_time']),
-        end: json['end'],
-        endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
-        endTime: DateTime.parse(json['end_time']),
-        seats: json['seats'],
-        price: json['price'],
-        status: RideStatus.values[json['status']],
-        riderId: json['rider_id'],
-        rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
-        driveId: json['drive_id'],
-        drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-        hideinListView: json['hide_in_listview']);
+      id: json['id'],
+      createdAt: DateTime.parse(json['created_at']),
+      start: json['start'],
+      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
+      startTime: DateTime.parse(json['start_time']),
+      end: json['end'],
+      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
+      endTime: DateTime.parse(json['end_time']),
+      seats: json['seats'],
+      price: json['price'],
+      status: RideStatus.values[json['status']],
+      riderId: json['rider_id'],
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
+      driveId: json['drive_id'],
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+      hideInListView: json['hide_in_listview'],
+    );
   }
 
   static List<Ride> fromJsonList(List<dynamic> jsonList) {
@@ -128,20 +130,16 @@ class Ride extends Trip {
   }
 
   @override
-  bool isDifferentFrom(Trip other) {
-    if (other is! Ride) return true;
+  bool equals(Trip other) {
+    if (other is! Ride) return false;
     Ride ride = other;
-    return start != ride.start ||
-        startPosition != ride.startPosition ||
-        startTime != ride.startTime ||
-        end != ride.end ||
-        endPosition != ride.endPosition ||
-        endTime != ride.endTime ||
-        seats != ride.seats ||
-        status != ride.status ||
-        driveId != ride.driveId ||
-        price != ride.price ||
-        rider != ride.rider;
+    return super.equals(other) &&
+        status == ride.status &&
+        driveId == ride.driveId &&
+        price == ride.price &&
+        rider == ride.rider &&
+        price == ride.price &&
+        riderId == ride.riderId;
   }
 
   Future<Drive> getDrive() async {

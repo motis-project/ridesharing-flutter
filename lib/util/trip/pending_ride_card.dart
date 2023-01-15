@@ -17,10 +17,10 @@ class PendingRideCard extends TripCard<Ride> {
   final Duration extraTime = const Duration(minutes: 5);
 
   @override
-  State<PendingRideCard> createState() => _PendingRideCard();
+  State<PendingRideCard> createState() => _PendingRideCardState();
 }
 
-class _PendingRideCard extends State<PendingRideCard> {
+class _PendingRideCardState extends State<PendingRideCard> {
   @override
   Widget build(BuildContext context) {
     Widget timeLine = FixedTimeline(

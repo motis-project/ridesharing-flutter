@@ -10,7 +10,6 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
   Trip? trip;
 
   FixedTimeline buildRoute(context) {
-    Duration duration = trip!.endTime.difference(trip!.startTime);
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: [
@@ -44,7 +43,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
-                          "${duration.inHours.toString().padLeft(2, "0")}:${(duration.inMinutes % 60).toString().padLeft(2, "0")}"),
+                          "${trip!.duration.inHours.toString().padLeft(2, "0")}:${(trip!.duration.inMinutes % 60).toString().padLeft(2, "0")}"),
                     ],
                   ),
                 ),

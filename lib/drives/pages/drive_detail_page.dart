@@ -320,7 +320,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return list;
   }
 
-  void noShowDrive() async {
+  void hideDrive() async {
     await supabaseClient.from('drives').update({'hide_in_listview': true}).eq('id', widget.drive!.id);
   }
 
@@ -338,7 +338,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           TextButton(
             child: Text(S.of(context).yes),
             onPressed: () {
-              noShowDrive();
+              hideDrive();
               Navigator.of(dialogContext).pop();
               Navigator.of(context).pop();
             },

@@ -14,39 +14,41 @@ class Drive extends Trip {
 
   final List<Ride>? rides;
 
-  Drive(
-      {super.id,
-      super.createdAt,
-      required super.start,
-      required super.startPosition,
-      required super.startTime,
-      required super.end,
-      required super.endPosition,
-      required super.endTime,
-      required super.seats,
-      this.cancelled = false,
-      required this.driverId,
-      this.driver,
-      this.rides,
-      super.hideinListView});
+  Drive({
+    super.id,
+    super.createdAt,
+    required super.start,
+    required super.startPosition,
+    required super.startTime,
+    required super.end,
+    required super.endPosition,
+    required super.endTime,
+    required super.seats,
+    this.cancelled = false,
+    required this.driverId,
+    this.driver,
+    this.rides,
+    super.hideInListView,
+  });
 
   @override
   factory Drive.fromJson(Map<String, dynamic> json) {
     return Drive(
-        id: json['id'],
-        createdAt: DateTime.parse(json['created_at']),
-        start: json['start'],
-        startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
-        startTime: DateTime.parse(json['start_time']),
-        end: json['end'],
-        endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
-        endTime: DateTime.parse(json['end_time']),
-        seats: json['seats'],
-        cancelled: json['cancelled'],
-        driverId: json['driver_id'],
-        driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
-        rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
-        hideinListView: json['hide_in_listview']);
+      id: json['id'],
+      createdAt: DateTime.parse(json['created_at']),
+      start: json['start'],
+      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
+      startTime: DateTime.parse(json['start_time']),
+      end: json['end'],
+      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
+      endTime: DateTime.parse(json['end_time']),
+      seats: json['seats'],
+      cancelled: json['cancelled'],
+      driverId: json['driver_id'],
+      driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
+      rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
+      hideInListView: json['hide_in_listview'],
+    );
   }
 
   static List<Drive> fromJsonList(List<dynamic> jsonList) {
@@ -153,17 +155,9 @@ class Drive extends Trip {
   }
 
   @override
-  bool isDifferentFrom(Trip other) {
-    if (other is! Drive) return true;
+  bool equals(Trip other) {
+    if (other is! Drive) return false;
     Drive drive = other;
-    return start != drive.start ||
-        startPosition != drive.startPosition ||
-        startTime != drive.startTime ||
-        end != drive.end ||
-        endPosition != drive.endPosition ||
-        endTime != drive.endTime ||
-        seats != drive.seats ||
-        cancelled != drive.cancelled ||
-        driverId != drive.driverId;
+    return super.equals(other) && cancelled == drive.cancelled && driverId == drive.driverId;
   }
 }
