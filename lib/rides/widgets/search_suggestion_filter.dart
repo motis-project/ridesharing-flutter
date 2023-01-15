@@ -416,9 +416,7 @@ class SearchSuggestionFilter {
                 driver.getAggregateReview().safetyRating >= _minSafetyRating &&
                 driver.getAggregateReview().reliabilityRating >= _minReliabilityRating &&
                 driver.getAggregateReview().hospitalityRating >= _minHospitalityRating;
-            List<Feature> driverFeatures =
-                driver.profileFeatures!.map((profileFeature) => profileFeature.feature).toList();
-            bool featuresSatisfied = Set.of(driverFeatures).containsAll(_selectedFeatures);
+            bool featuresSatisfied = Set.of(driver.features!).containsAll(_selectedFeatures);
             bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
             return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
