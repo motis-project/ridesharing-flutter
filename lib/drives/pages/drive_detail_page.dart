@@ -227,11 +227,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             ).then((value) => loadDrive()),
             icon: Badge(
               badgeContent: Text(
-                _getMessageCount(_drive!) == 0 ? '' : _getMessageCount(_drive!).toString(),
+                _getMessageCount(_drive!).toString(),
                 style: const TextStyle(color: Colors.white),
                 textScaleFactor: 1.0,
               ),
-              showBadge: _getMessageCount(_drive!) != null,
+              showBadge: _getMessageCount(_drive!) != 0,
               position: BadgePosition.topEnd(top: -12),
               child: const Icon(Icons.chat),
             ),
