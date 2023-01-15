@@ -179,6 +179,10 @@ class Ride extends Trip {
         .update(<String, dynamic>{'status': status.index, 'hide_in_list_view': true}).eq('id', id);
   }
 
+  int getUnreadMessagesCount() {
+    return messages!.where((message) => !message.read).length;
+  }
+
   @override
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';

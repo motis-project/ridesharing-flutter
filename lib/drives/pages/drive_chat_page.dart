@@ -49,17 +49,14 @@ class _DriveChatPageState extends State<DriveChatPage> {
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: RefreshIndicator(
-        onRefresh: loadDrive,
-        child: ListView.separated(
-          itemCount: widgets.length,
-          itemBuilder: (BuildContext context, int index) {
-            return widgets[index];
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(height: 10);
-          },
-        ),
+      body: ListView.separated(
+        itemCount: widgets.length,
+        itemBuilder: (BuildContext context, int index) {
+          return widgets[index];
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(height: 10);
+        },
       ),
     );
   }
@@ -93,8 +90,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 .push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => ChatPage(
-                      ride.id!,
-                      ride.rider!,
+                      rideId: ride.id!,
+                      profile: ride.rider!,
                       // ride.messages!,
                     ),
                   ),

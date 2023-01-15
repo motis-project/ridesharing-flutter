@@ -8,6 +8,7 @@ import '../../account/widgets/reviews_preview.dart';
 import '../../drives/models/drive.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
+import '../../util/chat/pages/chat_page.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/supabase.dart';
@@ -154,13 +155,23 @@ class _RideDetailPageState extends State<RideDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageRideDetailTitle),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.chat),
-            tooltip: S.of(context).openChat,
-          )
-        ],
+        actions: _ride!.status == RideStatus.approved
+            ? <Widget>[
+                IconButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatPage(
+                        rideId: _ride!.id!,
+                        profile: _ride!.drive!.driver!,
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.chat),
+                  tooltip: S.of(context).openChat,
+                )
+              ]
+            : null,
       ),
       body: _ride == null
           ? const Center(child: CircularProgressIndicator())

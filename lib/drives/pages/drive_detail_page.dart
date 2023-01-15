@@ -94,8 +94,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bool startSaved = false;
         bool endSaved = false;
 
-        final WaypointAction rideStartAction = WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats);
-        final WaypointAction rideEndAction = WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats);
+        final WaypointAction rideStartAction =
+            WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats, rideId: ride.id!);
+        final WaypointAction rideEndAction =
+            WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats, rideId: ride.id!);
         for (final Waypoint stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
@@ -233,7 +235,31 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: <Widget>[buildChatButton()],
+        actions: _fullyLoaded
+            ? <Widget>[
+                IconButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => DriveChatPage(
+                        drive: _drive!,
+                      ),
+                    ),
+                  ).then((value) => loadDrive()),
+                  icon: Badge(
+                    badgeContent: Text(
+                      _getNewMessagesCount(_drive!).toString(),
+                      style: const TextStyle(color: Colors.white),
+                      textScaleFactor: 1.0,
+                    ),
+                    showBadge: _getNewMessagesCount(_drive!) != 0,
+                    position: BadgePosition.topEnd(top: -12),
+                    child: const Icon(Icons.chat),
+                  ),
+                  tooltip: S.of(context).openChat,
+                ),
+              ]
+            : null,
       ),
       body: _drive == null
           ? const Center(child: CircularProgressIndicator())
@@ -329,8 +355,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              //TODO go to chat
-              onTap: () {},
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ChatPage(
+                    rideId: action.rideId,
+                    profile: action.profile,
+                  ),
+                ),
+              ).then((value) => loadDrive()),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: Row(
@@ -439,8 +472,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  int _getMessageCount(Drive drive) {
-    return 0;
+  int _getNewMessagesCount(Drive drive) {
+    final List<Ride> approvedRides = drive.approvedRides!;
+    int count = 0;
+    for (final Ride ride in approvedRides) {
+      count += ride.getUnreadMessagesCount();
+    }
+    return count;
   }
 
   List<Widget> _pendingRidesList(List<Ride> pendingRides) {
@@ -463,8 +501,9 @@ class WaypointAction {
   final Profile profile;
   final bool isStart;
   final int seats;
+  final int rideId;
 
-  WaypointAction({required this.profile, required this.isStart, required this.seats});
+  WaypointAction({required this.profile, required this.isStart, required this.seats, required this.rideId});
 }
 
 class Waypoint {
