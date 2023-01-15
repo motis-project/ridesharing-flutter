@@ -136,13 +136,17 @@ class _PendingRideCardState extends State<PendingRideCard> {
   }
 
   void approveRide() async {
-    await SupabaseManager.supabaseClient.from('rides').update({'status': RideStatus.approved.index}).eq('id', widget.trip.id);
+    await SupabaseManager.supabaseClient
+        .from('rides')
+        .update({'status': RideStatus.approved.index}).eq('id', widget.trip.id);
     // todo: notify rider
     widget.reloadPage();
   }
 
   void rejectRide() async {
-    await SupabaseManager.supabaseClient.from('rides').update({'status': RideStatus.rejected.index}).eq('id', widget.trip.id);
+    await SupabaseManager.supabaseClient
+        .from('rides')
+        .update({'status': RideStatus.rejected.index}).eq('id', widget.trip.id);
     //todo: notify rider
     widget.reloadPage();
   }
