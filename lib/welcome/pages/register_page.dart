@@ -90,7 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(S.of(context).pageRegisterSuccess),
-            duration: Duration(seconds: double.infinity.toInt()),
+            duration: const Duration(seconds: 10),
           ));
         }
       }

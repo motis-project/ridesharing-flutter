@@ -63,8 +63,6 @@ class AddressSuggestion {
   }
 
   static List<AddressSuggestion> deduplicate(List<AddressSuggestion> suggestions) {
-    suggestions.sort((a, b) => a.compareTo(b));
-
     var seen = <AddressSuggestion>{};
     return suggestions.where((suggestion) => seen.add(suggestion)).toList();
   }
@@ -85,11 +83,11 @@ class AddressSuggestion {
       name: json['name'],
       position: Position.fromJson(json['position']),
       type: AddressSuggestionType.values.firstWhere((e) => e.name == json['type']),
-      postalCode: json['postalCode'],
+      postalCode: json['postal_code'],
       city: json['city'],
       country: json['country'],
       fromHistory: fromHistory,
-      lastUsed: json['lastUsed'] != null ? DateTime.parse(json['lastUsed']) : DateTime.now(),
+      lastUsed: json['last_used'] != null ? DateTime.parse(json['last_used']) : DateTime.now(),
     );
   }
 
@@ -98,7 +96,7 @@ class AddressSuggestion {
       'name': name,
       'position': position.toJson(),
       'type': type.name,
-      'postalCode': postalCode,
+      'postal_code': postalCode,
       'city': city,
       'country': country,
       'last_used': lastUsed.toIso8601String(),
