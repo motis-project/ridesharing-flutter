@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
-import '../../util/trip/trip.dart';
-import '../../util/supabase.dart';
-
 import '../../util/search/position.dart';
+import '../../util/supabase.dart';
+import '../../util/trip/trip.dart';
 
 class Drive extends Trip {
   bool cancelled;

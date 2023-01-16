@@ -1,8 +1,10 @@
 import 'dart:convert';
+
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'util/mock_server.dart';
 import 'util/mock_server.mocks.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'trip.dart';
 
 abstract class TripCard<T extends Trip> extends StatelessWidget {

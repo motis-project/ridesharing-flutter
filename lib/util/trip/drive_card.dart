@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../custom_timeline_theme.dart';
 
-import 'trip_card.dart';
-import '../../drives/models/drive.dart';
-import '../../drives/pages/drive_detail_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../drives/models/drive.dart';
+import '../../drives/pages/drive_detail_page.dart';
+import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'trip_card.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});

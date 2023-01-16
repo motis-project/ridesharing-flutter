@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../drives/models/drive.dart';
 import '../locale_manager.dart';
 import 'trip.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TripOverview extends StatelessWidget {
   final Trip trip;

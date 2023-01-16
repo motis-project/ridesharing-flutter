@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../account/models/review.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../account/models/review.dart';
 import 'custom_rating_bar_indicator.dart';
 import 'custom_rating_bar_size.dart';
 

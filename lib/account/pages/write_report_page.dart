@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/profile.dart';
-import '../models/report.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:progress_state_button/progress_button.dart';
+
 import '../../util/buttons/loading_button.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/supabase.dart';
-import 'package:progress_state_button/progress_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../models/profile.dart';
+import '../models/report.dart';
 
 class WriteReportPage extends StatefulWidget {
   final Profile profile;

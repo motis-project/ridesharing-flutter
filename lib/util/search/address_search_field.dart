@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'address_search_delegate.dart';
 import 'address_suggestion.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddressSearchField extends StatelessWidget {
   final AddressType addressType;

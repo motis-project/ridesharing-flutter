@@ -1,7 +1,6 @@
-import 'profile.dart';
-import '../../util/profiles/reviews/aggregate_review_widget.dart';
-
 import '../../util/model.dart';
+import '../../util/profiles/reviews/aggregate_review_widget.dart';
+import 'profile.dart';
 
 class Review extends Model implements Comparable<Review> {
   static const int maxRating = 5;

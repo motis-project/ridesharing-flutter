@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../pages/avatar_picture_page.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/profile.dart';
+import '../pages/avatar_picture_page.dart';
 
 class Avatar extends StatefulWidget {
   const Avatar(

@@ -5,8 +5,9 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:motis_mitfahr_app/main_app.dart';
 
 void main() {
   testWidgets('Shows homepage', skip: true, (WidgetTester tester) async {

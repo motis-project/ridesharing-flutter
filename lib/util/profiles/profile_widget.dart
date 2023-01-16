@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../account/models/profile.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../account/models/profile.dart';
 import '../../account/pages/profile_page.dart';
 import '../../account/widgets/avatar.dart';
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
-import '../../util/own_theme_fields.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
+import '../../util/own_theme_fields.dart';
+import 'profile.dart';
 
 class ProfileFeature extends Model {
   int profileId;

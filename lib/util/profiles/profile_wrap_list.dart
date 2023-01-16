@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../account/models/profile.dart';
 import 'profile_chip.dart';
 

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../util/buttons/button.dart';
+import '../../util/locale_manager.dart';
+import '../../util/supabase.dart';
+import '../models/profile.dart';
+import '../widgets/avatar.dart';
+import '../widgets/editable_row.dart';
+import '../widgets/features_column.dart';
+import '../widgets/reviews_preview.dart';
 import 'edit_account/edit_birth_date_page.dart';
 import 'edit_account/edit_description_page.dart';
 import 'edit_account/edit_full_name_page.dart';
 import 'edit_account/edit_gender_page.dart';
 import 'edit_account/edit_profile_features_page.dart';
-import 'write_report_page.dart';
-import '../widgets/editable_row.dart';
-import '../widgets/features_column.dart';
-import '../widgets/reviews_preview.dart';
-import '../../util/buttons/button.dart';
-import '../../util/locale_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../../util/supabase.dart';
-import '../models/profile.dart';
-import '../widgets/avatar.dart';
 import 'edit_account/edit_username_page.dart';
+import 'write_report_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final int profileId;

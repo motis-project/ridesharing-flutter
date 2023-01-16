@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../own_theme_fields.dart';
 
 enum DisplayColorKind { primary, secondary, success, warning, error, disabled }

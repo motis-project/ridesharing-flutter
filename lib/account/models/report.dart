@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
+import 'profile.dart';
 
 class Report extends Model {
   int offenderId;

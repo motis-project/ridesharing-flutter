@@ -2,15 +2,17 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:progress_state_button/progress_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
+import '../../util/supabase.dart';
 import 'forgot_password_page.dart';
 import 'register_page.dart';
-import '../../util/supabase.dart';
-import 'package:progress_state_button/progress_button.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

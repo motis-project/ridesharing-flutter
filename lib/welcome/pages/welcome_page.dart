@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'register_page.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/pages/search_ride_page.dart';
 import '../../util/buttons/button.dart';
+import 'login_page.dart';
+import 'register_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

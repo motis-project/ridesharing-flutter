@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../util/supabase.dart';
+import '../../util/trip/drive_card.dart';
+import '../../util/trip/trip_page_builder.dart';
 import '../models/drive.dart';
 import 'create_drive_page.dart';
-import '../../util/supabase.dart';
-import '../../util/trip/trip_page_builder.dart';
-import '../../util/trip/drive_card.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DrivesPage extends StatefulWidget {
   const DrivesPage({super.key});

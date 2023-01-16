@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../models/profile.dart';
-import '../widgets/review_detail.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import '../../util/supabase.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import '../models/profile.dart';
 import '../models/review.dart';
+import '../widgets/review_detail.dart';
 import 'write_review_page.dart';
 
 class ReviewsPage extends StatefulWidget {

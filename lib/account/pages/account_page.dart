@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../util/locale_manager.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/supabase.dart';
 import '../../util/theme_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'about_page.dart';
 import 'help_page.dart';
 

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
+import 'package:timelines/timelines.dart';
+
 import '../../account/models/profile.dart';
+import '../../account/widgets/avatar.dart';
 import '../../rides/models/ride.dart';
 import '../../rides/pages/ride_detail_page.dart';
 import '../custom_timeline_theme.dart';
@@ -7,9 +11,6 @@ import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import 'trip_card.dart';
-import 'package:timelines/timelines.dart';
-
-import '../../account/widgets/avatar.dart';
 
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});

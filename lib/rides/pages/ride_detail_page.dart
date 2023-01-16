@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../account/models/profile.dart';
 import '../../account/pages/write_review_page.dart';
+import '../../account/widgets/features_column.dart';
+import '../../account/widgets/reviews_preview.dart';
 import '../../drives/models/drive.dart';
-import '../models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip_overview.dart';
-import '../../account/widgets/features_column.dart';
-import '../../account/widgets/reviews_preview.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
+import '../models/ride.dart';
 
 class RideDetailPage extends StatefulWidget {
   // One of these two must be set

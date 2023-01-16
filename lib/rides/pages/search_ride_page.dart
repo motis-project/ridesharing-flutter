@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'search_suggestion_page.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../util/buttons/button.dart';
 import '../../util/locale_manager.dart';
 import '../../util/search/address_search_field.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../util/search/address_suggestion.dart';
+import 'search_suggestion_page.dart';
 
 class SearchRidePage extends StatefulWidget {
   final bool anonymous;

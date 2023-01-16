@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'position.dart';
 
 class AddressSuggestion {

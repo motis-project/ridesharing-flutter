@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/profile.dart';
 
 class AvatarPicturePage extends StatelessWidget {

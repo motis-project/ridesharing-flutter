@@ -1,6 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'main_app.dart';
 import 'util/locale_manager.dart';
 import 'util/search/address_suggestion_manager.dart';
@@ -8,9 +13,6 @@ import 'util/supabase.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
 import 'welcome/pages/welcome_page.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   await dotenv.load();

@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'address_suggestion.dart';
-import '../storage_manager.dart';
-import '../supabase.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
+
+import '../storage_manager.dart';
+import '../supabase.dart';
+import 'address_suggestion.dart';
 
 final addressSuggestionManager = AddressSuggestionManager();
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'storage_manager.dart';
-import 'own_theme_fields.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'own_theme_fields.dart';
+import 'storage_manager.dart';
 
 ThemeManager themeManager = ThemeManager();
 

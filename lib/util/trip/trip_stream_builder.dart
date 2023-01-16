@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'trip.dart';
 
+import 'trip.dart';
 import 'trip_card.dart';
 
 class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
+
 import '../../rides/models/ride.dart';
+import '../../rides/pages/ride_detail_page.dart';
 import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
 import 'trip_card.dart';
-import 'package:timelines/timelines.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../../rides/pages/ride_detail_page.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import '../../../util/buttons/button.dart';
-import '../../../util/supabase.dart';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../util/buttons/button.dart';
+import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 import '../../models/profile_feature.dart';
 

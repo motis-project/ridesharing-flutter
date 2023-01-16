@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
+
+import '../../drives/models/drive.dart';
+import '../../rides/models/ride.dart';
 import '../custom_timeline_theme.dart';
 import '../icon_widget.dart';
+import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
 import '../supabase.dart';
 import 'trip_card.dart';
-import 'package:timelines/timelines.dart';
-import '../../drives/models/drive.dart';
-import '../../rides/models/ride.dart';
-import '../locale_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;

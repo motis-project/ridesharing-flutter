@@ -1,7 +1,10 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+
+import 'package:badges/badges.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
+
 import '../../account/models/profile.dart';
-import '../models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
@@ -12,11 +15,9 @@ import '../../util/own_theme_fields.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/supabase.dart';
-import '../../util/trip/trip_overview.dart';
-import 'package:timelines/timelines.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../util/trip/pending_ride_card.dart';
+import '../../util/trip/trip_overview.dart';
+import '../models/drive.dart';
 import 'drive_chat_page.dart';
 
 class DriveDetailPage extends StatefulWidget {

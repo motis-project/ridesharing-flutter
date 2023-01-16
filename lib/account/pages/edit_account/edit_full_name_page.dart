@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../util/buttons/button.dart';
-import '../../../util/supabase.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../util/buttons/button.dart';
+import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 
 class EditFullNamePage extends StatelessWidget {
