@@ -29,6 +29,9 @@ jobs:
 
       - name: Verify formatting
         run: flutter format --output=none --set-exit-if-changed --line-length=120 .
+      
+      - name: Check that imports are sorted
+        run: flutter pub run import_sorter:main --exit-if-changed
 
       - name: Analyze project source
         run: flutter analyze --no-fatal-infos
