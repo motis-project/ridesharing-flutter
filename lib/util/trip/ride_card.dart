@@ -79,19 +79,7 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildTopRight() {
-    RideStatus status = _ride!.status;
-    return Row(
-      children: [
-        status == RideStatus.approved
-            ? Icon(Icons.done_all, color: Theme.of(context).own().success)
-            : status == RideStatus.pending
-                ? Icon(Icons.done_all, color: Theme.of(context).disabledColor)
-                : status == RideStatus.preview
-                    ? const SizedBox()
-                    : Icon(Icons.block, color: Theme.of(context).errorColor),
-        Text(" ${_ride!.price}€"),
-      ],
-    );
+    return Text(" ${_ride!.price}€");
   }
 
   @override
@@ -145,23 +133,75 @@ class _RideCardState extends TripCardState<RideCard> {
     }
   }
 
-  Color pickColor() {
-    return _ride!.status.isCancelled() || _ride!.status == RideStatus.rejected
-        ? Theme.of(context).disabledColor.withOpacity(0.05)
-        : Theme.of(context).cardColor;
+  Color pickBannerColor() {
+    switch (_ride!.status) {
+      case RideStatus.preview:
+        return Theme.of(context).cardColor;
+      case RideStatus.pending:
+        return Theme.of(context).disabledColor;
+      case RideStatus.approved:
+        return Theme.of(context).own().success;
+      case RideStatus.rejected:
+        return Theme.of(context).errorColor;
+      case RideStatus.cancelledByDriver:
+        return Theme.of(context).errorColor;
+      case RideStatus.cancelledByRider:
+        return Theme.of(context).errorColor;
+      case RideStatus.withdrawnByRider:
+        return Theme.of(context).cardColor;
+    }
+  }
+
+  BoxDecoration pickDecoration() {
+    if (_ride!.status.isCancelled() || _ride!.status == RideStatus.rejected) {
+      return const BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        backgroundBlendMode: BlendMode.saturation,
+      );
+    } else {
+      return const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickColor(),
-      child: InkWell(
-          onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => RideDetailPage.fromRide(_ride!),
-                ),
+      color: pickBannerColor(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Wrap(
+        children: [
+          Container(
+            foregroundDecoration: pickDecoration(),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(10),
+                topRight: Radius.circular(10),
               ),
-          child: buildCardInfo(context)),
+            ),
+            margin: const EdgeInsets.only(left: 10),
+            child: InkWell(
+                onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => RideDetailPage.fromRide(_ride!),
+                      ),
+                    ),
+                child: buildCardInfo(context)),
+          ),
+        ],
+      ),
     );
   }
 }

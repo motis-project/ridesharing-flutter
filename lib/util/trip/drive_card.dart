@@ -16,16 +16,16 @@ class DriveCard extends TripCard<Drive> {
 }
 
 class _DriveCardState extends TripCardState<DriveCard> {
-  Drive? drive;
-  bool fullyLoaded = false;
+  Drive? _drive;
+  bool _fullyLoaded = false;
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      drive = widget.trip;
-      super.trip = drive;
+      _drive = widget.trip;
+      super.trip = _drive;
     });
     loadDrive();
   }
@@ -48,9 +48,9 @@ class _DriveCardState extends TripCardState<DriveCard> {
     ''').eq('id', widget.trip.id).single();
     if (mounted) {
       setState(() {
-        drive = Drive.fromJson(data);
-        super.trip = drive;
-        fullyLoaded = true;
+        _drive = Drive.fromJson(data);
+        super.trip = _drive;
+        _fullyLoaded = true;
       });
     }
   }
@@ -70,43 +70,69 @@ class _DriveCardState extends TripCardState<DriveCard> {
     return TripOverview(super.trip!).buildSeatIndicator(context, super.trip!);
   }
 
+  Color pickBannerColor() {
+    if (_drive!.cancelled) {
+      return Theme.of(context).errorColor;
+    } else {
+      return Theme.of(context).own().success;
+    }
+  }
+
   // Notification
   @override
   Widget buildTopRight() {
-    return !fullyLoaded
-        ? const Center(
-            child: SizedBox(
-            height: 24,
-            width: 24,
-          ))
-        : drive!.cancelled
-            ? Icon(Icons.block, color: Theme.of(context).errorColor)
-            : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
-                ? Icon(
-                    Icons.done_all,
-                    color: Theme.of(context).disabledColor,
-                  )
-                : Icon(
-                    Icons.done_all,
-                    color: Theme.of(context).own().success,
-                  );
+    return const SizedBox();
   }
 
-  Color pickColor() {
-    return drive!.cancelled ? Theme.of(context).disabledColor.withOpacity(0.05) : Theme.of(context).cardColor;
+  BoxDecoration pickDecoration() {
+    if (_drive!.cancelled) {
+      return const BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        backgroundBlendMode: BlendMode.saturation,
+      );
+    } else {
+      return const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          bottomRight: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickColor(),
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => DriveDetailPage.fromDrive(drive),
+      color: pickBannerColor(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Wrap(
+        children: [
+          Container(
+            foregroundDecoration: pickDecoration(),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            margin: const EdgeInsets.only(left: 10),
+            child: InkWell(
+                onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DriveDetailPage.fromDrive(_drive!),
+                      ),
+                    ),
+                child: buildCardInfo(context)),
           ),
-        ),
-        child: buildCardInfo(context),
+        ],
       ),
     );
   }
