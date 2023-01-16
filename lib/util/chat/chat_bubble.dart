@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/util/chat/models/message.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isSender;
   final String text;
   final bool tail;
   final bool read;
-  final String time;
 
   const ChatBubble({
-    Key? key,
+    super.key,
     this.isSender = true,
     required this.text,
     this.tail = true,
     this.read = false,
-    required this.time,
-  }) : super(key: key);
+  });
+
+  ChatBubble.fromMessage(
+    Message message, {
+    super.key,
+    this.tail = true,
+  })  : isSender = message.senderId == SupabaseManager.getCurrentProfile()!.id,
+        text = message.content,
+        read = message.read;
 
   @override
   Widget build(BuildContext context) {

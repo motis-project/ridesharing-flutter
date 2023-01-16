@@ -3,7 +3,6 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/chat/message_bar.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 import 'package:motis_mitfahr_app/util/chat/chat_bubble.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -91,28 +90,9 @@ class _ChatPageState extends State<ChatPage> {
 
   List<Widget> _buildChatBubbles(List<Message> messages) {
     List<Widget> chatBubbles = [];
-    Profile ownProfile = SupabaseManager.getCurrentProfile()!;
-    Message currentMessage = messages.first;
-    bool isOwnMessage = currentMessage.senderId == ownProfile.id;
-    if (!isOwnMessage) currentMessage.markAsRead();
-    chatBubbles.add(ChatBubble(
-      text: currentMessage.content,
-      isSender: isOwnMessage,
-      tail: true,
-      read: currentMessage.read && isOwnMessage,
-      time: localeManager.formatTime(currentMessage.createdAt!),
-    ));
-    for (int i = 1; i < messages.length; i++) {
-      currentMessage = messages[i];
-      isOwnMessage = currentMessage.senderId == ownProfile.id;
-      if (!isOwnMessage) currentMessage.markAsRead();
-      chatBubbles.add(ChatBubble(
-        text: currentMessage.content,
-        isSender: isOwnMessage,
-        tail: currentMessage.senderId != messages[i - 1].senderId,
-        read: currentMessage.read && isOwnMessage,
-        time: localeManager.formatTime(currentMessage.createdAt!),
-      ));
+    for (int i = 0; i < messages.length; i++) {
+      chatBubbles.add(
+          ChatBubble.fromMessage(messages[i], tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId));
     }
     return chatBubbles;
   }
