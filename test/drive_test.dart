@@ -36,6 +36,7 @@ void main() {
           'end_time': DateTime(2022, 09, 12, 20).toString(),
           'seats': 2,
           'cancelled': false,
+          'hide_in_list_view': false,
         }
       ]));
       final List<dynamic> data =
@@ -60,6 +61,7 @@ void main() {
           'end_time': DateTime(2022, 09, 12, 20).toString(),
           'seats': 2,
           'cancelled': false,
+          'hide_in_list_view': false,
         }
       ]));
       final data = await Drive.getDrivesOfUser(1);
