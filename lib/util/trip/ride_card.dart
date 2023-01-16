@@ -96,33 +96,53 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildBottomLeft() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: ProfileWidget(_driver!),
-    );
+    return !_fullyLoaded
+        ? const Center(
+            child: SizedBox(
+            height: 64,
+            width: 72,
+          ))
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: ProfileWidget(_driver!),
+          );
   }
 
   @override
   Widget buildBottomRight() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: CustomRatingBarIndicator(
-          rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
-          size: CustomRatingBarSize.medium),
-    );
+    return !_fullyLoaded
+        ? const Center(
+            child: SizedBox(
+            height: 44,
+            width: 52,
+          ))
+        : Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: CustomRatingBarIndicator(
+                rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
+                size: CustomRatingBarSize.medium),
+          );
   }
 
   @override
   Widget buildRightSide() {
-    List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
-    List<Icon> featureicons = <Icon>[];
-    for (int i = 0; i < min(profileFeatures.length, 3); i++) {
-      featureicons.add(profileFeatures[i].feature.getIcon(context));
+    if (!_fullyLoaded) {
+      return const Center(
+          child: SizedBox(
+        height: 24,
+        width: 24,
+      ));
+    } else {
+      List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
+      List<Icon> featureicons = <Icon>[];
+      for (int i = 0; i < min(profileFeatures.length, 3); i++) {
+        featureicons.add(profileFeatures[i].feature.getIcon(context));
+      }
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: featureicons,
+      );
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: featureicons,
-    );
   }
 
   Color pickColor() {
@@ -133,17 +153,15 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget build(BuildContext context) {
-    return !_fullyLoaded
-        ? const Center(child: SizedBox())
-        : Card(
-            color: pickColor(),
-            child: InkWell(
-                onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => RideDetailPage.fromRide(_ride!),
-                      ),
-                    ),
-                child: buildCardInfo(context)),
-          );
+    return Card(
+      color: pickColor(),
+      child: InkWell(
+          onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => RideDetailPage.fromRide(_ride!),
+                ),
+              ),
+          child: buildCardInfo(context)),
+    );
   }
 }

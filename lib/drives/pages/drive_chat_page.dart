@@ -69,7 +69,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
       body: RefreshIndicator(
         onRefresh: loadDrive,
         child: ListView.separated(
-          padding: const EdgeInsets.all(8),
           itemCount: widgets.length,
           itemBuilder: (context, index) {
             return widgets[index];

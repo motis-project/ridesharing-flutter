@@ -73,17 +73,23 @@ class _DriveCardState extends TripCardState<DriveCard> {
   // Notification
   @override
   Widget buildTopRight() {
-    return drive!.cancelled
-        ? Icon(Icons.block, color: Theme.of(context).errorColor)
-        : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
-            ? Icon(
-                Icons.done_all,
-                color: Theme.of(context).disabledColor,
-              )
-            : Icon(
-                Icons.done_all,
-                color: Theme.of(context).own().success,
-              );
+    return !fullyLoaded
+        ? const Center(
+            child: SizedBox(
+            height: 24,
+            width: 24,
+          ))
+        : drive!.cancelled
+            ? Icon(Icons.block, color: Theme.of(context).errorColor)
+            : drive!.rides!.any((ride) => ride.status == RideStatus.pending)
+                ? Icon(
+                    Icons.done_all,
+                    color: Theme.of(context).disabledColor,
+                  )
+                : Icon(
+                    Icons.done_all,
+                    color: Theme.of(context).own().success,
+                  );
   }
 
   Color pickColor() {
@@ -92,18 +98,16 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   Widget build(BuildContext context) {
-    return !fullyLoaded
-        ? const Center(child: SizedBox())
-        : Card(
-            color: pickColor(),
-            child: InkWell(
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => DriveDetailPage.fromDrive(drive),
-                ),
-              ),
-              child: buildCardInfo(context),
-            ),
-          );
+    return Card(
+      color: pickColor(),
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DriveDetailPage.fromDrive(drive),
+          ),
+        ),
+        child: buildCardInfo(context),
+      ),
+    );
   }
 }
