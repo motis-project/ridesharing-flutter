@@ -402,7 +402,8 @@
   "searchSuggestionsFilterSorting": "Sorting",
   "searchSuggestionsFilterResetToDefault": "Reset to default",
   "searchSuggestionsSortingRelevance": "Relevance",
-  "searchSuggestionsSortingTime": "Time",
+  "searchSuggestionsSortingTimeProximity": "Time proximity",
+  "searchSuggestionsSortingTravelDuration": "Travel duration",
   "searchSuggestionsSortingPrice": "Price",
 
   "pageRidesTitle": "Rides",

@@ -277,7 +277,8 @@
   "searchSuggestionsFilterSorting": "Sortierung",
   "searchSuggestionsFilterResetToDefault": "Zurücksetzen",
   "searchSuggestionsSortingRelevance": "Relevanz",
-  "searchSuggestionsSortingTime": "Zeit",
+  "searchSuggestionsSortingTimeProximity": "Zeitliche Nähe",
+  "searchSuggestionsSortingTravelDuration": "Reisedauer",
   "searchSuggestionsSortingPrice": "Preis",
 
   "pageRidesTitle": "Mitfahrten",

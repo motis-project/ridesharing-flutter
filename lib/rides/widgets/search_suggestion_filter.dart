@@ -437,28 +437,40 @@ class SearchSuggestionFilter {
   }
 }
 
-enum SearchSuggestionSorting { relevance, time, price }
+enum SearchSuggestionSorting {
+  relevance,
+  timeProximity,
+  travelDuration,
+  price,
+}
 
 extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
   String getDescription(BuildContext context) {
     switch (this) {
       case SearchSuggestionSorting.relevance:
         return S.of(context).searchSuggestionsSortingRelevance;
-      case SearchSuggestionSorting.time:
-        return S.of(context).searchSuggestionsSortingTime;
+      case SearchSuggestionSorting.timeProximity:
+        return S.of(context).searchSuggestionsSortingTimeProximity;
+      case SearchSuggestionSorting.travelDuration:
+        return S.of(context).searchSuggestionsSortingTravelDuration;
       case SearchSuggestionSorting.price:
         return S.of(context).searchSuggestionsSortingPrice;
     }
   }
 
   int Function(Ride, Ride) sortFunction(DateTime date) {
-    timeFunc(Ride ride1, Ride ride2) => (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
+    timeProximityFunc(Ride ride1, Ride ride2) =>
+        (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
+    travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {
       case SearchSuggestionSorting.relevance:
-        return (ride1, ride2) => timeFunc(ride1, ride2) + priceFunc(ride1, ride2);
-      case SearchSuggestionSorting.time:
-        return timeFunc;
+        return (ride1, ride2) =>
+            timeProximityFunc(ride1, ride2) + travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2);
+      case SearchSuggestionSorting.timeProximity:
+        return timeProximityFunc;
+      case SearchSuggestionSorting.travelDuration:
+        return travelDurationFunc;
       case SearchSuggestionSorting.price:
         return priceFunc;
     }
