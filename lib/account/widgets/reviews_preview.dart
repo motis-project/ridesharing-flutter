@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
+import 'review_detail.dart';
 
 import '../models/profile.dart';
 import '../models/review.dart';

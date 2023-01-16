@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/buttons/button.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import '../models/profile.dart';
+import '../widgets/review_detail.dart';
+import '../../rides/models/ride.dart';
+import '../../util/buttons/button.dart';
+import '../../util/profiles/profile_widget.dart';
+import '../../util/profiles/reviews/aggregate_review_widget.dart';
+import '../../util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/review.dart';

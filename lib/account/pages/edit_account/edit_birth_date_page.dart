@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/buttons/button.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import '../../../util/buttons/button.dart';
+import '../../../util/locale_manager.dart';
+import '../../../util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../models/profile.dart';

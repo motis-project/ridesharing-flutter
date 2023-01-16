@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
+import '../own_theme_fields.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/config.dart';
-import 'package:motis_mitfahr_app/util/buttons/button.dart';
+import '../../config.dart';
+import '../../util/buttons/button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import '../../util/supabase.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HelpPage extends StatefulWidget {

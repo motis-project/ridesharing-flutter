@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
+import '../../util/locale_manager.dart';
+import '../../util/profiles/profile_chip.dart';
+import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 
 import '../../util/profiles/reviews/custom_rating_bar_indicator.dart';
 import '../models/review.dart';

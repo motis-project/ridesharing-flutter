@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/report.dart';
-import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'report.dart';
+import 'review.dart';
+import 'profile_feature.dart';
+import '../../util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';

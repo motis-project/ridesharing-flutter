@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/rides/widgets/search_suggestion_filter.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
-import 'package:motis_mitfahr_app/util/trip/search_card.dart';
+import '../../util/locale_manager.dart';
+import '../../util/search/address_search_delegate.dart';
+import '../../util/trip/search_card.dart';
 import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';

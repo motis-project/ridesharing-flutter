@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import '../../util/supabase.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

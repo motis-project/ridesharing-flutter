@@ -1,5 +1,5 @@
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
+import 'profile.dart';
+import '../../util/profiles/reviews/aggregate_review_widget.dart';
 
 import '../../util/model.dart';
 

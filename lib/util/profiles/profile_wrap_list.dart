@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
+import '../../account/models/profile.dart';
+import 'profile_chip.dart';
 
 class ProfileWrapList extends StatelessWidget {
   final Set<Profile> profiles;
