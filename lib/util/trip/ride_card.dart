@@ -67,12 +67,14 @@ class _RideCardState extends TripCardState<RideCard> {
     Map<String, dynamic> data =
         await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
-    setState(() {
-      _ride = trip;
-      _driver = trip.drive!.driver!;
-      super.trip = _ride;
-      _fullyLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _ride = trip;
+        _driver = trip.drive!.driver!;
+        super.trip = _ride;
+        _fullyLoaded = true;
+      });
+    }
   }
 
   @override

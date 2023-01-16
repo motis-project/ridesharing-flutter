@@ -46,12 +46,13 @@ class _DriveCardState extends TripCardState<DriveCard> {
         rider: rider_id(*)
       )
     ''').eq('id', widget.trip.id).single();
-
-    setState(() {
-      drive = Drive.fromJson(data);
-      super.trip = drive;
-      fullyLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        drive = Drive.fromJson(data);
+        super.trip = drive;
+        fullyLoaded = true;
+      });
+    }
   }
 
   @override
