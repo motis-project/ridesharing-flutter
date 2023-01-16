@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:mockito/mockito.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'util/factories/profile_factory.dart';
 import 'util/mock_server.dart';
 import 'util/mock_server.mocks.dart';
 
@@ -23,9 +21,6 @@ void main() {
 
   group('basic test', () {
     test('test with explicit URL', () async {
-      Profile profile = ProfileFactory().generateFake();
-      print(profile.toJsonForApi());
-
       when(driveProcessor.processUrl('/rest/v1/drives?select=driver_id%2Cseats&driver_id=eq.1')).thenReturn(jsonEncode([
         {
           'id': 1,
