@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../rides/models/ride.dart';
 import '../../util/supabase.dart';
@@ -14,47 +15,58 @@ class DriveChatPage extends StatefulWidget {
 }
 
 class _DriveChatPageState extends State<DriveChatPage> {
-  Drive? _drive;
+  late Stream<List<Message>> _messagesStream;
 
   @override
   void initState() {
+    final List<int> ids = widget.drive.approvedRides!.map((Ride ride) => ride.id!).toList();
+    _messagesStream =
+        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
+              (SupabaseStreamEvent messages) => Message.fromJsonList(
+                messages.where((Map<String, dynamic> element) => ids.contains(element['ride_id'])).toList(),
+              ),
+            );
     super.initState();
-    setState(() {
-      _drive = widget.drive;
-    });
+  }
+
+  @override
+  void dispose() {
+    _messagesStream.drain();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> widgets = [];
-    final Set<Ride> approvedRides = _drive!.approvedRides!.toSet();
-    if (approvedRides.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(S.of(context).pageDriveChatTitle),
-        ),
-        body: Center(
-          child: Text(S.of(context).pageDriveChatEmptyMessage),
-        ),
-      );
-    } else {
-      if (approvedRides.isNotEmpty) {
-        final List<Widget> riderColumn = approvedRides.map((Ride ride) => _buildChatWidget(ride)).toList();
-        widgets.addAll(riderColumn);
-      }
-      widgets.add(const SizedBox(height: 10.0));
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: ListView.separated(
-        itemCount: widgets.length,
-        itemBuilder: (BuildContext context, int index) {
-          return widgets[index];
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(height: 10);
+      body: StreamBuilder<List<Message>>(
+        stream: _messagesStream,
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if (snapshot.hasData) {
+            final Set<Ride> approvedRides = widget.drive.approvedRides!.toSet();
+            for (final Message message in snapshot.data!) {
+              final Ride ride = approvedRides.firstWhere((Ride ride) => ride.id == message.rideId);
+              if (!ride.messages!.contains(message)) {
+                ride.messages!.add(message);
+              }
+            }
+            final List<Widget> widgets = _buildChatWidgets(approvedRides);
+            return ListView.separated(
+              itemCount: widgets.length,
+              itemBuilder: (BuildContext context, int index) {
+                return widgets[index];
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 10);
+              },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
       ),
     );
@@ -69,9 +81,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
         messages(*)
       )
     ''').eq('id', widget.drive.id).single();
-    setState(() {
-      _drive = Drive.fromJson(data);
-    });
   }
 
   Widget _buildChatWidget(Ride ride) {
@@ -110,5 +119,17 @@ class _DriveChatPageState extends State<DriveChatPage> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildChatWidgets(Set<Ride> approvedRides) {
+    if (approvedRides.isEmpty) {
+      return [
+        Center(
+          child: Text(S.of(context).pageDriveChatEmptyMessage),
+        )
+      ];
+    } else {
+      return approvedRides.map((Ride ride) => _buildChatWidget(ride)).toList();
+    }
   }
 }
