@@ -4,6 +4,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
+import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
@@ -417,11 +418,15 @@ class SearchSuggestionFilter {
         .where(
           (Ride ride) {
             Profile driver = ride.drive!.driver!;
+            AggregateReview driverReview = driver.getAggregateReview();
             bool ratingSatisfied = driver.getAggregateReview().rating >= _minRating &&
-                driver.getAggregateReview().comfortRating >= _minComfortRating &&
-                driver.getAggregateReview().safetyRating >= _minSafetyRating &&
-                driver.getAggregateReview().reliabilityRating >= _minReliabilityRating &&
-                driver.getAggregateReview().hospitalityRating >= _minHospitalityRating;
+                (driverReview.comfortRating >= _minComfortRating ||
+                    _minComfortRating == 1 && !driverReview.isComfortSet) &&
+                (driverReview.safetyRating >= _minSafetyRating || _minSafetyRating == 1 && !driverReview.isSafetySet) &&
+                (driverReview.reliabilityRating >= _minReliabilityRating ||
+                    _minReliabilityRating == 1 && !driverReview.isReliabilitySet) &&
+                (driverReview.hospitalityRating >= _minHospitalityRating ||
+                    _minHospitalityRating == 1 && !driverReview.isHospitalitySet);
             bool featuresSatisfied = Set.of(driver.features!).containsAll(_selectedFeatures);
             bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
