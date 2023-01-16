@@ -28,7 +28,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
       children: [
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(8, 16, 0, 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -43,7 +43,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(8, 16, 0, 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

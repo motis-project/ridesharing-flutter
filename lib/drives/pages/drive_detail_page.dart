@@ -181,9 +181,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.addAll(pendingRidesColumn);
       }
 
-      if (!(_drive!.isFinished || _drive!.cancelled)) {
-        widgets.add(const SizedBox(height: 10));
-        Widget deleteButton = Button(
       widgets.add(const SizedBox(height: 10));
       Widget bottomButton;
       if (!(_drive!.isFinished || _drive!.cancelled)) {
@@ -403,11 +400,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
-  }
-
-  void _cancelDrive() async {
-    await _drive?.cancel();
-    setState(() {});
   }
 
   int _getMessageCount(Drive drive) {
