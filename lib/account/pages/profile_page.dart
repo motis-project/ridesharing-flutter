@@ -277,7 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
                         .then((reportSent) {
-                      if (reportSent) {
+                      if (reportSent == true) {
                         loadProfile();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
