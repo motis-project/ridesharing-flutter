@@ -47,10 +47,11 @@ class _DriveChatPageState extends State<DriveChatPage> {
           if (snapshot.hasData) {
             final Set<Ride> approvedRides = widget.drive.approvedRides!.toSet();
             for (final Message message in snapshot.data!) {
-              final Ride ride = approvedRides.firstWhere((Ride ride) => ride.id == message.rideId);
-              if (!ride.messages!.contains(message)) {
-                ride.messages!.add(message);
+              final Ride ride = approvedRides.firstWhere((Ride element) => element.id == message.rideId);
+              if (ride.messages!.contains(message)) {
+                ride.messages!.remove(message);
               }
+              ride.messages!.add(message);
             }
             final List<Widget> widgets = _buildChatWidgets(approvedRides);
             return ListView.separated(
@@ -70,17 +71,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
         },
       ),
     );
-  }
-
-  Future<void> loadDrive() async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
-      *,
-      rides(
-        *,
-        rider: rider_id(*),
-        messages(*)
-      )
-    ''').eq('id', widget.drive.id).single();
   }
 
   Widget _buildChatWidget(Ride ride) {
@@ -114,7 +104,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                     ),
                   ),
                 )
-                .then((value) => loadDrive());
+                .then((value) => setState(() {}));
           },
         ),
       ),
