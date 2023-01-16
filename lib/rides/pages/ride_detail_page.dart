@@ -75,8 +75,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       ride.drive = Drive.fromJson(data);
     } else {
+      int id = _ride?.id ?? widget.id!;
       Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
+          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
       ride = Ride.fromJson(data);
     }
 
