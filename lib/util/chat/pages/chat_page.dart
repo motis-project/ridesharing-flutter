@@ -95,7 +95,8 @@ class _ChatPageState extends State<ChatPage> {
         messages[i].markAsRead();
       }
       chatBubbles.add(
-          ChatBubble.fromMessage(messages[i], tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId));
+        ChatBubble.fromMessage(messages[i], tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId),
+      );
     }
     return chatBubbles;
   }
