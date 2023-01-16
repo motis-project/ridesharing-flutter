@@ -91,6 +91,9 @@ class _ChatPageState extends State<ChatPage> {
   List<Widget> _buildChatBubbles(List<Message> messages) {
     List<Widget> chatBubbles = [];
     for (int i = 0; i < messages.length; i++) {
+      if (!messages[i].read && messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
+        messages[i].markAsRead();
+      }
       chatBubbles.add(
           ChatBubble.fromMessage(messages[i], tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId));
     }

@@ -51,11 +51,11 @@ class Message extends Model {
 
   Future<void> markAsRead() async {
     read = true;
-    await SupabaseManager.supabaseClient.from('messages').update({'read': true}).eq('id', id);
+    await SupabaseManager.supabaseClient.rpc('mark_message_as_read', params: {'message_id': id});
   }
 
   @override
   String toString() {
-    return 'Message{id: $id, createdAt: $createdAt, userId: $senderId, content: $content, chatId: $rideId, user: $sender}';
+    return 'Message{id: $id, createdAt: $createdAt, userId: $senderId, content: $content, chatId: $rideId, user: $sender, read: $read}';
   }
 }
