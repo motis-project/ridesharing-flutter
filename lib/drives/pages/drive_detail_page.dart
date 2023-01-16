@@ -16,6 +16,7 @@ import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:timelines/timelines.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/trip/pending_ride_card.dart';
 import 'drive_chat_page.dart';
 
 class DriveDetailPage extends StatefulWidget {
@@ -163,6 +164,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
+      List<Ride> pendingRides = _drive!.pendingRides!.toList();
+      if (pendingRides.isNotEmpty) {
+        List<Widget> pendingRidesColumn = [
+          const SizedBox(height: 5.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              S.of(context).pageDriveChatRequestsHeadline,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          ..._pendingRidesList(pendingRides)
+        ];
+        widgets.addAll(pendingRidesColumn);
+      }
+
       if (!(_drive!.isFinished || _drive!.cancelled)) {
         widgets.add(const SizedBox(height: 10));
         Widget deleteButton = Button(
@@ -209,11 +227,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             ).then((value) => loadDrive()),
             icon: Badge(
               badgeContent: Text(
-                _drive?.pendingRides?.length.toString() ?? '',
+                _getMessageCount(_drive!).toString(),
                 style: const TextStyle(color: Colors.white),
                 textScaleFactor: 1.0,
               ),
-              showBadge: _drive?.pendingRides?.isNotEmpty ?? false,
+              showBadge: _getMessageCount(_drive!) != 0,
               position: BadgePosition.topEnd(top: -12),
               child: const Icon(Icons.chat),
             ),
@@ -352,6 +370,25 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   void _cancelDrive() async {
     await _drive?.cancel();
     setState(() {});
+  }
+
+  int _getMessageCount(Drive drive) {
+    return 0;
+  }
+
+  List<Widget> _pendingRidesList(List<Ride> pendingRides) {
+    List<Widget> pendingRidesColumn = [];
+    if (pendingRides.isNotEmpty) {
+      pendingRidesColumn = List.generate(
+        pendingRides.length,
+        (index) => PendingRideCard(
+          pendingRides.elementAt(index),
+          reloadPage: loadDrive,
+          drive: _drive!,
+        ),
+      );
+    }
+    return pendingRidesColumn;
   }
 }
 
