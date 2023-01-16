@@ -95,16 +95,6 @@ class Profile extends Model {
   String toString() {
     return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
   }
-
-  static Future<Profile?> getProfileFromAuthId(String authId) async {
-    Map<String, dynamic>? query =
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('auth_id', authId).maybeSingle();
-    if (query == null) {
-      return null;
-    }
-
-    return Profile.fromJson(query);
-  }
 }
 
 enum Gender {

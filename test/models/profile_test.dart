@@ -173,19 +173,4 @@ void main() {
       );
     });
   });
-
-  group('getProfileFromAuthId', () {
-    test('returns null if no profile exists with that auth id', () async {
-      when(profileProcessor.processUrl(any)).thenReturn("");
-      Profile? result = await Profile.getProfileFromAuthId("1");
-      expect(result, null);
-    });
-
-    test('returns the profile if it exists', () async {
-      final profile = ProfileFactory().generateFake();
-      when(profileProcessor.processUrl(any)).thenReturn(jsonEncode(profile.toJsonForApi()));
-      Profile result = await Profile.getProfileFromAuthId("auth-id") as Profile;
-      expect(result.id, profile.id);
-    });
-  });
 }
