@@ -130,7 +130,7 @@
       "signature": {}
     }
   },
-  "pageAboutText": "This app was coded by a group of students at TU Darmstadt. Please note that we do not accept legal reliability for any content posted by users and do not guarantee that the app is secure.",
+  "pageAboutText": "This app was coded by a group of students at TU Darmstadt.\nLicensed under the MIT License.",
   "pageAboutGithub": "GitHub",
   "pageAboutWebsite": "Website",
   "pageAboutTermsOfService": "Terms of service",
