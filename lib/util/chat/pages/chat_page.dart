@@ -13,9 +13,12 @@ class ChatPage extends StatefulWidget {
   final Profile profile;
   final bool chatExists;
 
-  const ChatPage(
-      {rideId, required this.profile, this.chatExists = true, super.key})
-      : rideId = rideId ?? -1;
+  const ChatPage({
+    rideId,
+    required this.profile,
+    this.chatExists = true,
+    super.key,
+  }) : rideId = rideId ?? -1;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -75,8 +78,7 @@ class _ChatPageState extends State<ChatPage> {
                                   const SizedBox(height: 16),
                                   Text(
                                     S.of(context).pageChatEmptyTitle,
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
+                                    style: Theme.of(context).textTheme.headline6,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
@@ -125,15 +127,14 @@ class _ChatPageState extends State<ChatPage> {
   List<Widget> _buildChatBubbles(List<Message> messages) {
     List<Widget> chatBubbles = [];
     for (int i = 0; i < messages.length; i++) {
-      if (!messages[i].read &&
-          messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
+      if (!messages[i].read && messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
         messages[i].markAsRead();
       }
       chatBubbles.add(
-        ChatBubble.fromMessage(messages[i],
-            tail: i == 0
-                ? true
-                : messages[i].senderId != messages[i - 1].senderId),
+        ChatBubble.fromMessage(
+          messages[i],
+          tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId,
+        ),
       );
     }
     return chatBubbles;
