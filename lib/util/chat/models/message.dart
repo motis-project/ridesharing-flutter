@@ -1,4 +1,3 @@
-import '../../../account/models/profile.dart';
 import '../../model.dart';
 import '../../supabase.dart';
 
@@ -7,7 +6,6 @@ class Message extends Model {
   final String content;
 
   final int senderId;
-  final Profile? sender;
 
   bool read;
 
@@ -17,7 +15,6 @@ class Message extends Model {
     required this.senderId,
     required this.content,
     required this.rideId,
-    this.sender,
     this.read = false,
   });
 
@@ -29,17 +26,15 @@ class Message extends Model {
       senderId: json['sender_id'],
       content: json['content'],
       rideId: json['ride_id'],
-      sender: json.containsKey('user') ? Profile.fromJson(json['user']) : null,
       read: json['read'],
     );
   }
 
   static List<Message> fromJsonList(List<dynamic> jsonList) {
-    return jsonList
-        .map((json) => Message.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return jsonList.map((json) => Message.fromJson(json as Map<String, dynamic>)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'sender_id': senderId,
@@ -49,17 +44,15 @@ class Message extends Model {
     };
   }
 
-  bool get isFromCurrentUser =>
-      senderId == SupabaseManager.getCurrentProfile()?.id;
+  bool get isFromCurrentUser => senderId == SupabaseManager.getCurrentProfile()?.id;
 
   Future<void> markAsRead() async {
     read = true;
-    await SupabaseManager.supabaseClient
-        .rpc('mark_message_as_read', params: {'message_id': id});
+    await SupabaseManager.supabaseClient.rpc('mark_message_as_read', params: {'message_id': id});
   }
 
   @override
   String toString() {
-    return 'Message{id: $id, createdAt: $createdAt, userId: $senderId, content: $content, chatId: $rideId, user: $sender, read: $read}';
+    return 'Message{id: $id, createdAt: $createdAt, rideId: $rideId, senderId: $senderId, content: $content, read: $read}';
   }
 }
