@@ -419,11 +419,11 @@ class SearchSuggestionFilter {
           (Ride ride) {
             Profile driver = ride.drive!.driver!;
             AggregateReview driverReview = driver.getAggregateReview();
-            bool ratingSatisfied = (driverReview.rating >= _minRating || !driverReview.isRatingSet) &&
-                (driverReview.comfortRating >= _minComfortRating || !driverReview.isComfortSet) &&
-                (driverReview.safetyRating >= _minSafetyRating || !driverReview.isSafetySet) &&
-                (driverReview.reliabilityRating >= _minReliabilityRating || !driverReview.isReliabilitySet) &&
-                (driverReview.hospitalityRating >= _minHospitalityRating || !driverReview.isHospitalitySet);
+            bool ratingSatisfied = (!driverReview.isRatingSet || driverReview.rating >= _minRating) &&
+                (!driverReview.isComfortSet || driverReview.comfortRating >= _minComfortRating) &&
+                (!driverReview.isSafetySet || driverReview.safetyRating >= _minSafetyRating) &&
+                (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
+                (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             bool featuresSatisfied = Set.of(driver.features!).containsAll(_selectedFeatures);
             bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
