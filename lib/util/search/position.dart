@@ -1,3 +1,5 @@
+import '../parse_helper.dart';
+
 class Position {
   final double lat;
   final double lng;
@@ -6,6 +8,10 @@ class Position {
 
   factory Position.fromJson(Map<String, dynamic> json) {
     return Position(json['lat'], json['lng']);
+  }
+
+  factory Position.fromDynamicValues(dynamic lat, dynamic lng) {
+    return Position(parseHelper.parseDouble(lat), parseHelper.parseDouble(lng));
   }
 
   Map<String, dynamic> toJson() {

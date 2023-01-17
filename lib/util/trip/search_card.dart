@@ -14,7 +14,7 @@ import 'trip_card.dart';
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});
 
-  FixedTimeline buildRoute(context) {
+  FixedTimeline buildRoute(BuildContext context) {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: [
@@ -62,7 +62,7 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget buildProfile(driver) {
+  Widget buildProfile(Profile driver) {
     return Row(
       children: [
         Avatar(driver),
@@ -84,7 +84,7 @@ class SearchCard extends TripCard<Ride> {
     );
   }
 
-  Widget buildCardInfo(context, driver) {
+  Widget buildCardInfo(BuildContext context, Profile driver) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

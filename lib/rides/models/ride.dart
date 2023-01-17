@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
+import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip.dart';
@@ -68,13 +69,13 @@ class Ride extends Trip {
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
       start: json['start'],
-      startPosition: Position(json['start_lat'].toDouble(), json['start_lng'].toDouble()),
+      startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
       startTime: DateTime.parse(json['start_time']),
       end: json['end'],
-      endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
+      endPosition: Position(json['end_lat'], json['end_lng']),
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
-      price: json['price'].toDouble(),
+      price: parseHelper.parseDouble(['end_lng']),
       status: RideStatus.values[json['status']],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,

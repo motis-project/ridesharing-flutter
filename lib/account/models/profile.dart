@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
+import '../../util/parse_helper.dart';
 import '../../util/supabase.dart';
 import 'profile_feature.dart';
 import 'report.dart';
@@ -64,13 +65,13 @@ class Profile extends Model {
       gender: json['gender'] != null ? Gender.values[json['gender']] : null,
       avatarUrl: json['avatar_url'],
       reviewsReceived: json.containsKey('reviews_received')
-          ? Review.fromJsonList(json['reviews_received'].cast<Map<String, dynamic>>())
+          ? Review.fromJsonList(parseHelper.parseListOfMaps(json['reviews_received']))
           : null,
       profileFeatures: json.containsKey('profile_features')
-          ? ProfileFeature.fromJsonList(json['profile_features'].cast<Map<String, dynamic>>())
+          ? ProfileFeature.fromJsonList(parseHelper.parseListOfMaps(json['profile_features']))
           : null,
       reportsReceived: json.containsKey('reports_received')
-          ? Report.fromJsonList(json['reports_received'].cast<Map<String, dynamic>>())
+          ? Report.fromJsonList(parseHelper.parseListOfMaps(json['reports_received']))
           : null,
     );
   }

@@ -121,7 +121,10 @@ class AddressSuggestionManager {
 
     String response = await request.close().then((value) => value.transform(utf8.decoder).join());
 
-    return json.decode(response)['content']['guesses'];
+    Map<String, dynamic> responseMap = json.decode(response);
+    Map<String, dynamic> content = responseMap['content'];
+
+    return content['guesses'];
   }
 
   Future<List<AddressSuggestion>> getHistorySuggestions(String query) async {
