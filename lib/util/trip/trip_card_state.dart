@@ -9,6 +9,11 @@ import '../locale_manager.dart';
 abstract class TripCardState<T extends TripCard> extends State<T> {
   Trip? trip;
 
+  BorderRadius cardBorder = BorderRadius.only(
+    bottomRight: Radius.circular(10),
+    topRight: Radius.circular(10),
+  );
+
   FixedTimeline buildRoute(context) {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
@@ -108,8 +113,19 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
-  Widget buildBottomLeft();
-  Widget buildBottomRight();
-  Widget buildTopRight();
-  Widget buildRightSide();
+  Widget buildBottomLeft() {
+    return const SizedBox();
+  }
+
+  Widget buildBottomRight() {
+    return const SizedBox();
+  }
+
+  Widget buildTopRight() {
+    return const SizedBox();
+  }
+
+  Widget buildRightSide() {
+    return const SizedBox();
+  }
 }

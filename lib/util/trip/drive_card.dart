@@ -56,50 +56,34 @@ class _DriveCardState extends TripCardState<DriveCard> {
   }
 
   @override
-  Widget buildBottomLeft() {
-    return const SizedBox();
-  }
-
-  @override
-  Widget buildBottomRight() {
-    return const SizedBox();
-  }
-
-  @override
   Widget buildRightSide() {
     return TripOverview(super.trip!).buildSeatIndicator(context, super.trip!);
   }
 
   Color pickBannerColor() {
-    if (_drive!.cancelled) {
-      return Theme.of(context).errorColor;
+    if (!_fullyLoaded) {
+      return Theme.of(context).cardColor;
     } else {
-      return Theme.of(context).own().success;
+      if (_drive!.cancelled) {
+        return Theme.of(context).colorScheme.error;
+      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.pending)) {
+        return Theme.of(context).disabledColor;
+      } else {
+        return Theme.of(context).own().success;
+      }
     }
-  }
-
-  // Notification
-  @override
-  Widget buildTopRight() {
-    return const SizedBox();
   }
 
   BoxDecoration pickDecoration() {
     if (_drive!.cancelled) {
-      return const BoxDecoration(
+      return BoxDecoration(
         color: Colors.grey,
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-        backgroundBlendMode: BlendMode.saturation,
+        borderRadius: cardBorder,
+        backgroundBlendMode: BlendMode.screen,
       );
     } else {
-      return const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
+      return BoxDecoration(
+        borderRadius: cardBorder,
       );
     }
   }
@@ -118,18 +102,17 @@ class _DriveCardState extends TripCardState<DriveCard> {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
+              borderRadius: cardBorder,
             ),
             margin: const EdgeInsets.only(left: 10),
             child: InkWell(
-                onTap: () => Navigator.of(context).push(
+                onTap: () => Navigator.of(context)
+                    .push(
                       MaterialPageRoute(
                         builder: (context) => DriveDetailPage.fromDrive(_drive!),
                       ),
-                    ),
+                    )
+                    .then((value) => loadDrive()),
                 child: buildCardInfo(context)),
           ),
         ],

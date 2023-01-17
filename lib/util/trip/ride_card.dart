@@ -142,11 +142,11 @@ class _RideCardState extends TripCardState<RideCard> {
       case RideStatus.approved:
         return Theme.of(context).own().success;
       case RideStatus.rejected:
-        return Theme.of(context).errorColor;
+        return Theme.of(context).colorScheme.error;
       case RideStatus.cancelledByDriver:
-        return Theme.of(context).errorColor;
+        return Theme.of(context).colorScheme.error;
       case RideStatus.cancelledByRider:
-        return Theme.of(context).errorColor;
+        return Theme.of(context).colorScheme.error;
       case RideStatus.withdrawnByRider:
         return Theme.of(context).cardColor;
     }
@@ -154,21 +154,13 @@ class _RideCardState extends TripCardState<RideCard> {
 
   BoxDecoration pickDecoration() {
     if (_ride!.status.isCancelled() || _ride!.status == RideStatus.rejected) {
-      return const BoxDecoration(
+      return BoxDecoration(
         color: Colors.grey,
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-        backgroundBlendMode: BlendMode.saturation,
+        borderRadius: cardBorder,
+        backgroundBlendMode: BlendMode.screen,
       );
     } else {
-      return const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-      );
+      return BoxDecoration(borderRadius: cardBorder);
     }
   }
 
@@ -186,10 +178,7 @@ class _RideCardState extends TripCardState<RideCard> {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
+              borderRadius: cardBorder,
             ),
             margin: const EdgeInsets.only(left: 10),
             child: InkWell(
