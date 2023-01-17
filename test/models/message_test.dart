@@ -1,11 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import '../util/factories/message_factory.dart';
+import '../util/factories/profile_factory.dart';
 import '../util/mock_server.dart';
-import '../util/mock_server.mocks.dart';
 
 void main() {
   UrlProcessor messageProcessor = UrlProcessor();
@@ -46,6 +45,31 @@ void main() {
       expect(message.read, true);
     });
   });
+
+  group('Message.isFromCurrentUser', (() {
+    setUp(() {
+      final profile = ProfileFactory().generateFake();
+      SupabaseManager.setCurrentProfile(profile);
+    });
+    test('returns true if message is from current user', () async {
+      final message = MessageFactory().generateFake(
+        senderId: SupabaseManager.getCurrentProfile()?.id,
+      );
+      expect(message.isFromCurrentUser, true);
+    });
+    test('returns false if message is not from current user', () async {
+      final message = MessageFactory().generateFake(
+        senderId: SupabaseManager.getCurrentProfile()!.id! + 1,
+      );
+      expect(message.isFromCurrentUser, false);
+    });
+
+    test('returns false if current user is null', () async {
+      SupabaseManager.setCurrentProfile(null);
+      final message = MessageFactory().generateFake();
+      expect(message.isFromCurrentUser, false);
+    });
+  }));
 
   group('Message.fromJsonList', (() {
     test('parses a list of messages from json', () async {

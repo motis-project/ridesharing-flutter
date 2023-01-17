@@ -85,6 +85,8 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   Future<void> approveRide() async {
+    //custom rpc call to mark the ride as approved,
+    //so the user does not need the write permission on the rides table.
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
       params: <String, dynamic>{'ride_id': _ride.id},
@@ -94,6 +96,8 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   Future<void> rejectRide() async {
+    //custom rpc call to mark the ride as rejected,
+    //so the user does not need the write permission on the rides table.
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
       params: <String, dynamic>{'ride_id': _ride.id},

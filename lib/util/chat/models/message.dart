@@ -48,6 +48,7 @@ class Message extends Model {
 
   Future<void> markAsRead() async {
     read = true;
+    //custom rpc call to mark message as read, so the user does not need the write permission on the messages table
     await SupabaseManager.supabaseClient.rpc('mark_message_as_read', params: {'message_id': id});
   }
 
