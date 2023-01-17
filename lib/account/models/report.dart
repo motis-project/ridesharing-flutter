@@ -45,6 +45,7 @@ class Report extends Model {
     return jsonList.map((json) => Report.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'offender_id': offenderId,

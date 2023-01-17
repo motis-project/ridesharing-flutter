@@ -55,7 +55,7 @@ class _AppWrapperState extends State<AppWrapper> {
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
       themeMode: themeManager.currentThemeMode,
-      localizationsDelegates: localeManager.localizationsDelegates,
+      localizationsDelegates: S.localizationsDelegates,
       supportedLocales: localeManager.supportedLocales,
       locale: localeManager.currentLocale,
       home: const AuthApp(),

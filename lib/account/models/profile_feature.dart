@@ -39,6 +39,7 @@ class ProfileFeature extends Model {
     return list;
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'profile_id': profileId,

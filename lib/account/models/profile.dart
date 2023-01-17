@@ -79,6 +79,7 @@ class Profile extends Model {
     return jsonList.map((json) => Profile.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'username': username,
@@ -92,28 +93,9 @@ class Profile extends Model {
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Profile> profiles) {
-    return profiles.map((profile) => profile.toJson()).toList();
-  }
-
   @override
   String toString() {
     return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
-  }
-
-  static Future<Profile?> getProfileFromAuthId(String authId) async {
-    Map<String, dynamic>? query =
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('auth_id', authId).maybeSingle();
-    if (query == null) {
-      return null;
-    }
-
-    return Profile.fromJson(query);
-  }
-
-  AggregateReview getAggregateReview() {
-    List<Review> reviews = reviewsReceived ?? [];
-    return AggregateReview.fromReviews(reviews);
   }
 }
 

@@ -22,3 +22,5 @@ A ride-sharing app by the Motis team.
 ## Running the tests
 
 - Run `flutter test` to run all tests
+
+- Run `./scripts/coverage.sh` (`lcov` required for MacOS) to generate a html report in the `coverage/html` folder and open the report in the browser automatically.

@@ -46,3 +46,4 @@ app.*.map.json
 .env
 .fvm/flutter_sdk
 lib/l10n/untranslatedMessages.txt
+coverage/

@@ -3,8 +3,8 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'mock_server.dart';
-import 'mock_server.mocks.dart';
+import 'util/mock_server.dart';
+import 'util/mock_server.mocks.dart';
 
 // Die Klasse UrlProcessor muss zu Beginn jeder Testdatei implementiert werden und die Methode processUrl überschrieben werden
 // Wird die Methode ProcessUrl aufgrufen, wird für den dort definierten Fall (in dem Beispiel client.from('drives').select('driver_id,seats')) die Antwort definiert
@@ -63,7 +63,6 @@ void main() {
         }
       ]));
       final data = await Drive.getDrivesOfUser(1);
-      print(data);
       expect(data.first.driverId, 1);
     });
   });
