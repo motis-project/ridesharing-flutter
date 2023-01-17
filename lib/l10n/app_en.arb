@@ -427,7 +427,7 @@
   "pageRideDetailHideDialog": "Are you sure you want to delete this ride?",
 
   "pageDriveChatTitle": "Chats",
-  "pageDriveChatEmptyMessage": "No riders or pending rides",
+  "pageDriveChatEmptyMessage": "You can chat with your Riders as soon as you accept their request.",
   "pageDriveChatRiderHeadline": "Riders",
   "pageDriveChatRequestsHeadline": "Ride requests",
 
@@ -441,6 +441,7 @@
 
   "pageChatEmptyTitle": "Nothing to see here",
   "pageChatEmptyMessage": "Start your Conversation now :)",
+  "pageChatNoChatMessage": "You can chat with your driver as soon as your ride has been accepted",
   "pageChatMessageBarHint": "Write a Message",
 
   "appName": "Motis Ride-Sharing App"

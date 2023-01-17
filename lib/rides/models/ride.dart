@@ -201,4 +201,8 @@ extension RideStatusExtension on RideStatus {
   bool isApproved() {
     return this == RideStatus.approved;
   }
+
+  bool hasChat() {
+    return isApproved() || isCancelled();
+  }
 }

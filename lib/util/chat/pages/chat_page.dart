@@ -8,9 +8,11 @@ import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({required this.rideId, required this.profile, super.key});
   final int rideId;
   final Profile profile;
+  final bool chatExists;
+
+  const ChatPage({rideId, required this.profile, this.chatExists = true, super.key}) : rideId = rideId ?? -1;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -21,12 +23,16 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    _messagesStream = SupabaseManager.supabaseClient
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('ride_id', widget.rideId)
-        .order('created_at')
-        .map((messages) => Message.fromJsonList(messages));
+    if (widget.chatExists) {
+      _messagesStream = SupabaseManager.supabaseClient
+          .from('messages')
+          .stream(primaryKey: ['id'])
+          .eq('ride_id', widget.rideId)
+          .order('created_at')
+          .map((messages) => Message.fromJsonList(messages));
+    } else {
+      _messagesStream = Stream.value([]);
+    }
     super.initState();
   }
 
@@ -38,6 +44,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.chatExists) {}
     return Scaffold(
       appBar: AppBar(
         title: ProfileWidget(
@@ -45,46 +52,69 @@ class _ChatPageState extends State<ChatPage> {
           isTappable: true,
         ),
       ),
-      body: StreamBuilder<List<Message>>(
-        stream: _messagesStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Message> messages = snapshot.data!;
-            return Column(
+      body: widget.chatExists
+          ? StreamBuilder<List<Message>>(
+              stream: _messagesStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Message> messages = snapshot.data!;
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: messages.isEmpty
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/chat_shrug.png',
+                                    scale: 8,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    S.of(context).pageChatEmptyTitle,
+                                    style: Theme.of(context).textTheme.headline6,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    S.of(context).pageChatEmptyMessage,
+                                  ),
+                                ],
+                              )
+                            : ListView(
+                                reverse: true,
+                                children: _buildChatBubbles(messages),
+                              ),
+                      ),
+                      MessageBar(widget.rideId),
+                    ],
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: messages.isEmpty
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/chat_shrug.png',
-                              scale: 8,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              S.of(context).pageChatEmptyTitle,
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              S.of(context).pageChatEmptyMessage,
-                            ),
-                          ],
-                        )
-                      : ListView(
-                          reverse: true,
-                          children: _buildChatBubbles(messages),
-                        ),
+                Image.asset(
+                  'assets/chat_shrug.png',
+                  scale: 8,
                 ),
-                MessageBar(widget.rideId),
+                const SizedBox(height: 16),
+                Text(
+                  S.of(context).pageChatEmptyTitle,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    S.of(context).pageChatNoChatMessage,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+            ),
     );
   }
 

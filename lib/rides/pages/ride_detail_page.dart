@@ -155,15 +155,16 @@ class _RideDetailPageState extends State<RideDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageRideDetailTitle),
-        actions: _ride!.status == RideStatus.approved
+        actions: _fullyLoaded
             ? <Widget>[
                 IconButton(
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChatPage(
-                        rideId: _ride!.id!,
+                        rideId: _ride!.id,
                         profile: _ride!.drive!.driver!,
+                        chatExists: _ride!.status.hasChat(),
                       ),
                     ),
                   ),

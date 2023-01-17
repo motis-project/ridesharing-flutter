@@ -94,10 +94,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bool startSaved = false;
         bool endSaved = false;
 
-        final WaypointAction rideStartAction =
-            WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats, rideId: ride.id!);
-        final WaypointAction rideEndAction =
-            WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats, rideId: ride.id!);
+        final WaypointAction rideStartAction = WaypointAction(ride, isStart: true);
+        final WaypointAction rideEndAction = WaypointAction(ride, isStart: false);
         for (final Waypoint stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
@@ -235,7 +233,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: _fullyLoaded && _drive!.approvedRides!.isNotEmpty
+        actions: _fullyLoaded
             ? <Widget>[
                 IconButton(
                   onPressed: () => Navigator.push(
@@ -494,7 +492,10 @@ class WaypointAction {
   final int seats;
   final int rideId;
 
-  WaypointAction({required this.profile, required this.isStart, required this.seats, required this.rideId});
+  WaypointAction(Ride ride, {required this.isStart})
+      : profile = ride.rider!,
+        seats = ride.seats,
+        rideId = ride.id!;
 }
 
 class Waypoint {

@@ -313,7 +313,7 @@
   "pageRideDetailHideDialog": "Bist du sicher, dass du die Mitfahrt löschen möchtest?",
 
   "pageDriveChatTitle": "Chats",
-  "pageDriveChatEmptyMessage": "Keine Mitfahrer oder Anfragen",
+  "pageDriveChatEmptyMessage": "Du kannst mit deinen Mitfahrern chatten sobald du ihre Anfragen angenommen hast.",
   "pageDriveChatRiderHeadline": "Mitfahrer",
   "pageDriveChatRequestsHeadline": "Mitfahrtanfragen",
 
@@ -327,6 +327,7 @@
 
   "pageChatEmptyTitle": "Nichts zu sehen",
   "pageChatEmptyMessage": "Starte jetzt eine Konversation :)",
+  "pageChatNoChatMessage": "Du kannst mit deiner*m Fahrer*in chatten sobald deine Fahrt angenommen wurde.",
   "pageChatMessageBarHint": "Schreibe eine Nachricht",
 
 

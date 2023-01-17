@@ -19,7 +19,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   void initState() {
-    final List<int> ids = widget.drive.approvedRides!.map((Ride ride) => ride.id!).toList();
+    final List<int> ids = widget.drive.ridesWithChat!.map((Ride ride) => ride.id!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
               (SupabaseStreamEvent messages) => Message.fromJsonList(
@@ -37,39 +37,62 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Set<Ride> ridesWithChat = widget.drive.ridesWithChat!.toSet();
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: StreamBuilder<List<Message>>(
-        stream: _messagesStream,
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.hasData) {
-            final Set<Ride> approvedRides = widget.drive.approvedRides!.toSet();
-            for (final Message message in snapshot.data!) {
-              final Ride ride = approvedRides.firstWhere((Ride element) => element.id == message.rideId);
-              if (ride.messages!.contains(message)) {
-                ride.messages!.remove(message);
-              }
-              ride.messages!.add(message);
-            }
-            final List<Widget> widgets = _buildChatWidgets(approvedRides);
-            return ListView.separated(
-              itemCount: widgets.length,
-              itemBuilder: (BuildContext context, int index) {
-                return widgets[index];
+      body: ridesWithChat.isNotEmpty
+          ? StreamBuilder<List<Message>>(
+              stream: _messagesStream,
+              builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                if (snapshot.hasData) {
+                  for (final Message message in snapshot.data!) {
+                    final Ride ride = ridesWithChat.firstWhere((Ride element) => element.id == message.rideId);
+                    if (ride.messages!.contains(message)) {
+                      ride.messages!.remove(message);
+                    }
+                    ride.messages!.add(message);
+                  }
+                  final List<Widget> widgets = ridesWithChat.map((Ride ride) => _buildChatWidget(ride)).toList();
+                  return ListView.separated(
+                    itemCount: widgets.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return widgets[index];
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 10);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
               },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 10);
-              },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/chat_shrug.png',
+                  scale: 8,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  S.of(context).pageChatEmptyTitle,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    S.of(context).pageDriveChatEmptyMessage,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -81,7 +104,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         child: ListTile(
           leading: Avatar(ride.rider!),
           title: Text(ride.rider!.username),
-          subtitle: lastMessage == null ? null : Text(lastMessage.content),
+          subtitle: lastMessage == null ? null : Text(_truncate(lastMessage.content)),
           trailing: ride.getUnreadMessagesCount() == 0
               ? null
               : Container(
@@ -100,7 +123,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
                     builder: (BuildContext context) => ChatPage(
                       rideId: ride.id!,
                       profile: ride.rider!,
-                      // ride.messages!,
                     ),
                   ),
                 )
@@ -111,15 +133,12 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  List<Widget> _buildChatWidgets(Set<Ride> approvedRides) {
-    if (approvedRides.isEmpty) {
-      return [
-        Center(
-          child: Text(S.of(context).pageDriveChatEmptyMessage),
-        )
-      ];
+  String _truncate(String text) {
+    final int length = 30;
+    if (text.length > length) {
+      return text.replaceRange(length, text.length, '...');
     } else {
-      return approvedRides.map((Ride ride) => _buildChatWidget(ride)).toList();
+      return text;
     }
   }
 }

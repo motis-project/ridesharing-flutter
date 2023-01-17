@@ -76,6 +76,7 @@ class Drive extends Trip {
 
   List<Ride>? get approvedRides => rides?.where((Ride ride) => ride.status == RideStatus.approved).toList();
   List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
+  List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.hasChat()).toList();
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
@@ -150,7 +151,7 @@ class Drive extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    return approvedRides!.fold(0, (value, ride) => value + ride.getUnreadMessagesCount());
+    return approvedRides!.fold(0, (int value, Ride ride) => value + ride.getUnreadMessagesCount());
   }
 
   @override
