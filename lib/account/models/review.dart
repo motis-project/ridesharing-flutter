@@ -108,6 +108,7 @@ class AggregateReview {
     required this.numberOfReviews,
   });
 
+  bool get isRatingSet => rating != 0;
   bool get isComfortSet => comfortRating != 0;
   bool get isSafetySet => safetyRating != 0;
   bool get isReliabilitySet => reliabilityRating != 0;
