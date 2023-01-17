@@ -39,14 +39,16 @@ class Profile extends Model {
     this.reportsReceived,
   });
 
-  get fullName {
+  String get fullName {
     if (name != null && surname != null) return '$surname $name';
     if (name != null) return name!;
     if (surname != null) return surname!;
     return '';
   }
 
-  get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
+  bool get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
+
+  List<Feature>? get features => profileFeatures?.map((profileFeature) => profileFeature.feature).toList();
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {

@@ -20,7 +20,7 @@ class _AccountPageState extends State<AccountPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+        builder: (context, innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
@@ -32,7 +32,7 @@ class _AccountPageState extends State<AccountPage> {
                   value: ThemeMode.values[index],
                   groupValue: themeManager.currentThemeMode,
                   onChanged: (ThemeMode? value) {
-                    setState(() {
+                    innerSetState(() {
                       themeManager.setTheme(value);
                     });
                   }),
@@ -40,7 +40,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: Text(S.of(context).okay),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -53,7 +53,7 @@ class _AccountPageState extends State<AccountPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+        builder: (context, innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(
@@ -63,7 +63,7 @@ class _AccountPageState extends State<AccountPage> {
                 value: localeManager.supportedLocales[index],
                 groupValue: localeManager.currentLocale,
                 onChanged: (Locale? value) {
-                  setState(() {
+                  innerSetState(() {
                     localeManager.setCurrentLocale(value);
                   });
                 },
@@ -72,7 +72,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("Ok"),
+              child: Text(S.of(context).okay),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

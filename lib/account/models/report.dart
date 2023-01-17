@@ -25,7 +25,7 @@ class Report extends Model {
     this.text,
   });
 
-  get isRecent => DateTime.now().difference(createdAt!).inDays < 3;
+  bool get isRecent => DateTime.now().difference(createdAt!).inDays < 3;
 
   @override
   factory Report.fromJson(Map<String, dynamic> json) {
