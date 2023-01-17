@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/chat/models/message.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+
+import '../supabase.dart';
+import 'models/message.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isSender;
@@ -30,7 +31,9 @@ class ChatBubble extends StatelessWidget {
         ? Icon(
             Icons.done_all,
             size: 18,
-            color: read ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: read
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
           )
         : null;
 
@@ -40,7 +43,9 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: CustomPaint(
           painter: ChatBubblePainter(
-            color: isSender ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1) : Theme.of(context).primaryColor,
+            color: isSender
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1)
+                : Theme.of(context).primaryColor,
             alignment: isSender ? Alignment.topRight : Alignment.topLeft,
             tail: tail,
           ),
@@ -48,7 +53,9 @@ class ChatBubble extends StatelessWidget {
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * .7,
             ),
-            margin: isSender ? const EdgeInsets.fromLTRB(7, 7, 14, 7) : const EdgeInsets.fromLTRB(17, 7, 7, 7),
+            margin: isSender
+                ? const EdgeInsets.fromLTRB(7, 7, 14, 7)
+                : const EdgeInsets.fromLTRB(17, 7, 7, 7),
             child: Stack(
               children: <Widget>[
                 Padding(
@@ -113,13 +120,15 @@ class ChatBubblePainter extends CustomPainter {
         path.lineTo(w - _radius * 3, h);
 
         /// bottom-right bubble curve
-        path.quadraticBezierTo(w - _radius * 1.5, h, w - _radius * 1.5, h - _radius * 0.6);
+        path.quadraticBezierTo(
+            w - _radius * 1.5, h, w - _radius * 1.5, h - _radius * 0.6);
 
         /// bottom-right tail curve 1
         path.quadraticBezierTo(w - _radius * 1, h, w, h);
 
         /// bottom-right tail curve 2
-        path.quadraticBezierTo(w - _radius * 0.8, h, w - _radius, h - _radius * 1.5);
+        path.quadraticBezierTo(
+            w - _radius * 0.8, h, w - _radius, h - _radius * 1.5);
 
         /// right line
         path.lineTo(w - _radius, _radius * 1.5);
@@ -183,7 +192,8 @@ class ChatBubblePainter extends CustomPainter {
         path.quadraticBezierTo(_radius * .8, h, 0, h);
 
         /// bottom-right tail curve 2
-        path.quadraticBezierTo(_radius * 1, h, _radius * 1.5, h - _radius * 0.6);
+        path.quadraticBezierTo(
+            _radius * 1, h, _radius * 1.5, h - _radius * 0.6);
 
         /// bottom-left bubble curve
         path.quadraticBezierTo(_radius * 1.5, h, _radius * 3, h);

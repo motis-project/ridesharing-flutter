@@ -1,6 +1,6 @@
-import 'package:motis_mitfahr_app/util/model.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import '../../../account/models/profile.dart';
+import '../../model.dart';
+import '../../supabase.dart';
 
 class Message extends Model {
   final int rideId;
@@ -35,7 +35,9 @@ class Message extends Model {
   }
 
   static List<Message> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Message.fromJson(json as Map<String, dynamic>)).toList();
+    return jsonList
+        .map((json) => Message.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -47,11 +49,13 @@ class Message extends Model {
     };
   }
 
-  bool get isFromCurrentUser => senderId == SupabaseManager.getCurrentProfile()?.id;
+  bool get isFromCurrentUser =>
+      senderId == SupabaseManager.getCurrentProfile()?.id;
 
   Future<void> markAsRead() async {
     read = true;
-    await SupabaseManager.supabaseClient.rpc('mark_message_as_read', params: {'message_id': id});
+    await SupabaseManager.supabaseClient
+        .rpc('mark_message_as_read', params: {'message_id': id});
   }
 
   @override

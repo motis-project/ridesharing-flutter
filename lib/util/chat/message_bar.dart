@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+
+import '../supabase.dart';
 
 /// Set of widget that contains TextField and Button to submit message
 class MessageBar extends StatefulWidget {
