@@ -418,7 +418,7 @@ class SearchSuggestionFilter {
         .where(
           (Ride ride) {
             Profile driver = ride.drive!.driver!;
-            AggregateReview driverReview = driver.getAggregateReview();
+            AggregateReview driverReview = AggregateReview.fromReviews(driver.reviewsReceived!);
             bool ratingSatisfied = (!driverReview.isRatingSet || driverReview.rating >= _minRating) &&
                 (!driverReview.isComfortSet || driverReview.comfortRating >= _minComfortRating) &&
                 (!driverReview.isSafetySet || driverReview.safetyRating >= _minSafetyRating) &&
