@@ -19,12 +19,9 @@ A ride-sharing app by the Motis team.
 
 - Run `flutter run` to start the app
 
-- All package imports should be relative. Furthermore, we use the `import_sorter` package to sort the imports into 4 main groups. You can use the `flutter pub run import_sorter:main --no-comments` to do this.
-
 - Before committing, please do the following:
 
   - Run `flutter format .` to format the code
-  - Run `flutter pub run import_sorter:main --no-comments` to sort the imports
   - Run `flutter analyze` to check for any static analysis issues (not really needed if you use VSCode)
   - Run `flutter test` to run all tests
 

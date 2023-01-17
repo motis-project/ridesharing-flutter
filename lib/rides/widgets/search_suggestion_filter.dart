@@ -2,14 +2,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
-import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../account/models/profile.dart';
+import '../../account/models/profile_feature.dart';
+import '../../account/models/review.dart';
+import '../../util/profiles/reviews/custom_rating_bar.dart';
+import '../../util/profiles/reviews/custom_rating_bar_size.dart';
+import '../models/ride.dart';
 
 class SearchSuggestionFilter {
   static const List<Feature> _commonFeatures = [

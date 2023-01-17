@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/review.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+import '../../../account/models/review.dart';
 import 'custom_rating_bar_size.dart';
 
 class CustomRatingBarIndicator extends StatelessWidget {
