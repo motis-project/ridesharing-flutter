@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/models/report.dart';
-import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:progress_state_button/progress_button.dart';
+
+import '../../util/buttons/loading_button.dart';
+import '../../util/profiles/profile_widget.dart';
+import '../../util/supabase.dart';
+import '../models/profile.dart';
+import '../models/report.dart';
 
 class WriteReportPage extends StatefulWidget {
   final Profile profile;

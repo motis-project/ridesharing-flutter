@@ -1,8 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/search/address_suggestion_manager.dart';
-import 'package:motis_mitfahr_app/util/search/address_suggestion.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'address_suggestion.dart';
+import 'address_suggestion_manager.dart';
 
 class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override

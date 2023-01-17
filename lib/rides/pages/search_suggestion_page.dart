@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/rides/widgets/search_suggestion_filter.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/search/address_search_delegate.dart';
-import 'package:motis_mitfahr_app/util/trip/search_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
+
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';
+import '../../util/locale_manager.dart';
+import '../../util/search/address_search_delegate.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
+import '../../util/trip/search_card.dart';
 import '../models/ride.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../widgets/search_suggestion_filter.dart';
 
 class SearchSuggestionPage extends StatefulWidget {
   const SearchSuggestionPage(this.startSuggestion, this.endSuggestion, this.date, this.seats, {super.key});

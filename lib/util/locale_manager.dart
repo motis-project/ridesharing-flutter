@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/storage_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+
+import 'storage_manager.dart';
 
 LocaleManager localeManager = LocaleManager();
 

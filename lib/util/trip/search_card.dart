@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
-import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../account/models/profile.dart';
 import '../../account/widgets/avatar.dart';
+import '../../rides/models/ride.dart';
+import '../../rides/pages/ride_detail_page.dart';
+import '../custom_timeline_theme.dart';
+import '../locale_manager.dart';
+import '../profiles/profile_widget.dart';
+import '../profiles/reviews/custom_rating_bar_indicator.dart';
+import 'trip_card.dart';
 
 class SearchCard extends TripCard<Ride> {
   const SearchCard(super.trip, {super.key});

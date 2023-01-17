@@ -19,6 +19,12 @@ A ride-sharing app by the Motis team.
 
 - Run `flutter run` to start the app
 
+- Before committing, please do the following:
+
+  - Run `flutter format .` to format the code
+  - Run `flutter analyze` to check for any static analysis issues (not really needed if you use VSCode)
+  - Run `flutter test` to run all tests
+
 ## Running the tests
 
 - Run `flutter test` to run all tests

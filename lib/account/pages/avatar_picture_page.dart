@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
+
+import '../models/profile.dart';
 
 class AvatarPicturePage extends StatelessWidget {
   final Profile profile;

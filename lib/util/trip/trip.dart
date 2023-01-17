@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/model.dart';
-import 'package:motis_mitfahr_app/util/search/position.dart';
+
+import '../model.dart';
+import '../search/position.dart';
 
 abstract class Trip extends Model {
   final String start;

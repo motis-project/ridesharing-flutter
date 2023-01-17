@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_page_builder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
+import '../../util/trip/trip_page_builder.dart';
 import '../models/ride.dart';
+import 'search_ride_page.dart';
 
 class RidesPage extends StatefulWidget {
   const RidesPage({super.key});

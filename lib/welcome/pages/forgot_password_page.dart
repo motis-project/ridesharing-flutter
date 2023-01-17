@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_state_button/progress_button.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:progress_state_button/progress_button.dart';
 
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
+import '../../util/supabase.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;
