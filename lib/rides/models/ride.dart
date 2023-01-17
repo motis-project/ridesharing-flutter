@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
+import '../../util/chat/models/message.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase.dart';

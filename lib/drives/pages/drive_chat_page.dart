@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase/src/supabase_stream_builder.dart';
 
+import '../../account/widgets/avatar.dart';
 import '../../rides/models/ride.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
