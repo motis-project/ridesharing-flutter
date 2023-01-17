@@ -9,7 +9,7 @@ import '../locale_manager.dart';
 abstract class TripCardState<T extends TripCard> extends State<T> {
   Trip? trip;
 
-  BorderRadius cardBorder = BorderRadius.only(
+  BorderRadius cardBorder = const BorderRadius.only(
     bottomRight: Radius.circular(10),
     topRight: Radius.circular(10),
   );

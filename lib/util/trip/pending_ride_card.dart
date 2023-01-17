@@ -23,7 +23,7 @@ class PendingRideCard extends TripCard<Ride> {
 class _PendingRideCardState extends State<PendingRideCard> {
   @override
   Widget build(BuildContext context) {
-    Widget timeLine = FixedTimeline(
+    FixedTimeline timeLine = FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: [
         TimelineTile(
