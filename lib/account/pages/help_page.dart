@@ -14,7 +14,7 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
-  List<Widget> getFaqCards() => [
+  List<Widget> getFaqCards() => <Widget>[
         FAQCard(
           question: S.of(context).pageHelpQuestion1,
           answer: S.of(context).pageHelpAnswer1,
@@ -90,7 +90,7 @@ class _HelpPageState extends State<HelpPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: ListView(
           children: getFaqCards() +
-              [
+              <Widget>[
                 const Divider(
                   thickness: 1,
                 ),
@@ -130,7 +130,7 @@ class _FAQCardState extends State<FAQCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ExpansionTile(
         title: question,
-        children: [
+        children: <Widget>[
           Semantics(
             liveRegion: true,
             child: Padding(

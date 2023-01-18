@@ -33,13 +33,13 @@ class _EditGenderPageState extends State<EditGenderPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
-            children: [
-              ...List.generate(
+            children: <Widget>[
+              ...List<RadioListTile<Gender?>>.generate(
                 Gender.values.length + 1,
-                (index) {
+                (int index) {
                   if (index < Gender.values.length) {
-                    final gender = Gender.values[index];
-                    return RadioListTile(
+                    final Gender gender = Gender.values[index];
+                    return RadioListTile<Gender>(
                       title: Text(gender.getName(context)),
                       value: gender,
                       groupValue: _gender,
@@ -62,12 +62,10 @@ class _EditGenderPageState extends State<EditGenderPage> {
                   );
                 },
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Button(
                 S.of(context).save,
-                onPressed: () => onPressed(context),
+                onPressed: onPressed,
               ),
             ],
           ),
@@ -76,12 +74,12 @@ class _EditGenderPageState extends State<EditGenderPage> {
     );
   }
 
-  void onPressed(context) async {
-    await SupabaseManager.supabaseClient.from('profiles').update({
+  void onPressed() async {
+    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'gender': _gender?.index,
     }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();
 
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 }

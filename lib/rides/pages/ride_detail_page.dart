@@ -89,7 +89,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
+    List<Widget> widgets = <Widget>[];
 
     if (_ride != null) {
       widgets.add(TripOverview(_ride!));
@@ -111,8 +111,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
       if (ride.status == RideStatus.approved || ride.status == RideStatus.cancelledByDriver) {
         widgets.add(const Divider(thickness: 1));
 
-        Set<Profile> riders =
-            ride.drive!.rides!.where((otherRide) => ride.overlapsWith(otherRide)).map((ride) => ride.rider!).toSet();
+        Set<Profile> riders = ride.drive!.rides!
+            .where((Ride otherRide) => ride.overlapsWith(otherRide))
+            .map((Ride ride) => ride.rider!)
+            .toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
@@ -128,7 +130,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     }
 
     Widget content = Column(
-      children: [
+      children: <Widget>[
         if (_ride != null && _ride!.status == RideStatus.pending)
           CustomBanner.warning(S.of(context).pageRideDetailBannerRequested)
         else if (_ride != null && _ride!.status == RideStatus.rejected)
@@ -201,16 +203,14 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   void _navigateToRatePage(Profile driver) {
     Navigator.of(context)
-        .push(
-          MaterialPageRoute(builder: (context) => WriteReviewPage(driver)),
-        )
-        .then((value) => loadRide());
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) => WriteReviewPage(driver)))
+        .then((_) => loadRide());
   }
 
   void _showCancelDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageRideDetailCancelDialogTitle),
         content: Text(S.of(context).pageRideDetailCancelDialogMessage),
         actions: <Widget>[
@@ -245,7 +245,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _showRequestDialog() {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailRequestDialogTitle),
         content: Text(S.of(context).pageRideDetailRequestDialogMessage),
         actions: <Widget>[
@@ -266,13 +266,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void hideRide() async {
-    await SupabaseManager.supabaseClient.from('rides').update({'hide_in_list_view': true}).eq('id', widget.ride!.id);
+    await SupabaseManager.supabaseClient
+        .from('rides')
+        .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.ride!.id);
   }
 
-  _showHideDialog() {
+  void _showHideDialog() {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailButtonHide),
         content: Text(S.of(context).pageRideDetailHideDialog),
         actions: <Widget>[
@@ -295,7 +297,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   void confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    final data = await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    Map<String, dynamic> data =
+        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
     setState(() {
       _ride = Ride.fromJson(data);
     });
@@ -305,7 +308,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _showWithdrawDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageRideDetailWithdrawDialogTitle),
         content: Text(S.of(context).pageRideDetailWithdrawDialogMessage),
         actions: <Widget>[
@@ -340,7 +343,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   void _showLoginDialog() {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailLoginDialogTitle),
         content: Text(S.of(context).pageRideDetailLoginDialogMessage),
         actions: <Widget>[
@@ -352,15 +355,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
               child: Text(S.of(context).pageWelcomeLogin),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                Navigator.popUntil(context, (Route<void> route) => route.isFirst);
+                Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()));
               }),
           TextButton(
             child: Text(S.of(context).pageWelcomeRegister),
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
+              Navigator.popUntil(context, (Route<void> route) => route.isFirst);
+              Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const RegisterPage()));
             },
           ),
         ],

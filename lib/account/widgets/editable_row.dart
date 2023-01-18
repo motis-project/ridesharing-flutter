@@ -19,9 +19,9 @@ class EditableRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Row(
-          children: [
+          children: <Widget>[
             Text(
               title,
               style: Theme.of(context).textTheme.headline6,

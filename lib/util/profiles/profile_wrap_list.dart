@@ -11,7 +11,7 @@ class ProfileWrapList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(children: <Widget>[
       const SizedBox(height: 5),
       Align(
         alignment: Alignment.centerLeft,
@@ -24,9 +24,9 @@ class ProfileWrapList extends StatelessWidget {
           alignment: WrapAlignment.start,
           spacing: -5,
           runSpacing: -5,
-          children: List.generate(
+          children: List<Padding>.generate(
             profiles.length,
-            (index) => Padding(
+            (int index) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
               child: ProfileChip(
                 profiles.elementAt(index),

@@ -2,7 +2,6 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -31,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       body: const Center(
         child: CustomScrollView(
           physics: ClampingScrollPhysics(),
-          slivers: [
+          slivers: <Widget>[
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
@@ -55,8 +54,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
   void onSubmit() async {
@@ -96,7 +95,7 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {
       _state = ButtonState.fail;
     });
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
       _state = ButtonState.idle;
     });
@@ -125,7 +124,7 @@ class _LoginFormState extends State<LoginForm> {
               labelText: S.of(context).formPassword,
               hintText: S.of(context).formPasswordHint,
               controller: passwordController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).formPasswordValidateEmpty;
                 }
@@ -135,10 +134,8 @@ class _LoginFormState extends State<LoginForm> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ForgotPasswordPage(
-                      initialEmail: emailController.text,
-                    ),
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ForgotPasswordPage(initialEmail: emailController.text),
                   ),
                 );
               },
@@ -155,8 +152,8 @@ class _LoginFormState extends State<LoginForm> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const RegisterPage(),
                       ),
                     );
                   },

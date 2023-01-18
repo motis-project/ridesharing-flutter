@@ -26,7 +26,7 @@ class TripPageBuilder {
           title: Text(title),
           bottom: TabBar(
             labelColor: Theme.of(context).colorScheme.onSurface,
-            tabs: [
+            tabs: <Tab>[
               Tab(text: S.of(context).widgetTripBuilderTabUpcoming),
               Tab(text: S.of(context).widgetTripBuilderTabPast),
             ],
@@ -35,12 +35,12 @@ class TripPageBuilder {
         body: Semantics(
           sortKey: const OrdinalSortKey(1),
           child: TabBarView(
-            children: [
+            children: <Widget>[
               TripStreamBuilder<T>(
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
-                filterTrips: (trips) => trips
-                    .where((trip) =>
+                filterTrips: (List<T> trips) => trips
+                    .where((T trip) =>
                         trip.endTime.isAfter(DateTime.now()) &&
                         (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
                         !trip.hideInListView)
@@ -50,8 +50,8 @@ class TripPageBuilder {
               TripStreamBuilder<T>(
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
-                filterTrips: (trips) => trips.reversed
-                    .where((trip) =>
+                filterTrips: (List<T> trips) => trips.reversed
+                    .where((T trip) =>
                         trip.endTime.isBefore(DateTime.now()) &&
                         (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
                         !trip.hideInListView)

@@ -5,13 +5,23 @@ import '../../../util/buttons/button.dart';
 import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 
-class EditUsernamePage extends StatelessWidget {
+class EditUsernamePage extends StatefulWidget {
   final Profile profile;
-  final _formKey = GlobalKey<FormState>();
+
+  const EditUsernamePage(this.profile, {super.key});
+
+  @override
+  State<EditUsernamePage> createState() => _EditUsernamePageState();
+}
+
+class _EditUsernamePageState extends State<EditUsernamePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
 
-  EditUsernamePage(this.profile, {super.key}) {
-    _controller.text = profile.username;
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = widget.profile.username;
   }
 
   @override
@@ -26,28 +36,26 @@ class EditUsernamePage extends StatelessWidget {
           child: Form(
             key: _formKey,
             child: Column(
-              children: [
+              children: <Widget>[
                 TextFormField(
                   maxLength: 15,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     hintText: S.of(context).pageProfileEditUsernameHint,
-                    suffixIcon: _getClearButton(context),
+                    suffixIcon: _getClearButton(),
                   ),
                   controller: _controller,
-                  validator: (value) {
+                  validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return S.of(context).pageProfileEditUsernameValidateEmpty;
                     }
                     return null;
                   },
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Button(
                   S.of(context).save,
-                  onPressed: () => onPressed(context),
+                  onPressed: onPressed,
                 ),
               ],
             ),
@@ -57,7 +65,7 @@ class EditUsernamePage extends StatelessWidget {
     );
   }
 
-  Widget? _getClearButton(BuildContext context) {
+  Widget? _getClearButton() {
     if (_controller.text == '') {
       return null;
     }
@@ -68,15 +76,15 @@ class EditUsernamePage extends StatelessWidget {
     );
   }
 
-  void onPressed(context) async {
+  void onPressed() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    await SupabaseManager.supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'username': _controller.text,
-    }).eq('id', profile.id);
+    }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();
 
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 }

@@ -30,12 +30,12 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   final TextEditingController _destinationController = TextEditingController();
   late AddressSuggestion _destinationSuggestion;
 
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
   late int _dropdownValue;
 
-  final List<int> list = List.generate(10, (index) => index + 1);
+  final List<int> list = List<int>.generate(10, (int index) => index + 1);
 
   final SearchSuggestionFilter _filter = SearchSuggestionFilter();
 
@@ -71,7 +71,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       initialDate: _selectedDate,
       firstDate: firstDate,
       lastDate: firstDate.add(const Duration(days: 30)),
-    ).then((value) {
+    ).then((DateTime? value) {
       if (value != null) {
         setState(() {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
@@ -86,10 +86,10 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
-      builder: (context, childWidget) {
+      builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
-    ).then((value) {
+    ).then((TimeOfDay? value) {
       if (value != null) {
         setState(() {
           _selectedDate =
@@ -113,7 +113,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
-    List<dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    List<Map<String, dynamic>> data = await SupabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
             *,
@@ -121,9 +121,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
         ''').eq('start', _startController.text);
-    List<Drive> drives = data.map((drive) => Drive.fromJson(drive)).toList();
+    List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
-        .map((drive) => Ride.previewFromDrive(
+        .map((Drive drive) => Ride.previewFromDrive(
               drive,
               _startSuggestion.name,
               _startSuggestion.position,
@@ -142,7 +142,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   FixedTimeline buildSearchFieldViewer() {
-    return FixedTimeline(theme: CustomTimelineTheme.of(context), children: [
+    return FixedTimeline(theme: CustomTimelineTheme.of(context), children: <Widget>[
       TimelineTile(
         contents: Padding(
           padding: const EdgeInsets.all(4.0),
@@ -268,7 +268,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
-            children: [
+            children: <Widget>[
               Image.asset('assets/shrug.png'),
               Text(
                 S.of(context).pageSearchSuggestionsEmpty,
@@ -297,8 +297,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       );
     } else {
       list = ListView.separated(
-        itemBuilder: (context, index) {
-          final ride = filteredSuggestions[index];
+        itemBuilder: (BuildContext context, int index) {
+          final Ride ride = filteredSuggestions[index];
           return RideCard(ride);
         },
         separatorBuilder: (BuildContext context, int index) {
@@ -315,7 +315,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildDateSeatsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+      children: <Widget>[
         buildDatePicker(),
         buildTimePicker(),
         const SizedBox(width: 50),
@@ -331,7 +331,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          children: [
+          children: <Widget>[
             buildSearchFieldViewer(),
             const SizedBox(height: 10),
             buildDateSeatsRow(),

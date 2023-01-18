@@ -5,14 +5,24 @@ import '../../../util/buttons/button.dart';
 import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 
-class EditFullNamePage extends StatelessWidget {
+class EditFullNamePage extends StatefulWidget {
   final Profile profile;
+
+  const EditFullNamePage(this.profile, {super.key});
+
+  @override
+  State<EditFullNamePage> createState() => _EditFullNamePageState();
+}
+
+class _EditFullNamePageState extends State<EditFullNamePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
 
-  EditFullNamePage(this.profile, {super.key}) {
-    _nameController.text = profile.name ?? '';
-    _surnameController.text = profile.surname ?? '';
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.profile.name ?? '';
+    _surnameController.text = widget.profile.surname ?? '';
   }
 
   @override
@@ -25,32 +35,28 @@ class EditFullNamePage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
-            children: [
+            children: <Widget>[
               TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: S.of(context).pageProfileEditSurnameHint,
-                  suffixIcon: _getClearButton(context, _surnameController),
+                  suffixIcon: _getClearButton(_surnameController),
                 ),
                 controller: _surnameController,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: S.of(context).pageProfileEditNameHint,
-                  suffixIcon: _getClearButton(context, _nameController),
+                  suffixIcon: _getClearButton(_nameController),
                 ),
                 controller: _nameController,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Button(
                 S.of(context).save,
-                onPressed: () => onPressed(context),
+                onPressed: onPressed,
               ),
             ],
           ),
@@ -59,7 +65,7 @@ class EditFullNamePage extends StatelessWidget {
     );
   }
 
-  Widget? _getClearButton(BuildContext context, TextEditingController controller) {
+  Widget? _getClearButton(TextEditingController controller) {
     if (controller.text == '') {
       return null;
     }
@@ -70,15 +76,15 @@ class EditFullNamePage extends StatelessWidget {
     );
   }
 
-  void onPressed(context) async {
+  void onPressed() async {
     String? surname = _surnameController.text == '' ? null : _surnameController.text;
     String? name = _nameController.text == '' ? null : _nameController.text;
-    await SupabaseManager.supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'surname': surname,
       'name': name,
-    }).eq('id', profile.id);
+    }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();
 
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 }

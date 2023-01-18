@@ -49,15 +49,15 @@ class _WriteReportPageState extends State<WriteReportPage> {
             child: Form(
               key: _formKey,
               child: Column(
-                children: [
+                children: <Widget>[
                   Column(
-                    children: List.generate(
+                    children: List<RadioListTile<ReportCategory>>.generate(
                       ReportCategory.values.length,
-                      (index) {
-                        final category = ReportCategory.values[index];
-                        return RadioListTile(
+                      (int index) {
+                        final ReportCategory category = ReportCategory.values[index];
+                        return RadioListTile<ReportCategory>(
                           visualDensity: VisualDensity.compact,
-                          title: Row(children: [
+                          title: Row(children: <Widget>[
                             category.getIcon(context),
                             const SizedBox(width: 15),
                             Expanded(child: Text(category.getDescription(context))),
@@ -84,7 +84,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                     ),
                     textAlignVertical: TextAlignVertical.top,
                     maxLines: 5,
-                    validator: (value) {
+                    validator: (String? value) {
                       if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
                         return S.of(context).pageWriteReportFieldValidateEmpty;
                       }
@@ -114,7 +114,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
       _state = ButtonState.loading;
     });
 
-    final report = Report(
+    final Report report = Report(
       offenderId: widget.profile.id!,
       reporterId: SupabaseManager.getCurrentProfile()!.id!,
       category: _category!,

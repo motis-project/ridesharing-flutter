@@ -8,7 +8,7 @@ import 'address_suggestion_manager.dart';
 class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
+    return <Widget>[
       IconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
@@ -52,10 +52,10 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return StatefulBuilder(
-      builder: (BuildContext context, setState) {
+      builder: (BuildContext context, Function(VoidCallback) setState) {
         return FutureBuilder<List<AddressSuggestion>>(
           future: addressSuggestionManager.getSuggestions(query),
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<List<AddressSuggestion>> snapshot) {
             if (snapshot.hasData) {
               List<AddressSuggestion> suggestions = snapshot.data!;
               if (suggestions.isNotEmpty) {
@@ -63,8 +63,8 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                   shrinkWrap: true,
                   itemCount: suggestions.length,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var suggestion = suggestions[index];
+                  itemBuilder: (BuildContext context, int index) {
+                    AddressSuggestion suggestion = suggestions[index];
                     return ListTile(
                       leading: suggestion.getIcon(),
                       title: Text(suggestion.toString()),
@@ -82,7 +82,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                       onTap: () => close(context, suggestion),
                     );
                   },
-                  separatorBuilder: (context, index) {
+                  separatorBuilder: (BuildContext context, int index) {
                     return const Divider();
                   },
                 );

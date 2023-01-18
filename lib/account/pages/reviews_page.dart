@@ -47,7 +47,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
-    List<dynamic> commonRidesData = await SupabaseManager.supabaseClient.from('rides').select('''
+    List<Map<String, dynamic>> commonRidesData = await SupabaseManager.supabaseClient.from('rides').select('''
           *,
           drive: drives!inner(*)
         ''').eq('rider_id', SupabaseManager.getCurrentProfile()!.id).eq('drive.driver_id', _profileId);
@@ -55,8 +55,8 @@ class _ReviewsPageState extends State<ReviewsPage> {
     setState(() {
       _profile = Profile.fromJson(profileData);
       List<Ride> rides = Ride.fromJsonList(commonRidesData);
-      _hasReviewed = _profile!.reviewsReceived!.any((review) => review.writer!.isCurrentUser);
-      _reviewable = rides.any((ride) => ride.isFinished && ride.status == RideStatus.approved);
+      _hasReviewed = _profile!.reviewsReceived!.any((Review review) => review.writer!.isCurrentUser);
+      _reviewable = rides.any((Ride ride) => ride.isFinished && ride.status == RideStatus.approved);
     });
   }
 
@@ -66,13 +66,13 @@ class _ReviewsPageState extends State<ReviewsPage> {
       _hasReviewed ? S.of(context).pageReviewsUpdateRating : S.of(context).pageReviewsRate,
       onPressed: () => _navigateToRatePage(),
     );
-    List<Review> reviews = _profile!.reviewsReceived!..sort((a, b) => a.compareTo(b));
-    AggregateReviewWidget aggregated = AggregateReview.fromReviews(reviews).widget();
+    List<Review> reviews = _profile!.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
+    AggregateReviewWidget aggregated = AggregateReviewWidget(AggregateReview.fromReviews(reviews));
     Column reviewColumn = Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(
+      children: List<ReviewDetail>.generate(
         reviews.length,
-        (index) => ReviewDetail(review: reviews[index]),
+        (int index) => ReviewDetail(review: reviews[index]),
       ),
     );
 
@@ -89,12 +89,12 @@ class _ReviewsPageState extends State<ReviewsPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       ProfileWidget(_profile!),
                       const SizedBox(
                         height: 20,
                       ),
-                      if (_reviewable) ...[
+                      if (_reviewable) ...<Widget>[
                         reviewButton,
                         const SizedBox(
                           height: 20,
@@ -115,9 +115,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
   void _navigateToRatePage() {
     Navigator.of(context)
-        .push(
-          MaterialPageRoute(builder: (context) => WriteReviewPage(_profile!)),
-        )
-        .then((value) => load());
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) => WriteReviewPage(_profile!)))
+        .then((_) => load());
   }
 }

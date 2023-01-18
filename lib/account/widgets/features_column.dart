@@ -10,7 +10,7 @@ class FeaturesColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemBuilder: ((context, index) {
+      itemBuilder: ((BuildContext context, int index) {
         Feature feature = features[index].feature;
         return ListTile(
           leading: feature.getIcon(context),

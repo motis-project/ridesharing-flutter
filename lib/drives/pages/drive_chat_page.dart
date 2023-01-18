@@ -30,9 +30,9 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
+    List<Widget> widgets = <Widget>[];
     if (_fullyLoaded) {
-      Set<Profile> riders = _drive!.approvedRides!.map((ride) => ride.rider!).toSet();
+      Set<Profile> riders = _drive!.approvedRides!.map((Ride ride) => ride.rider!).toSet();
       List<Ride> pendingRides = _drive!.pendingRides!.toList();
       if (riders.isEmpty && pendingRides.isEmpty) {
         return Scaffold(
@@ -45,7 +45,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         );
       } else {
         if (riders.isNotEmpty) {
-          List<Widget> riderColumn = [
+          List<Widget> riderColumn = <Widget>[
             const SizedBox(height: 5.0),
             Text(
               S.of(context).pageDriveChatRiderHeadline,
@@ -70,7 +70,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         onRefresh: loadDrive,
         child: ListView.separated(
           itemCount: widgets.length,
-          itemBuilder: (context, index) {
+          itemBuilder: (BuildContext context, int index) {
             return widgets[index];
           },
           separatorBuilder: (BuildContext context, int index) {
@@ -85,9 +85,9 @@ class _DriveChatPageState extends State<DriveChatPage> {
     Widget ridersColumn = Container();
     if (riders.isNotEmpty) {
       ridersColumn = Column(
-        children: List.generate(
+        children: List<Padding>.generate(
           riders.length,
-          (index) => Padding(
+          (int index) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
             child: ProfileWidget(
               riders.elementAt(index),

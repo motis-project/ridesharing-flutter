@@ -12,9 +12,9 @@ class AggregateReviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Row(
-          children: [
+          children: <Widget>[
             ExcludeSemantics(
               child: Text(_aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
             ),
@@ -36,10 +36,10 @@ class AggregateReviewWidget extends StatelessWidget {
             spacing: 5,
             runSpacing: 5,
             alignment: WrapAlignment.spaceBetween,
-            children: [
+            children: <Widget>[
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Text(S.of(context).reviewCategoryComfort),
                   const SizedBox(width: 10),
                   CustomRatingBarIndicator(rating: _aggregateReview.comfortRating),
@@ -47,7 +47,7 @@ class AggregateReviewWidget extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Text(S.of(context).reviewCategorySafety),
                   const SizedBox(width: 10),
                   CustomRatingBarIndicator(rating: _aggregateReview.safetyRating)
@@ -55,7 +55,7 @@ class AggregateReviewWidget extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Text(S.of(context).reviewCategoryReliability),
                   const SizedBox(width: 10),
                   CustomRatingBarIndicator(rating: _aggregateReview.reliabilityRating)
@@ -63,7 +63,7 @@ class AggregateReviewWidget extends StatelessWidget {
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Text(S.of(context).reviewCategoryHospitality),
                   const SizedBox(width: 10),
                   CustomRatingBarIndicator(rating: _aggregateReview.hospitalityRating)

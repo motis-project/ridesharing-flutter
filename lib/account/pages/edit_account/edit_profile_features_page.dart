@@ -26,8 +26,8 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   void initState() {
     super.initState();
     _profileFeatures = widget.profile.profileFeatures!;
-    _features = _profileFeatures.map((e) => e.feature).toList();
-    _otherFeatures = Feature.values.where((e) => !_features.contains(e)).toList();
+    _features = _profileFeatures.map((ProfileFeature e) => e.feature).toList();
+    _otherFeatures = Feature.values.where((Feature e) => !_features.contains(e)).toList();
   }
 
   @override
@@ -39,7 +39,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         child: Column(
-          children: [
+          children: <Widget>[
             Flexible(
               child: ReorderableListView.builder(
                 header: _features.isEmpty
@@ -61,11 +61,11 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                 shrinkWrap: true,
                 onReorder: onReorder,
                 itemCount: Feature.values.length + 1,
-                itemBuilder: (context, index) {
+                itemBuilder: (BuildContext context, int index) {
                   if (index < _features.length) {
                     Feature feature = _features[index];
                     return ListTile(
-                      key: ValueKey(index),
+                      key: ValueKey<int>(index),
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesSelected,
@@ -73,7 +73,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: <Widget>[
                           IconButton(
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                             onPressed: () => _removeFeature(index),
@@ -88,7 +88,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     );
                   } else if (index == _features.length) {
                     return const IgnorePointer(
-                      key: ValueKey('divider'),
+                      key: ValueKey<String>('divider'),
                       child: Divider(
                         thickness: 5,
                       ),
@@ -97,7 +97,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     Feature feature = _otherFeatures[index - _features.length - 1];
                     return ListTile(
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                      key: ValueKey(index),
+                      key: ValueKey<int>(index),
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
@@ -105,7 +105,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: <Widget>[
                           IconButton(
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                             onPressed: () => _addFeature(index),
@@ -122,12 +122,10 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                 },
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Button(
               S.of(context).save,
-              onPressed: () => onPressed(context),
+              onPressed: onPressed,
             ),
           ],
         ),
@@ -153,13 +151,13 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
 
       // Moving a feature in the list
       if (newIndex < dividerIndex && oldIndex < dividerIndex) {
-        final feature = _features.removeAt(oldIndex);
+        final Feature feature = _features.removeAt(oldIndex);
         _features.insert(newIndex, feature);
         return;
       }
 
       if (newIndex > dividerIndex && oldIndex > dividerIndex) {
-        final feature = _otherFeatures.removeAt(oldIndex - dividerIndex - 1);
+        final Feature feature = _otherFeatures.removeAt(oldIndex - dividerIndex - 1);
         _otherFeatures.insert(newIndex - dividerIndex - 1, feature);
         return;
       }
@@ -188,7 +186,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     setState(() {
       Feature newFeature = _otherFeatures[indexInOtherFeatures];
       Feature? mutuallyExclusiveFeature =
-          _features.firstWhereOrNull((feature) => feature.isMutuallyExclusive(newFeature));
+          _features.firstWhereOrNull((Feature feature) => feature.isMutuallyExclusive(newFeature));
       if (mutuallyExclusiveFeature != null) {
         String description = mutuallyExclusiveFeature.getDescription(context);
         String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
@@ -209,14 +207,14 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     });
   }
 
-  void onPressed(context) async {
-    final previousFeatures = _profileFeatures.map((e) => e.feature).toList();
+  void onPressed() async {
+    final List<Feature> previousFeatures = _profileFeatures.map((ProfileFeature e) => e.feature).toList();
 
     for (int index = 0; index < _features.length; index++) {
-      final feature = _features[index];
+      final Feature feature = _features[index];
 
       if (!previousFeatures.contains(feature)) {
-        await SupabaseManager.supabaseClient.from('profile_features').insert({
+        await SupabaseManager.supabaseClient.from('profile_features').insert(<String, dynamic>{
           'profile_id': widget.profile.id,
           'feature': feature.index,
           'rank': index,
@@ -224,12 +222,12 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       } else {
         await SupabaseManager.supabaseClient
             .from('profile_features')
-            .update({'rank': index})
+            .update(<String, dynamic>{'rank': index})
             .eq('profile_id', widget.profile.id)
             .eq('feature', feature.index);
       }
     }
-    final removedFeatures = previousFeatures.where((e) => !_features.contains(e)).toList();
+    final List<Feature> removedFeatures = previousFeatures.where((Feature e) => !_features.contains(e)).toList();
     for (Feature feature in removedFeatures) {
       await SupabaseManager.supabaseClient
           .from('profile_features')
@@ -238,6 +236,6 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           .eq('feature', feature.index);
     }
 
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 }

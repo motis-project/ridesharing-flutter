@@ -56,12 +56,12 @@ class _SearchRideFormState extends State<SearchRideForm> {
   final TextEditingController _destinationController = TextEditingController();
   late AddressSuggestion? _destinationSuggestion;
 
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
   late int _dropdownValue;
 
-  final List<int> list = List.generate(10, (index) => index + 1);
+  final List<int> list = List<int>.generate(10, (int index) => index + 1);
 
   @override
   void initState() {
@@ -83,10 +83,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
-      builder: (context, childWidget) {
+      builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
-    ).then((value) {
+    ).then((TimeOfDay? value) {
       setState(() {
         if (value != null) {
           _selectedDate =
@@ -105,7 +105,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
       initialDate: _selectedDate,
       firstDate: firstDate,
       lastDate: firstDate.add(const Duration(days: 30)),
-    ).then((value) {
+    ).then((DateTime? value) {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
@@ -128,8 +128,8 @@ class _SearchRideFormState extends State<SearchRideForm> {
   void _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => SearchSuggestionPage(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => SearchSuggestionPage(
             _startSuggestion!,
             _destinationSuggestion!,
             _selectedDate,
@@ -218,17 +218,17 @@ class _SearchRideFormState extends State<SearchRideForm> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
         child: Column(
-          children: [
+          children: <Widget>[
             AddressSearchField.start(
               controller: _startController,
-              onSelected: (suggestion) {
+              onSelected: (AddressSuggestion suggestion) {
                 _startSuggestion = suggestion;
               },
             ),
             const SizedBox(height: 15),
             AddressSearchField.destination(
               controller: _destinationController,
-              onSelected: (suggestion) {
+              onSelected: (AddressSuggestion suggestion) {
                 _destinationSuggestion = suggestion;
               },
             ),
@@ -236,7 +236,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children: <Widget>[
                   buildDatePicker(),
                   buildTimePicker(),
                   const SizedBox(width: 50),

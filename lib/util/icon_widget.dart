@@ -10,8 +10,8 @@ class IconWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: count <= 2
-          ? List.generate(count, (index) => icon)
-          : [
+          ? List<Widget>.generate(count, (int index) => icon)
+          : <Widget>[
               icon,
               const SizedBox(width: 2),
               Text("x$count"),

@@ -7,13 +7,13 @@ import 'storage_manager.dart';
 LocaleManager localeManager = LocaleManager();
 
 class LocaleManager with ChangeNotifier {
-  final supportedLocales = S.supportedLocales;
+  final List<Locale> supportedLocales = S.supportedLocales;
   late Locale currentLocale;
 
   Future<void> loadCurrentLocale() async {
-    await StorageManager.readData('locale').then((value) {
+    await StorageManager.readData('locale').then((dynamic value) {
       value ??= 'en';
-      currentLocale = supportedLocales.firstWhere((element) => element.languageCode == value);
+      currentLocale = supportedLocales.firstWhere((Locale element) => element.languageCode == value);
       notifyListeners();
     });
   }

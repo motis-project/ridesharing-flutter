@@ -20,7 +20,7 @@ class Button extends StatelessWidget {
     this.kind = ButtonKind.big,
   });
 
-  factory Button.error(text, {onPressed, Key? key}) {
+  factory Button.error(String text, {Function()? onPressed, Key? key}) {
     return Button(
       text,
       onPressed: onPressed,
@@ -29,7 +29,7 @@ class Button extends StatelessWidget {
     );
   }
 
-  factory Button.disabled(text, {Key? key}) {
+  factory Button.disabled(String text, {Key? key}) {
     return Button(
       text,
       onPressed: null,
@@ -38,7 +38,7 @@ class Button extends StatelessWidget {
     );
   }
 
-  factory Button.submit(text, {onPressed}) {
+  factory Button.submit(String text, {Function()? onPressed}) {
     return Button(
       text,
       onPressed: onPressed,

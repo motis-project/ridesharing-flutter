@@ -23,7 +23,7 @@ abstract class Model {
   Map<String, dynamic> toJsonForApi() {
     return toJson()
       ..addAll(
-        {
+        <String, dynamic>{
           'id': id,
           'created_at': createdAt?.toIso8601String(),
         },

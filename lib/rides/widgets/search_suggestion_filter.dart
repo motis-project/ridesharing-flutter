@@ -12,7 +12,7 @@ import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/ride.dart';
 
 class SearchSuggestionFilter {
-  static const List<Feature> _commonFeatures = [
+  static const List<Feature> _commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
     Feature.petsAllowed,
@@ -21,7 +21,7 @@ class SearchSuggestionFilter {
     Feature.relaxedDrivingStyle,
   ];
   static const int _defaultRating = 1;
-  static const List<Feature> _defaultFeatures = [];
+  static const List<Feature> _defaultFeatures = <Feature>[];
   static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
   static const String _defaultDeviation = "12";
 
@@ -36,17 +36,17 @@ class SearchSuggestionFilter {
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
   late SearchSuggestionSorting _sorting;
-  final _maxDeviationController = TextEditingController();
+  final TextEditingController _maxDeviationController = TextEditingController();
 
   void setDefaultFilterValues() {
-    _retractedAdditionalFeatures = [..._commonFeatures];
+    _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
 
     _minRating = _defaultRating;
     _minComfortRating = _defaultRating;
     _minSafetyRating = _defaultRating;
     _minReliabilityRating = _defaultRating;
     _minHospitalityRating = _defaultRating;
-    _selectedFeatures = [..._defaultFeatures];
+    _selectedFeatures = <Feature>[..._defaultFeatures];
     _maxDeviationController.text = _defaultDeviation;
     _sorting = _defaultSorting;
   }
@@ -58,7 +58,7 @@ class SearchSuggestionFilter {
   Widget _filterCategory(BuildContext context, String title, Widget content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge,
@@ -74,20 +74,20 @@ class SearchSuggestionFilter {
       S.of(context).searchSuggestionsFilterMinimumRating,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           CustomRatingBar(
             size: CustomRatingBarSize.large,
             rating: _minRating,
-            onRatingUpdate: (newRating) => innerSetState(
+            onRatingUpdate: (double newRating) => innerSetState(
               () => _minRating = newRating.toInt(),
             ),
           ),
-          if (_isRatingExpanded) ...[
+          if (_isRatingExpanded) ...<Widget>[
             Text(S.of(context).reviewCategoryComfort),
             CustomRatingBar(
               size: CustomRatingBarSize.medium,
               rating: _minComfortRating,
-              onRatingUpdate: (newRating) => innerSetState(
+              onRatingUpdate: (double newRating) => innerSetState(
                 () => _minComfortRating = newRating.toInt(),
               ),
             ),
@@ -95,7 +95,7 @@ class SearchSuggestionFilter {
             CustomRatingBar(
               size: CustomRatingBarSize.medium,
               rating: _minSafetyRating,
-              onRatingUpdate: (newRating) => innerSetState(
+              onRatingUpdate: (double newRating) => innerSetState(
                 () => _minSafetyRating = newRating.toInt(),
               ),
             ),
@@ -103,7 +103,7 @@ class SearchSuggestionFilter {
             CustomRatingBar(
               size: CustomRatingBarSize.medium,
               rating: _minReliabilityRating,
-              onRatingUpdate: (newRating) => innerSetState(
+              onRatingUpdate: (double newRating) => innerSetState(
                 () => _minReliabilityRating = newRating.toInt(),
               ),
             ),
@@ -111,7 +111,7 @@ class SearchSuggestionFilter {
             CustomRatingBar(
               size: CustomRatingBarSize.medium,
               rating: _minHospitalityRating,
-              onRatingUpdate: (newRating) => innerSetState(
+              onRatingUpdate: (double newRating) => innerSetState(
                 () => _minHospitalityRating = newRating.toInt(),
               ),
             ),
@@ -128,22 +128,22 @@ class SearchSuggestionFilter {
   Widget _buildFeaturesFilter(BuildContext context, void Function(void Function()) innerSetState) {
     List<Feature> shownFeatures;
     if (_isFeatureListExpanded) {
-      shownFeatures = {..._selectedFeatures, ...Feature.values}.toList();
+      shownFeatures = <Feature>{..._selectedFeatures, ...Feature.values}.toList();
     } else {
-      shownFeatures = {..._selectedFeatures, ..._retractedAdditionalFeatures}.toList();
+      shownFeatures = <Feature>{..._selectedFeatures, ..._retractedAdditionalFeatures}.toList();
     }
     return _filterCategory(
       context,
       S.of(context).searchSuggestionsFilterFeatures,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Wrap(
             runSpacing: -10,
             spacing: 2,
-            children: List.generate(
+            children: List<FilterChip>.generate(
               shownFeatures.length,
-              (index) {
+              (int index) {
                 Feature feature = shownFeatures[index];
                 bool featureSelected = _selectedFeatures.contains(feature);
                 return FilterChip(
@@ -153,7 +153,7 @@ class SearchSuggestionFilter {
                   tooltip: featureSelected
                       ? S.of(context).searchSuggestionsFilterFeaturesDeselectTooltip
                       : S.of(context).searchSuggestionsFilterFeaturesSelectTooltip,
-                  onSelected: (selected) {
+                  onSelected: (bool selected) {
                     if (featureSelected) {
                       innerSetState(() {
                         _selectedFeatures.remove(feature);
@@ -161,7 +161,7 @@ class SearchSuggestionFilter {
                       });
                     } else {
                       Feature? mutuallyExclusiveFeature = _selectedFeatures
-                          .firstWhereOrNull((selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
+                          .firstWhereOrNull((Feature selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
                       if (mutuallyExclusiveFeature != null) {
                         String description = mutuallyExclusiveFeature.getDescription(context);
                         String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
@@ -182,9 +182,9 @@ class SearchSuggestionFilter {
             onPressed: () => innerSetState(() {
               _isFeatureListExpanded = !_isFeatureListExpanded;
               if (_selectedFeatures.isNotEmpty) {
-                _retractedAdditionalFeatures = [];
+                _retractedAdditionalFeatures = <Feature>[];
               } else {
-                _retractedAdditionalFeatures = [..._commonFeatures];
+                _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
               }
             }),
             child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
@@ -199,14 +199,14 @@ class SearchSuggestionFilter {
       context,
       S.of(context).searchSuggestionsFilterDeviation,
       Row(
-        children: [
+        children: <Widget>[
           SizedBox(
             width: 60,
             height: 60,
             child: TextField(
               controller: _maxDeviationController,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
             ),
           ),
           Text(S.of(context).searchSuggestionsFilterDeviationHours),
@@ -219,11 +219,11 @@ class SearchSuggestionFilter {
     return _filterCategory(
       context,
       S.of(context).searchSuggestionsFilterSorting,
-      DropdownButton(
+      DropdownButton<SearchSuggestionSorting>(
         value: _sorting,
         items: SearchSuggestionSorting.values
             .map(
-              (sorting) => DropdownMenuItem(
+              (SearchSuggestionSorting sorting) => DropdownMenuItem<SearchSuggestionSorting>(
                 value: sorting,
                 child: Text(sorting.getDescription(context)),
               ),
@@ -241,7 +241,7 @@ class SearchSuggestionFilter {
       context: context,
       builder: (BuildContext context) => ScaffoldMessenger(
         child: StatefulBuilder(
-          builder: (context, innerSetState) {
+          builder: (BuildContext context, Function(VoidCallback) innerSetState) {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: AlertDialog(
@@ -249,7 +249,7 @@ class SearchSuggestionFilter {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: [
+                    children: <Widget>[
                       _buildRatingFilter(context, innerSetState),
                       _buildFeaturesFilter(context, innerSetState),
                       _buildDeviationFilter(
@@ -281,8 +281,8 @@ class SearchSuggestionFilter {
   }
 
   Widget _buildSmallRatingIndicator(int rating, {Icon? icon}) {
-    return Row(children: [
-      if (icon != null) ...[icon, const SizedBox(width: 3)],
+    return Row(children: <Widget>[
+      if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
       Text(rating.toString()),
       const Icon(
         Icons.star,
@@ -300,9 +300,9 @@ class SearchSuggestionFilter {
     bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
     bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
 
-    List<Widget> widgets = [];
+    List<Widget> widgets = <Widget>[];
     if (!isRatingDefault) {
-      List<Widget> ratingWidgets = [];
+      List<Widget> ratingWidgets = <Widget>[];
       if (_minRating != _defaultRating) {
         ratingWidgets.add(_buildSmallRatingIndicator(_minRating));
         if (_minComfortRating != _defaultRating ||
@@ -364,17 +364,21 @@ class SearchSuggestionFilter {
       widgets.add(ratingsRow);
     }
     if (!isFeaturesDefault) {
-      Widget featuresRow = Row(children: _selectedFeatures.map((feature) => feature.getIcon(context)).toList());
+      Widget featuresRow = Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
     if (!isDeviationDefault) {
       Widget deviationWidget = Row(
-        children: [const Icon(Icons.schedule), const SizedBox(width: 6), Text("± ${_maxDeviationController.text}")],
+        children: <Widget>[
+          const Icon(Icons.schedule),
+          const SizedBox(width: 6),
+          Text("± ${_maxDeviationController.text}")
+        ],
       );
       widgets.add(deviationWidget);
     }
     Widget sortingWidget = Row(
-      children: [const Icon(Icons.sort), Text(_sorting.getDescription(context))],
+      children: <Widget>[const Icon(Icons.sort), Text(_sorting.getDescription(context))],
     );
     widgets.add(sortingWidget);
     int numDividers = widgets.length - 1;
@@ -390,7 +394,7 @@ class SearchSuggestionFilter {
           child: Padding(
             padding: const EdgeInsets.all(6),
             child: Row(
-              children: [
+              children: <Widget>[
                 const Icon(Icons.tune),
                 const SizedBox(width: 6),
                 Expanded(
@@ -424,7 +428,7 @@ class SearchSuggestionFilter {
                 (!driverReview.isSafetySet || driverReview.safetyRating >= _minSafetyRating) &&
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
-            bool featuresSatisfied = Set.of(driver.features!).containsAll(_selectedFeatures);
+            bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
             bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
             return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
@@ -467,7 +471,7 @@ extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {
       case SearchSuggestionSorting.relevance:
-        return (ride1, ride2) =>
+        return (Ride ride1, Ride ride2) =>
             timeProximityFunc(ride1, ride2) + travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2);
       case SearchSuggestionSorting.timeProximity:
         return timeProximityFunc;

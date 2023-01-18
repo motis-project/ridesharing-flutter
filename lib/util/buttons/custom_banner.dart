@@ -8,9 +8,9 @@ class CustomBanner extends StatelessWidget {
 
   const CustomBanner(this.text, {super.key, this.displayColorKind = DisplayColorKind.primary});
 
-  factory CustomBanner.error(text, {Key? key}) =>
+  factory CustomBanner.error(String text, {Key? key}) =>
       CustomBanner(text, displayColorKind: DisplayColorKind.error, key: key);
-  factory CustomBanner.warning(text, {Key? key}) =>
+  factory CustomBanner.warning(String text, {Key? key}) =>
       CustomBanner(text, displayColorKind: DisplayColorKind.warning, key: key);
 
   @override

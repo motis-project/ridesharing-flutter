@@ -34,7 +34,7 @@ class ProfileWidget extends StatelessWidget {
       button: isTappable,
       tooltip: S.of(context).seeProfile,
       child: Row(
-        children: [
+        children: <Widget>[
           Avatar(profile, size: size),
           const SizedBox(width: 5),
           Text(profile.username, style: TextStyle(fontSize: size)),
@@ -43,13 +43,16 @@ class ProfileWidget extends StatelessWidget {
     );
     if (actionWidget != null) {
       profileRow = Stack(
-        children: [profileRow, Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget!))],
+        children: <Widget>[
+          profileRow,
+          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget!))
+        ],
       );
     }
     if (showDescription && (profile.description?.isNotEmpty ?? false)) {
       profileRow = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           profileRow,
           const SizedBox(height: 10),
           Text(profile.description!),
@@ -61,8 +64,8 @@ class ProfileWidget extends StatelessWidget {
             onTap: () {
               onTap ??
                   Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)))
-                      .then((value) => onPop?.call(value));
+                      .push(MaterialPageRoute<dynamic>(builder: (_) => ProfilePage.fromProfile(profile)))
+                      .then((dynamic value) => onPop?.call(value));
             },
             child: profileRow,
           )

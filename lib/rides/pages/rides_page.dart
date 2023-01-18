@@ -23,20 +23,20 @@ class _RidesPageState extends State<RidesPage> {
     int userId = SupabaseManager.getCurrentProfile()!.id!;
     _rides = SupabaseManager.supabaseClient
         .from('rides')
-        .stream(primaryKey: ['id'])
+        .stream(primaryKey: <String>['id'])
         .eq('rider_id', userId)
         .order('start_time', ascending: true)
-        .map((ride) => Ride.fromJsonList(ride));
+        .map((List<Map<String, dynamic>> ride) => Ride.fromJsonList(ride));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return TripPageBuilder.build(
-      context, //context
-      S.of(context).pageRidesTitle, //title
-      _rides, //trips
-      (ride) => RideCard(ride),
+      context,
+      S.of(context).pageRidesTitle,
+      _rides,
+      (Ride ride) => RideCard(ride),
       FloatingActionButton(
         heroTag: 'RideFAB',
         tooltip: S.of(context).pageRidesTooltipSearchRide,
@@ -49,7 +49,7 @@ class _RidesPageState extends State<RidesPage> {
 
   void searchRide() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const SearchRidePage()),
+      MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
     );
   }
 }

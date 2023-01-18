@@ -26,7 +26,7 @@ class ProfileChip extends StatelessWidget {
           labelPadding: const EdgeInsets.all(5),
           padding: const EdgeInsets.all(5),
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProfilePage.fromProfile(profile)));
+            Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ProfilePage.fromProfile(profile)));
           },
         ),
       ),

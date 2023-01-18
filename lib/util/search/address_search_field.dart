@@ -53,7 +53,7 @@ class AddressSearchField extends StatelessWidget {
           hintText: getHintText(context),
         ),
         readOnly: true,
-        validator: (value) {
+        validator: (String? value) {
           if (value == null || value.isEmpty) {
             return getValidatorEmptyText(context);
           }

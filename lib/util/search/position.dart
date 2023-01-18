@@ -15,7 +15,7 @@ class Position {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'lat': lat,
       'lng': lng,
     };

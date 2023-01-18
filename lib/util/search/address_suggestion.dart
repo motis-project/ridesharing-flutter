@@ -32,9 +32,9 @@ class AddressSuggestion {
     Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
     List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions']);
-    String postalCode = _extractFromRegions(regions, [13]);
-    String city = _extractFromRegions(regions, [8, 7, 6, 5, 4]);
-    String country = _extractFromRegions(regions, [2]);
+    String postalCode = _extractFromRegions(regions, <int>[13]);
+    String city = _extractFromRegions(regions, <int>[8, 7, 6, 5, 4]);
+    String country = _extractFromRegions(regions, <int>[2]);
 
     return AddressSuggestion(
       name: name,
@@ -66,14 +66,14 @@ class AddressSuggestion {
   }
 
   static List<AddressSuggestion> deduplicate(List<AddressSuggestion> suggestions) {
-    var seen = <AddressSuggestion>{};
-    return suggestions.where((suggestion) => seen.add(suggestion)).toList();
+    Set<AddressSuggestion> seen = <AddressSuggestion>{};
+    return suggestions.where((AddressSuggestion suggestion) => seen.add(suggestion)).toList();
   }
 
   static String _extractFromRegions(List<Map<String, dynamic>> regions, List<int> adminLevels) {
     for (int adminLevel in adminLevels) {
       try {
-        return regions.firstWhere((region) => region['admin_level'] == adminLevel)['name'];
+        return regions.firstWhere((Map<String, dynamic> region) => region['admin_level'] == adminLevel)['name'];
       } catch (e) {
         continue;
       }
@@ -85,7 +85,7 @@ class AddressSuggestion {
     return AddressSuggestion(
       name: json['name'],
       position: Position.fromJson(json['position']),
-      type: AddressSuggestionType.values.firstWhere((e) => e.name == json['type']),
+      type: AddressSuggestionType.values.firstWhere((AddressSuggestionType e) => e.name == json['type']),
       postalCode: json['postal_code'],
       city: json['city'],
       country: json['country'],
@@ -95,7 +95,7 @@ class AddressSuggestion {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'name': name,
       'position': position.toJson(),
       'type': type.name,

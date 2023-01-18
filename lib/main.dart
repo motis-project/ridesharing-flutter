@@ -51,7 +51,7 @@ class _AppWrapperState extends State<AppWrapper> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: (context) => S.of(context).appName,
+      onGenerateTitle: (BuildContext context) => S.of(context).appName,
       debugShowCheckedModeBanner: false,
       theme: themeManager.lightTheme,
       darkTheme: themeManager.darkTheme,
@@ -85,7 +85,7 @@ class _AuthAppState extends State<AuthApp> {
 
   void _setupAuthStateSubscription() {
     _authStateSubscription = SupabaseManager.supabaseClient.auth.onAuthStateChange.listen(
-      (data) async {
+      (AuthState data) async {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
         await SupabaseManager.reloadCurrentProfile();
@@ -98,11 +98,11 @@ class _AuthAppState extends State<AuthApp> {
               event == AuthChangeEvent.signedIn ||
               event == AuthChangeEvent.passwordRecovery ||
               event == AuthChangeEvent.userDeleted) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
           }
         });
       },
-      onError: (error) {
+      onError: (Object error) {
         if (error.runtimeType == AuthException) {
           error = error as AuthException;
           if (error.message == 'Email link is invalid or has expired') {

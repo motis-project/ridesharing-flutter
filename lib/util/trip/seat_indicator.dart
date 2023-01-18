@@ -16,9 +16,9 @@ class SeatIndicator extends StatelessWidget {
 
     if (trip is Drive) {
       int? maxUsedSeats = (trip as Drive).getMaxUsedSeats();
-      seatIcons = List.generate(
+      seatIcons = List<Icon>.generate(
         trip.seats,
-        (index) => Icon(
+        (int index) => Icon(
           Icons.chair,
           color: maxUsedSeats != null && index < maxUsedSeats
               ? Theme.of(context).colorScheme.primary
@@ -32,9 +32,9 @@ class SeatIndicator extends StatelessWidget {
             : S.of(context).labelUnknownSeats(trip.seats),
       );
     } else {
-      seatIcons = List.generate(
+      seatIcons = List<Icon>.generate(
         trip.seats,
-        (index) => Icon(
+        (int index) => Icon(
           Icons.chair,
           color: Theme.of(context).colorScheme.primary,
         ),
@@ -44,7 +44,7 @@ class SeatIndicator extends StatelessWidget {
 
     return MergeSemantics(
       child: Column(
-        children: [
+        children: <Widget>[
           Row(children: seatIcons),
           text,
         ],

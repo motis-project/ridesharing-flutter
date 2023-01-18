@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
 import '../pages/reviews_page.dart';
@@ -15,7 +16,7 @@ class ReviewsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Review> reviews = profile.reviewsReceived!..sort((a, b) => a.compareTo(b));
+    List<Review> reviews = profile.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
     AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Semantics(
@@ -23,22 +24,20 @@ class ReviewsPreview extends StatelessWidget {
       button: true,
       tooltip: S.of(context).reviewsPreviewShowReviews,
       child: Stack(
-        children: [
+        children: <Widget>[
           Column(
-            children: [
-              aggregateReview.widget(),
+            children: <Widget>[
+              AggregateReviewWidget(aggregateReview),
               if (reviews.isNotEmpty)
                 ExcludeSemantics(
                   child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
+                    children: <Widget>[
+                      const SizedBox(height: 10),
                       ShaderMask(
-                        shaderCallback: (rect) => const LinearGradient(
+                        shaderCallback: (Rect rect) => const LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Colors.black, Colors.transparent],
+                          colors: <Color>[Colors.black, Colors.transparent],
                         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
                         blendMode: BlendMode.dstIn,
                         child: ConstrainedBox(
@@ -48,9 +47,9 @@ class ReviewsPreview extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                children: List.generate(
+                                children: List<ReviewDetail>.generate(
                                   min(reviews.length, 2),
-                                  (index) => ReviewDetail(review: reviews[index]),
+                                  (int index) => ReviewDetail(review: reviews[index]),
                                 ),
                               ),
                             ),
@@ -78,7 +77,9 @@ class ReviewsPreview extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => ReviewsPage.fromProfile(profile)));
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => ReviewsPage.fromProfile(profile)),
+                  );
                 },
               ),
             ),

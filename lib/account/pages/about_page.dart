@@ -23,7 +23,7 @@ class _AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then(
-      (value) => setState(
+      (PackageInfo value) => setState(
         () => _packageInfo = value,
       ),
     );
@@ -42,19 +42,19 @@ class _AboutPageState extends State<AboutPage> {
       body: Center(
         child: CustomScrollView(
           physics: const ClampingScrollPhysics(),
-          slivers: [
+          slivers: <Widget>[
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: Column(children: [
+                child: Column(children: <Widget>[
                   Expanded(child: Container()),
                   Text(
                     S.of(context).appName,
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
-                  if (_packageInfo != null) ...[
+                  if (_packageInfo != null) ...<Widget>[
                     Text(
                       S.of(context).pageAboutVersion(_packageInfo!.version),
                       style: packageInfoStyle,
@@ -84,7 +84,7 @@ class _AboutPageState extends State<AboutPage> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                         TextButton(
                           onPressed: () async => await launchUrlString(
                             githubLink,

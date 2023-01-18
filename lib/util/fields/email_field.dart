@@ -12,7 +12,7 @@ extension EmailValidator on String {
 class EmailField extends StatelessWidget {
   final TextEditingController? controller;
 
-  const EmailField({key, this.controller}) : super(key: key);
+  const EmailField({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class EmailField extends StatelessWidget {
       ),
       keyboardType: TextInputType.emailAddress,
       controller: controller,
-      validator: (value) {
+      validator: (String? value) {
         if (value == null || value.isEmpty) {
           return S.of(context).formEmailValidateEmpty;
         } else if (!value.isValidEmail()) {

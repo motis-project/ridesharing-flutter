@@ -42,12 +42,12 @@ class Report extends Model {
   }
 
   static List<Report> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => Report.fromJson(json)).toList();
+    return jsonList.map((Map<String, dynamic> json) => Report.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'offender_id': offenderId,
       'reporter_id': reporterId,
       'category': category.index,
@@ -58,7 +58,7 @@ class Report extends Model {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'offender': offender?.toJsonForApi(),
         'reporter': reporter?.toJsonForApi(),
       });

@@ -22,7 +22,7 @@ class RideCard extends TripCard<Ride> {
   State<RideCard> createState() => _RideCardState();
 }
 
-class _RideCardState extends TripCardState<RideCard> {
+class _RideCardState extends TripCardState<Ride, RideCard> {
   late Ride _ride;
   late Profile _driver;
   bool _fullyLoaded = false;
@@ -81,8 +81,8 @@ class _RideCardState extends TripCardState<RideCard> {
   @override
   void Function() get onTap {
     return () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RideDetailPage.fromRide(_ride),
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => RideDetailPage.fromRide(_ride),
           ),
         );
   }

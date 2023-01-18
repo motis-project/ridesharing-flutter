@@ -42,8 +42,8 @@ class ResetPasswordForm extends StatefulWidget {
 
 class _ResetPasswordFormState extends State<ResetPasswordForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final passwordController = TextEditingController();
-  final passwordConfirmationController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
   void onSubmit() async {
@@ -64,7 +64,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     setState(() {
       _state = ButtonState.fail;
     });
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
       _state = ButtonState.idle;
     });
@@ -89,7 +89,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               labelText: S.of(context).formPassword,
               hintText: S.of(context).pageResetPasswordHint,
               controller: passwordController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageResetPasswordValidateEmpty;
                 } else if (value.length < 8) {
@@ -111,7 +111,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               labelText: S.of(context).formPasswordConfirm,
               hintText: S.of(context).pageResetPasswordConfirmHint,
               controller: passwordConfirmationController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageResetPasswordConfirmValidateEmpty;
                 } else if (value != passwordController.text) {

@@ -51,14 +51,14 @@ class Drive extends Trip {
     );
   }
 
-  static List<Drive> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Drive.fromJson(json as Map<String, dynamic>)).toList();
+  static List<Drive> fromJsonList(List<Map<String, dynamic>> jsonList) {
+    return jsonList.map((Map<String, dynamic> json) => Drive.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
     return super.toJson()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'cancelled': cancelled,
         'driver_id': driverId,
       });
@@ -67,14 +67,14 @@ class Drive extends Trip {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'driver': driver?.toJsonForApi(),
-        'rides': rides?.map((ride) => ride.toJsonForApi()).toList() ?? [],
+        'rides': rides?.map((Ride ride) => ride.toJsonForApi()).toList() ?? <Map<String, dynamic>>[],
       });
   }
 
-  List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();
-  List<Ride>? get pendingRides => rides?.where((ride) => ride.status == RideStatus.pending).toList();
+  List<Ride>? get approvedRides => rides?.where((Ride ride) => ride.status == RideStatus.approved).toList();
+  List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
     return Drive.fromJsonList(await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId));
@@ -83,7 +83,7 @@ class Drive extends Trip {
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     //get all upcoming drives of user
     List<Drive> drives = await Drive.getDrivesOfUser(userId);
-    drives = drives.where((drive) => !drive.cancelled && !drive.isFinished).toList();
+    drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
 
     //check if drive overlaps with start and end
     for (Drive drive in drives) {
@@ -97,14 +97,17 @@ class Drive extends Trip {
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
-    Set<DateTime> times = approvedRides!.map((ride) => [ride.startTime, ride.endTime]).expand((x) => x).toSet();
+    Set<DateTime> times = approvedRides!
+        .map((Ride ride) => <DateTime>[ride.startTime, ride.endTime])
+        .expand((List<DateTime> x) => x)
+        .toSet();
 
     int maxUsedSeats = 0;
     for (DateTime time in times) {
       int usedSeats = 0;
       for (Ride ride in approvedRides!) {
-        final startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
-        final endTimeAfter = ride.endTime.isAfter(time);
+        final bool startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
+        final bool endTimeAfter = ride.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
           usedSeats += ride.seats;
         }
@@ -118,17 +121,17 @@ class Drive extends Trip {
   }
 
   bool isRidePossible(Ride ride) {
-    List<Ride> consideredRides = approvedRides! + [ride];
+    List<Ride> consideredRides = approvedRides!..add(ride);
     Set<DateTime> times = consideredRides
-        .map((consideredRide) => [consideredRide.startTime, consideredRide.endTime])
-        .expand((x) => x)
+        .map((Ride consideredRide) => <DateTime>[consideredRide.startTime, consideredRide.endTime])
+        .expand((List<DateTime> x) => x)
         .toSet();
     for (DateTime time in times) {
       int usedSeats = 0;
       for (Ride consideredRide in consideredRides) {
-        final startTimeBeforeOrEqual =
+        final bool startTimeBeforeOrEqual =
             consideredRide.startTime.isBefore(time) || consideredRide.startTime.isAtSameMomentAs(time);
-        final endTimeAfter = consideredRide.endTime.isAfter(time);
+        final bool endTimeAfter = consideredRide.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
           usedSeats += consideredRide.seats;
         }
@@ -143,7 +146,7 @@ class Drive extends Trip {
 
   Future<void> cancel() async {
     cancelled = true;
-    await SupabaseManager.supabaseClient.from('drives').update({'cancelled': true}).eq('id', id);
+    await SupabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'cancelled': true}).eq('id', id);
     //the rides get updated automatically by a supabase function.
   }
 
