@@ -107,7 +107,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         child: ListTile(
           leading: Avatar(chat.rider!),
           title: Text(chat.rider!.username),
-          subtitle: lastMessage == null ? null : Text(lastMessage.content, maxLines: 2),
+          subtitle: lastMessage == null ? null : Text(lastMessage.content, maxLines: 1),
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
               : Container(
