@@ -1,8 +1,10 @@
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
+import 'chat_facotry.dart';
 import 'model_factory.dart';
 import 'profile_factory.dart';
 import 'ride_factory.dart';
@@ -25,12 +27,24 @@ class DriveFactory extends TripFactory<Drive> {
     int? driverId,
     NullableParameter<Profile>? driver,
     List<Ride>? rides,
+    List<Chat>? chats,
     bool createDependencies = true,
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
     final Profile? generatedDriver =
         getNullableParameterOr(driver, ProfileFactory().generateFake(id: driverId, createDependencies: false));
+    final List<Ride>? generatedRides =
+        rides ?? (createDependencies ? RideFactory().generateFakeList(length: random.nextInt(5) + 1) : null);
+    final List<Chat>? generatedChats = chats ??
+        (createDependencies
+            ? generatedRides
+                ?.map((ride) => ChatFactory().generateFake(
+                      riderId: ride.riderId,
+                      rider: NullableParameter(ride.rider),
+                    ))
+                .toList()
+            : null);
 
     return Drive(
       id: id ?? randomId,
@@ -46,7 +60,8 @@ class DriveFactory extends TripFactory<Drive> {
       hideInListView: hideInListView ?? false,
       driverId: generatedDriver?.id ?? randomId,
       driver: generatedDriver,
-      rides: rides ?? (createDependencies ? RideFactory().generateFakeList(length: random.nextInt(5) + 1) : null),
+      rides: generatedRides,
+      chats: generatedChats,
     );
   }
 }
