@@ -183,13 +183,16 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       widgets.add(const SizedBox(height: 10));
       Widget bottomButton;
-      if (!(_drive!.isFinished || _drive!.cancelled)) {
+      if (_drive!.isFinished || _drive!.cancelled) {
         bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonCancel,
-          onPressed: _showCancelDialog,
+          S.of(context).pageDriveDetailHideDrive,
+          onPressed: _showHideDialog,
         );
       } else {
-        bottomButton = Button.error(S.of(context).pageDriveDetailDeleteDrive, onPressed: _showDeleteDialog);
+        bottomButton = Button.error(
+          S.of(context).pageDriveDetailButtonCancel,
+          onPressed: _showHideDialog,
+        );
       }
       widgets.add(bottomButton);
       widgets.add(const SizedBox(height: 5));
@@ -343,12 +346,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     await SupabaseManager.supabaseClient.from('drives').update({'hide_in_list_view': true}).eq('id', widget.drive!.id);
   }
 
-  void _showDeleteDialog() {
+  void _showHideDialog() {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(S.of(context).pageDriveDetailDeleteDrive),
-        content: Text(S.of(context).pageDriveDetailDeleteDriveDialog),
+        title: Text(S.of(context).pageDriveDetailHideDrive),
+        content: Text(S.of(context).pageDriveDetailHideDriveDialog),
         actions: <Widget>[
           TextButton(
             child: Text(S.of(context).no),

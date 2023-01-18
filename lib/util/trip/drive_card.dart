@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motis_mitfahr_app/util/theme_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
@@ -25,7 +26,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
     setState(() {
       _drive = widget.trip;
-      super.trip = _drive;
+      trip = _drive;
     });
     loadDrive();
   }
@@ -49,7 +50,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
     if (mounted) {
       setState(() {
         _drive = Drive.fromJson(data);
-        super.trip = _drive;
+        trip = _drive;
         _fullyLoaded = true;
       });
     }
@@ -57,19 +58,27 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   Widget buildRightSide() {
-    return TripOverview(super.trip!).buildSeatIndicator(context, super.trip!);
+    return TripOverview(super.trip!).buildSeatIndicator(context, trip!);
   }
 
   Color pickBannerColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else {
+    } else if (_drive!.endTime.isBefore(DateTime.now())) {
       if (_drive!.cancelled) {
-        return Theme.of(context).colorScheme.error;
-      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).disabledColor;
       } else {
         return Theme.of(context).own().success;
+      }
+    } else {
+      if (_drive!.cancelled) {
+        return Theme.of(context).disabledColor;
+      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.pending)) {
+        return Theme.of(context).own().warning;
+      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.approved)) {
+        return Theme.of(context).own().success;
+      } else {
+        return Theme.of(context).disabledColor;
       }
     }
   }
@@ -79,7 +88,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
       return BoxDecoration(
         color: Colors.grey,
         borderRadius: cardBorder,
-        backgroundBlendMode: BlendMode.screen,
+        backgroundBlendMode: BlendMode.multiply,
       );
     } else {
       return BoxDecoration(
@@ -95,27 +104,24 @@ class _DriveCardState extends TripCardState<DriveCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Wrap(
-        children: [
-          Container(
-            foregroundDecoration: pickDecoration(),
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: cardBorder,
-            ),
-            margin: const EdgeInsets.only(left: 10),
-            child: InkWell(
-                onTap: () => Navigator.of(context)
-                    .push(
-                      MaterialPageRoute(
-                        builder: (context) => DriveDetailPage.fromDrive(_drive!),
-                      ),
-                    )
-                    .then((value) => loadDrive()),
-                child: buildCardInfo(context)),
+      child: InkWell(
+        onTap: () => Navigator.of(context)
+            .push(
+              MaterialPageRoute(
+                builder: (context) => DriveDetailPage.fromDrive(_drive!),
+              ),
+            )
+            .then((value) => loadDrive()),
+        child: Container(
+          foregroundDecoration: pickDecoration(),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: cardBorder,
           ),
-        ],
+          margin: const EdgeInsets.only(left: 10),
+          child: buildCardInfo(context),
+        ),
       ),
     );
   }

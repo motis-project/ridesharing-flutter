@@ -48,7 +48,8 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
-                          "${trip!.duration.inHours.toString().padLeft(2, "0")}:${(trip!.duration.inMinutes % 60).toString().padLeft(2, "0")}"),
+                        localeManager.formatDuration(trip!.duration, true),
+                      ),
                     ],
                   ),
                 ),

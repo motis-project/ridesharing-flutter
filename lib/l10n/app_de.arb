@@ -247,8 +247,8 @@
   "pageDriveDetailCancelDialogMessage": "Bist du sicher, dass du diese Fahrt absagen möchtest?",
   "pageDriveDetailCancelDialogToast": "Fahrt abgesagt.",
   "pageDriveDetailBannerCancelled": "Du hast diese Fahrt abgesagt.",
-  "pageDriveDetailDeleteDrive": "Fahrt löschen",
-  "pageDriveDetailDeleteDriveDialog": "Wollen Sie wirklich die Fahrt löschen?",
+  "pageDriveDetailHideDrive": "Fahrt löschen",
+  "pageDriveDetailHideDriveDialog": "Bist du sicher, dass du  die Fahrt löschen möchtest?",
 
 
   "pageDrivesTitle": "Fahrten",
@@ -264,7 +264,6 @@
 
   "pageSearchSuggestionsTitle": "Vorschläge",
   "pageSearchSuggestionsButtonFilter": "Filter",
-  "pageSearchSuggestionsNoRidesFound": "Es werden keine passenden Fahrten angeboten",
 
   "pageRidesTitle": "Mitfahrten",
   "pageRidesTooltipSearchRide": "Fahrt suchen",
@@ -289,8 +288,8 @@
   "pageRideDetailBannerRejected": "Diese Mitfahrt wurde abgelehnt.",
   "pageRideDetailBannerCancelledByDriver": "Diese Mitfahrt wurde abgesagt.",
   "pageRideDetailBannerCancelledByYou": "Du hast diese Mitfahrt abgesagt.",
-  "pageRideDetailDeleteRide": "Mitfahrt löschen",
-  "pageRideDetailDeteRideDialog": "Willst du wirklich die Mitfahrt löschen?",
+  "pageRideDetailHideRide": "Mitfahrt löschen",
+  "pageRideDetailHideRideDialog": "Willst du wirklich die Mitfahrt löschen?",
 
   "pageDriveChatTitle": "Fahrt Chat",
   "pageDriveChatEmptyMessage": "Keine Mitfahrer oder Anfragen",

@@ -39,6 +39,12 @@ class LocaleManager with ChangeNotifier {
   String formatTime(DateTime time) {
     return DateFormat.Hm(currentLocale.languageCode).format(time);
   }
+
+  String formatDuration(Duration duration, bool hourpadding) {
+    return hourpadding
+        ? "${duration.inHours.toString().padLeft(2, "0")}:${(duration.inMinutes % 60).toString().padLeft(2, "0")}"
+        : "${duration.inHours.toString()}:${(duration.inMinutes % 60).toString().padLeft(2, "0")}";
+  }
 }
 
 extension LanguageName on Locale {
