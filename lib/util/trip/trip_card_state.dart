@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:timelines/timelines.dart';
 
 import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
+import 'trip.dart';
+import 'trip_card.dart';
 
 abstract class TripCardState<T extends TripCard> extends State<T> {
   Trip? trip;

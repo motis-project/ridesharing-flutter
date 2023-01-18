@@ -138,7 +138,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
   void approveRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
-      params: {'ride_id': trip.id},
+      params: {'ride_id': widget.trip.id},
     );
     // todo: notify rider
     widget.reloadPage();
@@ -147,7 +147,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
   void rejectRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
-      params: {'ride_id': trip.id},
+      params: {'ride_id': widget.trip.id},
     );
     //todo: notify rider
     widget.reloadPage();

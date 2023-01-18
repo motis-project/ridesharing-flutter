@@ -1,8 +1,5 @@
-import 'dart:convert';
-
-import 'package:mockito/mockito.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import '../util/factories/model_factory.dart';

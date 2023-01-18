@@ -191,7 +191,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       } else {
         bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonCancel,
-          onPressed: _showHideDialog,
+          onPressed: _showCancelDialog,
         );
       }
       widgets.add(bottomButton);
