@@ -58,7 +58,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController passwordController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _state = ButtonState.loading;
@@ -91,7 +91,7 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });
@@ -142,7 +142,7 @@ class _LoginFormState extends State<LoginForm> {
               child: Text(S.of(context).pageLoginButtonForgotPassword),
             ),
             Hero(
-              tag: "LoginButton",
+              tag: 'LoginButton',
               transitionOnUserGestures: true,
               child: LoadingButton(onPressed: onSubmit, state: _state),
             ),

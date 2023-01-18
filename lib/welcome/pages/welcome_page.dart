@@ -68,7 +68,7 @@ class _WelcomePageState extends State<WelcomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Hero(
-            tag: "LoginButton",
+            tag: 'LoginButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeLogin,
@@ -79,7 +79,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           const SizedBox(height: 15),
           Hero(
-            tag: "RegisterButton",
+            tag: 'RegisterButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeRegister,
@@ -90,7 +90,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           const SizedBox(height: 15),
           Hero(
-            tag: "SearchButton",
+            tag: 'SearchButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeAnonymousSearch,

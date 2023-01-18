@@ -105,7 +105,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
     );
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }

@@ -37,7 +37,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     super.dispose();
   }
 
-  void loadReview() async {
+  Future<void> loadReview() async {
     Map<String, dynamic>? data = await SupabaseManager.supabaseClient
         .from('reviews')
         .select('*')
@@ -182,7 +182,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     });
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (_review!.rating == 0) {
       setState(() {
         _state = ButtonState.fail;

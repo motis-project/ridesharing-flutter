@@ -39,7 +39,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text("+${localeManager.formatDuration(extraTime, shouldPadHours: false)}");
+    return Text('+${localeManager.formatDuration(extraTime, shouldPadHours: false)}');
   }
 
   @override
@@ -54,7 +54,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   Widget buildBottomRight() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text("${_ride.price}€"),
+      child: Text('${_ride.price}€'),
     );
   }
 
@@ -84,7 +84,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
     return IconWidget(icon: icon, count: trip.seats);
   }
 
-  void approveRide() async {
+  Future<void> approveRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
       params: <String, dynamic>{'ride_id': _ride.id},
@@ -93,7 +93,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
     widget.reloadPage();
   }
 
-  void rejectRide() async {
+  Future<void> rejectRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
       params: <String, dynamic>{'ride_id': _ride.id},

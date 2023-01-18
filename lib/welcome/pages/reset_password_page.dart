@@ -46,7 +46,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _state = ButtonState.loading;
@@ -60,7 +60,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     }
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });

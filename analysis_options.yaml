@@ -12,9 +12,94 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     - always_declare_return_types
+    # - always_put_control_body_on_new_line # DO WE WANT THIS?
+    - always_require_non_null_named_parameters
     - always_specify_types
+    - annotate_overrides
+    - avoid_bool_literals_in_conditional_expressions
+    # - avoid_classes_with_only_static_members # ENABLE IN THE FUTURE
     - avoid_double_and_int_checks
     - avoid_dynamic_calls
+    - avoid_empty_else
+    # - avoid_equals_and_hash_code_on_mutable_classes # FIND OUT WHAT THIS DOES
+    - avoid_escaping_inner_quotes
+    - avoid_field_initializers_in_const_classes
+    - avoid_function_literals_in_foreach_calls
+    - avoid_implementing_value_types
+    - avoid_init_to_null
+    - avoid_js_rounded_ints
+    - avoid_multiple_declarations_per_line
     - avoid_positional_boolean_parameters
+    - avoid_print
+    - avoid_null_checks_in_equality_operators
     - avoid_redundant_argument_values
+    - avoid_renaming_method_parameters
+    - avoid_return_types_on_setters
+    - avoid_returning_null
+    - avoid_returning_null_for_future
+    - avoid_returning_null_for_void
+    - avoid_setters_without_getters
+    - avoid_shadowing_type_parameters
+    - avoid_single_cascade_in_expression_statements
+    - avoid_slow_async_io
+    - avoid_type_to_string
+    - avoid_types_as_parameter_names
+    - avoid_unnecessary_containers
+    - avoid_unused_constructor_parameters
+    - avoid_void_async
+    - avoid_web_libraries_in_flutter
+    - await_only_futures
+    - camel_case_extensions
+    - camel_case_types
+    - cancel_subscriptions
+    - cast_nullable_to_non_nullable
+    - conditional_uri_does_not_exist
+    - constant_identifier_names
+    - control_flow_in_finally
+    - curly_braces_in_flow_control_structures
+    - depend_on_referenced_packages
+    - deprecated_consistency
+    - directives_ordering
+    - empty_catches
+    - empty_constructor_bodies
+    - empty_statements
+    - eol_at_end_of_file
+    - exhaustive_cases
+    - file_names
+    - hash_and_equals
+    - implementation_imports
+    - iterable_contains_unrelated_type
+    - leading_newlines_in_multiline_strings
+    - library_names
+    - library_prefixes
+    - library_private_types_in_public_api
+    - list_remove_unrelated_type
+    - missing_whitespace_between_adjacent_strings
+    - no_adjacent_strings_in_list
+    # - no_default_cases # DO WE WANT THIS?
+    - no_duplicate_case_values
+    - no_leading_underscores_for_library_prefixes
+    - no_leading_underscores_for_local_identifiers
+    - no_logic_in_create_state
+    - no_runtimeType_toString
+    - non_constant_identifier_names
+    - noop_primitive_operations
+    - null_check_on_nullable_type_parameter
+    - null_closures
+    - only_throw_errors
+    - overridden_fields
+    - package_api_docs
+    - package_names
+    - package_prefixed_library_names
+    - prefer_adjacent_string_concatenation
+    - prefer_asserts_in_initializer_lists
+    - prefer_collection_literals
+    - prefer_conditional_assignment
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_contains
+    - prefer_equal_for_default_values
     - prefer_relative_imports
+    - prefer_single_quotes

@@ -49,7 +49,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       late final AuthResponse res;
       try {
@@ -99,13 +99,13 @@ class _RegisterFormState extends State<RegisterForm> {
     }
   }
 
-  void showSnackBar(String text) async {
+  Future<void> showSnackBar(String text) async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
     ));
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });
@@ -186,7 +186,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 15),
             Hero(
-              tag: "RegisterButton",
+              tag: 'RegisterButton',
               transitionOnUserGestures: true,
               child: LoadingButton(
                 idleText: S.of(context).pageRegisterButtonCreate,

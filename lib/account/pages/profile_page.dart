@@ -215,7 +215,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildNoInfoText(String noInfoText) {
     return Text(
-      "<$noInfoText>",
+      '<$noInfoText>',
       style: Theme.of(context).textTheme.bodyText1?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
@@ -391,7 +391,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       await SupabaseManager.supabaseClient
           .from('profiles')
-          .update(<String, dynamic>{"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
+          .update(<String, dynamic>{'avatar_url': imageUrlResponse}).eq('id', _profile!.id);
 
       SupabaseManager.reloadCurrentProfile();
       loadProfile();
@@ -407,7 +407,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _deleteProfilePicture() async {
     await SupabaseManager.supabaseClient
         .from('profiles')
-        .update(<String, dynamic>{"avatar_url": null}).eq('id', _profile!.id);
+        .update(<String, dynamic>{'avatar_url': null}).eq('id', _profile!.id);
 
     SupabaseManager.reloadCurrentProfile();
     loadProfile();

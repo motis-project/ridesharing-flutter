@@ -298,7 +298,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     final Icon startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
     final Icon endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
-    for (int index = 0, length = stop.actions.length; index < length; index++) {
+    int actionsLength = stop.actions.length;
+    for (int index = 0; index < actionsLength; index++) {
       final WaypointAction action = stop.actions[index];
       final Icon icon = action.isStart ? startIcon : endIcon;
       final Profile profile = action.profile;
@@ -351,7 +352,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       list.add(container);
 
-      if (index < length - 1) {
+      if (index < actionsLength - 1) {
         list.add(const SizedBox(height: 6.0));
       }
     }

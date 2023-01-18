@@ -23,7 +23,7 @@ class SearchSuggestionFilter {
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
   static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
-  static const String _defaultDeviation = "12";
+  static const String _defaultDeviation = '12';
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -372,7 +372,7 @@ class SearchSuggestionFilter {
         children: <Widget>[
           const Icon(Icons.schedule),
           const SizedBox(width: 6),
-          Text("± ${_maxDeviationController.text}")
+          Text('± ${_maxDeviationController.text}')
         ],
       );
       widgets.add(deviationWidget);

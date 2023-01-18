@@ -237,7 +237,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void _cancelRide() async {
+  Future<void> _cancelRide() async {
     await _ride?.cancel();
     setState(() {});
   }
@@ -265,7 +265,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void hideRide() async {
+  Future<void> hideRide() async {
     await SupabaseManager.supabaseClient
         .from('rides')
         .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.ride!.id);
@@ -295,7 +295,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void confirmRequest(Ride ride) async {
+  Future<void> confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
     Map<String, dynamic> data =
         await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
@@ -335,7 +335,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  void _withdrawRide() async {
+  Future<void> _withdrawRide() async {
     await _ride?.withdraw();
     setState(() {});
   }

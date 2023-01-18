@@ -207,7 +207,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     });
   }
 
-  void onPressed() async {
+  Future<void> onPressed() async {
     final List<Feature> previousFeatures = _profileFeatures.map((ProfileFeature e) => e.feature).toList();
 
     for (int index = 0; index < _features.length; index++) {

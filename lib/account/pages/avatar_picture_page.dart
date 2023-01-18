@@ -15,7 +15,7 @@ class AvatarPicturePage extends StatelessWidget {
       ),
       body: Center(
         child: Hero(
-          tag: "Avatar-${profile.id}",
+          tag: 'Avatar-${profile.id}',
           child: SizedBox(
             height: width,
             width: width,

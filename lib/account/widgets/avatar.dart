@@ -30,7 +30,7 @@ class AvatarState extends State<Avatar> {
     return Stack(
       children: <Widget>[
         Hero(
-          tag: "Avatar-${widget.profile.id}",
+          tag: 'Avatar-${widget.profile.id}',
           child: CircleAvatar(
             radius: widget.size,
             backgroundImage: widget.profile.avatarUrl?.isEmpty ?? true ? null : NetworkImage(widget.profile.avatarUrl!),

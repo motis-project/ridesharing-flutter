@@ -45,7 +45,7 @@ class AddressSuggestionManager {
     return AddressSuggestion.deduplicate(suggestionsList);
   }
 
-  void loadHistorySuggestions() async {
+  Future<void> loadHistorySuggestions() async {
     List<String> data = await StorageManager.readStringList(getStorageKey());
 
     Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
@@ -119,9 +119,9 @@ class AddressSuggestionManager {
     );
 
     request.add(utf8.encode(json.encode(<String, dynamic>{
-      "destination": <String, dynamic>{"type": "Module", "target": target},
-      "content_type": contentType,
-      "content": <String, dynamic>{"input": query}
+      'destination': <String, dynamic>{'type': 'Module', 'target': target},
+      'content_type': contentType,
+      'content': <String, dynamic>{'input': query}
     })));
 
     String response = await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());
@@ -189,6 +189,6 @@ class AddressSuggestionManager {
   }
 
   String getStorageKey() {
-    return "$_storageKey.${SupabaseManager.getCurrentProfile()?.id}";
+    return '$_storageKey.${SupabaseManager.getCurrentProfile()?.id}';
   }
 }

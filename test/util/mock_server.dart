@@ -37,6 +37,6 @@ class MockServer {
 @GenerateMocks([UrlProcessor])
 class UrlProcessor {
   String processUrl(String url) {
-    return "";
+    return '';
   }
 }

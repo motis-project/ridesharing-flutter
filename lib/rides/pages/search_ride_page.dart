@@ -125,7 +125,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
     return null;
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
@@ -182,7 +182,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
   Widget buildSeatsPicker() {
     return Expanded(
       child: SizedBox(
-        //todo: add same height as time&date.
+        // TODO: add same height as time&date.
         height: 60,
         child: DropdownButtonFormField<int>(
           value: _dropdownValue,
@@ -244,10 +244,9 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            //Search
             widget.anonymous
                 ? Hero(
-                    tag: "SearchButton",
+                    tag: 'SearchButton',
                     child: submitButton,
                   )
                 : submitButton,

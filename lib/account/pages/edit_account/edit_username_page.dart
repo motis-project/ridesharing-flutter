@@ -76,7 +76,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
     );
   }
 
-  void onPressed() async {
+  Future<void> onPressed() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
