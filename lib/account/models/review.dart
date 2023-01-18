@@ -1,9 +1,10 @@
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
-
 import '../../util/model.dart';
+import '../../util/profiles/reviews/aggregate_review_widget.dart';
+import 'profile.dart';
 
 class Review extends Model implements Comparable<Review> {
+  static const int maxRating = 5;
+
   int rating;
   int? comfortRating;
   int? safetyRating;
@@ -54,6 +55,7 @@ class Review extends Model implements Comparable<Review> {
     return jsonList.map((json) => Review.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'rating': rating,
@@ -80,10 +82,6 @@ class Review extends Model implements Comparable<Review> {
     }
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Review> reviews) {
-    return reviews.map((review) => review.toJson()).toList();
-  }
-
   @override
   String toString() {
     return 'Review{id: $id, rating: $rating, text: $text, writerId: $writerId, receiverId: $receiverId, createdAt: $createdAt}';
@@ -107,6 +105,12 @@ class AggregateReview {
     required this.hospitalityRating,
     required this.numberOfReviews,
   });
+
+  bool get isRatingSet => rating != 0;
+  bool get isComfortSet => comfortRating != 0;
+  bool get isSafetySet => safetyRating != 0;
+  bool get isReliabilitySet => reliabilityRating != 0;
+  bool get isHospitalitySet => hospitalityRating != 0;
 
   AggregateReviewWidget widget() {
     return AggregateReviewWidget(this);

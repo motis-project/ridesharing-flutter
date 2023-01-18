@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
+
+import '../own_theme_fields.dart';
 
 enum DisplayColorKind { primary, secondary, success, warning, error, disabled }
 

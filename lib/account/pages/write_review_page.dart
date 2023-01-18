@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
-import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_size.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:progress_state_button/progress_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:progress_state_button/progress_button.dart';
+
+import '../../util/buttons/loading_button.dart';
+import '../../util/profiles/profile_widget.dart';
+import '../../util/profiles/reviews/custom_rating_bar.dart';
+import '../../util/profiles/reviews/custom_rating_bar_size.dart';
+import '../../util/supabase.dart';
+import '../models/profile.dart';
+import '../models/review.dart';
 
 class WriteReviewPage extends StatefulWidget {
   final Profile profile;

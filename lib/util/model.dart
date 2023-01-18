@@ -17,4 +17,16 @@ abstract class Model {
 
   @override
   int get hashCode => id.hashCode;
+
+  Map<String, dynamic> toJson();
+
+  Map<String, dynamic> toJsonForApi() {
+    return toJson()
+      ..addAll(
+        {
+          'id': id,
+          'created_at': createdAt?.toIso8601String(),
+        },
+      );
+  }
 }

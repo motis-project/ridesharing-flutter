@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/storage_manager.dart';
-import 'own_theme_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'own_theme_fields.dart';
+import 'storage_manager.dart';
 
 ThemeManager themeManager = ThemeManager();
 
 class ThemeManager with ChangeNotifier {
   final ThemeData lightTheme = ThemeData.light().copyWith(useMaterial3: true)..addOwn(const OwnThemeFields());
-  final ThemeData darkTheme = ThemeData.dark().copyWith(useMaterial3: true)
-    ..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
+  final ThemeData darkTheme = ThemeData.dark().copyWith(
+    useMaterial3: true,
+    chipTheme: ThemeData.dark().chipTheme.copyWith(
+          selectedColor: ThemeData.dark().highlightColor,
+        ),
+  )..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
   late ThemeMode currentThemeMode;
 

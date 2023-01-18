@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
+import '../../util/profiles/profile_widget.dart';
 import '../../util/supabase.dart';
 import '../models/drive.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DriveChatPage extends StatefulWidget {
   final Drive drive;

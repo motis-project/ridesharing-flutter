@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
-import 'package:motis_mitfahr_app/drives/models/drive.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/buttons/button.dart';
-import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
-import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
-import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../account/models/profile.dart';
+import '../../account/pages/write_review_page.dart';
+import '../../account/widgets/features_column.dart';
+import '../../account/widgets/reviews_preview.dart';
+import '../../drives/models/drive.dart';
+import '../../util/buttons/button.dart';
+import '../../util/buttons/custom_banner.dart';
+import '../../util/profiles/profile_widget.dart';
+import '../../util/profiles/profile_wrap_list.dart';
+import '../../util/supabase.dart';
+import '../../util/trip/trip_overview.dart';
 import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
+import '../models/ride.dart';
 
 class RideDetailPage extends StatefulWidget {
   // One of these two must be set
@@ -75,8 +75,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       ride.drive = Drive.fromJson(data);
     } else {
+      int id = _ride?.id ?? widget.id!;
       Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', widget.id!).single();
+          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
       ride = Ride.fromJson(data);
     }
 

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:timelines/timelines.dart';
+
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_card_state.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
+import '../custom_timeline_theme.dart';
+import '../locale_manager.dart';
+import 'trip_card.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
@@ -119,8 +125,6 @@ class _DriveCardState extends TripCardState<DriveCard> {
             color: Theme.of(context).cardColor,
             borderRadius: cardBorder,
           ),
-          margin: const EdgeInsets.only(left: 10),
-          child: buildCardInfo(context),
         ),
       ),
     );

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
 import '../../util/search/position.dart';
+import '../../util/supabase.dart';
+import '../../util/trip/trip.dart';
 
 class Ride extends Trip {
   final double? price;
@@ -75,7 +75,7 @@ class Ride extends Trip {
       endPosition: Position(json['end_lat'].toDouble(), json['end_lng'].toDouble()),
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
-      price: json['price'],
+      price: json['price'].toDouble(),
       status: RideStatus.values[json['status']],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
@@ -89,6 +89,7 @@ class Ride extends Trip {
     return jsonList.map((json) => Ride.fromJson(json as Map<String, dynamic>)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'start': start,
@@ -105,10 +106,6 @@ class Ride extends Trip {
       'drive_id': driveId,
       'rider_id': riderId,
     };
-  }
-
-  List<Map<String, dynamic>> toJsonList(List<Ride> rides) {
-    return rides.map((ride) => ride.toJson()).toList();
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {

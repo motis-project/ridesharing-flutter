@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/report.dart';
-import 'package:motis_mitfahr_app/account/models/review.dart';
-import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
+import '../../util/supabase.dart';
+import 'profile_feature.dart';
+import 'report.dart';
+import 'review.dart';
 
 class Profile extends Model {
   final String username;
@@ -39,14 +39,16 @@ class Profile extends Model {
     this.reportsReceived,
   });
 
-  get fullName {
+  String get fullName {
     if (name != null && surname != null) return '$surname $name';
     if (name != null) return name!;
     if (surname != null) return surname!;
     return '';
   }
 
-  get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
+  bool get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
+
+  List<Feature>? get features => profileFeatures?.map((profileFeature) => profileFeature.feature).toList();
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -77,6 +79,7 @@ class Profile extends Model {
     return jsonList.map((json) => Profile.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'username': username,
@@ -90,28 +93,9 @@ class Profile extends Model {
     };
   }
 
-  List<Map<String, dynamic>> toJsonList(List<Profile> profiles) {
-    return profiles.map((profile) => profile.toJson()).toList();
-  }
-
   @override
   String toString() {
     return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
-  }
-
-  static Future<Profile?> getProfileFromAuthId(String authId) async {
-    Map<String, dynamic>? query =
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('auth_id', authId).maybeSingle();
-    if (query == null) {
-      return null;
-    }
-
-    return Profile.fromJson(query);
-  }
-
-  AggregateReview getAggregateReview() {
-    List<Review> reviews = reviewsReceived ?? [];
-    return AggregateReview.fromReviews(reviews);
   }
 }
 

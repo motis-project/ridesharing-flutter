@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
+import 'profile.dart';
 
 class Report extends Model {
   int offenderId;
@@ -25,7 +25,7 @@ class Report extends Model {
     this.text,
   });
 
-  get isRecent => DateTime.now().difference(createdAt!).inDays < 3;
+  bool get isRecent => DateTime.now().difference(createdAt!).inDays < 3;
 
   @override
   factory Report.fromJson(Map<String, dynamic> json) {
@@ -45,6 +45,7 @@ class Report extends Model {
     return jsonList.map((json) => Report.fromJson(json)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'offender_id': offenderId,

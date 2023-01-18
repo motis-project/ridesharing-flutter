@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_stream_builder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../rides/models/ride.dart';
+import 'trip.dart';
+import 'trip_card.dart';
+import 'trip_stream_builder.dart';
 
 class TripPageBuilder {
   const TripPageBuilder();

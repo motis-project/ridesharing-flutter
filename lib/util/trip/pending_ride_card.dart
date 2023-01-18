@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/util/custom_timeline_theme.dart';
-import 'package:motis_mitfahr_app/util/icon_widget.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
+
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
+import '../custom_timeline_theme.dart';
+import '../icon_widget.dart';
 import '../locale_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../profiles/profile_widget.dart';
+import '../supabase.dart';
+import 'trip_card.dart';
 
 class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;
@@ -135,17 +136,19 @@ class _PendingRideCardState extends State<PendingRideCard> {
   }
 
   void approveRide() async {
-    await SupabaseManager.supabaseClient
-        .from('rides')
-        .update({'status': RideStatus.approved.index}).eq('id', widget.trip.id);
+    await SupabaseManager.supabaseClient.rpc(
+      'approve_ride',
+      params: {'ride_id': trip.id},
+    );
     // todo: notify rider
     widget.reloadPage();
   }
 
   void rejectRide() async {
-    await SupabaseManager.supabaseClient
-        .from('rides')
-        .update({'status': RideStatus.rejected.index}).eq('id', widget.trip.id);
+    await SupabaseManager.supabaseClient.rpc(
+      'reject_ride',
+      params: {'ride_id': trip.id},
+    );
     //todo: notify rider
     widget.reloadPage();
   }

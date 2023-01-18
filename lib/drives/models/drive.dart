@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../../account/models/profile.dart';
+import '../../rides/models/ride.dart';
 import '../../util/search/position.dart';
+import '../../util/supabase.dart';
+import '../../util/trip/trip.dart';
 
 class Drive extends Trip {
   bool cancelled;
@@ -55,6 +55,7 @@ class Drive extends Trip {
     return jsonList.map((json) => Drive.fromJson(json as Map<String, dynamic>)).toList();
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'start': start,
@@ -69,10 +70,6 @@ class Drive extends Trip {
       'seats': seats,
       'driver_id': driverId,
     };
-  }
-
-  List<Map<String, dynamic>> toJsonList(List<Drive> drives) {
-    return drives.map((drive) => drive.toJson()).toList();
   }
 
   List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();

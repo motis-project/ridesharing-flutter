@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:motis_mitfahr_app/drives/models/drive.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../drives/models/drive.dart';
+import '../locale_manager.dart';
+import 'trip.dart';
 
 class TripOverview extends StatelessWidget {
   final Trip trip;

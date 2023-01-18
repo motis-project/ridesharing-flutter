@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:motis_mitfahr_app/util/search/address_suggestion.dart';
-import 'package:motis_mitfahr_app/util/storage_manager.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
+
+import '../storage_manager.dart';
+import '../supabase.dart';
+import 'address_suggestion.dart';
 
 final addressSuggestionManager = AddressSuggestionManager();
 
