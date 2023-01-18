@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -164,11 +165,20 @@ class _RideDetailPageState extends State<RideDetailPage> {
                       builder: (context) => ChatPage(
                         rideId: _ride!.id,
                         profile: _ride!.drive!.driver!,
-                        chatExists: _ride!.status.hasChat(),
+                        chatExists: _ride!.status.allowsChat(),
                       ),
                     ),
                   ),
-                  icon: const Icon(Icons.chat),
+                  icon: Badge(
+                    badgeContent: Text(
+                      _ride!.getUnreadMessagesCount().toString(),
+                      style: const TextStyle(color: Colors.white),
+                      textScaleFactor: 1.0,
+                    ),
+                    showBadge: _ride!.getUnreadMessagesCount() != 0,
+                    position: BadgePosition.topEnd(top: -12),
+                    child: const Icon(Icons.chat),
+                  ),
                   tooltip: S.of(context).openChat,
                 )
               ]
