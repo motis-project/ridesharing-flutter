@@ -22,7 +22,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   void initState() {
-    final List<int> ids = widget.drive.chats!.map((Ride ride) => ride.id!).toList();
+    final List<int> ids = widget.drive.chats!.map((Chat chat) => chat.id!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
               (SupabaseStreamEvent messages) => Message.fromJsonList(
@@ -48,16 +48,16 @@ class _DriveChatPageState extends State<DriveChatPage> {
       body: chats.isNotEmpty
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
-              builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
                   for (final Message message in snapshot.data!) {
-                    final Chat chat = chats.firstWhere((Chat element) => element.id == message.chatId);
+                    final Chat chat = chats.firstWhere((Chat chat) => chat.id == message.chatId);
                     if (chat.messages!.contains(message)) {
                       chat.messages!.remove(message);
                     }
                     chat.messages!.add(message);
                   }
-                  final List<Widget> widgets = chats.map((Chat chat) => _buildChatWidget(chat)).toList();
+                  final List<Card> widgets = chats.map((Chat chat) => _buildChatWidget(chat)).toList();
                   return ListView.separated(
                     itemCount: widgets.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -76,11 +76,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
             )
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/chat_shrug.png',
-                  scale: 8,
-                ),
+              children: <Widget>[
+                Image.asset('assets/chat_shrug.png', scale: 8),
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).pageChatEmptyTitle,
@@ -99,7 +96,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  Widget _buildChatWidget(Chat chat) {
+  Card _buildChatWidget(Chat chat) {
     chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
     return Card(
@@ -122,14 +119,14 @@ class _DriveChatPageState extends State<DriveChatPage> {
           onTap: () {
             Navigator.of(context)
                 .push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (BuildContext context) => ChatPage(
                       chatId: chat.id!,
                       profile: chat.rider!,
                     ),
                   ),
                 )
-                .then((value) => setState(() {}));
+                .then((_) => setState(() {}));
           },
         ),
       ),

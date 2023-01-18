@@ -164,7 +164,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                 IconButton(
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (BuildContext context) => ChatPage(
                         chatId: _ride!.chat?.id,
                         profile: _ride!.drive!.driver!,

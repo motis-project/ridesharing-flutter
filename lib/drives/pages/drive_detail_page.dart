@@ -242,12 +242,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 IconButton(
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (BuildContext context) => DriveChatPage(
                         drive: _drive!,
                       ),
                     ),
-                  ).then((value) => loadDrive()),
+                  ).then((_) => loadDrive()),
                   icon: Badge(
                     badgeContent: Text(
                       _drive!.getUnreadMessagesCount().toString(),

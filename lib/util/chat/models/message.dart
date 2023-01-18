@@ -39,13 +39,13 @@ class Message extends Model {
     );
   }
 
-  static List<Message> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Message.fromJson(json as Map<String, dynamic>)).toList();
+  static List<Message> fromJsonList(List<Map<String, dynamic>> jsonList) {
+    return jsonList.map((Map<String, dynamic> json) => Message.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'chat_id': chatId,
       'sender_id': senderId,
       'content': content,

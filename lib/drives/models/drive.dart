@@ -159,7 +159,7 @@ class Drive extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    return approvedRides!.fold(0, (int value, Ride ride) => value + ride.getUnreadMessagesCount());
+    return chats!.fold(0, (int value, Chat chat) => value + chat.getUnreadMessagesCount());
   }
 
   @override

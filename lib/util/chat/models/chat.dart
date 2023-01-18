@@ -36,13 +36,13 @@ class Chat extends Model {
     );
   }
 
-  static List<Chat> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Chat.fromJson(json as Map<String, dynamic>)).toList();
+  static List<Chat> fromJsonList(List<Map<String, dynamic>> jsonList) {
+    return jsonList.map((Map<String, dynamic> json) => Chat.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'rider_id': riderId,
       'drive_id': driveId,
     };
@@ -51,7 +51,7 @@ class Chat extends Model {
   int getUnreadMessagesCount() {
     if (messages == null) return 0;
     return messages!
-        .where((message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
+        .where((Message message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
         .length;
   }
 

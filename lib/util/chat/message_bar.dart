@@ -24,7 +24,7 @@ class _MessageBarState extends State<MessageBar> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: TextFormField(
                     keyboardType: TextInputType.text,
@@ -64,7 +64,7 @@ class _MessageBarState extends State<MessageBar> {
   }
 
   void _submitMessage() async {
-    final text = _textController.text;
+    final String text = _textController.text;
     if (text.isEmpty) {
       return;
     }

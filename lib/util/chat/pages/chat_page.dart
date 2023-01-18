@@ -58,16 +58,16 @@ class _ChatPageState extends State<ChatPage> {
       body: widget.chatId != -1
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
-              builder: (context, snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
                   List<Message> messages = snapshot.data!;
                   return Column(
-                    children: [
+                    children: <Widget>[
                       Expanded(
                         child: messages.isEmpty
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                children: <Widget>[
                                   Image.asset(
                                     'assets/chat_shrug.png',
                                     scale: 8,
@@ -98,7 +98,7 @@ class _ChatPageState extends State<ChatPage> {
             )
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Image.asset(
                   'assets/chat_shrug.png',
                   scale: 8,
@@ -121,8 +121,8 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  List<Widget> _buildChatBubbles(List<Message> messages) {
-    List<Widget> chatBubbles = [];
+  List<ChatBubble> _buildChatBubbles(List<Message> messages) {
+    List<ChatBubble> chatBubbles = <ChatBubble>[];
     for (int i = 0; i < messages.length; i++) {
       if (!messages[i].read && messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
         messages[i].markAsRead();
