@@ -64,7 +64,24 @@ void main() {
       expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
     });
 
-    //? should also test if when index of category is out of range, it throws an error?
+    test('throws error if category is not in enum', () async {
+      Map<String, dynamic> json1 = {
+        "id": 1,
+        "created_at": "2021-05-01T00:00:00.000Z",
+        "reporter_id": 2,
+        "offender_id": 3,
+        "category": 100,
+      };
+      Map<String, dynamic> json2 = {
+        "id": 1,
+        "created_at": "2021-05-01T00:00:00.000Z",
+        "reporter_id": 2,
+        "offender_id": 3,
+        "category": -1,
+      };
+      expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
+      expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
+    });
 
     test('can handle Profiles', (() {
       Profile reporter = ProfileFactory().generateFake();

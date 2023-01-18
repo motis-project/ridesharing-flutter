@@ -36,7 +36,24 @@ void main() {
       expect(profileFeature.profile.toString(), profile.toString());
     }));
 
-    //? Test that checks if error is thrown when feature is not in enum
+    test('throws error when feature is not in enum', (() {
+      Map<String, dynamic> json1 = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "profile_id": 1,
+        "feature": 20,
+        "rank": 1,
+      };
+      Map<String, dynamic> json2 = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "profile_id": 1,
+        "feature": -1,
+        "rank": 1,
+      };
+      expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
+      expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
+    }));
   }));
 
   group('ProfileFeature.fromJsonList', () {
