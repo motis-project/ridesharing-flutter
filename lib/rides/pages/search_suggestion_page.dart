@@ -5,6 +5,7 @@ import 'package:timelines/timelines.dart';
 import '../../drives/models/drive.dart';
 import '../../util/custom_timeline_theme.dart';
 import '../../util/locale_manager.dart';
+import '../../util/parse_helper.dart';
 import '../../util/search/address_search_delegate.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
@@ -113,14 +114,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
-    List<Map<String, dynamic>> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
+      await SupabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
             *,
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', _startController.text);
+        ''').eq('start', _startController.text),
+    );
     List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     List<Ride> rides = drives
         .map((Drive drive) => Ride.previewFromDrive(

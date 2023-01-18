@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
+import '../../util/parse_helper.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import '../../util/supabase.dart';
@@ -47,10 +48,12 @@ class _ReviewsPageState extends State<ReviewsPage> {
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
-    List<Map<String, dynamic>> commonRidesData = await SupabaseManager.supabaseClient.from('rides').select('''
+    List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
+      await SupabaseManager.supabaseClient.from('rides').select('''
           *,
           drive: drives!inner(*)
-        ''').eq('rider_id', SupabaseManager.getCurrentProfile()!.id).eq('drive.driver_id', _profileId);
+        ''').eq('rider_id', SupabaseManager.getCurrentProfile()!.id).eq('drive.driver_id', _profileId),
+    );
 
     setState(() {
       _profile = Profile.fromJson(profileData);
