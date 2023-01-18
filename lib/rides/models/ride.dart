@@ -111,9 +111,10 @@ class Ride extends Trip {
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
-    //get all approved and upcoming rides of user
-    List<Ride> rides = await getRidesOfUser(userId);
-    rides = rides.where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
+    List<Map<String, dynamic>> jsonList =
+        await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId);
+    List<Ride> rides =
+        Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
 
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
@@ -122,10 +123,6 @@ class Ride extends Trip {
       }
     }
     return false;
-  }
-
-  static Future<List<Ride>> getRidesOfUser(int userId) async {
-    return Ride.fromJsonList(await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
   @override

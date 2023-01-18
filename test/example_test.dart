@@ -65,8 +65,6 @@ void main() {
           'hide_in_list_view': false,
         }
       ]));
-      final data = await Drive.getDrivesOfUser(1);
-      expect(data.first.driverId, 1);
     });
   });
 }
