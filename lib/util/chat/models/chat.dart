@@ -1,6 +1,7 @@
 import '../../../account/models/profile.dart';
 import '../../../drives/models/drive.dart';
 import '../../model.dart';
+import '../../parse_helper.dart';
 import '../../supabase.dart';
 import 'message.dart';
 
@@ -32,7 +33,8 @@ class Chat extends Model {
       driveId: json['drive_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-      messages: json.containsKey('messages') ? Message.fromJsonList(json['messages']) : null,
+      messages:
+          json.containsKey('messages') ? Message.fromJsonList(parseHelper.parseListOfMaps(json['messages'])) : null,
     );
   }
 
