@@ -203,7 +203,7 @@ extension RideStatusExtension on RideStatus {
     return this == RideStatus.approved;
   }
 
-  bool hasChat() {
+  bool allowsChat() {
     return isApproved() || isCancelled();
   }
 }
