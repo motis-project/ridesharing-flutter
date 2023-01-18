@@ -16,7 +16,7 @@ class DriveChatPage extends StatefulWidget {
 }
 
 class _DriveChatPageState extends State<DriveChatPage> {
-  Drive? _drive;
+  late Drive _drive;
   bool _fullyLoaded = false;
 
   @override
@@ -32,8 +32,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
   Widget build(BuildContext context) {
     final List<Widget> widgets = <Widget>[];
     if (_fullyLoaded) {
-      final Set<Profile> riders = _drive!.approvedRides!.map((Ride ride) => ride.rider!).toSet();
-      final List<Ride> pendingRides = _drive!.pendingRides!.toList();
+      final Set<Profile> riders = _drive.approvedRides!.map((Ride ride) => ride.rider!).toSet();
+      final List<Ride> pendingRides = _drive.pendingRides!.toList();
       if (riders.isEmpty && pendingRides.isEmpty) {
         return Scaffold(
           appBar: AppBar(

@@ -7,7 +7,7 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/report_factory.dart';
 
 void main() {
-  group('Report.isRecent', (() {
+  group('Report.isRecent', () {
     test('returns true if report is less than 3 days old', () async {
       final report = ReportFactory().generateFake(
         createdAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -28,8 +28,8 @@ void main() {
       );
       expect(report.isRecent, false);
     });
-  }));
-  group('Report.fromJson', (() {
+  });
+  group('Report.fromJson', () {
     test('parses a report from json', () async {
       final Map<String, dynamic> json = {
         'id': 1,
@@ -83,7 +83,7 @@ void main() {
       expect(() => Report.fromJson(json2), throwsA(isA<RangeError>()));
     });
 
-    test('can handle Profiles', (() {
+    test('can handle Profiles', () {
       final Profile reporter = ProfileFactory().generateFake();
       final Profile offender = ProfileFactory().generateFake();
 
@@ -100,10 +100,10 @@ void main() {
       final report = Report.fromJson(json);
       expect(report.reporter!.toString(), reporter.toString());
       expect(report.offender!.toString(), offender.toString());
-    }));
-  }));
+    });
+  });
 
-  group('Report.fromJsonList', (() {
+  group('Report.fromJsonList', () {
     test('parses a list of reports from json', () async {
       final List<Map<String, dynamic>> jsonList = [
         {
@@ -136,10 +136,10 @@ void main() {
       expect(reports[1].text, 'text');
       expect(reports[1].createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
     });
-  }));
+  });
 
   group('Report.toJson', () {
-    test('returns a json representation of the Report', (() async {
+    test('returns a json representation of the Report', () async {
       final Report report = ReportFactory().generateFake();
       final Map<String, dynamic> json = report.toJson();
       expect(json['reporter_id'], report.reporterId);
@@ -147,9 +147,9 @@ void main() {
       expect(json['category'], report.category.index);
       expect(json['text'], report.text);
       expect(json.keys.length, 4);
-    }));
+    });
 
-    test('returns a json representation of the Report without text', (() async {
+    test('returns a json representation of the Report without text', () async {
       final Report report = ReportFactory().generateFake(
         text: NullableParameter(null),
       );
@@ -159,6 +159,6 @@ void main() {
       expect(json['category'], report.category.index);
       expect(json['text'], null);
       expect(json.keys.length, 4);
-    }));
+    });
   });
 }

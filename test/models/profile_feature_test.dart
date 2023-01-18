@@ -6,8 +6,8 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/profile_feature_factory.dart';
 
 void main() {
-  group('ProfileFeature.fromJson', (() {
-    test('parses ProfileFeature from json', (() {
+  group('ProfileFeature.fromJson', () {
+    test('parses ProfileFeature from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -20,9 +20,9 @@ void main() {
       expect(profileFeature.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
       expect(profileFeature.profileId, 1);
       expect(profileFeature.feature, Feature.noSmoking);
-    }));
+    });
 
-    test('can handle Profile', (() {
+    test('can handle Profile', () {
       final Profile profile = ProfileFactory().generateFake();
       final Map<String, dynamic> json = {
         'id': 1,
@@ -34,9 +34,9 @@ void main() {
       };
       final ProfileFeature profileFeature = ProfileFeature.fromJson(json);
       expect(profileFeature.profile.toString(), profile.toString());
-    }));
+    });
 
-    test('throws error when feature is not in enum', (() {
+    test('throws error when feature is not in enum', () {
       final Map<String, dynamic> json1 = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -53,8 +53,8 @@ void main() {
       };
       expect(() => ProfileFeature.fromJson(json1), throwsA(isA<RangeError>()));
       expect(() => ProfileFeature.fromJson(json2), throwsA(isA<RangeError>()));
-    }));
-  }));
+    });
+  });
 
   group('ProfileFeature.fromJsonList', () {
     test('parses a list of ProfileFeatures from json', () {

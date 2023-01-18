@@ -42,7 +42,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         .from('reviews')
         .select('*')
         .eq('receiver_id', widget.profile.id)
-        .eq('writer_id', SupabaseManager.getCurrentProfile()!.id!)
+        .eq('writer_id', SupabaseManager.getCurrentProfile()!.id)
         .limit(1)
         .maybeSingle();
     setState(() {
@@ -213,6 +213,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       _state = ButtonState.success;
     });
 
-    if (mounted) Navigator.of(context).maybePop();
+    if (mounted) await Navigator.of(context).maybePop();
   }
 }

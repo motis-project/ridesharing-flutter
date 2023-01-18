@@ -4,13 +4,13 @@ class StorageManager {
   static Future<void> saveData(String key, dynamic value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value is int) {
-      prefs.setInt(key, value);
+      await prefs.setInt(key, value);
     } else if (value is String) {
-      prefs.setString(key, value);
+      await prefs.setString(key, value);
     } else if (value is bool) {
-      prefs.setBool(key, value);
+      await prefs.setBool(key, value);
     } else if (value is List<String>) {
-      prefs.setStringList(key, value);
+      await prefs.setStringList(key, value);
     } else {
       throw Exception('Unsupported type');
     }

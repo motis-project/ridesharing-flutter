@@ -72,7 +72,9 @@ class _LoginFormState extends State<LoginForm> {
           _state = ButtonState.success;
         });
       } on AuthException catch (e) {
-        fail();
+        await fail();
+
+        if (!mounted) return;
         // looks weird but needed later for i18n
         final String text = e.statusCode == '400'
             ? e.message.contains('credentials')
@@ -80,14 +82,18 @@ class _LoginFormState extends State<LoginForm> {
                 : S.of(context).pageLoginFailureEmailNotConfirmed
             : S.of(context).failureSnackBar;
 
-        SemanticsService.announce(text, TextDirection.ltr);
+        await SemanticsService.announce(text, TextDirection.ltr);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(text),
-        ),);
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
       }
     } else {
-      fail();
+      await fail();
     }
   }
 

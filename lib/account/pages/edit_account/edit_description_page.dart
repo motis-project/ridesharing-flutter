@@ -71,7 +71,7 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'description': text,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

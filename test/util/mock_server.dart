@@ -13,7 +13,7 @@ class MockServer {
         '',
         '',
         httpClient: MockClient(
-          ((request) {
+          (request) {
             // Uncomment this to see the requests
             // print("Request: ${request.url}");
             // print("Body: ${request.body}");
@@ -27,7 +27,7 @@ class MockServer {
                 request: request,
               ),
             );
-          }),
+          },
         ),
       ),
     );

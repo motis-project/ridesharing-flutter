@@ -89,18 +89,18 @@ class _AboutPageState extends State<AboutPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             TextButton(
-                              onPressed: () async => await launchUrlString(
+                              onPressed: () async => launchUrlString(
                                 githubLink,
                                 mode: LaunchMode.externalApplication,
                               ),
                               child: Text(S.of(context).pageAboutGithub),
                             ),
                             TextButton(
-                              onPressed: () async => await launchUrlString(websiteLink),
+                              onPressed: () async => launchUrlString(websiteLink),
                               child: Text(S.of(context).pageAboutWebsite),
                             ),
                             TextButton(
-                              onPressed: () async => await launchUrlString(termsOfServiceLink),
+                              onPressed: () async => launchUrlString(termsOfServiceLink),
                               child: Text(S.of(context).pageAboutTermsOfService),
                             ),
                           ],

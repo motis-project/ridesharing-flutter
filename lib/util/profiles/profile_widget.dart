@@ -45,7 +45,7 @@ class ProfileWidget extends StatelessWidget {
       profileRow = Stack(
         children: <Widget>[
           profileRow,
-          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget!))
+          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget))
         ],
       );
     }

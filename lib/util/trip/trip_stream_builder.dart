@@ -5,13 +5,12 @@ import 'trip_card.dart';
 
 class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
   TripStreamBuilder({
-    Key? key,
+    super.key,
     required Stream<List<T>> stream,
     required String emptyMessage,
     required List<T> Function(List<T> trips) filterTrips,
     required TripCard<T> Function(T trip) tripCard,
   }) : super(
-          key: key,
           stream: stream,
           builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
             if (snapshot.hasData) {

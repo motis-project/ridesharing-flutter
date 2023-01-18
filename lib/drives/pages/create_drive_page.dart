@@ -47,11 +47,9 @@ class CreateDriveForm extends StatefulWidget {
 class _CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
-  // ignore: unused_field
-  AddressSuggestion? _startSuggestion;
+  late AddressSuggestion _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
-  // ignore: unused_field
-  AddressSuggestion? _destinationSuggestion;
+  late AddressSuggestion _destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -129,10 +127,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
         final Drive drive = Drive(
           driverId: driver.id!,
-          start: _startSuggestion!.name,
-          startPosition: _startSuggestion!.position,
-          end: _destinationSuggestion!.name,
-          endPosition: _destinationSuggestion!.position,
+          start: _startSuggestion.name,
+          startPosition: _startSuggestion.position,
+          end: _destinationSuggestion.name,
+          endPosition: _destinationSuggestion.position,
           seats: _dropdownValue,
           startTime: _selectedDate,
           endTime: endTime,

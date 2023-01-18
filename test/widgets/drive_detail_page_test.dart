@@ -144,8 +144,8 @@ void main() {
       drive.rides!.addAll(List.generate(
         3,
         (index) => RideFactory().generateFake(
-          start: index % 2 == 0 ? waypoint : null,
-          end: index % 2 == 0 ? null : waypoint,
+          start: index.isEven ? waypoint : null,
+          end: index.isEven ? null : waypoint,
           status: RideStatus.approved,
         ),
       ));

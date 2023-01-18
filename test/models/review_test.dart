@@ -7,8 +7,8 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/review_factory.dart';
 
 void main() {
-  group('Review.fromJson', (() {
-    test('parses Review from json', (() {
+  group('Review.fromJson', () {
+    test('parses Review from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -23,9 +23,9 @@ void main() {
       expect(review.writerId, 1);
       expect(review.receiverId, 1);
       expect(review.rating, 5);
-    }));
+    });
 
-    test('can handle Profile', (() {
+    test('can handle Profile', () {
       final Profile writer = ProfileFactory().generateFake();
       final Profile receiver = ProfileFactory().generateFake();
       final Map<String, dynamic> json = {
@@ -41,9 +41,9 @@ void main() {
       final Review review = Review.fromJson(json);
       expect(review.writer.toString(), writer.toString());
       expect(review.receiver.toString(), receiver.toString());
-    }));
+    });
 
-    test('can handle non required values', (() {
+    test('can handle non required values', () {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -62,8 +62,8 @@ void main() {
       expect(review.safetyRating, 3);
       expect(review.reliabilityRating, 4);
       expect(review.hospitalityRating, 5);
-    }));
-  }));
+    });
+  });
 
   group('Review.fromJsonList', () {
     test('parses a list of Reviews from json', () {
@@ -90,8 +90,8 @@ void main() {
     });
   });
 
-  group('Review.toJson', (() {
-    test('returns a json representation of the review', (() {
+  group('Review.toJson', () {
+    test('returns a json representation of the review', () {
       final Review review = ReviewFactory().generateFake();
       final Map<String, dynamic> json = review.toJson();
       expect(json['writer_id'], review.writerId);
@@ -103,8 +103,8 @@ void main() {
       expect(json['hospitality_rating'], review.hospitalityRating);
       expect(json['text'], review.text);
       expect(json.keys.length, 8);
-    }));
-    test('can handle null vlaues', (() {
+    });
+    test('can handle null vlaues', () {
       final Review review = ReviewFactory().generateFake(
         comfortRating: NullableParameter(null),
         safetyRating: NullableParameter(null),
@@ -119,23 +119,23 @@ void main() {
       expect(json['reliability_rating'], null);
       expect(json['hospitality_rating'], null);
       expect(json.keys.length, 8);
-    }));
-  }));
+    });
+  });
 
-  group('Review.compareTo', (() {
-    test('returns 0 if the reviews are equal', (() {
+  group('Review.compareTo', () {
+    test('returns 0 if the reviews are equal', () {
       final Review review = ReviewFactory().generateFake();
       expect(review.compareTo(review), 0);
-    }));
-    test('ratings with text are rated higher', (() {
+    });
+    test('ratings with text are rated higher', () {
       final Review review = ReviewFactory().generateFake();
       final Review review2 = ReviewFactory().generateFake(
         text: NullableParameter(null),
       );
       expect(review.compareTo(review2), -1);
       expect(review2.compareTo(review), 1);
-    }));
-    test('ratings are rated by created at', (() {
+    });
+    test('ratings are rated by created at', () {
       final Review review = ReviewFactory().generateFake(
         createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
       );
@@ -144,9 +144,9 @@ void main() {
       );
       expect(review.compareTo(review2), 1);
       expect(review2.compareTo(review), -1);
-    }));
+    });
 
-    test('text is prioiritized over created at', (() {
+    test('text is prioiritized over created at', () {
       final Review review = ReviewFactory().generateFake(
         createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
         text: NullableParameter('text'),
@@ -157,21 +157,21 @@ void main() {
       );
       expect(review.compareTo(review2), -1);
       expect(review2.compareTo(review), 1);
-    }));
-  }));
+    });
+  });
 
-  group('Review.toString', (() {
-    test('returns a string representation of the review', (() {
+  group('Review.toString', () {
+    test('returns a string representation of the review', () {
       final Review review = ReviewFactory().generateFake(
         text: NullableParameter('text'),
       );
       expect(review.toString(),
           'Review{id: ${review.id}, rating: ${review.rating}, text: ${review.text}, writerId: ${review.writerId}, receiverId: ${review.receiverId}, createdAt: ${review.createdAt}}');
-    }));
-  }));
+    });
+  });
 
-  group('AggregateReview.isSet Methods', (() {
-    test('isSet returns true if the value is not 0', (() {
+  group('AggregateReview.isSet Methods', () {
+    test('isSet returns true if the value is not 0', () {
       final AggregateReview review = AggregateReview(
         rating: 1,
         comfortRating: 1,
@@ -185,8 +185,8 @@ void main() {
       expect(review.isSafetySet, true);
       expect(review.isReliabilitySet, true);
       expect(review.isHospitalitySet, true);
-    }));
-    test('isSet returns false if the value is 0', (() {
+    });
+    test('isSet returns false if the value is 0', () {
       final AggregateReview review = AggregateReview(
         rating: 0,
         comfortRating: 0,
@@ -200,11 +200,11 @@ void main() {
       expect(review.isSafetySet, false);
       expect(review.isReliabilitySet, false);
       expect(review.isHospitalitySet, false);
-    }));
-  }));
+    });
+  });
 
-  group('AggregateReview.fromReviews', (() {
-    test('returns an AggregateReview from a list of reviews', (() {
+  group('AggregateReview.fromReviews', () {
+    test('returns an AggregateReview from a list of reviews', () {
       final Review review1 = ReviewFactory().generateFake(
         rating: 1,
         comfortRating: NullableParameter(2),
@@ -248,8 +248,8 @@ void main() {
       expect(aggregateReview3.reliabilityRating, 10 / 3);
       expect(aggregateReview3.hospitalityRating, 3);
       expect(aggregateReview3.numberOfReviews, 3);
-    }));
-    test('returns an AggregateReview from an empty list', (() {
+    });
+    test('returns an AggregateReview from an empty list', () {
       final List<Review> reviews = [];
       final AggregateReview review = AggregateReview.fromReviews(reviews);
       expect(review.rating, 0);
@@ -258,8 +258,8 @@ void main() {
       expect(review.reliabilityRating, 0);
       expect(review.hospitalityRating, 0);
       expect(review.numberOfReviews, 0);
-    }));
-    test('returns zero if rating is not set', (() {
+    });
+    test('returns zero if rating is not set', () {
       final Review review = ReviewFactory().generateFake(
         rating: 0,
         comfortRating: NullableParameter(null),
@@ -277,8 +277,8 @@ void main() {
       expect(aggregateReview2.safetyRating, 0);
       expect(aggregateReview2.reliabilityRating, 0);
       expect(aggregateReview2.hospitalityRating, 0);
-    }));
-    test('discards null values', (() {
+    });
+    test('discards null values', () {
       final Review review1 = ReviewFactory().generateFake(
         rating: 1,
         comfortRating: NullableParameter(null),
@@ -294,6 +294,6 @@ void main() {
       expect(aggregateReviewWithNull.reliabilityRating, aggregateReview.reliabilityRating);
       expect(aggregateReviewWithNull.hospitalityRating, aggregateReview.hospitalityRating);
       expect(aggregateReviewWithNull.numberOfReviews, aggregateReview.numberOfReviews + 1);
-    }));
-  }));
+    });
+  });
 }

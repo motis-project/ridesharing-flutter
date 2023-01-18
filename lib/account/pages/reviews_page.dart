@@ -35,7 +35,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
     setState(() {
       _profileId = widget.profileId;
-      if (widget.profile != null) _profile = widget.profile!;
+      if (widget.profile != null) _profile = widget.profile;
     });
 
     load();

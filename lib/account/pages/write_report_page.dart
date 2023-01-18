@@ -129,6 +129,6 @@ class _WriteReportPageState extends State<WriteReportPage> {
       _state = ButtonState.success;
     });
 
-    if (mounted) Navigator.of(context).maybePop(true);
+    if (mounted) await Navigator.of(context).maybePop(true);
   }
 }

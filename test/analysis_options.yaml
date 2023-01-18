@@ -4,3 +4,4 @@ linter:
   rules:
     always_specify_types: false
     require_trailing_commas: false
+    unawaited_futures: false

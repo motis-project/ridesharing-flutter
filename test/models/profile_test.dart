@@ -102,7 +102,7 @@ void main() {
       expect(profile.reportsReceived!.length, 3);
     });
 
-    test('throws error if gender is not in enum', (() {
+    test('throws error if gender is not in enum', () {
       final Map<String, dynamic> json1 = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -129,7 +129,7 @@ void main() {
       };
       expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
       expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
-    }));
+    });
   });
 
   group('Profile.fromJsonList', () {

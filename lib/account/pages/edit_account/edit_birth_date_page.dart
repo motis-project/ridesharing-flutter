@@ -91,7 +91,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'birth_date': date,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

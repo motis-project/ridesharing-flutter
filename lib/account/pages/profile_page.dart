@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    if (widget.profile != null) _profile = widget.profile!;
+    if (widget.profile != null) _profile = widget.profile;
     loadProfile();
   }
 
@@ -284,7 +284,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.of(context)
                     .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
                     .then((bool? reportSent) {
-                  if (reportSent == true) {
+                  if (reportSent ?? false) {
                     loadProfile();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
@@ -330,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _updateProfilePictureDialog() async {
     setState(() => _isLoadingProfilePicture = true);
     if (_profile!.avatarUrl == null) {
-      _uploadProfilePicture();
+      await _uploadProfilePicture();
       setState(() => _isLoadingProfilePicture = false);
       return;
     }
@@ -357,10 +357,10 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     )) {
       case ProfilePictureUpdateMethod.fromGallery:
-        _uploadProfilePicture();
+        await _uploadProfilePicture();
         break;
       case ProfilePictureUpdateMethod.delete:
-        _deleteProfilePicture();
+        await _deleteProfilePicture();
         break;
       case null:
         break;
@@ -398,8 +398,8 @@ class _ProfilePageState extends State<ProfilePage> {
           .from('profiles')
           .update(<String, dynamic>{'avatar_url': imageUrlResponse}).eq('id', _profile!.id);
 
-      SupabaseManager.reloadCurrentProfile();
-      loadProfile();
+      await SupabaseManager.reloadCurrentProfile();
+      await loadProfile();
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -414,8 +414,8 @@ class _ProfilePageState extends State<ProfilePage> {
         .from('profiles')
         .update(<String, dynamic>{'avatar_url': null}).eq('id', _profile!.id);
 
-    SupabaseManager.reloadCurrentProfile();
-    loadProfile();
+    await SupabaseManager.reloadCurrentProfile();
+    await loadProfile();
   }
 
   void signOut() {

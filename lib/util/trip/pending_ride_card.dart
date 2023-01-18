@@ -63,12 +63,12 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
     return ButtonBar(
       children: <Widget>[
         IconButton(
-          onPressed: (() => showApproveDialog(context)),
+          onPressed: () => showApproveDialog(context),
           icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
           tooltip: S.of(context).approve,
         ),
         IconButton(
-          onPressed: (() => showRejectDialog(context)),
+          onPressed: () => showRejectDialog(context),
           icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
           tooltip: S.of(context).reject,
         ),

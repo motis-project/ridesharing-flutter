@@ -24,7 +24,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         title: Text(S.of(context).pageSearchRideTitle),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(),
+        padding: EdgeInsets.zero,
         child: SingleChildScrollView(
           child: SearchRideForm(
             anonymous: widget.anonymous,
@@ -128,7 +128,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushReplacement(
+      await Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
           builder: (BuildContext context) => SearchSuggestionPage(
             _startSuggestion!,
