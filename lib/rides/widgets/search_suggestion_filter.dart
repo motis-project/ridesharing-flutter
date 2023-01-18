@@ -461,10 +461,10 @@ extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
   }
 
   int Function(Ride, Ride) sortFunction(DateTime date) {
-    timeProximityFunc(Ride ride1, Ride ride2) =>
+    int timeProximityFunc(Ride ride1, Ride ride2) =>
         (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
-    travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
-    priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
+    int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
+    int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {
       case SearchSuggestionSorting.relevance:
         return (ride1, ride2) =>

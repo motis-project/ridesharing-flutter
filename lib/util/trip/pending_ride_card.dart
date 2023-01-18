@@ -54,7 +54,7 @@ class PendingRideCard extends TripCard<Ride> {
       ],
     );
 
-    buildSeatsIndicator() {
+    Widget buildSeatsIndicator() {
       Widget icon = Icon(
         Icons.chair,
         color: Theme.of(context).colorScheme.primary,
@@ -144,7 +144,7 @@ class PendingRideCard extends TripCard<Ride> {
     reloadPage();
   }
 
-  showApproveDialog(BuildContext context) {
+  void showApproveDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -184,7 +184,7 @@ class PendingRideCard extends TripCard<Ride> {
     );
   }
 
-  showRejectDialog(BuildContext context) {
+  void showRejectDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

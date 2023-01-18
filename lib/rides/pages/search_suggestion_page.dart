@@ -42,7 +42,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   List<Ride>? _rideSuggestions;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _selectedDate = widget.date;
     _dropdownValue = widget.seats;
