@@ -79,7 +79,7 @@ void main() {
     });
   });
 
-  group('ProfielFeature.toJson', () {
+  group('ProfileFeature.toJson', () {
     test('returns a json representation of the ProfileFeature', () async {
       ProfileFeature profileFeature = ProfileFeatureFactory().generateFake();
       Map<String, dynamic> json = profileFeature.toJson();
