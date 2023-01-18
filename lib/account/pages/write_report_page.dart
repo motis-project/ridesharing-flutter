@@ -60,7 +60,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                           title: Row(children: [
                             category.getIcon(context),
                             const SizedBox(width: 15),
-                            Text(category.getDescription(context)),
+                            Expanded(child: Text(category.getDescription(context))),
                           ]),
                           value: category,
                           groupValue: _category,
