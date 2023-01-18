@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
+import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip.dart';
@@ -47,7 +48,7 @@ class Drive extends Trip {
       hideInListView: json['hide_in_list_view'],
       driverId: json['driver_id'],
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
-      rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
+      rides: json.containsKey('rides') ? Ride.fromJsonList(parseHelper.parseListOfMaps(json['rides'])) : null,
     );
   }
 
