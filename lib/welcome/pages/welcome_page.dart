@@ -43,7 +43,6 @@ class _WelcomePageState extends State<WelcomePage> {
           height: height / 2 - indicatorSize - indicatorMargin * 2,
           child: PageView.builder(
             itemCount: images.length,
-            pageSnapping: true,
             padEnds: false,
             onPageChanged: (int page) {
               setState(() {

@@ -13,5 +13,8 @@ linter:
   rules:
     - always_declare_return_types
     - always_specify_types
+    - avoid_double_and_int_checks
     - avoid_dynamic_calls
+    - avoid_positional_boolean_parameters
+    - avoid_redundant_argument_values
     - prefer_relative_imports

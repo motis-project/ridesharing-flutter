@@ -233,7 +233,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget buildLocationPicker({bool isStart = true}) {
+  Widget buildLocationPicker({required bool isStart}) {
     TextEditingController controller = isStart ? _startController : _destinationController;
 
     return ElevatedButton(

@@ -137,7 +137,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                   const SizedBox(height: 10.0),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(width: 1.0, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                      border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     padding: const EdgeInsets.all(8.0),

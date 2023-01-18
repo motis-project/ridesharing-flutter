@@ -24,9 +24,9 @@ class CustomRatingBar extends StatelessWidget {
         Icons.star,
         color: Colors.amber,
       ),
+      // ignore: avoid_redundant_argument_values
       itemCount: Review.maxRating,
       itemSize: size.itemSize,
-      direction: Axis.horizontal,
       onRatingUpdate: onRatingUpdate,
       initialRating: rating?.toDouble() ?? 0,
     );

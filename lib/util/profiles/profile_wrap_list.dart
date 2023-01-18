@@ -21,7 +21,6 @@ class ProfileWrapList extends StatelessWidget {
       SizedBox(
         width: double.infinity,
         child: Wrap(
-          alignment: WrapAlignment.start,
           spacing: -5,
           runSpacing: -5,
           children: List<Padding>.generate(
