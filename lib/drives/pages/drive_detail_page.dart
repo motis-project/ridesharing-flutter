@@ -185,7 +185,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       Widget bottomButton;
       if (_drive!.isFinished || _drive!.cancelled) {
         bottomButton = Button.error(
-          S.of(context).pageDriveDetailHideDrive,
+          S.of(context).pageDriveDetailButtonHide,
           onPressed: _showHideDialog,
         );
       } else {
@@ -350,8 +350,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(S.of(context).pageDriveDetailHideDrive),
-        content: Text(S.of(context).pageDriveDetailHideDriveDialog),
+        title: Text(S.of(context).pageDriveDetailButtonHide),
+        content: Text(S.of(context).pageDriveDetailHideDialog),
         actions: <Widget>[
           TextButton(
             child: Text(S.of(context).no),

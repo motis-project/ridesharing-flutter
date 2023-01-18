@@ -190,18 +190,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
           onPressed: _showWithdrawDialog,
         );
       case RideStatus.cancelledByDriver:
-        return Button.error(
-          S.of(context).pageRideDetailHideRide,
-          onPressed: _showHideDialog,
-        );
       case RideStatus.rejected:
-        return Button.error(
-          S.of(context).pageRideDetailHideRide,
-          onPressed: _showHideDialog,
-        );
       case RideStatus.cancelledByRider:
         return Button.error(
-          S.of(context).pageRideDetailHideRide,
+          S.of(context).pageRideDetailButtonHide,
           onPressed: _showHideDialog,
         );
     }
@@ -281,8 +273,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(S.of(context).pageRideDetailHideRide),
-        content: Text(S.of(context).pageRideDetailHideRideDialog),
+        title: Text(S.of(context).pageRideDetailButtonHide),
+        content: Text(S.of(context).pageRideDetailHideDialog),
         actions: <Widget>[
           TextButton(
             child: Text(S.of(context).no),

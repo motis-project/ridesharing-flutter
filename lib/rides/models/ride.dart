@@ -163,8 +163,9 @@ class Ride extends Trip {
 
   Future<void> withdraw() async {
     status = RideStatus.withdrawnByRider;
-    await SupabaseManager.supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
-    await SupabaseManager.supabaseClient.from('rides').update({'hide_in_list_view': true}).eq('id', id);
+    await SupabaseManager.supabaseClient
+        .from('rides')
+        .update({'status': status.index, 'hide_in_list_view': true}).eq('id', id);
   }
 
   @override

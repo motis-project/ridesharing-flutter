@@ -29,7 +29,7 @@ class _RideCardState extends TripCardState<RideCard> {
   bool _fullyLoaded = false;
   Profile? _driver;
 
-  BorderRadius cardpreviewBorder = BorderRadius.circular(10);
+  BorderRadius cardPreviewBorder = BorderRadius.circular(10);
 
   static const String _driveQuery = '''
     *,
@@ -139,7 +139,7 @@ class _RideCardState extends TripCardState<RideCard> {
     }
   }
 
-  Color pickBannerColor(Color cardColor) {
+  Color pickBannerColor() {
     if (_ride!.startTime.isBefore(DateTime.now())) {
       if (_ride!.status == RideStatus.approved) {
         return Theme.of(context).own().success;
@@ -159,7 +159,7 @@ class _RideCardState extends TripCardState<RideCard> {
         case RideStatus.cancelledByRider:
           return Theme.of(context).disabledColor;
         default:
-          //in this case the ba will not be seen and the foregroundDecoration will cover it up
+          //in this case the banner will not be seen and the foregroundDecoration will cover it up
           return Theme.of(context).cardColor;
       }
     }
@@ -178,9 +178,8 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color cardColor = Theme.of(context).cardColor;
     return Card(
-      color: pickBannerColor(cardColor),
+      color: pickBannerColor(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -190,8 +189,8 @@ class _RideCardState extends TripCardState<RideCard> {
             foregroundDecoration: pickDecoration(),
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: _ride!.status == RideStatus.preview ? cardpreviewBorder : cardBorder,
+              color: Theme.of(context).cardColor,
+              borderRadius: _ride!.status == RideStatus.preview ? cardPreviewBorder : cardBorder,
             ),
             margin: _ride!.status == RideStatus.preview ? null : const EdgeInsets.only(left: 10),
             child: buildCardInfo(context),
