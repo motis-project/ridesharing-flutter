@@ -5,7 +5,7 @@ class EditableRow extends StatelessWidget {
   final String title;
   final Widget innerWidget;
   final bool isEditable;
-  final Function onPressed;
+  final Function() onPressed;
 
   const EditableRow({
     super.key,
@@ -33,7 +33,7 @@ class EditableRow extends StatelessWidget {
                   child: IconButton(
                     tooltip: S.of(context).edit,
                     icon: const Icon(Icons.edit),
-                    onPressed: () => onPressed(),
+                    onPressed: onPressed,
                   ),
                 ),
               ),

@@ -22,7 +22,7 @@ class MockServer {
     }
   }
 
-  static initialize() async {
+  static Future<void> initialize() async {
     mockServer = await HttpServer.bind('localhost', 0);
     SupabaseClient client = SupabaseClient(
       'http://${mockServer.address.host}:${mockServer.port}',

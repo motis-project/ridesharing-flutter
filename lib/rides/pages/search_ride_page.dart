@@ -64,7 +64,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
   final List<int> list = List.generate(10, (index) => index + 1);
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _selectedDate = DateTime.now();
     _dropdownValue = list.first;
