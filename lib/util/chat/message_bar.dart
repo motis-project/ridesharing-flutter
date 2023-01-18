@@ -3,10 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../supabase.dart';
 
-/// Set of widget that contains TextField and Button to submit message
 class MessageBar extends StatefulWidget {
-  const MessageBar(this.rideId, {super.key});
-  final int rideId;
+  const MessageBar(this.chatId, {super.key});
+  final int chatId;
 
   @override
   State<MessageBar> createState() => _MessageBarState();
@@ -74,7 +73,7 @@ class _MessageBarState extends State<MessageBar> {
       await SupabaseManager.supabaseClient.from('messages').insert({
         'sender_id': SupabaseManager.getCurrentProfile()!.id!,
         'content': text,
-        'ride_id': widget.rideId,
+        'ride_id': widget.chatId,
       });
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(

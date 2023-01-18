@@ -39,7 +39,7 @@ void main() {
       final message = Message.fromJson(json);
       expect(message.id, 1);
       expect(message.createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
-      expect(message.rideId, 1);
+      expect(message.chatId, 1);
       expect(message.content, "content");
       expect(message.senderId, 1);
       expect(message.read, true);
@@ -95,13 +95,13 @@ void main() {
       expect(messages.length, 2);
       expect(messages[0].id, 1);
       expect(messages[0].createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
-      expect(messages[0].rideId, 1);
+      expect(messages[0].chatId, 1);
       expect(messages[0].content, "content");
       expect(messages[0].senderId, 1);
       expect(messages[0].read, true);
       expect(messages[1].id, 2);
       expect(messages[1].createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
-      expect(messages[1].rideId, 1);
+      expect(messages[1].chatId, 1);
       expect(messages[1].content, "content");
       expect(messages[1].senderId, 1);
       expect(messages[1].read, true);
@@ -118,7 +118,7 @@ void main() {
     test('converts a message to json', () async {
       final message = MessageFactory().generateFake();
       final json = message.toJson();
-      expect(json["ride_id"], message.rideId);
+      expect(json["ride_id"], message.chatId);
       expect(json["content"], message.content);
       expect(json["sender_id"], message.senderId);
       expect(json["read"], message.read);
@@ -131,7 +131,7 @@ void main() {
       final message = MessageFactory().generateFake();
       final string = message.toString();
       expect(string,
-          "Message{id: ${message.id}, createdAt: ${message.createdAt}, rideId: ${message.rideId}, senderId: ${message.senderId}, content: ${message.content}, read: ${message.read}}");
+          "Message{id: ${message.id}, createdAt: ${message.createdAt}, rideId: ${message.chatId}, senderId: ${message.senderId}, content: ${message.content}, read: ${message.read}}");
     });
   }));
 }

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../account/widgets/avatar.dart';
-import '../../rides/models/ride.dart';
+import '../../util/chat/models/chat.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
 import '../../util/supabase.dart';
@@ -22,11 +22,11 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   void initState() {
-    final List<int> ids = widget.drive.ridesWithChat!.map((Ride ride) => ride.id!).toList();
+    final List<int> ids = widget.drive.chats!.map((Ride ride) => ride.id!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
               (SupabaseStreamEvent messages) => Message.fromJsonList(
-                messages.where((Map<String, dynamic> element) => ids.contains(element['ride_id'])).toList(),
+                messages.where((Map<String, dynamic> element) => ids.contains(element['chat_id'])).toList(),
               ),
             );
     super.initState();
@@ -40,24 +40,24 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Set<Ride> ridesWithChat = widget.drive.ridesWithChat!.toSet();
+    final List<Chat> chats = widget.drive.chats!.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: ridesWithChat.isNotEmpty
+      body: chats.isNotEmpty
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
               builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
                 if (snapshot.hasData) {
                   for (final Message message in snapshot.data!) {
-                    final Ride ride = ridesWithChat.firstWhere((Ride element) => element.id == message.rideId);
-                    if (ride.messages!.contains(message)) {
-                      ride.messages!.remove(message);
+                    final Chat chat = chats.firstWhere((Chat element) => element.id == message.chatId);
+                    if (chat.messages!.contains(message)) {
+                      chat.messages!.remove(message);
                     }
-                    ride.messages!.add(message);
+                    chat.messages!.add(message);
                   }
-                  final List<Widget> widgets = ridesWithChat.map((Ride ride) => _buildChatWidget(ride)).toList();
+                  final List<Widget> widgets = chats.map((Chat chat) => _buildChatWidget(chat)).toList();
                   return ListView.separated(
                     itemCount: widgets.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -99,23 +99,23 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  Widget _buildChatWidget(Ride ride) {
-    ride.messages!.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-    final Message? lastMessage = ride.messages!.isEmpty ? null : ride.messages!.first;
+  Widget _buildChatWidget(Chat chat) {
+    chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
+    final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
     return Card(
       child: InkWell(
         child: ListTile(
-          leading: Avatar(ride.rider!),
-          title: Text(ride.rider!.username),
+          leading: Avatar(chat.rider!),
+          title: Text(chat.rider!.username),
           subtitle: lastMessage == null ? null : Text(_truncate(lastMessage.content)),
-          trailing: ride.getUnreadMessagesCount() == 0
+          trailing: chat.getUnreadMessagesCount() == 0
               ? null
               : Container(
                   decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      ride.getUnreadMessagesCount().toString(),
+                      chat.getUnreadMessagesCount().toString(),
                     ),
                   ),
                 ),
@@ -124,8 +124,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 .push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => ChatPage(
-                      rideId: ride.id!,
-                      profile: ride.rider!,
+                      chatId: chat.id!,
+                      profile: chat.rider!,
                     ),
                   ),
                 )
@@ -137,7 +137,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
   }
 
   String _truncate(String text) {
-    final int length = 30;
+    const int length = 30;
     if (text.length > length) {
       return text.replaceRange(length, text.length, '...');
     } else {

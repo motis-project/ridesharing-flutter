@@ -80,6 +80,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
       final int id = _ride?.id ?? widget.id!;
       final Map<String, dynamic> data =
           await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
+      Map<String, dynamic> dataChat =
+          await SupabaseManager.supabaseClient.from('chats').select('*').eq('rider_id', data['rider_id']).single();
+      data.addAll({'chat': dataChat});
       ride = Ride.fromJson(data);
     }
 
@@ -162,20 +165,19 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatPage(
-                        rideId: _ride!.id,
+                      builder: (BuildContext context) => ChatPage(
+                        chatId: _ride!.chat?.id,
                         profile: _ride!.drive!.driver!,
-                        chatExists: _ride!.status.allowsChat(),
                       ),
                     ),
                   ),
                   icon: Badge(
                     badgeContent: Text(
-                      _ride!.getUnreadMessagesCount().toString(),
+                      _ride!.chat?.getUnreadMessagesCount().toString() ?? '',
                       style: const TextStyle(color: Colors.white),
                       textScaleFactor: 1.0,
                     ),
-                    showBadge: _ride!.getUnreadMessagesCount() != 0,
+                    showBadge: _ride!.chat != null && _ride!.chat!.getUnreadMessagesCount() != 0,
                     position: BadgePosition.topEnd(top: -12),
                     child: const Icon(Icons.chat),
                   ),
@@ -321,6 +323,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     ride.status = RideStatus.pending;
     final Map<String, dynamic> data =
         await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
+    //chat gets created by trigger
     setState(() {
       _ride = Ride.fromJson(data);
     });

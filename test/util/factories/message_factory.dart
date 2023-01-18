@@ -16,7 +16,7 @@ class MessageFactory extends ModelFactory<Message> {
     return Message(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
-      rideId: rideId ?? randomId,
+      chatId: rideId ?? randomId,
       content: content ?? faker.lorem.sentences(random.nextInt(2) + 1).join(" "),
       senderId: senderId ?? randomId,
       read: read ?? false,

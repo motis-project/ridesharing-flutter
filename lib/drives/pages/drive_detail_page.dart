@@ -51,10 +51,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       *,
       rides(
         *,
-        rider: rider_id(*),
-        messages(*)
+        rider: rider_id(*)
+      ),
+      chats(
+        *,
+        messages: messages!messages_chat_id_fkey(*),
+        rider: rider_id(*)
       )
-      
     ''').eq('id', widget.id).single();
 
     setState(() {
@@ -358,7 +361,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => ChatPage(
-                    rideId: action.rideId,
+                    chatId: action.rideId,
                     profile: action.profile,
                   ),
                 ),

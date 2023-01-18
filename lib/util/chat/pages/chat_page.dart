@@ -9,16 +9,14 @@ import '../message_bar.dart';
 import '../models/message.dart';
 
 class ChatPage extends StatefulWidget {
-  final int rideId;
   final Profile profile;
-  final bool chatExists;
+  final int chatId;
 
   const ChatPage({
-    rideId,
+    chatId,
     required this.profile,
-    this.chatExists = true,
     super.key,
-  }) : rideId = rideId ?? -1;
+  }) : chatId = chatId ?? -1;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -29,11 +27,11 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    if (widget.chatExists) {
+    if (widget.chatId != -1) {
       _messagesStream = SupabaseManager.supabaseClient
           .from('messages')
           .stream(primaryKey: ['id'])
-          .eq('ride_id', widget.rideId)
+          .eq('chat_id', widget.chatId)
           .order('created_at')
           .map((messages) => Message.fromJsonList(messages));
     } else {
@@ -50,7 +48,6 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.chatExists) {}
     return Scaffold(
       appBar: AppBar(
         title: ProfileWidget(
@@ -58,7 +55,7 @@ class _ChatPageState extends State<ChatPage> {
           isTappable: true,
         ),
       ),
-      body: widget.chatExists
+      body: widget.chatId != -1
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
               builder: (context, snapshot) {
@@ -91,7 +88,7 @@ class _ChatPageState extends State<ChatPage> {
                                 children: _buildChatBubbles(messages),
                               ),
                       ),
-                      MessageBar(widget.rideId),
+                      MessageBar(widget.chatId),
                     ],
                   );
                 } else {

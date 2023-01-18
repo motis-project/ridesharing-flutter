@@ -1,21 +1,28 @@
+import '../../../account/models/profile.dart';
 import '../../model.dart';
 import '../../supabase.dart';
+import 'chat.dart';
 
 class Message extends Model {
-  final int rideId;
+  final int chatId;
+  final Chat? chat;
+
   final String content;
 
   final int senderId;
+  final Profile? sender;
 
   bool read;
 
   Message({
     super.id,
     super.createdAt,
+    required this.chatId,
     required this.senderId,
     required this.content,
-    required this.rideId,
     this.read = false,
+    this.chat,
+    this.sender,
   });
 
   @override
@@ -23,10 +30,12 @@ class Message extends Model {
     return Message(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
+      chatId: json['chat_id'],
       senderId: json['sender_id'],
       content: json['content'],
-      rideId: json['ride_id'],
       read: json['read'],
+      chat: json.containsKey('chat') ? Chat.fromJson(json['chat']) : null,
+      sender: json.containsKey('sender') ? Profile.fromJson(json['sender']) : null,
     );
   }
 
@@ -37,9 +46,9 @@ class Message extends Model {
   @override
   Map<String, dynamic> toJson() {
     return {
+      'chat_id': chatId,
       'sender_id': senderId,
       'content': content,
-      'ride_id': rideId,
       'read': read,
     };
   }
@@ -54,6 +63,6 @@ class Message extends Model {
 
   @override
   String toString() {
-    return 'Message{id: $id, createdAt: $createdAt, rideId: $rideId, senderId: $senderId, content: $content, read: $read}';
+    return 'Message{id: $id, createdAt: $createdAt, chatId: $chatId, senderId: $senderId, content: $content, read: $read}';
   }
 }

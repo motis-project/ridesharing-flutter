@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
-import '../../util/chat/models/message.dart';
+import '../../util/chat/models/chat.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase.dart';
@@ -18,7 +18,7 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
-  List<Message>? messages;
+  Chat? chat;
 
   Ride({
     super.id,
@@ -37,7 +37,7 @@ class Ride extends Trip {
     this.drive,
     required this.riderId,
     this.rider,
-    this.messages,
+    this.chat,
   });
 
   factory Ride.previewFromDrive(
@@ -87,7 +87,7 @@ class Ride extends Trip {
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-      messages: json.containsKey('messages') ? Message.fromJsonList(json['messages']) : null,
+      chat: json.containsKey('chat') ? Chat.fromJson(json['chat']) : null,
     );
   }
 
@@ -178,12 +178,6 @@ class Ride extends Trip {
     await SupabaseManager.supabaseClient
         .from('rides')
         .update(<String, dynamic>{'status': status.index, 'hide_in_list_view': true}).eq('id', id);
-  }
-
-  int getUnreadMessagesCount() {
-    return messages!
-        .where((message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
-        .length;
   }
 
   @override
