@@ -15,6 +15,7 @@ import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
 import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});
@@ -183,13 +184,9 @@ class _RideCardState extends TripCardState<RideCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => RideDetailPage.fromRide(_ride!),
-          ),
-        ),
-        child: Container(
+      child: Stack(
+        children: [
+          Container(
             foregroundDecoration: pickDecoration(),
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
@@ -197,7 +194,25 @@ class _RideCardState extends TripCardState<RideCard> {
               borderRadius: _ride!.status == RideStatus.preview ? cardpreviewBorder : cardBorder,
             ),
             margin: _ride!.status == RideStatus.preview ? null : const EdgeInsets.only(left: 10),
-            child: buildCardInfo(context)),
+            child: buildCardInfo(context),
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: Semantics(
+                button: true,
+                tooltip: S.of(context).openDetails,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => RideDetailPage.fromRide(_ride!),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
