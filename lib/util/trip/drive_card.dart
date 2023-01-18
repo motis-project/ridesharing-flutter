@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
@@ -104,24 +105,37 @@ class _DriveCardState extends TripCardState<DriveCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: InkWell(
-        onTap: () => Navigator.of(context)
-            .push(
-              MaterialPageRoute(
-                builder: (context) => DriveDetailPage.fromDrive(_drive!),
-              ),
-            )
-            .then((value) => loadDrive()),
-        child: Container(
-          foregroundDecoration: pickDecoration(),
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: cardBorder,
+      child: Stack(
+        children: [
+          Container(
+            foregroundDecoration: pickDecoration(),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: cardBorder,
+            ),
+            margin: const EdgeInsets.only(left: 10),
+            child: buildCardInfo(context),
           ),
-          margin: const EdgeInsets.only(left: 10),
-          child: buildCardInfo(context),
-        ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: Semantics(
+                button: true,
+                tooltip: S.of(context).openDetails,
+                child: InkWell(
+                  onTap: () => Navigator.of(context)
+                      .push(
+                        MaterialPageRoute(
+                          builder: (context) => DriveDetailPage.fromDrive(_drive!),
+                        ),
+                      )
+                      .then((value) => loadDrive()),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
