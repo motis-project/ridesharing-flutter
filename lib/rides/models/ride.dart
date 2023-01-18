@@ -75,7 +75,7 @@ class Ride extends Trip {
       endPosition: Position(json['end_lat'], json['end_lng']),
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
-      price: parseHelper.parseDouble(['end_lng']),
+      price: parseHelper.parseDouble(json['end_lng']),
       status: RideStatus.values[json['status']],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
