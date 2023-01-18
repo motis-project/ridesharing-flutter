@@ -1,16 +1,16 @@
 ParseHelper parseHelper = ParseHelper();
 
 class ParseHelper {
-  parseDouble(dynamic value) {
+  double parseDouble(dynamic value) {
     if (value is double) return value;
     if (value is int) return value.toDouble();
-    return null;
+    throw Exception('Cannot parse $value to double');
   }
 
-  parseListOfMaps(dynamic value) {
+  List<Map<String, dynamic>> parseListOfMaps(dynamic value) {
     if (value is List) {
       return value.cast<Map<String, dynamic>>();
     }
-    return null;
+    throw Exception('Cannot parse $value to List<Map<String, dynamic>>');
   }
 }
