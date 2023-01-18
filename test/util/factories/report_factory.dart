@@ -20,9 +20,9 @@ class ReportFactory extends ModelFactory<Report> {
     assert(reporterId == null || reporter?.value == null || reporter!.value?.id == reporterId);
     assert(offenderId == null || offender?.value == null || offender!.value?.id == offenderId);
 
-    Profile? generatedReporter =
+    final Profile? generatedReporter =
         reporter == null ? ProfileFactory().generateFake(id: reporterId, createDependencies: false) : reporter.value;
-    Profile? generatedOffender =
+    final Profile? generatedOffender =
         offender == null ? ProfileFactory().generateFake(id: offenderId, createDependencies: false) : offender.value;
 
     return Report(

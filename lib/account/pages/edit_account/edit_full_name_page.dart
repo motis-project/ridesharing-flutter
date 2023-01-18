@@ -77,8 +77,8 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
   }
 
   Future<void> onPressed() async {
-    String? surname = _surnameController.text == '' ? null : _surnameController.text;
-    String? name = _nameController.text == '' ? null : _nameController.text;
+    final String? surname = _surnameController.text == '' ? null : _surnameController.text;
+    final String? name = _nameController.text == '' ? null : _nameController.text;
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'surname': surname,
       'name': name,

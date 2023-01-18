@@ -52,7 +52,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
         _state = ButtonState.loading;
       });
 
-      UserAttributes newAttributes = UserAttributes(password: passwordController.text);
+      final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
       await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
       // will be redirected to login screen if successful (onAuthStateChange)
     } else {

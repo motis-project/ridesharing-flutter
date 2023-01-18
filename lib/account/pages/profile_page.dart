@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> loadProfile() async {
-    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
       *,
       profile_features (*),
       reviews_received: reviews!reviews_receiver_id_fkey(
@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildUsername() {
-    Widget username = Text(
+    final Widget username = Text(
       _profile!.username,
       style: Theme.of(context).textTheme.headline5,
     );
@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildDescription() {
-    Widget description = _profile!.description?.isNotEmpty ?? false
+    final Widget description = _profile!.description?.isNotEmpty ?? false
         ? Text(
             _profile!.description!,
             style: Theme.of(context).textTheme.bodyText1,
@@ -129,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildFullName() {
-    Widget fullName = _profile!.fullName.isNotEmpty
+    final Widget fullName = _profile!.fullName.isNotEmpty
         ? Text(
             _profile!.fullName,
             style: Theme.of(context).textTheme.titleMedium,
@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildBirthDate() {
-    Widget birthDate = _profile!.birthDate != null
+    final Widget birthDate = _profile!.birthDate != null
         ? Text(
             localeManager.formatDate(_profile!.birthDate!),
             style: Theme.of(context).textTheme.titleMedium,
@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildGender() {
-    Widget gender = _profile!.gender != null
+    final Widget gender = _profile!.gender != null
         ? Text(
             _profile!.gender!.getName(context),
             style: Theme.of(context).textTheme.titleMedium,
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildFeatures() {
-    Widget features = _profile!.profileFeatures!.isNotEmpty
+    final Widget features = _profile!.profileFeatures!.isNotEmpty
         ? FeaturesColumn(_profile!.profileFeatures!)
         : buildNoInfoText(S.of(context).pageProfileFeaturesEmpty);
     return EditableRow(
@@ -224,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = <Widget>[
+    final List<Widget> widgets = <Widget>[
       buildAvatar(),
       const SizedBox(height: 8),
       buildUsername(),
@@ -265,16 +265,14 @@ class _ProfilePageState extends State<ProfilePage> {
       }
       widgets.add(buildReviews());
       if (!_profile!.isCurrentUser) {
-        bool hasRecentReport = _profile!.reportsReceived!
+        final bool hasRecentReport = _profile!.reportsReceived!
             .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
 
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
-          hasRecentReport
-              ? Button.disabled(
+          if (hasRecentReport) Button.disabled(
                   S.of(context).pageProfileButtonReported,
-                )
-              : Button.error(
+                ) else Button.error(
                   S.of(context).pageProfileButtonReport,
                   onPressed: () {
                     Navigator.of(context)

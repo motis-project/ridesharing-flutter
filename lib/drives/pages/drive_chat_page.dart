@@ -30,10 +30,10 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = <Widget>[];
+    final List<Widget> widgets = <Widget>[];
     if (_fullyLoaded) {
-      Set<Profile> riders = _drive!.approvedRides!.map((Ride ride) => ride.rider!).toSet();
-      List<Ride> pendingRides = _drive!.pendingRides!.toList();
+      final Set<Profile> riders = _drive!.approvedRides!.map((Ride ride) => ride.rider!).toSet();
+      final List<Ride> pendingRides = _drive!.pendingRides!.toList();
       if (riders.isEmpty && pendingRides.isEmpty) {
         return Scaffold(
           appBar: AppBar(
@@ -45,7 +45,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         );
       } else {
         if (riders.isNotEmpty) {
-          List<Widget> riderColumn = <Widget>[
+          final List<Widget> riderColumn = <Widget>[
             const SizedBox(height: 5.0),
             Text(
               S.of(context).pageDriveChatRiderHeadline,
@@ -107,7 +107,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,

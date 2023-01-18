@@ -11,7 +11,7 @@ class TripOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget startDest = Row(
+    final Widget startDest = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Expanded(
@@ -46,9 +46,9 @@ class TripOverview extends StatelessWidget {
       ],
     );
 
-    List<Widget> infoRowWidgets = <Widget>[];
+    final List<Widget> infoRowWidgets = <Widget>[];
 
-    Widget dateWidget = Text(
+    final Widget dateWidget = Text(
       localeManager.formatDate(trip.startTime),
       style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
     );
@@ -56,13 +56,13 @@ class TripOverview extends StatelessWidget {
 
     infoRowWidgets.add(SeatIndicator(trip));
 
-    Widget infoRow = Row(
+    final Widget infoRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: infoRowWidgets,
     );
 
-    Widget overview = Column(
+    final Widget overview = Column(
       children: <Widget>[startDest, const SizedBox(height: 10.0), infoRow],
     );
 

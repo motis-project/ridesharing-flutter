@@ -29,7 +29,7 @@ class DriveFactory extends TripFactory<Drive> {
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
-    Profile? generatedDriver =
+    final Profile? generatedDriver =
         getNullableParameterOr(driver, ProfileFactory().generateFake(id: driverId, createDependencies: false));
 
     return Drive(

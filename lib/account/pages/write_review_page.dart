@@ -38,7 +38,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   Future<void> loadReview() async {
-    Map<String, dynamic>? data = await SupabaseManager.supabaseClient
+    final Map<String, dynamic>? data = await SupabaseManager.supabaseClient
         .from('reviews')
         .select('*')
         .eq('receiver_id', widget.profile.id)
@@ -187,7 +187,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       setState(() {
         _state = ButtonState.fail;
       });
-      Duration duration = const Duration(seconds: 1);
+      const Duration duration = Duration(seconds: 1);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(S.of(context).pageWriteReviewRatingRequired),
         duration: duration,

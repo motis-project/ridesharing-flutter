@@ -31,12 +31,12 @@ void main() {
   }));
   group('Report.fromJson', (() {
     test('parses a report from json', () async {
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-05-01T00:00:00.000Z",
-        "reporter_id": 2,
-        "offender_id": 3,
-        "category": ReportCategory.didNotPay.index,
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-05-01T00:00:00.000Z',
+        'reporter_id': 2,
+        'offender_id': 3,
+        'category': ReportCategory.didNotPay.index,
       };
       final report = Report.fromJson(json);
       expect(report.id, 1);
@@ -47,13 +47,13 @@ void main() {
     });
 
     test('parses a report from json with optional field text', () async {
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-05-01T00:00:00.000Z",
-        "reporter_id": 2,
-        "offender_id": 3,
-        "category": ReportCategory.didNotFollowRules.index,
-        "text": "text",
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-05-01T00:00:00.000Z',
+        'reporter_id': 2,
+        'offender_id': 3,
+        'category': ReportCategory.didNotFollowRules.index,
+        'text': 'text',
       };
       final report = Report.fromJson(json);
       expect(report.id, 1);
@@ -65,37 +65,37 @@ void main() {
     });
 
     test('throws error if category is not in enum', () async {
-      Map<String, dynamic> json1 = {
-        "id": 1,
-        "created_at": "2021-05-01T00:00:00.000Z",
-        "reporter_id": 2,
-        "offender_id": 3,
-        "category": 100,
+      final Map<String, dynamic> json1 = {
+        'id': 1,
+        'created_at': '2021-05-01T00:00:00.000Z',
+        'reporter_id': 2,
+        'offender_id': 3,
+        'category': 100,
       };
-      Map<String, dynamic> json2 = {
-        "id": 1,
-        "created_at": "2021-05-01T00:00:00.000Z",
-        "reporter_id": 2,
-        "offender_id": 3,
-        "category": -1,
+      final Map<String, dynamic> json2 = {
+        'id': 1,
+        'created_at': '2021-05-01T00:00:00.000Z',
+        'reporter_id': 2,
+        'offender_id': 3,
+        'category': -1,
       };
       expect(() => Report.fromJson(json1), throwsA(isA<RangeError>()));
       expect(() => Report.fromJson(json2), throwsA(isA<RangeError>()));
     });
 
     test('can handle Profiles', (() {
-      Profile reporter = ProfileFactory().generateFake();
-      Profile offender = ProfileFactory().generateFake();
+      final Profile reporter = ProfileFactory().generateFake();
+      final Profile offender = ProfileFactory().generateFake();
 
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-05-01T00:00:00.000Z",
-        "reporter_id": 2,
-        "offender_id": 3,
-        "category": ReportCategory.didNotFollowRules.index,
-        "text": "text",
-        "reporter": reporter.toJsonForApi(),
-        "offender": offender.toJsonForApi(),
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-05-01T00:00:00.000Z',
+        'reporter_id': 2,
+        'offender_id': 3,
+        'category': ReportCategory.didNotFollowRules.index,
+        'text': 'text',
+        'reporter': reporter.toJsonForApi(),
+        'offender': offender.toJsonForApi(),
       };
       final report = Report.fromJson(json);
       expect(report.reporter!.toString(), reporter.toString());
@@ -105,21 +105,21 @@ void main() {
 
   group('Report.fromJsonList', (() {
     test('parses a list of reports from json', () async {
-      List<Map<String, dynamic>> jsonList = [
+      final List<Map<String, dynamic>> jsonList = [
         {
-          "id": 1,
-          "created_at": "2021-05-01T00:00:00.000Z",
-          "reporter_id": 2,
-          "offender_id": 3,
-          "category": ReportCategory.didNotPay.index,
+          'id': 1,
+          'created_at': '2021-05-01T00:00:00.000Z',
+          'reporter_id': 2,
+          'offender_id': 3,
+          'category': ReportCategory.didNotPay.index,
         },
         {
-          "id": 2,
-          "created_at": "2021-05-01T00:00:00.000Z",
-          "reporter_id": 2,
-          "offender_id": 3,
-          "category": ReportCategory.didNotFollowRules.index,
-          "text": "text",
+          'id': 2,
+          'created_at': '2021-05-01T00:00:00.000Z',
+          'reporter_id': 2,
+          'offender_id': 3,
+          'category': ReportCategory.didNotFollowRules.index,
+          'text': 'text',
         },
       ];
       final reports = Report.fromJsonList(jsonList);
@@ -140,8 +140,8 @@ void main() {
 
   group('Report.toJson', () {
     test('returns a json representation of the Report', (() async {
-      Report report = ReportFactory().generateFake();
-      Map<String, dynamic> json = report.toJson();
+      final Report report = ReportFactory().generateFake();
+      final Map<String, dynamic> json = report.toJson();
       expect(json['reporter_id'], report.reporterId);
       expect(json['offender_id'], report.offenderId);
       expect(json['category'], report.category.index);
@@ -150,10 +150,10 @@ void main() {
     }));
 
     test('returns a json representation of the Report without text', (() async {
-      Report report = ReportFactory().generateFake(
+      final Report report = ReportFactory().generateFake(
         text: NullableParameter(null),
       );
-      Map<String, dynamic> json = report.toJson();
+      final Map<String, dynamic> json = report.toJson();
       expect(json['reporter_id'], report.reporterId);
       expect(json['offender_id'], report.offenderId);
       expect(json['category'], report.category.index);

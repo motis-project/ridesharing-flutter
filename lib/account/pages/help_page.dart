@@ -121,7 +121,7 @@ class FAQCard extends StatefulWidget {
 class _FAQCardState extends State<FAQCard> {
   @override
   Widget build(BuildContext context) {
-    Widget question = Text(
+    final Widget question = Text(
       widget.question,
       textAlign: TextAlign.center,
       style: const TextStyle(fontWeight: FontWeight.bold),

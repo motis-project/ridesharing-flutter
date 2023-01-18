@@ -17,7 +17,7 @@ class TripPageBuilder {
     TripCard<T> Function(T) tripCard,
     FloatingActionButton floatingActionButton,
   ) {
-    String name = title.toLowerCase();
+    final String name = title.toLowerCase();
 
     return DefaultTabController(
       length: 2,

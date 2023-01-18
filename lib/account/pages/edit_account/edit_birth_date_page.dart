@@ -74,7 +74,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
 
   Future<void> _showDatePicker() async {
     final DateTime twelveYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 12));
-    DateTime? date = await showDatePicker(
+    final DateTime? date = await showDatePicker(
       context: context,
       initialDate: twelveYearsAgo,
       firstDate: DateTime(1900),

@@ -46,7 +46,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,
@@ -62,7 +62,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = <Widget>[];
+    final List<Widget> widgets = <Widget>[];
 
     if (_drive != null) {
       widgets.add(TripOverview(_drive!));
@@ -70,9 +70,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     }
 
     if (_fullyLoaded) {
-      Drive drive = _drive!;
+      final Drive drive = _drive!;
 
-      List<Waypoint> stops = <Waypoint>[];
+      final List<Waypoint> stops = <Waypoint>[];
       stops.add(Waypoint(
         actions: <WaypointAction>[],
         place: drive.start,
@@ -83,14 +83,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         place: drive.end,
         time: drive.endTime,
       ));
-      List<Ride> approvedRides = drive.approvedRides!;
-      for (Ride ride in approvedRides) {
+      final List<Ride> approvedRides = drive.approvedRides!;
+      for (final Ride ride in approvedRides) {
         bool startSaved = false;
         bool endSaved = false;
 
-        WaypointAction rideStartAction = WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats);
-        WaypointAction rideEndAction = WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats);
-        for (Waypoint stop in stops) {
+        final WaypointAction rideStartAction = WaypointAction(profile: ride.rider!, isStart: true, seats: ride.seats);
+        final WaypointAction rideEndAction = WaypointAction(profile: ride.rider!, isStart: false, seats: ride.seats);
+        for (final Waypoint stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
             stop.actions.add(rideStartAction);
@@ -118,11 +118,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       }
 
       stops.sort((Waypoint a, Waypoint b) => a.time.compareTo(b.time));
-      for (Waypoint stop in stops) {
+      for (final Waypoint stop in stops) {
         stop.actions.sort((WaypointAction a, WaypointAction b) => a.isStart ? 1 : -1);
       }
 
-      Widget timeline = FixedTimeline.tileBuilder(
+      final Widget timeline = FixedTimeline.tileBuilder(
         theme: CustomTimelineThemeForBuilder.of(context),
         builder: TimelineTileBuilder.connected(
           connectionDirection: ConnectionDirection.before,
@@ -160,13 +160,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       if (approvedRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
-        Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
+        final Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
-      List<Ride> pendingRides = _drive!.pendingRides!.toList();
+      final List<Ride> pendingRides = _drive!.pendingRides!.toList();
       if (pendingRides.isNotEmpty) {
-        List<Widget> pendingRidesColumn = <Widget>[
+        final List<Widget> pendingRidesColumn = <Widget>[
           const SizedBox(height: 5.0),
           Align(
             alignment: Alignment.centerLeft,
@@ -203,7 +203,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    Widget content = Column(
+    final Widget content = Column(
       children: <Widget>[
         if (_drive?.cancelled ?? false)
           CustomBanner.error(
@@ -238,8 +238,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Widget buildChatButton() {
-    String tooltip = S.of(context).openChat;
-    Icon icon = const Icon(Icons.chat);
+    final String tooltip = S.of(context).openChat;
+    const Icon icon = Icon(Icons.chat);
 
     if (!_fullyLoaded) {
       return IconButton(
@@ -274,7 +274,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   List<Widget> buildCard(Waypoint stop) {
-    List<Widget> list = <Widget>[];
+    final List<Widget> list = <Widget>[];
     list.add(
       MergeSemantics(
         child: Padding(
@@ -298,13 +298,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     final Icon startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
     final Icon endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
-    int actionsLength = stop.actions.length;
+    final int actionsLength = stop.actions.length;
     for (int index = 0; index < actionsLength; index++) {
       final WaypointAction action = stop.actions[index];
       final Icon icon = action.isStart ? startIcon : endIcon;
       final Profile profile = action.profile;
 
-      Widget container = Semantics(
+      final Widget container = Semantics(
         button: true,
         label: action.isStart
             ? S.of(context).pageDriveDetailLabelPickup(action.seats, action.profile.username)
@@ -360,7 +360,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return list;
   }
 
-  void hideDrive() async {
+  Future<void> hideDrive() async {
     await SupabaseManager.supabaseClient
         .from('drives')
         .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.drive!.id);
@@ -392,7 +392,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  void _cancelDrive() async {
+  Future<void> _cancelDrive() async {
     await _drive?.cancel();
     setState(() {});
   }

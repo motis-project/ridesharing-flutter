@@ -36,8 +36,8 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    Widget carousel = Column(
+    final double height = MediaQuery.of(context).size.height;
+    final Widget carousel = Column(
       children: <Widget>[
         SizedBox(
           height: height / 2 - indicatorSize - indicatorMargin * 2,
@@ -63,7 +63,7 @@ class _WelcomePageState extends State<WelcomePage> {
         )
       ],
     );
-    Widget buttons = Center(
+    final Widget buttons = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

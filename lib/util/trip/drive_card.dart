@@ -39,7 +39,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   Future<void> loadDrive() async {
-    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,

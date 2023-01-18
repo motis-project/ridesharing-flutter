@@ -79,7 +79,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -100,11 +100,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     if (_formKey.currentState!.validate()) {
       try {
         //todo: add right end_time from algorithm
-        DateTime endTime = DateTime(
+        final DateTime endTime = DateTime(
             _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
         final Profile driver = SupabaseManager.getCurrentProfile()!;
 
-        bool hasDrive =
+        final bool hasDrive =
             await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasDrive && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -113,7 +113,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
 
-        bool hasRide = await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
+        final bool hasRide = await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasRide && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveRide)),
@@ -121,7 +121,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
 
-        Drive drive = Drive(
+        final Drive drive = Drive(
           driverId: driver.id!,
           start: _startSuggestion!.name,
           startPosition: _startSuggestion!.position,
@@ -139,7 +139,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             .single()
             .then(
           (Map<String, dynamic> data) {
-            Drive drive = Drive.fromJson(data);
+            final Drive drive = Drive.fromJson(data);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute<void>(

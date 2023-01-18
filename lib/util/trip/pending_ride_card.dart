@@ -77,7 +77,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   Widget buildSeatsIndicator() {
-    Widget icon = Icon(
+    final Widget icon = Icon(
       Icons.chair,
       color: Theme.of(context).colorScheme.primary,
     );

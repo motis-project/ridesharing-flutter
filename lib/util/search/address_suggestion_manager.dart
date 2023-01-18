@@ -39,23 +39,23 @@ class AddressSuggestionManager {
       getAddressSuggestions(query),
     ]);
 
-    List<AddressSuggestion> suggestionsList =
+    final List<AddressSuggestion> suggestionsList =
         suggestionsByCategory.expand((List<AddressSuggestion> element) => element).toList();
 
     return AddressSuggestion.deduplicate(suggestionsList);
   }
 
   Future<void> loadHistorySuggestions() async {
-    List<String> data = await StorageManager.readStringList(getStorageKey());
+    final List<String> data = await StorageManager.readStringList(getStorageKey());
 
-    Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
+    final Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
     _historySuggestions = suggestions
         .map((Map<String, dynamic> suggestion) => AddressSuggestion.fromJson(suggestion, fromHistory: true))
         .toList();
   }
 
   Future<void> storeSuggestion(AddressSuggestion suggestion) async {
-    AddressSuggestion? previousSuggestion =
+    final AddressSuggestion? previousSuggestion =
         _historySuggestions.firstWhereOrNull((AddressSuggestion element) => element == suggestion);
 
     if (previousSuggestion != null) {
@@ -80,7 +80,7 @@ class AddressSuggestionManager {
   }
 
   void saveHistorySuggestionsToStorage() {
-    List<String> data =
+    final List<String> data =
         _historySuggestions.map((AddressSuggestion suggestion) => jsonEncode(suggestion.toJson())).toList();
 
     StorageManager.saveData(getStorageKey(), data);
@@ -110,7 +110,7 @@ class AddressSuggestionManager {
   ) async {
     if (query.length < searchLengthRequirement) return <Map<String, dynamic>>[];
 
-    HttpClientRequest request = await _httpClient.postUrl(
+    final HttpClientRequest request = await _httpClient.postUrl(
       Uri(
         scheme: 'https',
         host: _motisHost,
@@ -124,11 +124,12 @@ class AddressSuggestionManager {
       'content': <String, dynamic>{'input': query}
     })));
 
-    String response = await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());
+    final String response =
+        await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());
 
-    Map<String, dynamic> responseMap = json.decode(response);
+    final Map<String, dynamic> responseMap = json.decode(response);
 
-    List<Map<String, dynamic>> guesses =
+    final List<Map<String, dynamic>> guesses =
         pick(responseMap, 'content', 'guesses').asListOrEmpty((RequiredPick p0) => p0.value as Map<String, dynamic>);
 
     return guesses;
@@ -139,7 +140,7 @@ class AddressSuggestionManager {
 
     if (query == '') return _historySuggestions.take(15).toList();
 
-    List<ExtractedResult<AddressSuggestion>> fuzzyResults = extractTop<AddressSuggestion>(
+    final List<ExtractedResult<AddressSuggestion>> fuzzyResults = extractTop<AddressSuggestion>(
       query: query,
       choices: _historySuggestions,
       getter: (AddressSuggestion suggestion) => suggestion.toString(),
@@ -148,8 +149,8 @@ class AddressSuggestionManager {
     ).toList();
 
     fuzzyResults.sort((ExtractedResult<AddressSuggestion> a, ExtractedResult<AddressSuggestion> b) {
-      int scoreDifference = b.score - a.score;
-      int timeDifference = a.choice.lastUsed.millisecondsSinceEpoch - b.choice.lastUsed.millisecondsSinceEpoch;
+      final int scoreDifference = b.score - a.score;
+      final int timeDifference = a.choice.lastUsed.millisecondsSinceEpoch - b.choice.lastUsed.millisecondsSinceEpoch;
 
       return scoreDifference + timeDifference ~/ 100000000;
     });
@@ -158,32 +159,32 @@ class AddressSuggestionManager {
   }
 
   Future<List<AddressSuggestion>> getStationSuggestions(String query) async {
-    List<Map<String, dynamic>> suggestions = await _doRequest(
+    final List<Map<String, dynamic>> suggestions = await _doRequest(
       'StationSuggestions',
       '/guesser',
       'StationGuesserRequest',
       query,
     );
 
-    Iterable<AddressSuggestion> stationSuggestions =
+    final Iterable<AddressSuggestion> stationSuggestions =
         suggestions.map((Map<String, dynamic> suggestion) => AddressSuggestion.fromMotisStationResponse(suggestion));
 
     return stationSuggestions.take(_suggestionsCount['station']!).toList();
   }
 
   Future<List<AddressSuggestion>> getAddressSuggestions(String query) async {
-    List<Map<String, dynamic>> suggestions = await _doRequest(
+    final List<Map<String, dynamic>> suggestions = await _doRequest(
       'AddressSuggestions',
       '/address',
       'AddressRequest',
       query,
     );
 
-    List<AddressSuggestion> addressSuggestions = suggestions
+    final List<AddressSuggestion> addressSuggestions = suggestions
         .map((Map<String, dynamic> suggestion) => AddressSuggestion.fromMotisAddressResponse(suggestion))
         .toList();
 
-    List<AddressSuggestion> deduplicatedSuggestions = AddressSuggestion.deduplicate(addressSuggestions);
+    final List<AddressSuggestion> deduplicatedSuggestions = AddressSuggestion.deduplicate(addressSuggestions);
 
     return deduplicatedSuggestions.take(_suggestionsCount['address']!).toList();
   }

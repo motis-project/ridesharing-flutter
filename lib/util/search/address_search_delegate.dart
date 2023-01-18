@@ -57,14 +57,14 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
           future: addressSuggestionManager.getSuggestions(query),
           builder: (BuildContext context, AsyncSnapshot<List<AddressSuggestion>> snapshot) {
             if (snapshot.hasData) {
-              List<AddressSuggestion> suggestions = snapshot.data!;
+              final List<AddressSuggestion> suggestions = snapshot.data!;
               if (suggestions.isNotEmpty) {
                 return ListView.separated(
                   shrinkWrap: true,
                   itemCount: suggestions.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    AddressSuggestion suggestion = suggestions[index];
+                    final AddressSuggestion suggestion = suggestions[index];
                     return ListTile(
                       leading: suggestion.getIcon(),
                       title: Text(suggestion.toString()),

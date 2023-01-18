@@ -32,9 +32,9 @@ class RideFactory extends TripFactory<Ride> {
     assert(driveId == null || drive?.value == null || drive!.value?.id == driveId);
     assert(riderId == null || rider?.value == null || rider!.value?.id == riderId);
 
-    Drive? generatedDrive =
+    final Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
-    Profile? generatedRider =
+    final Profile? generatedRider =
         getNullableParameterOr(rider, ProfileFactory().generateFake(id: riderId, createDependencies: false));
 
     return Ride(

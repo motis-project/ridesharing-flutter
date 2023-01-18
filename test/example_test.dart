@@ -14,7 +14,7 @@ import 'util/mock_server.mocks.dart';
 // Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  MockUrlProcessor driveProcessor = MockUrlProcessor();
+  final MockUrlProcessor driveProcessor = MockUrlProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
     MockServer.setProcessor(driveProcessor);
@@ -42,7 +42,7 @@ void main() {
       ]));
       final List<dynamic> data =
           await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
-      Drive drive = Drive.fromJson(data[0]);
+      final Drive drive = Drive.fromJson(data[0]);
       expect(drive.driverId, 1);
     });
 

@@ -31,7 +31,7 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle packageInfoStyle = Theme.of(context)
+    final TextStyle packageInfoStyle = Theme.of(context)
         .textTheme
         .subtitle2!
         .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));

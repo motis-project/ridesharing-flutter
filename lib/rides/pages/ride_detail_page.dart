@@ -70,13 +70,13 @@ class _RideDetailPageState extends State<RideDetailPage> {
     if (_ride?.status == RideStatus.preview) {
       ride = _ride!;
 
-      Map<String, dynamic> data =
+      final Map<String, dynamic> data =
           await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
       ride.drive = Drive.fromJson(data);
     } else {
-      int id = _ride?.id ?? widget.id!;
-      Map<String, dynamic> data =
+      final int id = _ride?.id ?? widget.id!;
+      final Map<String, dynamic> data =
           await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
       ride = Ride.fromJson(data);
     }
@@ -89,7 +89,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = <Widget>[];
+    final List<Widget> widgets = <Widget>[];
 
     if (_ride != null) {
       widgets.add(TripOverview(_ride!));
@@ -97,9 +97,9 @@ class _RideDetailPageState extends State<RideDetailPage> {
     }
 
     if (_fullyLoaded) {
-      Ride ride = _ride!;
+      final Ride ride = _ride!;
 
-      Profile driver = ride.drive!.driver!;
+      final Profile driver = ride.drive!.driver!;
       widgets.add(ProfileWidget(driver, showDescription: true));
       widgets.add(const Divider(thickness: 1));
 
@@ -111,14 +111,14 @@ class _RideDetailPageState extends State<RideDetailPage> {
       if (ride.status == RideStatus.approved || ride.status == RideStatus.cancelledByDriver) {
         widgets.add(const Divider(thickness: 1));
 
-        Set<Profile> riders = ride.drive!.rides!
+        final Set<Profile> riders = ride.drive!.rides!
             .where((Ride otherRide) => ride.overlapsWith(otherRide))
             .map((Ride ride) => ride.rider!)
             .toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
-      Widget? primaryButton = _buildPrimaryButton(driver);
+      final Widget? primaryButton = _buildPrimaryButton(driver);
       if (primaryButton != null) {
         widgets.add(const SizedBox(height: 10));
         widgets.add(primaryButton);
@@ -129,7 +129,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    Widget content = Column(
+    final Widget content = Column(
       children: <Widget>[
         if (_ride != null && _ride!.status == RideStatus.pending)
           CustomBanner.warning(S.of(context).pageRideDetailBannerRequested)
@@ -297,7 +297,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   Future<void> confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    Map<String, dynamic> data =
+    final Map<String, dynamic> data =
         await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
     setState(() {
       _ride = Ride.fromJson(data);

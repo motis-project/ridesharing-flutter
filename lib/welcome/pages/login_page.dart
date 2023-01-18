@@ -74,7 +74,7 @@ class _LoginFormState extends State<LoginForm> {
       } on AuthException catch (e) {
         fail();
         // looks weird but needed later for i18n
-        String text = e.statusCode == '400'
+        final String text = e.statusCode == '400'
             ? e.message.contains('credentials')
                 ? S.of(context).pageLoginFailureCredentials
                 : S.of(context).pageLoginFailureEmailNotConfirmed

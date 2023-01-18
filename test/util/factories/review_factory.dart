@@ -24,9 +24,9 @@ class ReviewFactory extends ModelFactory<Review> {
     assert(writerId == null || writer?.value == null || writer!.value?.id == writerId);
     assert(receiverId == null || receiver?.value == null || receiver!.value?.id == receiverId);
 
-    Profile? generatedWriter =
+    final Profile? generatedWriter =
         getNullableParameterOr(writer, ProfileFactory().generateFake(id: writerId, createDependencies: false));
-    Profile? generatedReceiver =
+    final Profile? generatedReceiver =
         getNullableParameterOr(receiver, ProfileFactory().generateFake(id: receiverId, createDependencies: false));
 
     return Review(

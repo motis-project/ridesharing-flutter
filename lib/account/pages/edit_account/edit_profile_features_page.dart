@@ -63,7 +63,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                 itemCount: Feature.values.length + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index < _features.length) {
-                    Feature feature = _features[index];
+                    final Feature feature = _features[index];
                     return ListTile(
                       key: ValueKey<int>(index),
                       leading: feature.getIcon(context),
@@ -94,7 +94,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       ),
                     );
                   } else {
-                    Feature feature = _otherFeatures[index - _features.length - 1];
+                    final Feature feature = _otherFeatures[index - _features.length - 1];
                     return ListTile(
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                       key: ValueKey<int>(index),
@@ -134,7 +134,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   }
 
   void onReorder(int oldIndex, int newIndex) {
-    int dividerIndex = _features.length;
+    final int dividerIndex = _features.length;
 
     setState(() {
       if (newIndex <= dividerIndex && oldIndex > dividerIndex) {
@@ -165,13 +165,13 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   }
 
   void _removeFeature(int index, {int? newIndex}) {
-    int dividerIndex = _features.length;
+    final int dividerIndex = _features.length;
 
     setState(() {
-      Feature oldFeature = _features.removeAt(index);
+      final Feature oldFeature = _features.removeAt(index);
 
       if (newIndex != null) {
-        int indexInOtherFeatures = newIndex - dividerIndex - 1;
+        final int indexInOtherFeatures = newIndex - dividerIndex - 1;
         _otherFeatures.insert(indexInOtherFeatures, oldFeature);
       } else {
         _otherFeatures.add(oldFeature);
@@ -180,16 +180,16 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   }
 
   void _addFeature(int index, {int? newIndex}) {
-    int dividerIndex = _features.length;
-    int indexInOtherFeatures = index - dividerIndex - 1;
+    final int dividerIndex = _features.length;
+    final int indexInOtherFeatures = index - dividerIndex - 1;
 
     setState(() {
-      Feature newFeature = _otherFeatures[indexInOtherFeatures];
-      Feature? mutuallyExclusiveFeature =
+      final Feature newFeature = _otherFeatures[indexInOtherFeatures];
+      final Feature? mutuallyExclusiveFeature =
           _features.firstWhereOrNull((Feature feature) => feature.isMutuallyExclusive(newFeature));
       if (mutuallyExclusiveFeature != null) {
-        String description = mutuallyExclusiveFeature.getDescription(context);
-        String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+        final String description = mutuallyExclusiveFeature.getDescription(context);
+        final String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
         SemanticsService.announce(text, TextDirection.ltr);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(text)),
@@ -228,7 +228,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       }
     }
     final List<Feature> removedFeatures = previousFeatures.where((Feature e) => !_features.contains(e)).toList();
-    for (Feature feature in removedFeatures) {
+    for (final Feature feature in removedFeatures) {
       await SupabaseManager.supabaseClient
           .from('profile_features')
           .delete()

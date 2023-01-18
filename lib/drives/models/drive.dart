@@ -78,14 +78,14 @@ class Drive extends Trip {
   List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
-    List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
+    final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId),
     );
     List<Drive> drives = Drive.fromJsonList(data);
     drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
 
     //check if drive overlaps with start and end
-    for (Drive drive in drives) {
+    for (final Drive drive in drives) {
       if (drive.overlapsWithTimeRange(range)) {
         return true;
       }
@@ -96,15 +96,15 @@ class Drive extends Trip {
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
-    Set<DateTime> times = approvedRides!
+    final Set<DateTime> times = approvedRides!
         .map((Ride ride) => <DateTime>[ride.startTime, ride.endTime])
         .expand((List<DateTime> x) => x)
         .toSet();
 
     int maxUsedSeats = 0;
-    for (DateTime time in times) {
+    for (final DateTime time in times) {
       int usedSeats = 0;
-      for (Ride ride in approvedRides!) {
+      for (final Ride ride in approvedRides!) {
         final bool startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
         final bool endTimeAfter = ride.endTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
@@ -120,14 +120,14 @@ class Drive extends Trip {
   }
 
   bool isRidePossible(Ride ride) {
-    List<Ride> consideredRides = approvedRides!..add(ride);
-    Set<DateTime> times = consideredRides
+    final List<Ride> consideredRides = approvedRides!..add(ride);
+    final Set<DateTime> times = consideredRides
         .map((Ride consideredRide) => <DateTime>[consideredRide.startTime, consideredRide.endTime])
         .expand((List<DateTime> x) => x)
         .toSet();
-    for (DateTime time in times) {
+    for (final DateTime time in times) {
       int usedSeats = 0;
-      for (Ride consideredRide in consideredRides) {
+      for (final Ride consideredRide in consideredRides) {
         final bool startTimeBeforeOrEqual =
             consideredRide.startTime.isBefore(time) || consideredRide.startTime.isAtSameMomentAs(time);
         final bool endTimeAfter = consideredRide.endTime.isAfter(time);
@@ -157,7 +157,7 @@ class Drive extends Trip {
   @override
   bool equals(Trip other) {
     if (other is! Drive) return false;
-    Drive drive = other;
+    final Drive drive = other;
     return super.equals(other) && cancelled == drive.cancelled && driverId == drive.driverId;
   }
 }

@@ -8,7 +8,7 @@ class AvatarPicturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(profile.username),
@@ -39,7 +39,7 @@ class AvatarPicturePage extends StatelessWidget {
   }
 
   Color getBackgroundColor(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     switch (ThemeData.estimateBrightnessForColor(theme.primaryTextTheme.subtitle1!.color!)) {
       case Brightness.dark:
         return theme.primaryColorLight;

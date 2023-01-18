@@ -67,7 +67,7 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
   }
 
   Future<void> onPressed() async {
-    String? text = _controller.text == '' ? null : _controller.text;
+    final String? text = _controller.text == '' ? null : _controller.text;
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'description': text,
     }).eq('id', widget.profile.id);

@@ -19,7 +19,7 @@ class SearchRidePage extends StatefulWidget {
 class _SearchRidePageState extends State<SearchRidePage> {
   @override
   Widget build(BuildContext context) {
-    Widget scaffold = Scaffold(
+    final Widget scaffold = Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageSearchRideTitle),
       ),
@@ -98,7 +98,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -209,7 +209,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   @override
   Widget build(BuildContext context) {
-    Widget submitButton = Button.submit(
+    final Widget submitButton = Button.submit(
       S.of(context).pageSearchRideButtonSearch,
       onPressed: _onSubmit,
     );
@@ -244,12 +244,10 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            widget.anonymous
-                ? Hero(
+            if (widget.anonymous) Hero(
                     tag: 'SearchButton',
                     child: submitButton,
-                  )
-                : submitButton,
+                  ) else submitButton,
           ],
         ),
       ),

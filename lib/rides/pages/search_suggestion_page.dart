@@ -65,7 +65,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -114,7 +114,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
-    List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
+    final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
@@ -124,8 +124,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           )
         ''').eq('start', _startController.text),
     );
-    List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
-    List<Ride> rides = drives
+    final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
+    final List<Ride> rides = drives
         .map((Drive drive) => Ride.previewFromDrive(
               drive,
               _startSuggestion.name,
@@ -234,7 +234,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   Widget buildLocationPicker({required bool isStart}) {
-    TextEditingController controller = isStart ? _startController : _destinationController;
+    final TextEditingController controller = isStart ? _startController : _destinationController;
 
     return ElevatedButton(
       onPressed: () async {
@@ -264,7 +264,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     if (_rideSuggestions == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
+    final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
     Widget list;
     if (filteredSuggestions.isEmpty) {
       list = Center(
