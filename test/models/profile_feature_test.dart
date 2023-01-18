@@ -51,8 +51,8 @@ void main() {
         "feature": -1,
         "rank": 1,
       };
-      expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
-      expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
+      expect(() => ProfileFeature.fromJson(json1), throwsA(isA<RangeError>()));
+      expect(() => ProfileFeature.fromJson(json2), throwsA(isA<RangeError>()));
     }));
   }));
 

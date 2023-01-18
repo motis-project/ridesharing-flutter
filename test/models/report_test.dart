@@ -79,8 +79,8 @@ void main() {
         "offender_id": 3,
         "category": -1,
       };
-      expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
-      expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
+      expect(() => Report.fromJson(json1), throwsA(isA<RangeError>()));
+      expect(() => Report.fromJson(json2), throwsA(isA<RangeError>()));
     });
 
     test('can handle Profiles', (() {
