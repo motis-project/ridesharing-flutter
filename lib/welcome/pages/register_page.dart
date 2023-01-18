@@ -91,7 +91,7 @@ class _RegisterFormState extends State<RegisterForm> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(S.of(context).pageRegisterSuccess),
             duration: const Duration(seconds: 10),
-          ));
+          ),);
         }
       }
     } else {
@@ -102,7 +102,7 @@ class _RegisterFormState extends State<RegisterForm> {
   Future<void> showSnackBar(String text) async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
-    ));
+    ),);
   }
 
   Future<void> fail() async {

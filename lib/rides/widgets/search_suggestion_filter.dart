@@ -288,7 +288,7 @@ class SearchSuggestionFilter {
         Icons.star,
         color: Colors.amber,
       )
-    ]);
+    ],);
   }
 
   Widget buildIndicatorRow(BuildContext context, void Function(void Function()) setState) {

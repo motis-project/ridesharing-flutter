@@ -84,7 +84,7 @@ class _LoginFormState extends State<LoginForm> {
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(text),
-        ));
+        ),);
       }
     } else {
       fail();

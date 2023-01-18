@@ -203,14 +203,17 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildReviews() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(
-        S.of(context).pageProfileReviewsTitle,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-      const SizedBox(height: 8),
-      ReviewsPreview(_profile!)
-    ]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          S.of(context).pageProfileReviewsTitle,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        const SizedBox(height: 8),
+        ReviewsPreview(_profile!)
+      ],
+    );
   }
 
   Widget buildNoInfoText(String noInfoText) {
@@ -270,23 +273,26 @@ class _ProfilePageState extends State<ProfilePage> {
 
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
-          if (hasRecentReport) Button.disabled(
-                  S.of(context).pageProfileButtonReported,
-                ) else Button.error(
-                  S.of(context).pageProfileButtonReport,
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
-                        .then((bool? reportSent) {
-                      if (reportSent == true) {
-                        loadProfile();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
-                        );
-                      }
-                    });
-                  },
-                ),
+          if (hasRecentReport)
+            Button.disabled(
+              S.of(context).pageProfileButtonReported,
+            )
+          else
+            Button.error(
+              S.of(context).pageProfileButtonReport,
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
+                    .then((bool? reportSent) {
+                  if (reportSent == true) {
+                    loadProfile();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
+                    );
+                  }
+                });
+              },
+            ),
         ]);
       }
     } else {
@@ -329,26 +335,27 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
     switch (await showDialog<ProfilePictureUpdateMethod>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(S.of(context).pageProfileUpdateProfilePictureTitle),
-            children: <Widget>[
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ProfilePictureUpdateMethod.fromGallery);
-                },
-                child: Text(S.of(context).pageProfileUpdateProfilePictureFromGallery),
-              ),
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ProfilePictureUpdateMethod.delete);
-                },
-                child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
-              ),
-            ],
-          );
-        })) {
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text(S.of(context).pageProfileUpdateProfilePictureTitle),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, ProfilePictureUpdateMethod.fromGallery);
+              },
+              child: Text(S.of(context).pageProfileUpdateProfilePictureFromGallery),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, ProfilePictureUpdateMethod.delete);
+              },
+              child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
+            ),
+          ],
+        );
+      },
+    )) {
       case ProfilePictureUpdateMethod.fromGallery:
         _uploadProfilePicture();
         break;

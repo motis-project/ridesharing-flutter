@@ -47,63 +47,68 @@ class _AboutPageState extends State<AboutPage> {
               hasScrollBody: false,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: Column(children: <Widget>[
-                  Expanded(child: Container()),
-                  Text(
-                    S.of(context).appName,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  if (_packageInfo != null) ...<Widget>[
+                child: Column(
+                  children: <Widget>[
+                    Expanded(child: Container()),
                     Text(
-                      S.of(context).pageAboutVersion(_packageInfo!.version),
-                      style: packageInfoStyle,
+                      S.of(context).appName,
+                      style: Theme.of(context).textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
-                    Text(
-                      S.of(context).pageAboutBuildNumber(_packageInfo!.buildNumber),
-                      style: packageInfoStyle,
-                      textAlign: TextAlign.center,
+                    if (_packageInfo != null) ...<Widget>[
+                      Text(
+                        S.of(context).pageAboutVersion(_packageInfo!.version),
+                        style: packageInfoStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        S.of(context).pageAboutBuildNumber(_packageInfo!.buildNumber),
+                        style: packageInfoStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        S.of(context).pageAboutBuildSignature(_packageInfo!.buildSignature),
+                        style: packageInfoStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    SvgPicture.asset(
+                      'assets/logo.svg',
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.width / 2,
+                      semanticsLabel: S.of(context).pageAboutLogoSemantics,
                     ),
                     Text(
-                      S.of(context).pageAboutBuildSignature(_packageInfo!.buildSignature),
-                      style: packageInfoStyle,
+                      S.of(context).pageAboutText,
                       textAlign: TextAlign.center,
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TextButton(
+                              onPressed: () async => await launchUrlString(
+                                githubLink,
+                                mode: LaunchMode.externalApplication,
+                              ),
+                              child: Text(S.of(context).pageAboutGithub),
+                            ),
+                            TextButton(
+                              onPressed: () async => await launchUrlString(websiteLink),
+                              child: Text(S.of(context).pageAboutWebsite),
+                            ),
+                            TextButton(
+                              onPressed: () async => await launchUrlString(termsOfServiceLink),
+                              child: Text(S.of(context).pageAboutTermsOfService),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
-                  SvgPicture.asset(
-                    'assets/logo.svg',
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.width / 2,
-                    semanticsLabel: S.of(context).pageAboutLogoSemantics,
-                  ),
-                  Text(
-                    S.of(context).pageAboutText,
-                    textAlign: TextAlign.center,
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                        TextButton(
-                          onPressed: () async => await launchUrlString(
-                            githubLink,
-                            mode: LaunchMode.externalApplication,
-                          ),
-                          child: Text(S.of(context).pageAboutGithub),
-                        ),
-                        TextButton(
-                          onPressed: () async => await launchUrlString(websiteLink),
-                          child: Text(S.of(context).pageAboutWebsite),
-                        ),
-                        TextButton(
-                          onPressed: () async => await launchUrlString(termsOfServiceLink),
-                          child: Text(S.of(context).pageAboutTermsOfService),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ]),
+                ),
               ),
             ),
           ],

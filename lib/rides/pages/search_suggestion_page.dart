@@ -137,7 +137,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               _dropdownValue,
               SupabaseManager.getCurrentProfile()?.id ?? -1,
               10.25,
-            ))
+            ),)
         .toList();
     setState(() {
       _rideSuggestions = rides;
@@ -166,7 +166,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           startConnector: CustomSolidLineConnector(),
         ),
       ),
-    ]);
+    ],);
   }
 
   Widget buildDatePicker() {

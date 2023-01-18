@@ -57,11 +57,13 @@ class _WriteReportPageState extends State<WriteReportPage> {
                         final ReportCategory category = ReportCategory.values[index];
                         return RadioListTile<ReportCategory>(
                           visualDensity: VisualDensity.compact,
-                          title: Row(children: <Widget>[
-                            category.getIcon(context),
-                            const SizedBox(width: 15),
-                            Expanded(child: Text(category.getDescription(context))),
-                          ]),
+                          title: Row(
+                            children: <Widget>[
+                              category.getIcon(context),
+                              const SizedBox(width: 15),
+                              Expanded(child: Text(category.getDescription(context))),
+                            ],
+                          ),
                           value: category,
                           groupValue: _category,
                           onChanged: (ReportCategory? value) {

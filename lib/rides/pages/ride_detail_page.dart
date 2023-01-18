@@ -352,12 +352,13 @@ class _RideDetailPageState extends State<RideDetailPage> {
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-              child: Text(S.of(context).pageWelcomeLogin),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                Navigator.popUntil(context, (Route<void> route) => route.isFirst);
-                Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()));
-              }),
+            child: Text(S.of(context).pageWelcomeLogin),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              Navigator.popUntil(context, (Route<void> route) => route.isFirst);
+              Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()));
+            },
+          ),
           TextButton(
             child: Text(S.of(context).pageWelcomeRegister),
             onPressed: () {

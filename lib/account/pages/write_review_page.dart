@@ -188,10 +188,12 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         _state = ButtonState.fail;
       });
       const Duration duration = Duration(seconds: 1);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(S.of(context).pageWriteReviewRatingRequired),
-        duration: duration,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context).pageWriteReviewRatingRequired),
+          duration: duration,
+        ),
+      );
       await Future<void>.delayed(duration);
       setState(() {
         _state = ButtonState.idle;

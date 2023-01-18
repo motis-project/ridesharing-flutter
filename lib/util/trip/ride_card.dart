@@ -97,9 +97,10 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
     return !_fullyLoaded
         ? const Center(
             child: SizedBox(
-            height: 56,
-            width: 72,
-          ))
+              height: 56,
+              width: 72,
+            ),
+          )
         : Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 0, 16),
             child: ProfileWidget(
@@ -128,10 +129,11 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   Widget buildRightSide() {
     if (!_fullyLoaded) {
       return const Center(
-          child: SizedBox(
-        height: 24,
-        width: 24,
-      ));
+        child: SizedBox(
+          height: 24,
+          width: 24,
+        ),
+      );
     }
 
     final List<ProfileFeature> profileFeatures = _driver.profileFeatures!;

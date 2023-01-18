@@ -73,16 +73,20 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       final Drive drive = _drive!;
 
       final List<Waypoint> stops = <Waypoint>[];
-      stops.add(Waypoint(
-        actions: <WaypointAction>[],
-        place: drive.start,
-        time: drive.startTime,
-      ));
-      stops.add(Waypoint(
-        actions: <WaypointAction>[],
-        place: drive.end,
-        time: drive.endTime,
-      ));
+      stops.add(
+        Waypoint(
+          actions: <WaypointAction>[],
+          place: drive.start,
+          time: drive.startTime,
+        ),
+      );
+      stops.add(
+        Waypoint(
+          actions: <WaypointAction>[],
+          place: drive.end,
+          time: drive.endTime,
+        ),
+      );
       final List<Ride> approvedRides = drive.approvedRides!;
       for (final Ride ride in approvedRides) {
         bool startSaved = false;
@@ -101,19 +105,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         }
 
         if (!startSaved) {
-          stops.add(Waypoint(
-            actions: <WaypointAction>[rideStartAction],
-            place: ride.start,
-            time: ride.startTime,
-          ));
+          stops.add(
+            Waypoint(
+              actions: <WaypointAction>[rideStartAction],
+              place: ride.start,
+              time: ride.startTime,
+            ),
+          );
         }
 
         if (!endSaved) {
-          stops.add(Waypoint(
-            actions: <WaypointAction>[rideEndAction],
-            place: ride.end,
-            time: ride.endTime,
-          ));
+          stops.add(
+            Waypoint(
+              actions: <WaypointAction>[rideEndAction],
+              place: ride.end,
+              time: ride.endTime,
+            ),
+          );
         }
       }
 

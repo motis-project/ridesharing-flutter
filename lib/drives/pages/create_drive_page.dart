@@ -101,7 +101,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       try {
         //todo: add right end_time from algorithm
         final DateTime endTime = DateTime(
-            _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          _selectedDate.hour + 2,
+          _selectedDate.minute,
+        );
         final Profile driver = SupabaseManager.getCurrentProfile()!;
 
         final bool hasDrive =
@@ -113,7 +118,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
 
-        final bool hasRide = await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
+        final bool hasRide =
+            await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasRide && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveRide)),
@@ -150,9 +156,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         );
       } on AuthException {
         //todo: change error message when login is implemented
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(S.of(context).failureSnackBar),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(S.of(context).failureSnackBar),
+          ),
+        );
       }
     }
   }

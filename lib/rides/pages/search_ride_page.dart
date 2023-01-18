@@ -26,9 +26,10 @@ class _SearchRidePageState extends State<SearchRidePage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(),
         child: SingleChildScrollView(
-            child: SearchRideForm(
-          anonymous: widget.anonymous,
-        )),
+          child: SearchRideForm(
+            anonymous: widget.anonymous,
+          ),
+        ),
       ),
     );
     return widget.anonymous
@@ -244,10 +245,13 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            if (widget.anonymous) Hero(
-                    tag: 'SearchButton',
-                    child: submitButton,
-                  ) else submitButton,
+            if (widget.anonymous)
+              Hero(
+                tag: 'SearchButton',
+                child: submitButton,
+              )
+            else
+              submitButton,
           ],
         ),
       ),

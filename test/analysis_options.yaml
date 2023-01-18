@@ -3,3 +3,4 @@ include: ../analysis_options.yaml
 linter:
   rules:
     always_specify_types: false
+    require_trailing_commas: false

@@ -34,6 +34,6 @@ class ProfileWrapList extends StatelessWidget {
           ),
         ),
       ),
-    ]);
+    ],);
   }
 }
