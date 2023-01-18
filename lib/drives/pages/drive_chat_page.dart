@@ -107,7 +107,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
         child: ListTile(
           leading: Avatar(chat.rider!),
           title: Text(chat.rider!.username),
-          subtitle: lastMessage == null ? null : Text(_truncate(lastMessage.content)),
+          subtitle: lastMessage == null ? null : Text(lastMessage.content, maxLines: 2),
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
               : Container(
@@ -134,14 +134,5 @@ class _DriveChatPageState extends State<DriveChatPage> {
         ),
       ),
     );
-  }
-
-  String _truncate(String text) {
-    const int length = 30;
-    if (text.length > length) {
-      return text.replaceRange(length, text.length, '...');
-    } else {
-      return text;
-    }
   }
 }
