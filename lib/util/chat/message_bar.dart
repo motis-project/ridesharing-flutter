@@ -73,7 +73,7 @@ class _MessageBarState extends State<MessageBar> {
       await SupabaseManager.supabaseClient.from('messages').insert({
         'sender_id': SupabaseManager.getCurrentProfile()!.id!,
         'content': text,
-        'ride_id': widget.chatId,
+        'chat_id': widget.chatId,
       });
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(
