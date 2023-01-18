@@ -17,7 +17,7 @@ class ChatFactory extends ModelFactory<Chat> {
     NullableParameter<Profile>? rider,
     int? driveId,
     NullableParameter<Drive>? drive,
-    List<Message>? messages,
+    NullableParameter<List<Message>>? messages,
     bool createDependencies = true,
   }) {
     assert(
@@ -29,6 +29,8 @@ class ChatFactory extends ModelFactory<Chat> {
         getNullableParameterOr(rider, ProfileFactory().generateFake(id: riderId, createDependencies: false));
     Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
+    List<Message>? generatedMessages =
+        getNullableParameterOr(messages, MessageFactory().generateFakeList(length: 20, createDependencies: false));
 
     return Chat(
       id: id ?? randomId,
@@ -37,7 +39,7 @@ class ChatFactory extends ModelFactory<Chat> {
       rider: generatedRider,
       driveId: generatedDrive?.id ?? randomId,
       drive: generatedDrive,
-      messages: messages ?? MessageFactory().generateFakeList(createDependencies: false),
+      messages: generatedMessages,
     );
   }
 }

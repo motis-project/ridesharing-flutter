@@ -4,7 +4,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 
-import 'chat_facotry.dart';
+import 'chat_factory.dart';
 import 'model_factory.dart';
 import 'profile_factory.dart';
 
@@ -27,8 +27,9 @@ class MessageFactory extends ModelFactory<Message> {
 
     Profile? generatedSender =
         getNullableParameterOr(sender, ProfileFactory().generateFake(id: senderId, createDependencies: false));
-    Chat? generatedChat =
-        getNullableParameterOr(chat, ChatFactory().generateFake(id: chatId, createDependencies: false));
+    Chat? generatedChat = createDependencies
+        ? getNullableParameterOr(chat, ChatFactory().generateFake(id: chatId, createDependencies: false))
+        : null;
 
     return Message(
       id: id ?? randomId,

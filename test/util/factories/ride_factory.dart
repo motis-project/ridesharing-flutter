@@ -4,7 +4,7 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
-import 'chat_facotry.dart';
+import 'chat_factory.dart';
 import 'drive_factory.dart';
 import 'model_factory.dart';
 import 'profile_factory.dart';
@@ -59,7 +59,8 @@ class RideFactory extends TripFactory<Ride> {
       rider: generatedRider,
       chat: chat ??
           (createDependencies
-              ? ChatFactory().generateFake(riderId: generatedRider?.id, rider: NullableParameter(generatedRider))
+              ? ChatFactory().generateFake(
+                  riderId: generatedRider?.id, rider: NullableParameter(generatedRider), createDependencies: false)
               : null),
     );
   }

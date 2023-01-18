@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/mock_server.dart';
@@ -26,25 +29,6 @@ void main() {
       expect(message.read, true);
     });
   }));
-  group('Message.fromJson', () {
-    test('parses a message from json', () async {
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "ride_id": 1,
-        "content": "content",
-        "sender_id": 1,
-        "read": true,
-      };
-      final message = Message.fromJson(json);
-      expect(message.id, 1);
-      expect(message.createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
-      expect(message.chatId, 1);
-      expect(message.content, "content");
-      expect(message.senderId, 1);
-      expect(message.read, true);
-    });
-  });
 
   group('Message.isFromCurrentUser', (() {
     setUp(() {
@@ -71,13 +55,51 @@ void main() {
     });
   }));
 
+  group('Message.fromJson', () {
+    test('parses a message from json', () async {
+      Map<String, dynamic> json = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "chat_id": 1,
+        "content": "content",
+        "sender_id": 1,
+        "read": true,
+      };
+      final message = Message.fromJson(json);
+      expect(message.id, 1);
+      expect(message.createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
+      expect(message.chatId, 1);
+      expect(message.content, "content");
+      expect(message.senderId, 1);
+      expect(message.read, true);
+    });
+
+    test('can handel associated models', (() {
+      Chat chat = ChatFactory().generateFake();
+      Profile profile = ProfileFactory().generateFake();
+      Map<String, dynamic> json = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "chat_id": 1,
+        "chat": chat.toJsonForApi(),
+        "content": "content",
+        "sender_id": 1,
+        "sender": profile.toJsonForApi(),
+        "read": true,
+      };
+      final message = Message.fromJson(json);
+      expect(message.chat.toString(), chat.toString());
+      expect(message.sender.toString(), profile.toString());
+    }));
+  });
+
   group('Message.fromJsonList', (() {
     test('parses a list of messages from json', () async {
       List<Map<String, dynamic>> json = [
         {
           "id": 1,
           "created_at": "2021-01-01T00:00:00.000Z",
-          "ride_id": 1,
+          "chat_id": 1,
           "content": "content",
           "sender_id": 1,
           "read": true,
@@ -85,7 +107,7 @@ void main() {
         {
           "id": 2,
           "created_at": "2021-01-01T00:00:00.000Z",
-          "ride_id": 1,
+          "chat_id": 1,
           "content": "content",
           "sender_id": 1,
           "read": true,
@@ -118,7 +140,7 @@ void main() {
     test('converts a message to json', () async {
       final message = MessageFactory().generateFake();
       final json = message.toJson();
-      expect(json["ride_id"], message.chatId);
+      expect(json["chat_id"], message.chatId);
       expect(json["content"], message.content);
       expect(json["sender_id"], message.senderId);
       expect(json["read"], message.read);
@@ -131,7 +153,7 @@ void main() {
       final message = MessageFactory().generateFake();
       final string = message.toString();
       expect(string,
-          "Message{id: ${message.id}, createdAt: ${message.createdAt}, rideId: ${message.chatId}, senderId: ${message.senderId}, content: ${message.content}, read: ${message.read}}");
+          "Message{id: ${message.id}, createdAt: ${message.createdAt}, chatId: ${message.chatId}, senderId: ${message.senderId}, content: ${message.content}, read: ${message.read}}");
     });
   }));
 }
