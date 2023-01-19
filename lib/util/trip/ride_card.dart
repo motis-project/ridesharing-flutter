@@ -103,17 +103,16 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Widget buildBottomRight() {
-    return !_fullyLoaded
-        ? const Center(
-            child: SizedBox(
-            height: 44,
-            width: 52,
-          ))
-        : Padding(
+    return _fullyLoaded
+        ? Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 16, 16),
             child: CustomRatingBarIndicator(
-                rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
-                size: CustomRatingBarSize.medium),
+              rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
+              size: CustomRatingBarSize.medium,
+            ),
+          )
+        : const Center(
+            child: SizedBox(height: 44, width: 52),
           );
   }
 
@@ -125,25 +124,26 @@ class _RideCardState extends TripCardState<RideCard> {
         height: 24,
         width: 24,
       ));
-    } else {
-      List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
-      List<Icon> featureicons = <Icon>[];
-      for (int i = 0; i < min(profileFeatures.length, 3); i++) {
-        featureicons.add(profileFeatures[i].feature.getIcon(context));
-      }
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: featureicons,
-      );
     }
+
+    List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
+    List<Icon> featureicons = <Icon>[];
+    for (int i = 0; i < min(profileFeatures.length, 3); i++) {
+      featureicons.add(profileFeatures[i].feature.getIcon(context));
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: featureicons,
+    );
   }
 
-  Color pickBannerColor() {
-    if (_ride!.startTime.isBefore(DateTime.now())) {
+  @override
+  Color pickStatusColor() {
+    if (_ride!.endTime.isBefore(DateTime.now())) {
       if (_ride!.status == RideStatus.approved) {
         return Theme.of(context).own().success;
       } else {
-        return Theme.of(context).colorScheme.error;
+        return Theme.of(context).disabledColor;
       }
     } else {
       switch (_ride!.status) {
@@ -157,28 +157,25 @@ class _RideCardState extends TripCardState<RideCard> {
           return Theme.of(context).colorScheme.error;
         case RideStatus.cancelledByRider:
           return Theme.of(context).disabledColor;
-        default:
-          //in this case the banner will not be seen and the foregroundDecoration will cover it up
-          return Theme.of(context).cardColor;
+        case RideStatus.withdrawnByRider:
+        case RideStatus.preview:
+          return Colors.red;
       }
     }
   }
 
-  BoxDecoration? pickDecoration() {
+  @override
+  BoxDecoration pickDecoration() {
     if (_ride!.status.isCancelled() || _ride!.status == RideStatus.rejected) {
-      return BoxDecoration(
-        color: Colors.grey,
-        borderRadius: cardBorder,
-        backgroundBlendMode: BlendMode.multiply,
-      );
+      return disabledDecoration;
     }
-    return null;
+    return super.pickDecoration();
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickBannerColor(),
+      color: pickStatusColor(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -189,9 +186,9 @@ class _RideCardState extends TripCardState<RideCard> {
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              borderRadius: _ride!.status == RideStatus.preview ? cardPreviewBorder : cardBorder,
+              borderRadius: cardBorder,
             ),
-            margin: _ride!.status == RideStatus.preview ? null : const EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             child: buildCardInfo(context),
           ),
           Positioned.fill(

@@ -52,7 +52,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
-                        localeManager.formatDuration(trip!.duration, true),
+                        localeManager.formatDuration(trip!.duration),
                       ),
                     ],
                   ),
@@ -101,19 +101,23 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
+  Widget buildBottom() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        buildBottomLeft(),
+        buildBottomRight(),
+      ],
+    );
+  }
+
   Widget buildCardInfo(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTop(),
         Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 8), child: buildRoute(context)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            buildBottomLeft(),
-            buildBottomRight(),
-          ],
-        ),
+        buildBottom(),
       ],
     );
   }
@@ -133,4 +137,20 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
   Widget buildRightSide() {
     return const SizedBox();
   }
+
+  Color pickStatusColor() {
+    return Theme.of(context).cardColor;
+  }
+
+  BoxDecoration pickDecoration() {
+    return BoxDecoration(
+      borderRadius: cardBorder,
+    );
+  }
+
+  BoxDecoration get disabledDecoration => BoxDecoration(
+        color: Colors.grey,
+        borderRadius: cardBorder,
+        backgroundBlendMode: BlendMode.multiply,
+      );
 }

@@ -61,7 +61,8 @@ class _DriveCardState extends TripCardState<DriveCard> {
     return SeatIndicator(trip!);
   }
 
-  Color pickBannerColor() {
+  @override
+  Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
     } else if (_drive!.endTime.isBefore(DateTime.now())) {
@@ -79,24 +80,19 @@ class _DriveCardState extends TripCardState<DriveCard> {
     }
   }
 
+  @override
   BoxDecoration pickDecoration() {
     if (_drive!.cancelled) {
-      return BoxDecoration(
-        color: Colors.grey,
-        borderRadius: cardBorder,
-        backgroundBlendMode: BlendMode.multiply,
-      );
-    } else {
-      return BoxDecoration(
-        borderRadius: cardBorder,
-      );
+      return disabledDecoration;
     }
+
+    return super.pickDecoration();
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickBannerColor(),
+      color: pickStatusColor(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),

@@ -77,7 +77,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ProfileWidget(widget.trip.rider!),
-                Text("+ ${localeManager.formatDuration(widget.extraTime, false)}"),
+                Text("+${localeManager.formatDuration(widget.extraTime, shouldPadHours: false)}"),
               ],
             ),
           ),
