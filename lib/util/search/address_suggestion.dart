@@ -28,7 +28,8 @@ class AddressSuggestion {
     String name = json['name'];
     AddressSuggestionType type = AddressSuggestionType.place;
 
-    Position pos = Position(json['pos']['lat'], json['pos']['lng']);
+    Map<String, dynamic> posJson = json['pos'];
+    Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
     List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions']);
     String postalCode = _extractFromRegions(regions, [13]);
@@ -50,7 +51,8 @@ class AddressSuggestion {
     String name = json['name'];
     AddressSuggestionType type = AddressSuggestionType.station;
 
-    Position pos = Position(json['pos']['lat'], json['pos']['lng']);
+    Map<String, dynamic> posJson = json['pos'];
+    Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
     return AddressSuggestion(
       name: name,

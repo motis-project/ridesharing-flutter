@@ -242,7 +242,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     setState(() {});
   }
 
-  _showRequestDialog() {
+  void _showRequestDialog() {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -337,7 +337,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     setState(() {});
   }
 
-  _showLoginDialog() {
+  void _showLoginDialog() {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(

@@ -76,12 +76,12 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
     );
   }
 
-  buildSeatsIndicator() {
+  Widget buildSeatsIndicator() {
     Widget icon = Icon(
       Icons.chair,
       color: Theme.of(context).colorScheme.primary,
     );
-    return IconWidget(icon: icon, count: _ride.seats);
+    return IconWidget(icon: icon, count: trip.seats);
   }
 
   void approveRide() async {
@@ -102,7 +102,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
     widget.reloadPage();
   }
 
-  showApproveDialog(BuildContext context) {
+  void showApproveDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -142,7 +142,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
     );
   }
 
-  showRejectDialog(BuildContext context) {
+  void showRejectDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
