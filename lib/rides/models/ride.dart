@@ -111,8 +111,9 @@ class Ride extends Trip {
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
-    List<Map<String, dynamic>> jsonList =
-        await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId);
+    List<Map<String, dynamic>> jsonList = parseHelper.parseListOfMaps(
+      await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId),
+    );
     List<Ride> rides =
         Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
 

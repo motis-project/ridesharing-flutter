@@ -78,8 +78,9 @@ class Drive extends Trip {
   List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
-    List<Map<String, dynamic>> data =
-        await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId);
+    List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
+      await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId),
+    );
     List<Drive> drives = Drive.fromJsonList(data);
     drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
 
