@@ -73,6 +73,7 @@ dependencies:
   package_info_plus: ^3.0.2
   image_picker: ^0.8.6
   faker: ^2.1.0
+  deep_pick: ^0.10.0
 
 dev_dependencies:
   flutter_test:

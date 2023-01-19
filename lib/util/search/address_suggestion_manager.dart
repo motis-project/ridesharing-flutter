@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:deep_pick/deep_pick.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
 
@@ -126,9 +127,11 @@ class AddressSuggestionManager {
     String response = await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());
 
     Map<String, dynamic> responseMap = json.decode(response);
-    Map<String, dynamic> content = responseMap['content'];
 
-    return content['guesses'];
+    List<Map<String, dynamic>> guesses =
+        pick(responseMap, 'content', 'guesses').asListOrEmpty((RequiredPick p0) => p0.value as Map<String, dynamic>);
+
+    return guesses;
   }
 
   Future<List<AddressSuggestion>> getHistorySuggestions(String query) async {
