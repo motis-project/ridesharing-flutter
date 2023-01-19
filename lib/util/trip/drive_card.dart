@@ -56,7 +56,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
   }
 
   @override
-  void Function() onTap() {
+  void Function() get onTap {
     return () => Navigator.of(context)
         .push(
           MaterialPageRoute(

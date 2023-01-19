@@ -175,7 +175,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   EdgeInsets get middlePadding => const EdgeInsets.only(left: 16);
 
   @override
-  void Function()? onTap() {
+  void Function()? get onTap {
     return null;
   }
 }

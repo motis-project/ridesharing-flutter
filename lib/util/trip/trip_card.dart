@@ -38,24 +38,25 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
             margin: const EdgeInsets.only(left: 10),
             child: buildCardInfo(context),
           ),
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: Semantics(
-                button: true,
-                tooltip: S.of(context).openDetails,
-                child: InkWell(
-                  onTap: onTap(),
+          if (onTap != null)
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: Semantics(
+                  button: true,
+                  tooltip: S.of(context).openDetails,
+                  child: InkWell(
+                    onTap: onTap,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  void Function()? onTap();
+  void Function()? get onTap;
 
   EdgeInsets get middlePadding => const EdgeInsets.all(16);
 

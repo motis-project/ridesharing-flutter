@@ -79,7 +79,7 @@ class _RideCardState extends TripCardState<RideCard> {
   }
 
   @override
-  void Function() onTap() {
+  void Function() get onTap {
     return () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => RideDetailPage.fromRide(_ride),
