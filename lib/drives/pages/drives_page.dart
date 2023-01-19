@@ -26,6 +26,7 @@ class _DrivesPageState extends State<DrivesPage> {
         .eq('driver_id', userId)
         .order('start_time', ascending: true)
         .map((drive) => Drive.fromJsonList(drive));
+
     super.initState();
   }
 

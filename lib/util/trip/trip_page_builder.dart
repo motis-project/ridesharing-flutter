@@ -42,7 +42,8 @@ class TripPageBuilder {
                 filterTrips: (trips) => trips
                     .where((trip) =>
                         trip.endTime.isAfter(DateTime.now()) &&
-                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider))
+                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
+                        !trip.hideInListView)
                     .toList(),
                 tripCard: tripCard,
               ),
@@ -52,7 +53,8 @@ class TripPageBuilder {
                 filterTrips: (trips) => trips.reversed
                     .where((trip) =>
                         trip.endTime.isBefore(DateTime.now()) &&
-                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider))
+                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
+                        !trip.hideInListView)
                     .toList(),
                 tripCard: tripCard,
               ),

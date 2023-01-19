@@ -28,6 +28,7 @@ class Drive extends Trip {
     required this.driverId,
     this.driver,
     this.rides,
+    super.hideInListView,
   });
 
   @override
@@ -46,6 +47,7 @@ class Drive extends Trip {
       driverId: json['driver_id'],
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
+      hideInListView: json['hide_in_list_view'],
     );
   }
 
@@ -147,5 +149,12 @@ class Drive extends Trip {
   @override
   String toString() {
     return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
+  }
+
+  @override
+  bool equals(Trip other) {
+    if (other is! Drive) return false;
+    Drive drive = other;
+    return super.equals(other) && cancelled == drive.cancelled && driverId == drive.driverId;
   }
 }

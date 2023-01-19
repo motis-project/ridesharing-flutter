@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:timelines/timelines.dart';
 
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
-import '../custom_timeline_theme.dart';
 import '../icon_widget.dart';
 import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
@@ -17,131 +15,91 @@ class PendingRideCard extends TripCard<Ride> {
   const PendingRideCard(super.trip, {super.key, required this.reloadPage, required this.drive});
 
   @override
-  Widget build(BuildContext context) {
-    Widget timeLine = FixedTimeline(
-      theme: CustomTimelineTheme.of(context),
+  State<PendingRideCard> createState() => _PendingRideCardState();
+}
+
+class _PendingRideCardState extends TripCardState<PendingRideCard> {
+  static const Duration extraTime = Duration(minutes: 5);
+
+  late Ride _ride;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _ride = widget.trip;
+      trip = widget.trip;
+    });
+  }
+
+  @override
+  Widget buildTopLeft() {
+    return ProfileWidget(_ride.rider!);
+  }
+
+  @override
+  Widget buildTopRight() {
+    return Text("+${localeManager.formatDuration(extraTime, shouldPadHours: false)}");
+  }
+
+  @override
+  Widget buildBottomLeft() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: buildSeatsIndicator(),
+    );
+  }
+
+  @override
+  Widget buildBottomRight() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text("${_ride.price}€"),
+    );
+  }
+
+  @override
+  Widget buildRightSide() {
+    return ButtonBar(
       children: [
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${localeManager.formatTime(trip.startTime)}  ${trip.start}'),
-              ],
-            ),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            endConnector: CustomSolidLineConnector(),
-          ),
+        IconButton(
+          onPressed: (() => showApproveDialog(context)),
+          icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+          tooltip: S.of(context).approve,
         ),
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${localeManager.formatTime(trip.endTime)}  ${trip.end}'),
-              ],
-            ),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            startConnector: CustomSolidLineConnector(),
-          ),
+        IconButton(
+          onPressed: (() => showRejectDialog(context)),
+          icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+          tooltip: S.of(context).reject,
         ),
       ],
     );
+  }
 
-    Widget buildSeatsIndicator() {
-      Widget icon = Icon(
-        Icons.chair,
-        color: Theme.of(context).colorScheme.primary,
-      );
-      return IconWidget(icon: icon, count: trip.seats);
-    }
-
-    return Card(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ProfileWidget(trip.rider!),
-          ),
-          const Divider(
-            thickness: 1,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    timeLine,
-                  ],
-                ),
-              ),
-              ButtonBar(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showApproveDialog(context)),
-                      icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
-                      tooltip: S.of(context).approve,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: (() => showRejectDialog(context)),
-                      icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
-                      tooltip: S.of(context).reject,
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-          const Divider(
-            thickness: 1,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: buildSeatsIndicator(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${trip.price}€"),
-              ),
-            ],
-          ),
-        ],
-      ),
+  Widget buildSeatsIndicator() {
+    Widget icon = Icon(
+      Icons.chair,
+      color: Theme.of(context).colorScheme.primary,
     );
+    return IconWidget(icon: icon, count: trip.seats);
   }
 
   void approveRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
-      params: {'ride_id': trip.id},
+      params: {'ride_id': _ride.id},
     );
     // todo: notify rider
-    reloadPage();
+    widget.reloadPage();
   }
 
   void rejectRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
-      params: {'ride_id': trip.id},
+      params: {'ride_id': _ride.id},
     );
     //todo: notify rider
-    reloadPage();
+    widget.reloadPage();
   }
 
   void showApproveDialog(BuildContext context) {
@@ -159,7 +117,7 @@ class PendingRideCard extends TripCard<Ride> {
             child: Text(S.of(context).yes),
             onPressed: () {
               // check if there are enough seats available
-              if (drive.isRidePossible(trip)) {
+              if (widget.drive.isRidePossible(_ride)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -211,5 +169,13 @@ class PendingRideCard extends TripCard<Ride> {
         ],
       ),
     );
+  }
+
+  @override
+  EdgeInsets get middlePadding => const EdgeInsets.only(left: 16);
+
+  @override
+  void Function()? get onTap {
+    return null;
   }
 }

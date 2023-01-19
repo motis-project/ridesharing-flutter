@@ -189,8 +189,13 @@ class _RideDetailPageState extends State<RideDetailPage> {
           S.of(context).pageRideDetailButtonWithdraw,
           onPressed: _showWithdrawDialog,
         );
-      default:
-        return null;
+      case RideStatus.cancelledByDriver:
+      case RideStatus.rejected:
+      case RideStatus.cancelledByRider:
+        return Button.error(
+          S.of(context).pageRideDetailButtonHide,
+          onPressed: _showHideDialog,
+        );
     }
   }
 
@@ -253,6 +258,34 @@ class _RideDetailPageState extends State<RideDetailPage> {
             onPressed: () {
               confirmRequest(_ride!);
               Navigator.of(dialogContext).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void hideRide() async {
+    await SupabaseManager.supabaseClient.from('rides').update({'hide_in_list_view': true}).eq('id', widget.ride!.id);
+  }
+
+  _showHideDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(S.of(context).pageRideDetailButtonHide),
+        content: Text(S.of(context).pageRideDetailHideDialog),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              hideRide();
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],

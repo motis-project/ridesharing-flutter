@@ -181,16 +181,21 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.addAll(pendingRidesColumn);
       }
 
-      if (!(_drive!.isFinished || _drive!.cancelled)) {
-        widgets.add(const SizedBox(height: 10));
-        Widget deleteButton = Button(
+      widgets.add(const SizedBox(height: 10));
+      Widget bottomButton;
+      if (_drive!.isFinished || _drive!.cancelled) {
+        bottomButton = Button.error(
+          S.of(context).pageDriveDetailButtonHide,
+          onPressed: _showHideDialog,
+        );
+      } else {
+        bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
-          backgroundColor: Theme.of(context).colorScheme.error,
         );
-        widgets.add(deleteButton);
-        widgets.add(const SizedBox(height: 5));
       }
+      widgets.add(bottomButton);
+      widgets.add(const SizedBox(height: 5));
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -337,6 +342,39 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return list;
   }
 
+  void hideDrive() async {
+    await SupabaseManager.supabaseClient.from('drives').update({'hide_in_list_view': true}).eq('id', widget.drive!.id);
+  }
+
+  void _showHideDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(S.of(context).pageDriveDetailButtonHide),
+        content: Text(S.of(context).pageDriveDetailHideDialog),
+        actions: <Widget>[
+          TextButton(
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+          ),
+          TextButton(
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              hideDrive();
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _cancelDrive() async {
+    await _drive?.cancel();
+    setState(() {});
+  }
+
   void _showCancelDialog() {
     showDialog(
       context: context,
@@ -365,11 +403,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ],
       ),
     );
-  }
-
-  void _cancelDrive() async {
-    await _drive?.cancel();
-    setState(() {});
   }
 
   int _getMessageCount(Drive drive) {

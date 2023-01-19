@@ -8,7 +8,7 @@ import '../../util/locale_manager.dart';
 import '../../util/search/address_search_delegate.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/supabase.dart';
-import '../../util/trip/search_card.dart';
+import '../../util/trip/ride_card.dart';
 import '../models/ride.dart';
 import '../widgets/search_suggestion_filter.dart';
 
@@ -299,7 +299,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
       list = ListView.separated(
         itemBuilder: (context, index) {
           final ride = filteredSuggestions[index];
-          return SearchCard(ride);
+          return RideCard(ride);
         },
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(height: 10);

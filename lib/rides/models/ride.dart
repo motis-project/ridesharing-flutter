@@ -33,6 +33,7 @@ class Ride extends Trip {
     this.drive,
     required this.riderId,
     this.rider,
+    super.hideInListView,
   });
 
   factory Ride.previewFromDrive(
@@ -81,6 +82,7 @@ class Ride extends Trip {
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+      hideInListView: json['hide_in_list_view'],
     );
   }
 
@@ -125,6 +127,19 @@ class Ride extends Trip {
     return Ride.fromJsonList(await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
+  @override
+  bool equals(Trip other) {
+    if (other is! Ride) return false;
+    Ride ride = other;
+    return super.equals(other) &&
+        status == ride.status &&
+        driveId == ride.driveId &&
+        price == ride.price &&
+        rider == ride.rider &&
+        price == ride.price &&
+        riderId == ride.riderId;
+  }
+
   Future<Drive> getDrive() async {
     drive ??= Drive.fromJson(await SupabaseManager.supabaseClient.from('drives').select().eq('id', driveId).single());
     return drive!;
@@ -149,7 +164,9 @@ class Ride extends Trip {
 
   Future<void> withdraw() async {
     status = RideStatus.withdrawnByRider;
-    await SupabaseManager.supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
+    await SupabaseManager.supabaseClient
+        .from('rides')
+        .update({'status': status.index, 'hide_in_list_view': true}).eq('id', id);
   }
 
   @override

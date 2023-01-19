@@ -23,6 +23,7 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
                       itemCount: filteredTrips.length,
                       itemBuilder: (context, index) {
                         final trip = filteredTrips[index];
+
                         return tripCard(trip);
                       },
                       separatorBuilder: (BuildContext context, int index) {
