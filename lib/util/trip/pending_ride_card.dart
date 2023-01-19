@@ -24,7 +24,7 @@ class PendingRideCard extends TripCard<Ride> {
 class _PendingRideCardState extends State<PendingRideCard> {
   @override
   Widget build(BuildContext context) {
-    FixedTimeline timeLine = FixedTimeline(
+    FixedTimeline timeline = FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: [
         TimelineTile(
@@ -60,14 +60,6 @@ class _PendingRideCardState extends State<PendingRideCard> {
       ],
     );
 
-    buildSeatsIndicator() {
-      Widget icon = Icon(
-        Icons.chair,
-        color: Theme.of(context).colorScheme.primary,
-      );
-      return IconWidget(icon: icon, count: widget.trip.seats);
-    }
-
     return Card(
       child: Column(
         children: [
@@ -93,7 +85,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
-                      child: timeLine,
+                      child: timeline,
                     ),
                   ],
                 ),
@@ -133,6 +125,14 @@ class _PendingRideCardState extends State<PendingRideCard> {
         ],
       ),
     );
+  }
+
+  buildSeatsIndicator() {
+    Widget icon = Icon(
+      Icons.chair,
+      color: Theme.of(context).colorScheme.primary,
+    );
+    return IconWidget(icon: icon, count: widget.trip.seats);
   }
 
   void approveRide() async {

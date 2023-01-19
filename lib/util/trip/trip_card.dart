@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
 import '../custom_timeline_theme.dart';
@@ -17,6 +18,44 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     bottomRight: Radius.circular(10),
     topRight: Radius.circular(10),
   );
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: pickStatusColor(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Stack(
+        children: [
+          Container(
+            foregroundDecoration: pickDecoration(),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: cardBorder,
+            ),
+            margin: const EdgeInsets.only(left: 10),
+            child: buildCardInfo(context),
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: Semantics(
+                button: true,
+                tooltip: S.of(context).openDetails,
+                child: InkWell(
+                  onTap: onTap(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void Function()? onTap();
 
   FixedTimeline buildRoute(context) {
     return FixedTimeline(
