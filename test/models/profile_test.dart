@@ -1,8 +1,5 @@
-import 'dart:convert';
-
-import 'package:mockito/mockito.dart';
-import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import '../util/factories/model_factory.dart';
@@ -119,6 +116,35 @@ void main() {
       expect(profile.profileFeatures!.length, 3);
       expect(profile.reportsReceived!.length, 3);
     });
+
+    test('throws error if gender is not in enum', (() {
+      Map<String, dynamic> json1 = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "username": "username",
+        "email": "email",
+        "description": "description",
+        "birth_date": "2021-01-01T00:00:00.000Z",
+        "surname": "surname",
+        "name": "name",
+        "gender": -1,
+        "avatar_url": "avatar_url",
+      };
+      Map<String, dynamic> json2 = {
+        "id": 1,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "username": "username",
+        "email": "email",
+        "description": "description",
+        "birth_date": "2021-01-01T00:00:00.000Z",
+        "surname": "surname",
+        "name": "name",
+        "gender": 5,
+        "avatar_url": "avatar_url",
+      };
+      expect(() => Profile.fromJson(json1), throwsA(isA<RangeError>()));
+      expect(() => Profile.fromJson(json2), throwsA(isA<RangeError>()));
+    }));
   });
 
   group('Profile.fromJsonList', () {

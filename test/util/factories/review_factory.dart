@@ -36,7 +36,7 @@ class ReviewFactory extends ModelFactory<Review> {
       comfortRating: getNullableParameterOr(comfortRating, random.nextInt(Review.maxRating)),
       safetyRating: getNullableParameterOr(safetyRating, random.nextInt(Review.maxRating)),
       reliabilityRating: getNullableParameterOr(reliabilityRating, random.nextInt(Review.maxRating)),
-      hospitalityRating: getNullableParameterOr(comfortRating, random.nextInt(Review.maxRating)),
+      hospitalityRating: getNullableParameterOr(hospitalityRating, random.nextInt(Review.maxRating)),
       text: getNullableParameterOr(text, faker.lorem.sentences(random.nextInt(2) + 1).join(" ")),
       writerId: generatedWriter?.id ?? randomId,
       writer: generatedWriter,
