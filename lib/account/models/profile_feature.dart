@@ -47,6 +47,14 @@ class ProfileFeature extends Model {
       'rank': rank,
     };
   }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'profile': profile?.toJsonForApi(),
+      });
+  }
 }
 
 // Stored in the database as an integer

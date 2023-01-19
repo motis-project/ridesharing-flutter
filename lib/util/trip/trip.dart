@@ -27,6 +27,22 @@ abstract class Trip extends Model {
     this.hideInListView = false,
   });
 
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'start': start,
+      'start_lat': startPosition.lat,
+      'start_lng': startPosition.lng,
+      'start_time': startTime.toString(),
+      'end': end,
+      'end_lat': endPosition.lat,
+      'end_lng': endPosition.lng,
+      'end_time': endTime.toString(),
+      'seats': seats,
+      'hide_in_list_view': hideInListView,
+    };
+  }
+
   Duration get duration => endTime.difference(startTime);
   bool get isFinished => endTime.isBefore(DateTime.now());
   bool get isOngoing => startTime.isBefore(DateTime.now()) && endTime.isAfter(DateTime.now());
