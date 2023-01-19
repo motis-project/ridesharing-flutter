@@ -7,18 +7,18 @@ import 'address_suggestion.dart';
 class AddressSearchField extends StatelessWidget {
   final AddressType addressType;
   final TextEditingController controller;
-  final void Function(AddressSuggestion) onSelected;
+  final void Function(AddressSuggestion)? onSelected;
 
   const AddressSearchField({
     super.key,
     required this.addressType,
     required this.controller,
-    required this.onSelected,
+    this.onSelected,
   });
 
   factory AddressSearchField.start({
     required TextEditingController controller,
-    required void Function(AddressSuggestion) onSelected,
+    void Function(AddressSuggestion)? onSelected,
   }) {
     return AddressSearchField(
       addressType: AddressType.start,
@@ -29,7 +29,7 @@ class AddressSearchField extends StatelessWidget {
 
   factory AddressSearchField.destination({
     required TextEditingController controller,
-    required void Function(AddressSuggestion) onSelected,
+    void Function(AddressSuggestion)? onSelected,
   }) {
     return AddressSearchField(
       addressType: AddressType.destination,
@@ -45,21 +45,8 @@ class AddressSearchField extends StatelessWidget {
       label: getLabelText(context),
       tooltip: getHintText(context),
       excludeSemantics: true,
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          labelText: getLabelText(context),
-          hintText: getHintText(context),
-        ),
-        readOnly: true,
-        validator: (String? value) {
-          if (value == null || value.isEmpty) {
-            return getValidatorEmptyText(context);
-          }
-          return null;
-        },
-        onTap: () async {
+      child: ElevatedButton(
+        onPressed: () async {
           final AddressSuggestion? addressSuggestion = await showSearch<AddressSuggestion?>(
             context: context,
             delegate: AddressSearchDelegate(),
@@ -68,9 +55,20 @@ class AddressSearchField extends StatelessWidget {
 
           if (addressSuggestion != null) {
             controller.text = addressSuggestion.name;
-            onSelected(addressSuggestion);
+            if (onSelected != null) onSelected!(addressSuggestion);
           }
         },
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: controller.text != ""
+              ? Text(controller.text)
+              : Text(
+                  getLabelText(context),
+                  style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                ),
+        ),
       ),
     );
   }
@@ -90,15 +88,6 @@ class AddressSearchField extends StatelessWidget {
         return S.of(context).formAddressStartHint;
       case AddressType.destination:
         return S.of(context).formAddressDestinationHint;
-    }
-  }
-
-  String getValidatorEmptyText(BuildContext context) {
-    switch (addressType) {
-      case AddressType.start:
-        return S.of(context).formAddressStartValidateEmpty;
-      case AddressType.destination:
-        return S.of(context).formAddressDestinationValidateEmpty;
     }
   }
 }

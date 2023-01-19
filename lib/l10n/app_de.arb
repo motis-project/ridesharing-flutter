@@ -53,7 +53,6 @@
   "formAddressStartValidateEmpty": "Bitte gib deinen Startort ein",
   "formAddressDestination": "Ziel",
   "formAddressDestinationHint": "Gib dein Ziel ein",
-  "formAddressDestinationValidateEmpty": "Bitte gib dein Ziel ein",
   "formClearInput": "Eingabe entfernen",
   "formSubmit": "Absenden",
   "formSubmitFail": "Fehler",
