@@ -164,10 +164,10 @@ class _RideCardState extends TripCardState<RideCard> {
         case RideStatus.cancelledByDriver:
           return Theme.of(context).colorScheme.error;
         case RideStatus.cancelledByRider:
-          return Theme.of(context).disabledColor;
         case RideStatus.withdrawnByRider:
+          return Theme.of(context).disabledColor;
         case RideStatus.preview:
-          return Colors.red;
+          return Theme.of(context).colorScheme.primary;
       }
     }
   }

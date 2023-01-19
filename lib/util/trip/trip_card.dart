@@ -157,7 +157,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTop(),
-        Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 8), child: buildRoute(context)),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), child: buildRoute(context)),
         buildBottom(),
       ],
     );
