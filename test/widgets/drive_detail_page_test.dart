@@ -58,6 +58,13 @@ void main() {
       await tester.pump();
 
       expect(find.text(drive.start), findsNWidgets(2));
+    });
+
+    testWidgets('Shows pending ride cards', (WidgetTester tester) async {
+      when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+
+      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+      await tester.pump();
 
       final pendingRideCard = find.byType(PendingRideCard);
       await tester.scrollUntilVisible(pendingRideCard, 100);
@@ -70,6 +77,36 @@ void main() {
         find.descendant(of: pendingRideCard, matching: find.byType(ButtonBar)),
         findsOneWidget,
       );
+    });
+
+    group('Shows cancel/hide button depending on circumstances', () {
+      testWidgets('Shows cancel when ride is upcoming', (WidgetTester tester) async {
+        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+        await tester.pump();
+
+        expect(find.byKey(const Key('cancelDriveButton')), findsOneWidget);
+        expect(find.byKey(const Key('hideDriveButton')), findsNothing);
+      });
+      testWidgets('Shows hide when drive is finished', (WidgetTester tester) async {
+        Drive finishedDrive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
+          endTime: DateTime.now().subtract(const Duration(days: 1)),
+        );
+        when(processor.processUrl(any)).thenReturn(jsonEncode(finishedDrive.toJsonForApi()));
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(finishedDrive));
+        await tester.pump();
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+      });
+      testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
+        Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
+        when(processor.processUrl(any)).thenReturn(jsonEncode(cancelledDrive.toJsonForApi()));
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
+        await tester.pump();
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+      });
     });
 
     testWidgets('Can handle other types of rides', (WidgetTester tester) async {
@@ -92,7 +129,6 @@ void main() {
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
-      // Wait for the drive to be fully loaded
       await tester.pump();
 
       expect(find.text(drive.start), findsNWidgets(2));
@@ -116,7 +152,6 @@ void main() {
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
-      // Wait for the drive to be fully loaded
       await tester.pump();
 
       expect(find.text(drive.start), findsNWidgets(2));
@@ -128,11 +163,9 @@ void main() {
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
-      // Wait for the drive to be fully loaded
       await tester.pump();
 
       final Finder cancelDriveButton = find.byKey(const Key('cancelDriveButton'));
-      expect(cancelDriveButton, findsOneWidget);
       await tester.scrollUntilVisible(cancelDriveButton, 500.0);
       await tester.tap(cancelDriveButton);
       await tester.pumpAndSettle();
@@ -153,11 +186,9 @@ void main() {
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
-      // Wait for the drive to be fully loaded
       await tester.pump();
 
       final Finder cancelDriveButton = find.byKey(const Key('cancelDriveButton'));
-      expect(cancelDriveButton, findsOneWidget);
       await tester.scrollUntilVisible(cancelDriveButton, 500.0);
       await tester.tap(cancelDriveButton);
       await tester.pumpAndSettle();
@@ -170,6 +201,59 @@ void main() {
       verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}'));
 
       expect(find.byKey(const Key("cancelledDriveBanner")), findsNothing);
+    });
+
+    testWidgets('Can hide drive', (WidgetTester tester) async {
+      Drive drive = DriveFactory().generateFake(
+        startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
+        endTime: DateTime.now().subtract(const Duration(days: 1)),
+      );
+
+      when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+
+      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+
+      // Wait for the drive to be fully loaded
+      await tester.pump();
+
+      final Finder hideDriveButton = find.byKey(const Key('hideDriveButton'));
+      await tester.scrollUntilVisible(hideDriveButton, 500.0);
+      await tester.tap(hideDriveButton);
+      await tester.pumpAndSettle();
+
+      final Finder hideDriveYesButton = find.byKey(const Key('hideDriveYesButton'));
+      expect(hideDriveYesButton, findsOneWidget);
+      await tester.tap(hideDriveYesButton);
+      await tester.pumpAndSettle();
+
+      // Verify that the drive was hidden (but no way to verify body right now)
+      verify(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}')).called(1);
+    });
+
+    testWidgets('Can abort hiding drive', (WidgetTester tester) async {
+      Drive drive = DriveFactory().generateFake(
+        startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
+        endTime: DateTime.now().subtract(const Duration(days: 1)),
+      );
+
+      when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+
+      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+
+      // Wait for the drive to be fully loaded
+      await tester.pump();
+
+      final Finder hideDriveButton = find.byKey(const Key('hideDriveButton'));
+      await tester.scrollUntilVisible(hideDriveButton, 500.0);
+      await tester.tap(hideDriveButton);
+      await tester.pumpAndSettle();
+
+      final Finder hideDriveNoButton = find.byKey(const Key('hideDriveNoButton'));
+      expect(hideDriveNoButton, findsOneWidget);
+      await tester.tap(hideDriveNoButton);
+      await tester.pumpAndSettle();
+
+      verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}'));
     });
 
     testWidgets('can navigate to drive chat page', (WidgetTester tester) async {

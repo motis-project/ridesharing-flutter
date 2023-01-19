@@ -187,6 +187,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonHide,
           onPressed: _showHideDialog,
+          key: const Key('hideDriveButton'),
         );
       } else {
         bottomButton = Button.error(
@@ -370,16 +371,18 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         content: Text(S.of(context).pageDriveDetailHideDialog),
         actions: <Widget>[
           TextButton(
-            child: Text(S.of(context).no),
             onPressed: () => Navigator.of(dialogContext).pop(),
+            key: const Key('hideDriveNoButton'),
+            child: Text(S.of(context).no),
           ),
           TextButton(
-            child: Text(S.of(context).yes),
             onPressed: () {
               hideDrive();
               Navigator.of(dialogContext).pop();
               Navigator.of(context).pop();
             },
+            key: const Key('hideDriveYesButton'),
+            child: Text(S.of(context).yes),
           ),
         ],
       ),
