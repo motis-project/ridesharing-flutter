@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/button.dart';
-import '../../util/locale_manager.dart';
 import '../../util/supabase.dart';
 import '../models/profile.dart';
 import '../models/report.dart';
@@ -147,16 +146,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildBirthDate() {
-    final Widget birthDate = _profile!.birthDate != null
+  Widget buildAge() {
+    final Widget age = _profile!.birthDate != null
         ? Text(
-            localeManager.formatDate(_profile!.birthDate!),
+            (DateTime.now().difference(_profile!.birthDate!).inDays ~/ 365).toString(),
             style: Theme.of(context).textTheme.titleMedium,
           )
-        : buildNoInfoText(S.of(context).pageProfileBirthDateEmpty);
+        : buildNoInfoText(S.of(context).pageProfileAgeEmpty);
     return EditableRow(
-      title: S.of(context).pageProfileBirthDateTitle,
-      innerWidget: birthDate,
+      title: S.of(context).pageProfileAgeTitle,
+      innerWidget: age,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
@@ -252,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     if (_profile!.isCurrentUser || _profile!.birthDate != null) {
       widgets.addAll(<Widget>[
-        buildBirthDate(),
+        buildAge(),
         const SizedBox(height: 16),
       ]);
     }
