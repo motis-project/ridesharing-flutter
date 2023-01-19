@@ -12,7 +12,7 @@ abstract class TripCard<T extends Trip> extends StatefulWidget {
 }
 
 abstract class TripCardState<T extends TripCard> extends State<T> {
-  Trip? trip;
+  late Trip trip;
 
   BorderRadius cardBorder = const BorderRadius.only(
     bottomRight: Radius.circular(10),
@@ -57,6 +57,8 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
 
   void Function()? onTap();
 
+  EdgeInsets get middlePadding => const EdgeInsets.all(16);
+
   FixedTimeline buildRoute(context) {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
@@ -68,7 +70,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${localeManager.formatTime(trip!.startTime)}  ${trip!.start}',
+                  '${localeManager.formatTime(trip.startTime)}  ${trip.start}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
@@ -81,7 +83,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: middlePadding,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -91,7 +93,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
-                        localeManager.formatDuration(trip!.duration),
+                        localeManager.formatDuration(trip.duration),
                       ),
                     ],
                   ),
@@ -112,7 +114,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${localeManager.formatTime(trip!.endTime)}  ${trip!.end}',
+                  '${localeManager.formatTime(trip.endTime)}  ${trip.end}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
@@ -133,7 +135,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(localeManager.formatDate(trip!.startTime)),
+          buildTopLeft(),
           buildTopRight(),
         ],
       ),
@@ -161,15 +163,19 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
     );
   }
 
+  Widget buildTopLeft() {
+    return Text(localeManager.formatDate(trip.startTime));
+  }
+
+  Widget buildTopRight() {
+    return const SizedBox();
+  }
+
   Widget buildBottomLeft() {
     return const SizedBox();
   }
 
   Widget buildBottomRight() {
-    return const SizedBox();
-  }
-
-  Widget buildTopRight() {
     return const SizedBox();
   }
 

@@ -16,7 +16,7 @@ class DriveCard extends TripCard<Drive> {
 }
 
 class _DriveCardState extends TripCardState<DriveCard> {
-  Drive? _drive;
+  late Drive _drive;
   bool _fullyLoaded = false;
 
   @override
@@ -32,7 +32,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   void didUpdateWidget(DriveCard oldWidget) {
-    if (!trip!.equals(widget.trip)) {
+    if (!trip.equals(widget.trip)) {
       loadDrive();
     }
     super.didUpdateWidget(oldWidget);
@@ -60,7 +60,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
     return () => Navigator.of(context)
         .push(
           MaterialPageRoute(
-            builder: (context) => DriveDetailPage.fromDrive(_drive!),
+            builder: (context) => DriveDetailPage.fromDrive(_drive),
           ),
         )
         .then((value) => loadDrive());
@@ -68,21 +68,21 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   Widget buildRightSide() {
-    return SeatIndicator(trip!);
+    return SeatIndicator(trip);
   }
 
   @override
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else if (_drive!.endTime.isBefore(DateTime.now())) {
+    } else if (_drive.endTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {
-      if (_drive!.cancelled) {
+      if (_drive.cancelled) {
         return Theme.of(context).disabledColor;
-      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.pending)) {
+      } else if (_drive.rides!.any((ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
-      } else if (_drive!.rides!.any((ride) => ride.status == RideStatus.approved)) {
+      } else if (_drive.rides!.any((ride) => ride.status == RideStatus.approved)) {
         return Theme.of(context).own().success;
       } else {
         return Theme.of(context).disabledColor;
@@ -92,7 +92,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_drive!.cancelled) {
+    if (_drive.cancelled) {
       return disabledDecoration;
     }
 

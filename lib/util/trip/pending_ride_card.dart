@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:timelines/timelines.dart';
 
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
-import '../custom_timeline_theme.dart';
 import '../icon_widget.dart';
 import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
@@ -15,115 +13,66 @@ class PendingRideCard extends TripCard<Ride> {
   final Function() reloadPage;
   final Drive drive;
   const PendingRideCard(super.trip, {super.key, required this.reloadPage, required this.drive});
-  final Duration extraTime = const Duration(minutes: 5);
 
   @override
   State<PendingRideCard> createState() => _PendingRideCardState();
 }
 
-class _PendingRideCardState extends State<PendingRideCard> {
+class _PendingRideCardState extends TripCardState<PendingRideCard> {
+  static const Duration extraTime = Duration(minutes: 5);
+
+  late Ride _ride;
+
   @override
-  Widget build(BuildContext context) {
-    FixedTimeline timeline = FixedTimeline(
-      theme: CustomTimelineTheme.of(context),
+  void initState() {
+    super.initState();
+    setState(() {
+      _ride = widget.trip;
+      trip = widget.trip;
+    });
+  }
+
+  @override
+  Widget buildTopLeft() {
+    return ProfileWidget(_ride.rider!);
+  }
+
+  @override
+  Widget buildTopRight() {
+    return Text("+${localeManager.formatDuration(extraTime, shouldPadHours: false)}");
+  }
+
+  @override
+  Widget buildBottomLeft() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: buildSeatsIndicator(),
+    );
+  }
+
+  @override
+  Widget buildBottomRight() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text("${_ride.price}€"),
+    );
+  }
+
+  @override
+  Widget buildRightSide() {
+    return ButtonBar(
       children: [
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 16, 0, 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${localeManager.formatTime(widget.trip.startTime)}  ${widget.trip.start}'),
-              ],
-            ),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            endConnector: CustomSolidLineConnector(),
-          ),
+        IconButton(
+          onPressed: (() => showApproveDialog(context)),
+          icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+          tooltip: S.of(context).approve,
         ),
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 16, 0, 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${localeManager.formatTime(widget.trip.endTime)}  ${widget.trip.end}'),
-              ],
-            ),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            startConnector: CustomSolidLineConnector(),
-          ),
+        IconButton(
+          onPressed: (() => showRejectDialog(context)),
+          icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+          tooltip: S.of(context).reject,
         ),
       ],
-    );
-
-    return Card(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ProfileWidget(widget.trip.rider!),
-                Text("+${localeManager.formatDuration(widget.extraTime, shouldPadHours: false)}"),
-              ],
-            ),
-          ),
-          const Divider(
-            thickness: 1,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: timeline,
-                    ),
-                  ],
-                ),
-              ),
-              ButtonBar(
-                children: [
-                  IconButton(
-                    onPressed: (() => showApproveDialog(context)),
-                    icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
-                    tooltip: S.of(context).approve,
-                  ),
-                  IconButton(
-                    onPressed: (() => showRejectDialog(context)),
-                    icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
-                    tooltip: S.of(context).reject,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const Divider(
-            thickness: 1,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: buildSeatsIndicator(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${widget.trip.price}€"),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -132,13 +81,13 @@ class _PendingRideCardState extends State<PendingRideCard> {
       Icons.chair,
       color: Theme.of(context).colorScheme.primary,
     );
-    return IconWidget(icon: icon, count: widget.trip.seats);
+    return IconWidget(icon: icon, count: _ride.seats);
   }
 
   void approveRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
-      params: {'ride_id': widget.trip.id},
+      params: {'ride_id': _ride.id},
     );
     // todo: notify rider
     widget.reloadPage();
@@ -147,7 +96,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
   void rejectRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
-      params: {'ride_id': widget.trip.id},
+      params: {'ride_id': _ride.id},
     );
     //todo: notify rider
     widget.reloadPage();
@@ -168,7 +117,7 @@ class _PendingRideCardState extends State<PendingRideCard> {
             child: Text(S.of(context).yes),
             onPressed: () {
               // check if there are enough seats available
-              if (widget.drive.isRidePossible(widget.trip)) {
+              if (widget.drive.isRidePossible(_ride)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -220,5 +169,13 @@ class _PendingRideCardState extends State<PendingRideCard> {
         ],
       ),
     );
+  }
+
+  @override
+  EdgeInsets get middlePadding => const EdgeInsets.only(left: 16);
+
+  @override
+  void Function()? onTap() {
+    return null;
   }
 }

@@ -23,9 +23,9 @@ class RideCard extends TripCard<Ride> {
 }
 
 class _RideCardState extends TripCardState<RideCard> {
-  Ride? _ride;
+  late Ride _ride;
+  late Profile _driver;
   bool _fullyLoaded = false;
-  Profile? _driver;
 
   BorderRadius cardPreviewBorder = BorderRadius.circular(10);
 
@@ -57,7 +57,7 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   void didUpdateWidget(RideCard oldWidget) {
-    if (!trip!.equals(widget.trip)) {
+    if (!trip.equals(widget.trip)) {
       loadRide();
     }
     super.didUpdateWidget(oldWidget);
@@ -72,7 +72,7 @@ class _RideCardState extends TripCardState<RideCard> {
       setState(() {
         _ride = trip;
         _driver = trip.drive!.driver!;
-        trip = _ride!;
+        trip = _ride;
         _fullyLoaded = true;
       });
     }
@@ -82,14 +82,14 @@ class _RideCardState extends TripCardState<RideCard> {
   void Function() onTap() {
     return () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => RideDetailPage.fromRide(_ride!),
+            builder: (context) => RideDetailPage.fromRide(_ride),
           ),
         );
   }
 
   @override
   Widget buildTopRight() {
-    return Text(" ${_ride!.price}€");
+    return Text(" ${_ride.price}€");
   }
 
   @override
@@ -103,7 +103,7 @@ class _RideCardState extends TripCardState<RideCard> {
         : Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 0, 16),
             child: ProfileWidget(
-              _driver!,
+              _driver,
               size: 16,
             ),
           );
@@ -115,7 +115,7 @@ class _RideCardState extends TripCardState<RideCard> {
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 16, 16),
             child: CustomRatingBarIndicator(
-              rating: AggregateReview.fromReviews(_ride!.drive!.driver!.reviewsReceived!).rating,
+              rating: AggregateReview.fromReviews(_ride.drive!.driver!.reviewsReceived!).rating,
               size: CustomRatingBarSize.medium,
             ),
           )
@@ -134,7 +134,7 @@ class _RideCardState extends TripCardState<RideCard> {
       ));
     }
 
-    List<ProfileFeature> profileFeatures = _driver!.profileFeatures!;
+    List<ProfileFeature> profileFeatures = _driver.profileFeatures!;
     List<Icon> featureicons = <Icon>[];
     for (int i = 0; i < min(profileFeatures.length, 3); i++) {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
@@ -147,14 +147,14 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   Color pickStatusColor() {
-    if (_ride!.endTime.isBefore(DateTime.now())) {
-      if (_ride!.status == RideStatus.approved) {
+    if (_ride.endTime.isBefore(DateTime.now())) {
+      if (_ride.status == RideStatus.approved) {
         return Theme.of(context).own().success;
       } else {
         return Theme.of(context).disabledColor;
       }
     } else {
-      switch (_ride!.status) {
+      switch (_ride.status) {
         case RideStatus.pending:
           return Theme.of(context).own().warning;
         case RideStatus.approved:
@@ -174,7 +174,7 @@ class _RideCardState extends TripCardState<RideCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_ride!.status.isCancelled() || _ride!.status == RideStatus.rejected) {
+    if (_ride.status.isCancelled() || _ride.status == RideStatus.rejected) {
       return disabledDecoration;
     }
     return super.pickDecoration();
