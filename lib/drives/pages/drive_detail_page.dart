@@ -192,6 +192,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonCancel,
           onPressed: _showCancelDialog,
+          key: const Key('cancelDriveButton'),
         );
       }
       widgets.add(bottomButton);
@@ -206,6 +207,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         if (_drive?.cancelled ?? false)
           CustomBanner.error(
             S.of(context).pageDriveDetailBannerCancelled,
+            key: const Key('cancelledDriveBanner'),
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -220,29 +222,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DriveChatPage(
-                  drive: _drive!,
-                ),
-              ),
-            ).then((value) => loadDrive()),
-            icon: Badge(
-              badgeContent: Text(
-                _getMessageCount(_drive!).toString(),
-                style: const TextStyle(color: Colors.white),
-                textScaleFactor: 1.0,
-              ),
-              showBadge: _getMessageCount(_drive!) != 0,
-              position: BadgePosition.topEnd(top: -12),
-              child: const Icon(Icons.chat),
-            ),
-            tooltip: S.of(context).openChat,
-          ),
-        ],
+        actions: [buildChatButton()],
       ),
       body: _drive == null
           ? const Center(child: CircularProgressIndicator())
@@ -253,6 +233,42 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 child: content,
               ),
             ),
+    );
+  }
+
+  Widget buildChatButton() {
+    String tooltip = S.of(context).openChat;
+    Icon icon = const Icon(Icons.chat);
+
+    if (!_fullyLoaded) {
+      return IconButton(
+        onPressed: null,
+        icon: icon,
+        tooltip: tooltip,
+      );
+    }
+
+    return IconButton(
+      key: const Key('driveChatButton'),
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DriveChatPage(
+            drive: _drive!,
+          ),
+        ),
+      ).then((value) => loadDrive()),
+      icon: Badge(
+        badgeContent: Text(
+          _getMessageCount(_drive!).toString(),
+          style: const TextStyle(color: Colors.white),
+          textScaleFactor: 1.0,
+        ),
+        showBadge: _getMessageCount(_drive!) != 0,
+        position: BadgePosition.topEnd(top: -12),
+        child: icon,
+      ),
+      tooltip: tooltip,
     );
   }
 
@@ -267,7 +283,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             children: [
               Text(
                 localeManager.formatTime(stop.time),
-                style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(width: 4.0),
               Text(stop.place),
@@ -383,10 +399,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         content: Text(S.of(context).pageDriveDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('cancelDriveNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
+            key: const Key('cancelDriveYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               _cancelDrive();

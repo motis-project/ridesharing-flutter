@@ -54,6 +54,15 @@ class Report extends Model {
       'text': text,
     };
   }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'offender': offender?.toJsonForApi(),
+        'reporter': reporter?.toJsonForApi(),
+      });
+  }
 }
 
 // Stored in the database as an integer

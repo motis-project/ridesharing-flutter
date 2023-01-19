@@ -92,22 +92,22 @@ class Ride extends Trip {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'start': start,
-      'start_lat': startPosition.lat,
-      'start_lng': startPosition.lng,
-      'start_time': startTime.toString(),
-      'end': end,
-      'end_lat': endPosition.lat,
-      'end_lng': endPosition.lng,
-      'end_time': endTime.toString(),
-      'seats': seats,
-      'price': price,
-      'status': status.index,
-      'hide_in_list_view': hideInListView,
-      'drive_id': driveId,
-      'rider_id': riderId,
-    };
+    return super.toJson()
+      ..addAll({
+        'price': price,
+        'status': status.index,
+        'drive_id': driveId,
+        'rider_id': riderId,
+      });
+  }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'drive': drive?.toJsonForApi(),
+        'rider': rider?.toJsonForApi(),
+      });
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {

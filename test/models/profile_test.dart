@@ -7,23 +7,8 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/profile_feature_factory.dart';
 import '../util/factories/report_factory.dart';
 import '../util/factories/review_factory.dart';
-import '../util/mock_server.dart';
-import '../util/mock_server.mocks.dart';
-
-// Die Klasse UrlProcessor muss zu Beginn jeder Testdatei implementiert werden und die Methode processUrl überschrieben werden
-// Wird die Methode ProcessUrl aufgrufen, wird für den dort definierten Fall (in dem Beispiel client.from('drives').select('driver_id,seats')) die Antwort definiert
-// Die Datenbankabfrage an den Client wird so abgefangen und das gewünschte Ergebnis zurückgegeben.
-// Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  MockUrlProcessor profileProcessor = MockUrlProcessor();
-
-  //setup muss in jeder Testklasse einmal aufgerufen werden
-  setUp(() async {
-    await MockServer.initialize();
-    MockServer.handleRequests(profileProcessor);
-  });
-
   group('fullname', () {
     test('returns empty if neither name nor surname are set', () async {
       Profile profile = ProfileFactory().generateFake(

@@ -22,7 +22,7 @@ class TripOverview extends StatelessWidget {
                 Text(trip.start),
                 Text(
                   localeManager.formatTime(trip.startTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
                 )
               ],
             ),

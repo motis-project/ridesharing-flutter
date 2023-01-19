@@ -95,6 +95,16 @@ class Profile extends Model {
   }
 
   @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'reviews_received': reviewsReceived?.map((review) => review.toJsonForApi()).toList() ?? [],
+        'profile_features': profileFeatures?.map((profileFeature) => profileFeature.toJsonForApi()).toList() ?? [],
+        'reports_received': reportsReceived?.map((report) => report.toJsonForApi()).toList() ?? [],
+      });
+  }
+
+  @override
   String toString() {
     return 'Profile{id: $id, username: $username, email: $email, createdAt: $createdAt}';
   }

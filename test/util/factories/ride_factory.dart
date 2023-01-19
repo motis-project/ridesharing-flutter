@@ -47,7 +47,7 @@ class RideFactory extends TripFactory<Ride> {
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
       endTime: endTime ?? DateTime.now(),
       seats: seats ?? random.nextInt(5) + 1,
-      price: getNullableParameterOr(price, random.nextDouble() * 10),
+      price: getNullableParameterOr(price, double.parse((random.nextDouble() * 10).toStringAsFixed(2))),
       status: status ?? RideStatus.values[random.nextInt(RideStatus.values.length)],
       hideInListView: hideInListView ?? false,
       driveId: generatedDrive?.id ?? randomId,
