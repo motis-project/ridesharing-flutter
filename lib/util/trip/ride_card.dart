@@ -15,7 +15,6 @@ import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase.dart';
 import 'trip_card.dart';
-import 'trip_card_state.dart';
 
 class RideCard extends TripCard<Ride> {
   const RideCard(super.trip, {super.key});

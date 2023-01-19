@@ -6,9 +6,8 @@ import '../../drives/pages/drive_detail_page.dart';
 import '../../rides/models/ride.dart';
 import '../own_theme_fields.dart';
 import '../supabase.dart';
+import 'seat_indicator.dart';
 import 'trip_card.dart';
-import 'trip_card_state.dart';
-import 'trip_overview.dart';
 
 class DriveCard extends TripCard<Drive> {
   const DriveCard(super.trip, {super.key});
@@ -59,7 +58,7 @@ class _DriveCardState extends TripCardState<DriveCard> {
 
   @override
   Widget buildRightSide() {
-    return TripOverview(super.trip!).buildSeatIndicator(context, trip!);
+    return SeatIndicator(trip!);
   }
 
   Color pickBannerColor() {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../drives/models/drive.dart';
 import '../locale_manager.dart';
+import 'seat_indicator.dart';
 import 'trip.dart';
 
 class TripOverview extends StatelessWidget {
@@ -55,8 +54,7 @@ class TripOverview extends StatelessWidget {
     );
     infoRowWidgets.add(dateWidget);
 
-    Widget seatIndicator = buildSeatIndicator(context, trip);
-    infoRowWidgets.add(seatIndicator);
+    infoRowWidgets.add(SeatIndicator(trip));
 
     Widget infoRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,47 +67,5 @@ class TripOverview extends StatelessWidget {
     );
 
     return overview;
-  }
-
-  Widget buildSeatIndicator(BuildContext context, Trip trip) {
-    List<Widget> seatIcons;
-    Widget text;
-
-    if (trip is Drive) {
-      int? maxUsedSeats = trip.getMaxUsedSeats();
-      seatIcons = List.generate(
-        trip.seats,
-        (index) => Icon(
-          Icons.chair,
-          color: maxUsedSeats != null && index < maxUsedSeats
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-        ),
-      );
-      text = Text(
-        "${maxUsedSeats ?? '?'}/${trip.seats} ${S.of(context).seats}",
-        semanticsLabel: maxUsedSeats != null
-            ? S.of(context).labelXOfYseats(maxUsedSeats, trip.seats)
-            : S.of(context).labelUnknownSeats(trip.seats),
-      );
-    } else {
-      seatIcons = List.generate(
-        trip.seats,
-        (index) => Icon(
-          Icons.chair,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      );
-      text = Text(S.of(context).seatsCount(trip.seats));
-    }
-
-    return MergeSemantics(
-      child: Column(
-        children: [
-          Row(children: seatIcons),
-          text,
-        ],
-      ),
-    );
   }
 }
