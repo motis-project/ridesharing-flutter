@@ -19,8 +19,7 @@ void main() {
   MockUrlProcessor driveProcessor = MockUrlProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
-    await MockServer.initialize();
-    MockServer.handleRequests(driveProcessor);
+    MockServer.setProcessor(driveProcessor);
   });
 
   group('Drive.fromJson', () {
