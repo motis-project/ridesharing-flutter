@@ -8,6 +8,7 @@ import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
+import '../util/factories/ride_factory.dart';
 
 void main() {
   group('getUnreadMessagesCount', (() {
@@ -95,13 +96,13 @@ void main() {
       Map<String, dynamic> json = {
         "id": 1,
         "created_at": "2021-01-01T00:00:00.000Z",
-        "rider_id": 2,
+        "ride_id": 2,
         "drive_id": 3,
       };
       Chat chat = Chat.fromJson(json);
       expect(chat.id, json["id"]);
       expect(chat.createdAt, DateTime.parse(json["created_at"]));
-      expect(chat.rideId, json["rider_id"]);
+      expect(chat.rideId, json["ride_id"]);
       expect(chat.driveId, json["drive_id"]);
     });
 
@@ -109,9 +110,9 @@ void main() {
       Map<String, dynamic> json = {
         "id": 1,
         "created_at": "2021-01-01T00:00:00.000Z",
-        "rider_id": 2,
+        "ride_id": 2,
         "drive_id": 3,
-        "rider": ProfileFactory().generateFake().toJsonForApi(),
+        "ride": RideFactory().generateFake().toJsonForApi(),
         "messages": [
           MessageFactory().generateFake().toJsonForApi(),
           MessageFactory().generateFake().toJsonForApi(),
@@ -129,14 +130,14 @@ void main() {
       Map<String, dynamic> json = {
         "id": 1,
         "created_at": "2021-01-01T00:00:00.000Z",
-        "rider_id": 2,
+        "ride_id": 2,
         "drive_id": 3,
       };
       List<Chat> chats = Chat.fromJsonList([json, json, json]);
       expect(chats.length, 3);
       expect(chats[0].id, json["id"]);
       expect(chats[2].createdAt, DateTime.parse(json["created_at"]));
-      expect(chats[1].rideId, json["rider_id"]);
+      expect(chats[1].rideId, json["ride_id"]);
       expect(chats[0].driveId, json["drive_id"]);
     });
 
@@ -150,7 +151,7 @@ void main() {
     test('parses a Chat to json', () {
       Chat chat = ChatFactory().generateFake();
       Map<String, dynamic> json = chat.toJson();
-      expect(json["rider_id"], chat.rideId);
+      expect(json["ride_id"], chat.rideId);
       expect(json["drive_id"], chat.driveId);
       expect(json.keys.length, 2);
     });
@@ -161,7 +162,7 @@ void main() {
       Chat chat = ChatFactory().generateFake();
       String string = chat.toString();
       expect(string,
-          "Chat{id: ${chat.id}, createdAt: ${chat.createdAt}, riderId: ${chat.rideId}, driveId: ${chat.driveId}}");
+          "Chat{id: ${chat.id}, createdAt: ${chat.createdAt}, rideId: ${chat.rideId}, driveId: ${chat.driveId}}");
     });
   });
 }

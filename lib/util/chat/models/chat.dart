@@ -30,7 +30,7 @@ class Chat extends Model {
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
       rideId: json['ride_id'],
-      ride: json.containsKey('rider') ? Ride.fromJson(json['ride']) : null,
+      ride: json.containsKey('ride') ? Ride.fromJson(json['ride']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
       messages:
@@ -59,6 +59,6 @@ class Chat extends Model {
 
   @override
   String toString() {
-    return 'Chat{id: $id, createdAt: $createdAt, riderId: $rideId, driveId: $driveId}';
+    return 'Chat{id: $id, createdAt: $createdAt, rideId: $rideId, driveId: $driveId}';
   }
 }
