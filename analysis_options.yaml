@@ -5,14 +5,9 @@
 # IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
 # invoked from the command line by running `flutter analyze`.
 
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
-
 linter:
   rules:
     - always_declare_return_types
-    # - always_put_control_body_on_new_line # DO WE WANT THIS?
     - always_require_non_null_named_parameters
     - always_specify_types
     - annotate_overrides
@@ -21,7 +16,6 @@ linter:
     - avoid_double_and_int_checks
     - avoid_dynamic_calls
     - avoid_empty_else
-    # - avoid_equals_and_hash_code_on_mutable_classes # FIND OUT WHAT THIS DOES
     - avoid_escaping_inner_quotes
     - avoid_field_initializers_in_const_classes
     - avoid_function_literals_in_foreach_calls
@@ -131,8 +125,7 @@ linter:
     - sized_box_shrink_expand
     - slash_for_doc_comments
     - sort_child_properties_last
-    # - sort_constructors_first # Think we don't want this?
-    # - sort_pub_dependencies # sNEEDED?
+    # - sort_pub_dependencies # DO WE WANT THIS?
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally
