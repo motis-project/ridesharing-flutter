@@ -302,11 +302,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       ).then((_) => loadDrive()),
       icon: Badge(
         badgeContent: Text(
-          _getMessageCount(_drive!).toString(),
+          _drive!.getUnreadMessagesCount().toString(),
           style: const TextStyle(color: Colors.white),
           textScaleFactor: 1.0,
         ),
-        showBadge: _getMessageCount(_drive!) != 0,
+        showBadge: _drive!.getUnreadMessagesCount() != 0,
         position: BadgePosition.topEnd(top: -12),
         child: icon,
       ),
