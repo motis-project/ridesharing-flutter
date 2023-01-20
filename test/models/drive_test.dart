@@ -16,7 +16,7 @@ import '../util/mock_server.mocks.dart';
 // Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  MockUrlProcessor driveProcessor = MockUrlProcessor();
+  final MockUrlProcessor driveProcessor = MockUrlProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
     await MockServer.initialize();
@@ -25,23 +25,23 @@ void main() {
 
   group('Drive.fromJson', () {
     test('parses a drive from json with no driver and no rides', () {
-      Map<String, dynamic> json = {
-        "id": 43,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "start": "London",
-        "start_lat": 2,
-        "start_lng": 3,
-        "start_time": "2022-01-01T00:00:00.000Z",
-        "end": "Berlin",
-        "end_lat": 4,
-        "end_lng": 5,
-        "end_time": "2023-01-01T00:00:00.000Z",
-        "seats": 2,
-        "cancelled": true,
-        "driver_id": 7,
-        "hide_in_list_view": false,
+      final Map<String, dynamic> json = {
+        'id': 43,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'start': 'London',
+        'start_lat': 2,
+        'start_lng': 3,
+        'start_time': '2022-01-01T00:00:00.000Z',
+        'end': 'Berlin',
+        'end_lat': 4,
+        'end_lng': 5,
+        'end_time': '2023-01-01T00:00:00.000Z',
+        'seats': 2,
+        'cancelled': true,
+        'driver_id': 7,
+        'hide_in_list_view': false,
       };
-      Drive drive = Drive.fromJson(json);
+      final Drive drive = Drive.fromJson(json);
       expect(drive.id, json['id']);
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
@@ -59,25 +59,25 @@ void main() {
     });
     test('can handle associated models', () {
       RideFactory().generateFakeJsonList(length: 3);
-      Map<String, dynamic> json = {
-        "id": 43,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "start": "London",
-        "start_lat": 2,
-        "start_lng": 3,
-        "start_time": "2022-01-01T00:00:00.000Z",
-        "end": "Berlin",
-        "end_lat": 4,
-        "end_lng": 5,
-        "end_time": "2023-01-01T00:00:00.000Z",
-        "seats": 2,
-        "cancelled": true,
-        "driver_id": 7,
-        "driver": ProfileFactory().generateFake().toJsonForApi(),
-        "rides": RideFactory().generateFakeJsonList(length: 3),
-        "hide_in_list_view": false,
+      final Map<String, dynamic> json = {
+        'id': 43,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'start': 'London',
+        'start_lat': 2,
+        'start_lng': 3,
+        'start_time': '2022-01-01T00:00:00.000Z',
+        'end': 'Berlin',
+        'end_lat': 4,
+        'end_lng': 5,
+        'end_time': '2023-01-01T00:00:00.000Z',
+        'seats': 2,
+        'cancelled': true,
+        'driver_id': 7,
+        'driver': ProfileFactory().generateFake().toJsonForApi(),
+        'rides': RideFactory().generateFakeJsonList(length: 3),
+        'hide_in_list_view': false,
       };
-      Drive drive = Drive.fromJson(json);
+      final Drive drive = Drive.fromJson(json);
       expect(drive.id, json['id']);
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
@@ -96,38 +96,38 @@ void main() {
   });
   group('Drive.fromJsonList', () {
     test('parses a list of drives from json', () {
-      Map<String, dynamic> json = {
-        "id": 43,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "start": "London",
-        "start_lat": 2,
-        "start_lng": 3,
-        "start_time": "2022-01-01T00:00:00.000Z",
-        "end": "Berlin",
-        "end_lat": 4,
-        "end_lng": 5,
-        "end_time": "2023-01-01T00:00:00.000Z",
-        "seats": 2,
-        "cancelled": true,
-        "driver_id": 7,
-        "hide_in_list_view": false,
+      final Map<String, dynamic> json = {
+        'id': 43,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'start': 'London',
+        'start_lat': 2,
+        'start_lng': 3,
+        'start_time': '2022-01-01T00:00:00.000Z',
+        'end': 'Berlin',
+        'end_lat': 4,
+        'end_lng': 5,
+        'end_time': '2023-01-01T00:00:00.000Z',
+        'seats': 2,
+        'cancelled': true,
+        'driver_id': 7,
+        'hide_in_list_view': false,
       };
-      List<Map<String, dynamic>> jsonList = [json, json, json];
-      List<Drive> drives = Drive.fromJsonList(jsonList);
+      final List<Map<String, dynamic>> jsonList = [json, json, json];
+      final List<Drive> drives = Drive.fromJsonList(jsonList);
       expect(drives.length, 3);
-      expect(drives.first.id, json["id"]);
-      expect(drives[1].start, json["start"]);
+      expect(drives.first.id, json['id']);
+      expect(drives[1].start, json['start']);
       expect(drives.last.seats, 2);
     });
     test('can handle an empty list', () {
-      List<Drive> drives = Drive.fromJsonList([]);
+      final List<Drive> drives = Drive.fromJsonList([]);
       expect(drives, []);
     });
   });
   group('Drive.toJson', () {
     test('returns a json representation of the drive', () async {
-      Drive drive = DriveFactory().generateFake();
-      Map<String, dynamic> json = drive.toJson();
+      final Drive drive = DriveFactory().generateFake();
+      final Map<String, dynamic> json = drive.toJson();
       expect(json['start'], drive.start);
       expect(json['start_lat'], drive.startPosition.lat);
       expect(json['start_lng'], drive.startPosition.lng);
@@ -144,13 +144,13 @@ void main() {
   });
   group('Drive.approvedrides', () {
     test('return null if rides is null', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         createDependencies: false,
       );
       expect(drive.approvedRides, null);
     });
     test('return an empty List if rides has no approved rides', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.pending),
         ],
@@ -158,13 +158,13 @@ void main() {
       expect(drive.approvedRides, []);
     });
     test('return a List with 1 ride if rides has rides only has 1 ride and it is approved', () async {
-      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
-      Drive drive = DriveFactory().generateFake(rides: [ride]);
+      final Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      final Drive drive = DriveFactory().generateFake(rides: [ride]);
       expect(drive.approvedRides, [ride]);
     });
     test('return the right ride with a rides have 1 approved in it', () async {
-      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
-      Drive drive = DriveFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.pending),
           RideFactory().generateFake(status: RideStatus.cancelledByDriver),
@@ -178,11 +178,11 @@ void main() {
       expect(drive.approvedRides, [ride]);
     });
     test('return the right rides with a rides have more than 1 approved in it', () async {
-      Ride ride1 = RideFactory().generateFake(status: RideStatus.approved);
-      Ride ride2 = RideFactory().generateFake(status: RideStatus.approved);
-      Ride ride3 = RideFactory().generateFake(status: RideStatus.approved);
+      final Ride ride1 = RideFactory().generateFake(status: RideStatus.approved);
+      final Ride ride2 = RideFactory().generateFake(status: RideStatus.approved);
+      final Ride ride3 = RideFactory().generateFake(status: RideStatus.approved);
 
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.pending),
           RideFactory().generateFake(status: RideStatus.cancelledByDriver),
@@ -200,13 +200,13 @@ void main() {
   });
   group('Drive.pendingRides', () {
     test('return null if rides is null', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         createDependencies: false,
       );
       expect(drive.pendingRides, null);
     });
     test('return an empty List if rides has no pending rides', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.approved),
         ],
@@ -214,15 +214,15 @@ void main() {
       expect(drive.pendingRides, []);
     });
     test('return a List with 1 ride if rides has 1 ride and is pending', () async {
-      Ride ride = RideFactory().generateFake(status: RideStatus.pending);
-      Drive drive = DriveFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(status: RideStatus.pending);
+      final Drive drive = DriveFactory().generateFake(
         rides: [ride],
       );
       expect(drive.pendingRides, [ride]);
     });
     test('return the right ride with a rides have 1 pending in it', () async {
-      Ride ride = RideFactory().generateFake(status: RideStatus.pending);
-      Drive drive = DriveFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(status: RideStatus.pending);
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.approved),
           RideFactory().generateFake(status: RideStatus.cancelledByDriver),
@@ -235,11 +235,11 @@ void main() {
       expect(drive.pendingRides, [ride]);
     });
     test('return the right rides with a rides have more than 1 pending in it', () async {
-      Ride ride1 = RideFactory().generateFake(status: RideStatus.pending);
-      Ride ride2 = RideFactory().generateFake(status: RideStatus.pending);
-      Ride ride3 = RideFactory().generateFake(status: RideStatus.pending);
+      final Ride ride1 = RideFactory().generateFake(status: RideStatus.pending);
+      final Ride ride2 = RideFactory().generateFake(status: RideStatus.pending);
+      final Ride ride3 = RideFactory().generateFake(status: RideStatus.pending);
 
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         rides: [
           RideFactory().generateFake(status: RideStatus.approved),
           RideFactory().generateFake(status: RideStatus.cancelledByDriver),
@@ -260,11 +260,11 @@ void main() {
   // What to do if we use more seats than we have
   group('Drive.getMaxUsedSeats', () {
     test('returns null if rides are null', () async {
-      Drive drive = DriveFactory().generateFake(rides: null, createDependencies: false);
+      final Drive drive = DriveFactory().generateFake(createDependencies: false);
       expect(drive.getMaxUsedSeats(), null);
     });
     test('returns 0 if there is no approved ride', () async {
-      Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
+      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
             startTime: DateTime(2022, 2, 2, 14, 30),
             endTime: DateTime(2022, 2, 2, 15),
@@ -299,7 +299,7 @@ void main() {
       expect(drive.getMaxUsedSeats(), 0);
     });
     test('returns 1 if rides has only 1 approved ride with 1 seat', () async {
-      Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
+      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
             startTime: DateTime(2022, 2, 2, 14, 30),
             endTime: DateTime(2022, 2, 2, 15),
@@ -334,7 +334,7 @@ void main() {
       expect(drive.getMaxUsedSeats(), 1);
     });
     test('returns 2 if rides has 2 approved ride with 1 seat at the same time', () async {
-      Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
+      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
             startTime: DateTime(2022, 2, 2, 14, 30),
             endTime: DateTime(2022, 2, 2, 15),
@@ -369,7 +369,7 @@ void main() {
       expect(drive.getMaxUsedSeats(), 2);
     });
     test('returns 4 if rides has a complex overlay where at its peak has 4 seats taken by approved rides', () async {
-      Drive drive = DriveFactory().generateFake(seats: 4, rides: <Ride>[
+      final Drive drive = DriveFactory().generateFake(seats: 4, rides: <Ride>[
         RideFactory().generateFake(
             startTime: DateTime(2022, 2, 2, 14, 30),
             endTime: DateTime(2022, 2, 2, 15),
@@ -407,14 +407,14 @@ void main() {
   // what if ride starts or ends outside of the Drive time
   group('Drive.isRidePossible', () {
     test('returns true if ride has space in an empty drive', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14),
         endTime: DateTime(2022, 2, 2, 16),
         seats: 4,
         rides: [],
         createDependencies: false,
       );
-      Ride ride = RideFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(
           startTime: DateTime(2022, 2, 2, 14, 50),
           endTime: DateTime(2022, 2, 2, 15, 10),
           status: RideStatus.approved,
@@ -422,7 +422,7 @@ void main() {
       expect(drive.isRidePossible(ride), true);
     });
     test('returns false if drive has 1 seat and its already taken', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14),
         endTime: DateTime(2022, 2, 2, 15),
         seats: 1,
@@ -435,7 +435,7 @@ void main() {
         ],
         createDependencies: false,
       );
-      Ride ride = RideFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14, 50),
         endTime: DateTime(2022, 2, 2, 15),
         seats: 1,
@@ -443,7 +443,7 @@ void main() {
       expect(drive.isRidePossible(ride), false);
     });
     test('returns true if ride is able to fit in with a drive with many riders', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14),
         endTime: DateTime(2022, 2, 2, 16),
         seats: 4,
@@ -480,7 +480,7 @@ void main() {
               seats: 1),
         ],
       );
-      Ride ride = RideFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(
           startTime: DateTime(2022, 2, 2, 14, 50),
           endTime: DateTime(2022, 2, 2, 15, 10),
           status: RideStatus.approved,
@@ -488,7 +488,7 @@ void main() {
       expect(drive.isRidePossible(ride), true);
     });
     test('returns false if ride not able to fit in with a drive with many riders', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14),
         endTime: DateTime(2022, 2, 2, 16),
         seats: 4,
@@ -525,7 +525,7 @@ void main() {
               seats: 1),
         ],
       );
-      Ride ride = RideFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(
           startTime: DateTime(2022, 2, 2, 14, 15),
           endTime: DateTime(2022, 2, 2, 15, 10),
           status: RideStatus.approved,
@@ -536,424 +536,400 @@ void main() {
   group('Drive.cancel', () {});
   group('Drive.toString', () {
     test('returns a string representation of the drive', () async {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         id: 1,
-        start: "start",
-        startTime: DateTime.parse("2022-02-02T00:00:00.000Z"),
-        end: "end",
-        endTime: DateTime.parse("2023-03-03T00:00:00.000Z"),
+        start: 'start',
+        startTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
+        end: 'end',
+        endTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
         driverId: 5,
         createDependencies: false,
       );
       expect(
         drive.toString(),
-        "Drive{id: 1, from: start at 2022-02-02 00:00:00.000Z, to: end at 2023-03-03 00:00:00.000Z, by: 5}",
+        'Drive{id: 1, from: start at 2022-02-02 00:00:00.000Z, to: end at 2023-03-03 00:00:00.000Z, by: 5}',
       );
     });
   });
   //soll equals auch auf rides prüfen und auf driver?
   group('Drive.equals', () {
     test('retrurns true when the drives are the same', () async {
-      Drive drive = DriveFactory().generateFake(createDependencies: true);
+      final Drive drive = DriveFactory().generateFake();
       expect(drive.equals(drive), true);
     });
     test('returns false when parameter is not a drive', () async {
-      Drive drive = DriveFactory().generateFake(createDependencies: false);
-      Ride ride = RideFactory().generateFake(createDependencies: false);
+      final Drive drive = DriveFactory().generateFake(createDependencies: false);
+      final Ride ride = RideFactory().generateFake(createDependencies: false);
       expect(drive.equals(ride), false);
     });
     test('returns false when drive has not the same cancelled', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: false,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same driverId', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 3,
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same id', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 2,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same createdAt', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 9),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same start', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Hamburg",
+        start: 'Hamburg',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same startPosition', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(2, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same startTime', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 10),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same end', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Darmstadt",
+        end: 'Darmstadt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same endPosition', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 1),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same endTime', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 11),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same seats', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 2,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
       );
       expect(drive0.equals(drive1), false);
     });
     test('returns false when drive has not the same hideInListView', () async {
-      Drive drive0 = DriveFactory().generateFake(
+      final Drive drive0 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driverId: 2,
-        rides: null,
         createDependencies: false,
       );
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime(2022, 11),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: true,
         driver: NullableParameter(drive0.driver),
-        rides: null,
         createDependencies: false,
         hideInListView: true,
       );
