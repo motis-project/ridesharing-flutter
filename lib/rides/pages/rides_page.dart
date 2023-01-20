@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip_page_builder.dart';
 import '../models/ride.dart';
-import 'search_ride_page.dart';
+import 'search_suggestion_page.dart';
 
 class RidesPage extends StatefulWidget {
   const RidesPage({super.key});
@@ -38,7 +38,7 @@ class _RidesPageState extends State<RidesPage> {
 
   void searchRide() {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+      MaterialPageRoute<void>(builder: (BuildContext context) => const SearchSuggestionPage()),
     );
   }
 }

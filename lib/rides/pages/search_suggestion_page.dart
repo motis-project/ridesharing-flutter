@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:timelines/timelines.dart';
 
 import '../../drives/models/drive.dart';
-import '../../util/custom_timeline_theme.dart';
+import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/parse_helper.dart';
-import '../../util/search/address_search_delegate.dart';
 import '../../util/search/address_suggestion.dart';
+import '../../util/search/start_destination_timeline.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
 import '../models/ride.dart';
 import '../widgets/search_suggestion_filter.dart';
 
 class SearchSuggestionPage extends StatefulWidget {
-  const SearchSuggestionPage(this.startSuggestion, this.endSuggestion, this.date, this.seats, {super.key});
-
-  final AddressSuggestion startSuggestion;
-  final AddressSuggestion endSuggestion;
-  final int seats;
-  final DateTime date;
+  const SearchSuggestionPage({super.key});
 
   @override
   State<SearchSuggestionPage> createState() => _SearchSuggestionPage();
@@ -34,9 +28,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
+  late bool _wholeDay;
   late int _dropdownValue;
-
-  final List<int> list = List<int>.generate(10, (int index) => index + 1);
 
   final SearchSuggestionFilter _filter = SearchSuggestionFilter();
 
@@ -45,12 +38,9 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.date;
-    _dropdownValue = widget.seats;
-    _startSuggestion = widget.startSuggestion;
-    _startController.text = widget.startSuggestion.name;
-    _destinationSuggestion = widget.endSuggestion;
-    _destinationController.text = widget.endSuggestion.name;
+    _selectedDate = DateTime.now();
+    _wholeDay = true;
+    _dropdownValue = 1;
     loadRides();
   }
 
@@ -146,30 +136,29 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     });
   }
 
-  FixedTimeline buildSearchFieldViewer() {
-    return FixedTimeline(
-      theme: CustomTimelineTheme.of(context),
+  Widget buildSearchFieldViewer() {
+    return Row(
       children: <Widget>[
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: buildLocationPicker(isStart: true),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            endConnector: CustomSolidLineConnector(),
+        Expanded(
+          child: StartDestinationTimeline(
+            startController: _startController,
+            destinationController: _destinationController,
+            onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
+            onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
           ),
         ),
-        TimelineTile(
-          contents: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: buildLocationPicker(isStart: false),
-          ),
-          node: const TimelineNode(
-            indicator: CustomOutlinedDotIndicator(),
-            startConnector: CustomSolidLineConnector(),
-          ),
-        ),
+        IconButton(
+          onPressed: () {
+            final String oldStartText = _startController.text;
+            _startController.text = _destinationController.text;
+            _destinationController.text = oldStartText;
+            final AddressSuggestion oldStartSuggestion = _startSuggestion;
+            _startSuggestion = _destinationSuggestion;
+            _destinationSuggestion = oldStartSuggestion;
+            loadRides();
+          },
+          icon: const Icon(Icons.swap_vert),
+        )
       ],
     );
   }
@@ -177,18 +166,16 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildDatePicker() {
     _dateController.text = localeManager.formatDate(_selectedDate);
 
-    return Expanded(
-      child: Semantics(
-        button: true,
-        child: TextFormField(
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: S.of(context).formDate,
-          ),
-          readOnly: true,
-          onTap: _showDatePicker,
-          controller: _dateController,
+    return Semantics(
+      button: true,
+      child: TextFormField(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: S.of(context).formDate,
         ),
+        readOnly: true,
+        onTap: _showDatePicker,
+        controller: _dateController,
       ),
     );
   }
@@ -196,71 +183,18 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   Widget buildTimePicker() {
     _timeController.text = localeManager.formatTime(_selectedDate);
 
-    return Expanded(
-      child: Semantics(
-        button: true,
-        child: TextFormField(
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            labelText: S.of(context).formTime,
-            errorText: _dateTimeValidator(_timeController.text),
-          ),
-          readOnly: true,
-          onTap: _showTimePicker,
-          controller: _timeController,
-          validator: _dateTimeValidator,
-        ),
-      ),
-    );
-  }
-
-  Widget buildSeatsPicker() {
-    return SizedBox(
-      height: 60,
-      width: 110,
-      child: DropdownButtonFormField<int>(
+    return Semantics(
+      button: true,
+      child: TextFormField(
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
-          labelText: S.of(context).seats,
+          labelText: S.of(context).formTime,
+          errorText: _dateTimeValidator(_timeController.text),
         ),
-        value: _dropdownValue,
-        onChanged: (int? value) {
-          _dropdownValue = value!;
-          loadRides();
-        },
-        items: list.map<DropdownMenuItem<int>>((int value) {
-          return DropdownMenuItem<int>(
-            value: value,
-            child: Text(value.toString()),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget buildLocationPicker({required bool isStart}) {
-    final TextEditingController controller = isStart ? _startController : _destinationController;
-
-    return ElevatedButton(
-      onPressed: () async {
-        final AddressSuggestion? suggestion = await showSearch<AddressSuggestion?>(
-          context: context,
-          delegate: AddressSearchDelegate(),
-          query: controller.text,
-        );
-        if (suggestion != null) {
-          controller.text = suggestion.name;
-          if (isStart) {
-            _startSuggestion = suggestion;
-          } else {
-            _destinationSuggestion = suggestion;
-          }
-          await loadRides();
-        }
-      },
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(controller.text),
+        readOnly: true,
+        onTap: _showTimePicker,
+        controller: _timeController,
+        validator: _dateTimeValidator,
       ),
     );
   }
@@ -281,6 +215,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
               Text(
                 S.of(context).pageSearchSuggestionsEmpty,
                 style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
               ),
               if (_rideSuggestions!.isNotEmpty)
                 Semantics(
@@ -291,6 +226,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
                     child: Text(
                       S.of(context).pageSearchSuggestionsRelaxRestrictions,
                       style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 )
@@ -298,6 +234,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
                 Text(
                   S.of(context).pageSearchSuggestionsNoResults,
                   style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
                 ),
             ],
           ),
@@ -324,30 +261,62 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        buildDatePicker(),
-        buildTimePicker(),
-        const SizedBox(width: 50),
-        buildSeatsPicker(),
+        Expanded(child: buildDatePicker()),
+        const SizedBox(width: 10),
+        if (!_wholeDay) ...<Widget>[
+          Expanded(child: buildTimePicker()),
+          const SizedBox(width: 10),
+        ],
+        Expanded(
+          child: Row(
+            children: <Widget>[
+              Checkbox(
+                value: _wholeDay,
+                onChanged: (bool? value) => setState(() => _wholeDay = value!),
+              ),
+              const Text('Whole day')
+            ],
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget buildSeats() {
+    return IncrementField(
+      maxValue: 8,
+      icon: Icon(
+        Icons.chair,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      onChanged: (int? value) {
+        setState(() {
+          _dropdownValue = value!;
+        });
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).pageSearchSuggestionsTitle)),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            buildSearchFieldViewer(),
-            const SizedBox(height: 10),
-            buildDateSeatsRow(),
-            const SizedBox(height: 5),
-            _filter.buildIndicatorRow(context, setState),
-            const Divider(thickness: 1),
-            buildSearchCardList(),
-          ],
+    return Hero(
+      tag: 'RideFAB',
+      child: Scaffold(
+        appBar: AppBar(title: Text(S.of(context).pageSearchRideTitle)),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              buildSearchFieldViewer(),
+              const SizedBox(height: 10),
+              buildDateSeatsRow(),
+              const SizedBox(height: 5),
+              buildSeats(),
+              _filter.buildIndicatorRow(context, setState),
+              const Divider(thickness: 1),
+              buildSearchCardList(),
+            ],
+          ),
         ),
       ),
     );
