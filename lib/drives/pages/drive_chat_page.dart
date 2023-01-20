@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../account/widgets/avatar.dart';
+import '../../rides/models/ride.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
@@ -19,10 +20,15 @@ class DriveChatPage extends StatefulWidget {
 
 class _DriveChatPageState extends State<DriveChatPage> {
   late Stream<List<Message>> _messagesStream;
+  late List<Chat> _chats;
 
   @override
   void initState() {
-    final List<int> ids = widget.drive.chats!.map((Chat chat) => chat.id!).toList();
+    _chats = widget.drive.chats!
+        .where((Chat chat) =>
+            ,final widget.drive.rides!.firstWhere((Ride element) => element.id == chat.rideId).status.activeChat())
+        .toList();
+    final List<int> ids = _chats.map((Chat chat) => chat.id!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
               (SupabaseStreamEvent messages) => Message.fromJsonList(
@@ -40,24 +46,23 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Chat> chats = widget.drive.chats!.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: chats.isNotEmpty
+      body: _chats.isNotEmpty
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
               builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
                   for (final Message message in snapshot.data!) {
-                    final Chat chat = chats.firstWhere((Chat chat) => chat.id == message.chatId);
+                    final Chat chat = _chats.firstWhere((Chat chat) => chat.id == message.chatId);
                     if (chat.messages!.contains(message)) {
                       chat.messages!.remove(message);
                     }
                     chat.messages!.add(message);
                   }
-                  final List<Card> widgets = chats.map((Chat chat) => _buildChatWidget(chat)).toList();
+                  final List<Card> widgets = _chats.map<Card>((Chat chat) => _buildChatWidget(chat)).toList();
                   return ListView.separated(
                     itemCount: widgets.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -99,12 +104,27 @@ class _DriveChatPageState extends State<DriveChatPage> {
   Card _buildChatWidget(Chat chat) {
     chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
+    final Widget? subtitle = lastMessage == null
+        ? null
+        : Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.done_all,
+                size: 18,
+                color: lastMessage.read
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              ),
+              Text(lastMessage.content),
+            ],
+          );
     return Card(
       child: InkWell(
         child: ListTile(
           leading: Avatar(chat.ride!.rider!),
           title: Text(chat.ride!.rider!.username),
-          subtitle: lastMessage == null ? null : Text(lastMessage.content, maxLines: 1),
+          subtitle: subtitle,
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
               : Container(
