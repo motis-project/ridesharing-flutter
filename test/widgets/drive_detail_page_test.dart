@@ -7,6 +7,7 @@ import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/pending_ride_card.dart';
 
 import '../util/factories/drive_factory.dart';
@@ -131,6 +132,11 @@ void main() {
       expect(find.text('Waypoint'), findsOneWidget);
       expect(find.text('Waypoint2'), findsNothing);
       expect(find.text('Waypoint3'), findsNothing);
+
+      final Finder profileWidget = find.byType(ProfileWidget);
+      tester.tap(profileWidget.first);
+
+      // Add navigating to chat here
     });
 
     testWidgets('Can handle duplicate waypoints', (WidgetTester tester) async {
