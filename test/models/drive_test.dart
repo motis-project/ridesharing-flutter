@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/util/search/position.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/model_factory.dart';
+import '../util/factories/profile_factory.dart';
 import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
 import '../util/mock_server.mocks.dart';
@@ -22,11 +23,238 @@ void main() {
     MockServer.handleRequests(driveProcessor);
   });
 
-  group('Drive.fromJson', () {});
-  group('Drive.fromJsonList', () {});
-  group('Drive.toJson', () {});
-  group('Drive.approvedrides', () {});
-  group('Drive.pendingRides', () {});
+  group('Drive.fromJson', () {
+    test('parses a drive from json with no driver and no rides', () {
+      Map<String, dynamic> json = {
+        "id": 43,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "start": "London",
+        "start_lat": 2,
+        "start_lng": 3,
+        "start_time": "2022-01-01T00:00:00.000Z",
+        "end": "Berlin",
+        "end_lat": 4,
+        "end_lng": 5,
+        "end_time": "2023-01-01T00:00:00.000Z",
+        "seats": 2,
+        "cancelled": true,
+        "driver_id": 7,
+        "hide_in_list_view": false,
+      };
+      Drive drive = Drive.fromJson(json);
+      expect(drive.id, json['id']);
+      expect(drive.createdAt, DateTime.parse(json['created_at']));
+      expect(drive.start, json['start']);
+      expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
+      expect(drive.startTime, DateTime.parse(json['start_time']));
+      expect(drive.end, json['end']);
+      expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
+      expect(drive.endTime, DateTime.parse(json['end_time']));
+      expect(drive.seats, json['seats']);
+      expect(drive.cancelled, json['cancelled']);
+      expect(drive.driverId, json['driver_id']);
+      expect(drive.driver, null);
+      expect(drive.rides, null);
+      expect(drive.hideInListView, json['hide_in_list_view']);
+    });
+    test('can handle associated models', () {
+      RideFactory().generateFakeJsonList(length: 3);
+      Map<String, dynamic> json = {
+        "id": 43,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "start": "London",
+        "start_lat": 2,
+        "start_lng": 3,
+        "start_time": "2022-01-01T00:00:00.000Z",
+        "end": "Berlin",
+        "end_lat": 4,
+        "end_lng": 5,
+        "end_time": "2023-01-01T00:00:00.000Z",
+        "seats": 2,
+        "cancelled": true,
+        "driver_id": 7,
+        "driver": ProfileFactory().generateFake().toJsonForApi(),
+        "rides": RideFactory().generateFakeJsonList(length: 3),
+        "hide_in_list_view": false,
+      };
+      Drive drive = Drive.fromJson(json);
+      expect(drive.id, json['id']);
+      expect(drive.createdAt, DateTime.parse(json['created_at']));
+      expect(drive.start, json['start']);
+      expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
+      expect(drive.startTime, DateTime.parse(json['start_time']));
+      expect(drive.end, json['end']);
+      expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
+      expect(drive.endTime, DateTime.parse(json['end_time']));
+      expect(drive.seats, json['seats']);
+      expect(drive.cancelled, json['cancelled']);
+      expect(drive.driverId, json['driver_id']);
+      expect(drive.hideInListView, json['hide_in_list_view']);
+      expect(drive.driver == null, false);
+      expect(drive.rides!.length, 3);
+    });
+  });
+  group('Drive.fromJsonList', () {
+    test('parses a list of drives from json', () {
+      Map<String, dynamic> json = {
+        "id": 43,
+        "created_at": "2021-01-01T00:00:00.000Z",
+        "start": "London",
+        "start_lat": 2,
+        "start_lng": 3,
+        "start_time": "2022-01-01T00:00:00.000Z",
+        "end": "Berlin",
+        "end_lat": 4,
+        "end_lng": 5,
+        "end_time": "2023-01-01T00:00:00.000Z",
+        "seats": 2,
+        "cancelled": true,
+        "driver_id": 7,
+        "hide_in_list_view": false,
+      };
+      List<Map<String, dynamic>> jsonList = [json, json, json];
+      List<Drive> drives = Drive.fromJsonList(jsonList);
+      expect(drives.length, 3);
+      expect(drives.first.id, json["id"]);
+      expect(drives[1].start, json["start"]);
+      expect(drives.last.seats, 2);
+    });
+    test('can handle an empty list', () {
+      List<Drive> drives = Drive.fromJsonList([]);
+      expect(drives, []);
+    });
+  });
+  group('Drive.toJson', () {
+    test('returns a json representation of the drive', () async {
+      Drive drive = DriveFactory().generateFake();
+      Map<String, dynamic> json = drive.toJson();
+      expect(json['start'], drive.start);
+      expect(json['start_lat'], drive.startPosition.lat);
+      expect(json['start_lng'], drive.startPosition.lng);
+      expect(json['start_time'], drive.startTime.toString());
+      expect(json['end'], drive.end);
+      expect(json['end_lat'], drive.endPosition.lat);
+      expect(json['end_lng'], drive.endPosition.lng);
+      expect(json['end_time'], drive.endTime.toString());
+      expect(json['cancelled'], drive.cancelled);
+      expect(json['seats'], drive.seats);
+      expect(json['driver_id'], drive.driverId);
+      expect(json.keys.length, 11);
+    });
+  });
+  group('Drive.approvedrides', () {
+    test('return null if rides is null', () async {
+      Drive drive = DriveFactory().generateFake(
+        createDependencies: false,
+      );
+      expect(drive.approvedRides, null);
+    });
+    test('return an empty List if rides has no approved rides', () async {
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.pending),
+        ],
+      );
+      expect(drive.approvedRides, []);
+    });
+    test('return a List with 1 ride if rides has rides only has 1 ride and it is approved', () async {
+      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      Drive drive = DriveFactory().generateFake(rides: [ride]);
+      expect(drive.approvedRides, [ride]);
+    });
+    test('return the right ride with a rides have 1 approved in it', () async {
+      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+          RideFactory().generateFake(status: RideStatus.pending),
+          ride,
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.cancelledByRider),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+        ],
+      );
+      expect(drive.approvedRides, [ride]);
+    });
+    test('return the right rides with a rides have more than 1 approved in it', () async {
+      Ride ride1 = RideFactory().generateFake(status: RideStatus.approved);
+      Ride ride2 = RideFactory().generateFake(status: RideStatus.approved);
+      Ride ride3 = RideFactory().generateFake(status: RideStatus.approved);
+
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+          RideFactory().generateFake(status: RideStatus.pending),
+          ride1,
+          ride2,
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.cancelledByRider),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+          ride3,
+        ],
+      );
+      expect(drive.approvedRides, [ride1, ride2, ride3]);
+    });
+  });
+  group('Drive.pendingRides', () {
+    test('return null if rides is null', () async {
+      Drive drive = DriveFactory().generateFake(
+        createDependencies: false,
+      );
+      expect(drive.pendingRides, null);
+    });
+    test('return an empty List if rides has no pending rides', () async {
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.approved),
+        ],
+      );
+      expect(drive.pendingRides, []);
+    });
+    test('return a List with 1 ride if rides has 1 ride and is pending', () async {
+      Ride ride = RideFactory().generateFake(status: RideStatus.pending);
+      Drive drive = DriveFactory().generateFake(
+        rides: [ride],
+      );
+      expect(drive.pendingRides, [ride]);
+    });
+    test('return the right ride with a rides have 1 pending in it', () async {
+      Ride ride = RideFactory().generateFake(status: RideStatus.pending);
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.approved),
+          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+          ride,
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.cancelledByRider),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+        ],
+      );
+      expect(drive.pendingRides, [ride]);
+    });
+    test('return the right rides with a rides have more than 1 pending in it', () async {
+      Ride ride1 = RideFactory().generateFake(status: RideStatus.pending);
+      Ride ride2 = RideFactory().generateFake(status: RideStatus.pending);
+      Ride ride3 = RideFactory().generateFake(status: RideStatus.pending);
+
+      Drive drive = DriveFactory().generateFake(
+        rides: [
+          RideFactory().generateFake(status: RideStatus.approved),
+          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+          RideFactory().generateFake(status: RideStatus.approved),
+          ride1,
+          ride2,
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.cancelledByRider),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+          ride3,
+        ],
+      );
+      expect(drive.pendingRides, [ride1, ride2, ride3]);
+    });
+  });
   group('Drive.getDrivesOfUser', () {});
   group('Drive.userHasDriveAtTimeRange', () {});
   // What to do if we use more seats than we have
@@ -176,6 +404,7 @@ void main() {
       expect(drive.getMaxUsedSeats(), 4);
     });
   });
+  // what if ride starts or ends outside of the Drive time
   group('Drive.isRidePossible', () {
     test('returns true if ride has space in an empty drive', () async {
       Drive drive = DriveFactory().generateFake(
@@ -208,10 +437,10 @@ void main() {
       );
       Ride ride = RideFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14, 50),
-        endTime: DateTime(2022, 2, 2, 15, 10),
+        endTime: DateTime(2022, 2, 2, 15),
         seats: 1,
       );
-      expect(drive.isRidePossible(ride), true);
+      expect(drive.isRidePossible(ride), false);
     });
     test('returns true if ride is able to fit in with a drive with many riders', () async {
       Drive drive = DriveFactory().generateFake(
@@ -257,6 +486,51 @@ void main() {
           status: RideStatus.approved,
           seats: 1);
       expect(drive.isRidePossible(ride), true);
+    });
+    test('returns false if ride not able to fit in with a drive with many riders', () async {
+      Drive drive = DriveFactory().generateFake(
+        startTime: DateTime(2022, 2, 2, 14),
+        endTime: DateTime(2022, 2, 2, 16),
+        seats: 4,
+        rides: <Ride>[
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 14),
+              endTime: DateTime(2022, 2, 2, 15),
+              status: RideStatus.approved,
+              seats: 1),
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 14),
+              endTime: DateTime(2022, 2, 2, 14, 20),
+              status: RideStatus.approved,
+              seats: 3),
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 14, 20),
+              endTime: DateTime(2022, 2, 2, 15),
+              status: RideStatus.approved,
+              seats: 2),
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 14, 40),
+              endTime: DateTime(2022, 2, 2, 14, 50),
+              status: RideStatus.approved,
+              seats: 1),
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 15),
+              endTime: DateTime(2022, 2, 2, 15, 30),
+              status: RideStatus.approved,
+              seats: 2),
+          RideFactory().generateFake(
+              startTime: DateTime(2022, 2, 2, 15),
+              endTime: DateTime(2022, 2, 2, 15, 20),
+              status: RideStatus.approved,
+              seats: 1),
+        ],
+      );
+      Ride ride = RideFactory().generateFake(
+          startTime: DateTime(2022, 2, 2, 14, 15),
+          endTime: DateTime(2022, 2, 2, 15, 10),
+          status: RideStatus.approved,
+          seats: 1);
+      expect(drive.isRidePossible(ride), false);
     });
   });
   group('Drive.cancel', () {});
