@@ -15,7 +15,7 @@ class DriveCard extends TripCard<Drive> {
   State<DriveCard> createState() => _DriveCardState();
 }
 
-class _DriveCardState extends TripCardState<DriveCard> {
+class _DriveCardState extends TripCardState<Drive, DriveCard> {
   late Drive _drive;
   bool _fullyLoaded = false;
 
@@ -59,11 +59,11 @@ class _DriveCardState extends TripCardState<DriveCard> {
   void Function() get onTap {
     return () => Navigator.of(context)
         .push(
-          MaterialPageRoute(
-            builder: (context) => DriveDetailPage.fromDrive(_drive),
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => DriveDetailPage.fromDrive(_drive),
           ),
         )
-        .then((value) => loadDrive());
+        .then((_) => loadDrive());
   }
 
   @override
@@ -80,9 +80,9 @@ class _DriveCardState extends TripCardState<DriveCard> {
     } else {
       if (_drive.cancelled) {
         return Theme.of(context).errorColor;
-      } else if (_drive.rides!.any((ride) => ride.status == RideStatus.pending)) {
+      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
-      } else if (_drive.rides!.any((ride) => ride.status == RideStatus.approved)) {
+      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
         return Theme.of(context).own().success;
       } else {
         return Theme.of(context).disabledColor;

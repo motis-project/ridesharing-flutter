@@ -35,7 +35,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
-            children: [
+            children: <Widget>[
               TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
@@ -46,9 +46,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
                 onTap: _showDatePicker,
                 controller: _controller,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Button(
                 S.of(context).save,
                 onPressed: onPressed,
@@ -75,7 +73,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
   }
 
   void _showDatePicker() async {
-    final twelveYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 12));
+    final DateTime twelveYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 12));
     DateTime? date = await showDatePicker(
       context: context,
       initialDate: twelveYearsAgo,
@@ -89,8 +87,8 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
   }
 
   void onPressed() async {
-    final date = _date == null ? null : _date!.toString();
-    await SupabaseManager.supabaseClient.from('profiles').update({
+    final String? date = _date == null ? null : _date!.toString();
+    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'birth_date': date,
     }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();

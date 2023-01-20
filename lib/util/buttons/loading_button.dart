@@ -23,7 +23,7 @@ class _LoadingButtonState extends State<LoadingButton> {
   @override
   Widget build(BuildContext context) {
     return ProgressButton.icon(
-      iconedButtons: {
+      iconedButtons: <ButtonState, IconedButton>{
         ButtonState.idle: IconedButton(
           text: widget.idleText ?? S.of(context).formSubmit,
           icon: widget.idleIcon ??

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
 
@@ -67,11 +66,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
       );
 
-      await Future.delayed(const Duration(seconds: 1));
+      await Future<void>.delayed(const Duration(seconds: 1));
       setState(() {
         _state = ButtonState.success;
       });
-      await Future.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -85,7 +84,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     setState(() {
       _state = ButtonState.fail;
     });
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
       _state = ButtonState.idle;
     });

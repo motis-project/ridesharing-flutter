@@ -86,14 +86,14 @@ class Ride extends Trip {
     );
   }
 
-  static List<Ride> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => Ride.fromJson(json as Map<String, dynamic>)).toList();
+  static List<Ride> fromJsonList(List<Map<String, dynamic>> jsonList) {
+    return jsonList.map((Map<String, dynamic> json) => Ride.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
     return super.toJson()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'price': price,
         'status': status.index,
         'drive_id': driveId,
@@ -104,16 +104,18 @@ class Ride extends Trip {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'drive': drive?.toJsonForApi(),
         'rider': rider?.toJsonForApi(),
       });
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
-    //get all approved and upcoming rides of user
-    List<Ride> rides = await getRidesOfUser(userId);
-    rides = rides.where((ride) => ride.status.isApproved() && !ride.isFinished).toList();
+    List<Map<String, dynamic>> jsonList = parseHelper.parseListOfMaps(
+      await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId),
+    );
+    List<Ride> rides =
+        Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
 
     //check if ride overlaps with start and end
     for (Ride ride in rides) {
@@ -122,10 +124,6 @@ class Ride extends Trip {
       }
     }
     return false;
-  }
-
-  static Future<List<Ride>> getRidesOfUser(int userId) async {
-    return Ride.fromJsonList(await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId));
   }
 
   @override
@@ -160,14 +158,14 @@ class Ride extends Trip {
 
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
-    await SupabaseManager.supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
+    await SupabaseManager.supabaseClient.from('rides').update(<String, dynamic>{'status': status.index}).eq('id', id);
   }
 
   Future<void> withdraw() async {
     status = RideStatus.withdrawnByRider;
     await SupabaseManager.supabaseClient
         .from('rides')
-        .update({'status': status.index, 'hide_in_list_view': true}).eq('id', id);
+        .update(<String, dynamic>{'status': status.index, 'hide_in_list_view': true}).eq('id', id);
   }
 
   @override

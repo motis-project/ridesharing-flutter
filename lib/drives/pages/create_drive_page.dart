@@ -53,21 +53,21 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   // ignore: unused_field
   AddressSuggestion? _destinationSuggestion;
 
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
   late int _dropdownValue;
 
-  final List<int> list = List.generate(10, (index) => index + 1);
+  final List<int> list = List<int>.generate(10, (int index) => index + 1);
 
   void _showTimePicker() {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
-      builder: (context, childWidget) {
+      builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
-    ).then((value) {
+    ).then((TimeOfDay? value) {
       setState(() {
         if (value != null) {
           _selectedDate =
@@ -86,7 +86,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       initialDate: _selectedDate,
       firstDate: firstDate,
       lastDate: firstDate.add(const Duration(days: 30)),
-    ).then((value) {
+    ).then((DateTime? value) {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
@@ -138,11 +138,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             .select<Map<String, dynamic>>()
             .single()
             .then(
-          (data) {
+          (Map<String, dynamic> data) {
             Drive drive = Drive.fromJson(data);
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
               ),
             );
@@ -192,21 +192,21 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     return Form(
       key: _formKey,
       child: Column(
-        children: [
+        children: <Widget>[
           AddressSearchField.start(
             controller: _startController,
-            onSelected: (suggestion) => _startSuggestion = suggestion,
+            onSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
           ),
           const SizedBox(height: 15),
           AddressSearchField.destination(
             controller: _destinationController,
-            onSelected: (suggestion) => _destinationSuggestion = suggestion,
+            onSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: Semantics(
                     button: true,

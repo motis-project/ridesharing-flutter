@@ -5,12 +5,22 @@ import '../../../util/buttons/button.dart';
 import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 
-class EditDescriptionPage extends StatelessWidget {
+class EditDescriptionPage extends StatefulWidget {
   final Profile profile;
+
+  const EditDescriptionPage(this.profile, {super.key});
+
+  @override
+  State<EditDescriptionPage> createState() => _EditDescriptionPageState();
+}
+
+class _EditDescriptionPageState extends State<EditDescriptionPage> {
   final TextEditingController _controller = TextEditingController();
 
-  EditDescriptionPage(this.profile, {super.key}) {
-    _controller.text = profile.description ?? '';
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = widget.profile.description ?? '';
   }
 
   @override
@@ -23,22 +33,20 @@ class EditDescriptionPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
-            children: [
+            children: <Widget>[
               TextField(
                 maxLines: 10,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: S.of(context).pageProfileEditDescriptionHint,
-                  suffixIcon: _getClearButton(context),
+                  suffixIcon: _getClearButton(),
                 ),
                 controller: _controller,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Button(
                 S.of(context).save,
-                onPressed: () => onPressed(context),
+                onPressed: onPressed,
               ),
             ],
           ),
@@ -47,7 +55,7 @@ class EditDescriptionPage extends StatelessWidget {
     );
   }
 
-  Widget? _getClearButton(BuildContext context) {
+  Widget? _getClearButton() {
     if (_controller.text == '') {
       return null;
     }
@@ -58,13 +66,13 @@ class EditDescriptionPage extends StatelessWidget {
     );
   }
 
-  void onPressed(context) async {
+  void onPressed() async {
     String? text = _controller.text == '' ? null : _controller.text;
-    await SupabaseManager.supabaseClient.from('profiles').update({
+    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'description': text,
-    }).eq('id', profile.id);
+    }).eq('id', widget.profile.id);
     SupabaseManager.reloadCurrentProfile();
 
-    Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop();
   }
 }

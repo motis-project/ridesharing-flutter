@@ -13,7 +13,7 @@ class ReviewDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget header = Row(
-      children: [
+      children: <Widget>[
         ProfileChip(review.writer!),
         Text(
           localeManager.formatDate(review.createdAt!),
@@ -35,9 +35,9 @@ class ReviewDetail extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
-          children: [
+          children: <Widget>[
             header,
-            if (review.text?.isNotEmpty ?? false) ...[
+            if (review.text?.isNotEmpty ?? false) ...<Widget>[
               const SizedBox(
                 height: 5,
               ),

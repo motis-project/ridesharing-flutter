@@ -43,10 +43,10 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  final passwordConfirmationController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
   void onSubmit() async {
@@ -70,7 +70,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
       if (user != null) {
         try {
-          await SupabaseManager.supabaseClient.from('profiles').insert({
+          await SupabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
             'auth_id': user.id,
             'email': user.email,
             'username': usernameController.text,
@@ -82,7 +82,7 @@ class _RegisterFormState extends State<RegisterForm> {
           if (mounted) showSnackBar(S.of(context).failureSnackBar);
           return;
         }
-        await Future.delayed(const Duration(seconds: 2));
+        await Future<void>.delayed(const Duration(seconds: 2));
         setState(() {
           _state = ButtonState.success;
         });
@@ -109,7 +109,7 @@ class _RegisterFormState extends State<RegisterForm> {
     setState(() {
       _state = ButtonState.fail;
     });
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
       _state = ButtonState.idle;
     });
@@ -141,7 +141,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 hintText: S.of(context).pageRegisterUsernameHint,
               ),
               controller: usernameController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageRegisterUsernameValidateEmpty;
                 }
@@ -153,7 +153,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: S.of(context).formPassword,
               hintText: S.of(context).formPasswordHint,
               controller: passwordController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).formPasswordValidateEmpty;
                 } else if (value.length < 8) {
@@ -175,7 +175,7 @@ class _RegisterFormState extends State<RegisterForm> {
               labelText: S.of(context).formPasswordConfirm,
               hintText: S.of(context).formPasswordConfirmHint,
               controller: passwordConfirmationController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).formPasswordConfirmValidateEmpty;
                 } else if (value != passwordController.text) {

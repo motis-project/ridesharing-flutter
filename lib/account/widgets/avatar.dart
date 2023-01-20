@@ -28,7 +28,7 @@ class AvatarState extends State<Avatar> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: [
+      children: <Widget>[
         Hero(
           tag: "Avatar-${widget.profile.id}",
           child: CircleAvatar(
@@ -53,9 +53,7 @@ class AvatarState extends State<Avatar> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(widget.size ?? 20),
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => AvatarPicturePage(widget.profile),
-                    ),
+                    MaterialPageRoute<void>(builder: (BuildContext context) => AvatarPicturePage(widget.profile)),
                   ),
                 ),
               ),

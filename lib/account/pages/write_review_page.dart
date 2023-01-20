@@ -69,7 +69,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             ? const CircularProgressIndicator()
             : SingleChildScrollView(
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     CustomRatingBar(
                       size: CustomRatingBarSize.huge,
                       rating: _review!.rating,
@@ -109,7 +109,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     return SizedBox(
       width: double.infinity,
       child: Column(
-        children: [
+        children: <Widget>[
           _buildCategoryReviewRow(
             S.of(context).reviewCategoryComfort,
             _review!.comfortRating,
@@ -138,7 +138,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   Widget _buildCategoryReviewRow(String category, int? rating, Function(double) onRatingUpdate) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+      children: <Widget>[
         Flexible(child: SizedBox(width: 100, child: Text(category))),
         const SizedBox(width: 10),
         CustomRatingBar(size: CustomRatingBarSize.large, rating: rating, onRatingUpdate: onRatingUpdate),
@@ -192,7 +192,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         content: Text(S.of(context).pageWriteReviewRatingRequired),
         duration: duration,
       ));
-      await Future.delayed(duration);
+      await Future<void>.delayed(duration);
       setState(() {
         _state = ButtonState.idle;
       });

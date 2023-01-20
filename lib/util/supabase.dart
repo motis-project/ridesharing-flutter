@@ -19,7 +19,7 @@ class SupabaseManager {
 
   static Future<void> reloadCurrentProfile() async {
     try {
-      final response = await supabaseClient
+      final Map<String, dynamic>? response = await supabaseClient
           .from('profiles')
           .select<Map<String, dynamic>?>()
           .eq('auth_id', supabaseClient.auth.currentUser!.id)

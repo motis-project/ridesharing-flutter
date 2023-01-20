@@ -1,5 +1,4 @@
 import '../../util/model.dart';
-import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import 'profile.dart';
 
 class Review extends Model implements Comparable<Review> {
@@ -52,12 +51,12 @@ class Review extends Model implements Comparable<Review> {
   }
 
   static List<Review> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => Review.fromJson(json)).toList();
+    return jsonList.map((Map<String, dynamic> json) => Review.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'rating': rating,
       'comfort_rating': comfortRating,
       'safety_rating': safetyRating,
@@ -72,7 +71,7 @@ class Review extends Model implements Comparable<Review> {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'writer': writer?.toJsonForApi(),
         'receiver': receiver?.toJsonForApi(),
       });
@@ -121,34 +120,33 @@ class AggregateReview {
   bool get isReliabilitySet => reliabilityRating != 0;
   bool get isHospitalitySet => hospitalityRating != 0;
 
-  AggregateReviewWidget widget() {
-    return AggregateReviewWidget(this);
-  }
-
   factory AggregateReview.fromReviews(List<Review> reviews) {
-    double rating =
-        reviews.isEmpty ? 0 : reviews.map((review) => review.rating).reduce((a, b) => a + b) / reviews.length;
+    double rating = reviews.isEmpty
+        ? 0
+        : reviews.map((Review review) => review.rating).reduce((int a, int b) => a + b) / reviews.length;
 
-    List<Review> comfortReviews = reviews.where((review) => review.comfortRating != null).toList();
+    List<Review> comfortReviews = reviews.where((Review review) => review.comfortRating != null).toList();
     double comfortRating = comfortReviews.isEmpty
         ? 0
-        : comfortReviews.map((review) => review.comfortRating!).reduce((a, b) => a + b) / comfortReviews.length;
+        : comfortReviews.map((Review review) => review.comfortRating!).reduce((int a, int b) => a + b) /
+            comfortReviews.length;
 
-    List<Review> safetyReviews = reviews.where((review) => review.safetyRating != null).toList();
+    List<Review> safetyReviews = reviews.where((Review review) => review.safetyRating != null).toList();
     double safetyRating = safetyReviews.isEmpty
         ? 0
-        : safetyReviews.map((review) => review.safetyRating!).reduce((a, b) => a + b) / safetyReviews.length;
+        : safetyReviews.map((Review review) => review.safetyRating!).reduce((int a, int b) => a + b) /
+            safetyReviews.length;
 
-    List<Review> reliabilityReviews = reviews.where((review) => review.reliabilityRating != null).toList();
+    List<Review> reliabilityReviews = reviews.where((Review review) => review.reliabilityRating != null).toList();
     double reliabilityRating = reliabilityReviews.isEmpty
         ? 0
-        : reliabilityReviews.map((review) => review.reliabilityRating!).reduce((a, b) => a + b) /
+        : reliabilityReviews.map((Review review) => review.reliabilityRating!).reduce((int a, int b) => a + b) /
             reliabilityReviews.length;
 
-    List<Review> hospitalityReviews = reviews.where((review) => review.hospitalityRating != null).toList();
+    List<Review> hospitalityReviews = reviews.where((Review review) => review.hospitalityRating != null).toList();
     double averageRating = hospitalityReviews.isEmpty
         ? 0
-        : hospitalityReviews.map((review) => review.hospitalityRating!).reduce((a, b) => a + b) /
+        : hospitalityReviews.map((Review review) => review.hospitalityRating!).reduce((int a, int b) => a + b) /
             hospitalityReviews.length;
 
     return AggregateReview(

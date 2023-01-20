@@ -8,15 +8,15 @@ class PasswordField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextEditingController? controller;
 
-  const PasswordField(
-      {key,
-      required this.labelText,
-      this.hintText = "",
-      this.errorText,
-      this.helperText,
-      this.controller,
-      this.validator})
-      : super(key: key);
+  const PasswordField({
+    super.key,
+    required this.labelText,
+    this.hintText = "",
+    this.errorText,
+    this.helperText,
+    this.controller,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {

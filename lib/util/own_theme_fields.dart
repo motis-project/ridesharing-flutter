@@ -16,7 +16,7 @@ class OwnThemeFields {
 }
 
 extension ThemeDataExtensions on ThemeData {
-  static final Map<InputDecorationTheme, OwnThemeFields> _own = {};
+  static final Map<InputDecorationTheme, OwnThemeFields> _own = <InputDecorationTheme, OwnThemeFields>{};
 
   void addOwn(OwnThemeFields own) {
     _own[inputDecorationTheme] = own;
@@ -25,7 +25,7 @@ extension ThemeDataExtensions on ThemeData {
   static OwnThemeFields? empty;
 
   OwnThemeFields own() {
-    var o = _own[inputDecorationTheme];
+    OwnThemeFields? o = _own[inputDecorationTheme];
     if (o == null) {
       empty ??= const OwnThemeFields();
       o = empty;

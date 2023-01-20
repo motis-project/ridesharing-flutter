@@ -20,12 +20,12 @@ class _AccountPageState extends State<AccountPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, innerSetState) => AlertDialog(
+        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: List.generate(
+            children: List<RadioListTile<ThemeMode>>.generate(
               ThemeMode.values.length,
-              (index) => RadioListTile(
+              (int index) => RadioListTile<ThemeMode>(
                   title: Text(
                     ThemeMode.values[index].getName(context),
                   ),
@@ -53,13 +53,13 @@ class _AccountPageState extends State<AccountPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, innerSetState) => AlertDialog(
+        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: List.generate(
+            children: List<RadioListTile<Locale>>.generate(
               localeManager.supportedLocales.length,
-              (index) => RadioListTile(
-                title: Text(localeManager.supportedLocales.map((e) => e.languageName).toList()[index]),
+              (int index) => RadioListTile<Locale>(
+                title: Text(localeManager.supportedLocales.map((Locale e) => e.languageName).toList()[index]),
                 value: localeManager.supportedLocales[index],
                 groupValue: localeManager.currentLocale,
                 onChanged: (Locale? value) {
@@ -101,7 +101,7 @@ class _AccountPageState extends State<AccountPage> {
         title: Text(S.of(context).pageAccountTitle),
       ),
       body: ListView(
-        children: [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             child: ProfileWidget(
@@ -127,8 +127,8 @@ class _AccountPageState extends State<AccountPage> {
             leading: const Icon(Icons.help),
             title: Text(S.of(context).pageAccountHelp),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const HelpPage(),
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const HelpPage(),
               ),
             ),
           ),
@@ -136,8 +136,8 @@ class _AccountPageState extends State<AccountPage> {
             leading: const Icon(Icons.info),
             title: Text(S.of(context).pageAccountAbout),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const AboutPage(),
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const AboutPage(),
               ),
             ),
           ),

@@ -49,7 +49,8 @@ class Profile extends Model {
 
   bool get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
 
-  List<Feature>? get features => profileFeatures?.map((profileFeature) => profileFeature.feature).toList();
+  List<Feature>? get features =>
+      profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.feature).toList();
 
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -77,12 +78,12 @@ class Profile extends Model {
   }
 
   static List<Profile> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    return jsonList.map((json) => Profile.fromJson(json)).toList();
+    return jsonList.map((Map<String, dynamic> json) => Profile.fromJson(json)).toList();
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'username': username,
       'email': email,
       'description': description,
@@ -97,10 +98,14 @@ class Profile extends Model {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
-        'reviews_received': reviewsReceived?.map((review) => review.toJsonForApi()).toList() ?? [],
-        'profile_features': profileFeatures?.map((profileFeature) => profileFeature.toJsonForApi()).toList() ?? [],
-        'reports_received': reportsReceived?.map((report) => report.toJsonForApi()).toList() ?? [],
+      ..addAll(<String, dynamic>{
+        'reviews_received':
+            reviewsReceived?.map((Review review) => review.toJsonForApi()).toList() ?? <Map<String, dynamic>>[],
+        'profile_features':
+            profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.toJsonForApi()).toList() ??
+                <Map<String, dynamic>>[],
+        'reports_received':
+            reportsReceived?.map((Report report) => report.toJsonForApi()).toList() ?? <Map<String, dynamic>>[],
       });
   }
 

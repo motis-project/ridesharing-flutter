@@ -22,10 +22,10 @@ class _DrivesPageState extends State<DrivesPage> {
     int userId = SupabaseManager.getCurrentProfile()!.id!;
     _drives = SupabaseManager.supabaseClient
         .from('drives')
-        .stream(primaryKey: ['id'])
+        .stream(primaryKey: <String>['id'])
         .eq('driver_id', userId)
         .order('start_time', ascending: true)
-        .map((drive) => Drive.fromJsonList(drive));
+        .map((List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive));
 
     super.initState();
   }
@@ -36,7 +36,7 @@ class _DrivesPageState extends State<DrivesPage> {
       context,
       S.of(context).pageDrivesTitle,
       _drives,
-      (drive) => DriveCard(drive),
+      (Drive drive) => DriveCard(drive),
       FloatingActionButton(
         heroTag: 'DriveFAB',
         tooltip: S.of(context).pageDrivesTooltipOfferRide,
@@ -49,7 +49,7 @@ class _DrivesPageState extends State<DrivesPage> {
 
   void onPressed() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const CreateDrivePage()),
+      MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
     );
   }
 }

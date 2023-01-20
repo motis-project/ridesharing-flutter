@@ -62,7 +62,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [];
+    List<Widget> widgets = <Widget>[];
 
     if (_drive != null) {
       widgets.add(TripOverview(_drive!));
@@ -72,14 +72,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     if (_fullyLoaded) {
       Drive drive = _drive!;
 
-      List<Waypoint> stops = [];
+      List<Waypoint> stops = <Waypoint>[];
       stops.add(Waypoint(
-        actions: [],
+        actions: <WaypointAction>[],
         place: drive.start,
         time: drive.startTime,
       ));
       stops.add(Waypoint(
-        actions: [],
+        actions: <WaypointAction>[],
         place: drive.end,
         time: drive.endTime,
       ));
@@ -102,7 +102,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
         if (!startSaved) {
           stops.add(Waypoint(
-            actions: [rideStartAction],
+            actions: <WaypointAction>[rideStartAction],
             place: ride.start,
             time: ride.startTime,
           ));
@@ -110,30 +110,30 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
         if (!endSaved) {
           stops.add(Waypoint(
-            actions: [rideEndAction],
+            actions: <WaypointAction>[rideEndAction],
             place: ride.end,
             time: ride.endTime,
           ));
         }
       }
 
-      stops.sort((a, b) => a.time.compareTo(b.time));
+      stops.sort((Waypoint a, Waypoint b) => a.time.compareTo(b.time));
       for (Waypoint stop in stops) {
-        stop.actions.sort((a, b) => a.isStart ? 1 : -1);
+        stop.actions.sort((WaypointAction a, WaypointAction b) => a.isStart ? 1 : -1);
       }
 
       Widget timeline = FixedTimeline.tileBuilder(
         theme: CustomTimelineThemeForBuilder.of(context),
         builder: TimelineTileBuilder.connected(
           connectionDirection: ConnectionDirection.before,
-          indicatorBuilder: (context, index) => const CustomOutlinedDotIndicator(),
-          connectorBuilder: (context, index, type) => const CustomSolidLineConnector(),
-          contentsBuilder: (context, index) {
-            final stop = stops[index];
+          indicatorBuilder: (BuildContext context, int index) => const CustomOutlinedDotIndicator(),
+          connectorBuilder: (BuildContext context, int index, ConnectorType type) => const CustomSolidLineConnector(),
+          contentsBuilder: (BuildContext context, int index) {
+            final Waypoint stop = stops[index];
             return Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Column(
-                children: [
+                children: <Widget>[
                   const SizedBox(height: 10.0),
                   Container(
                     decoration: BoxDecoration(
@@ -160,13 +160,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       if (approvedRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
-        Set<Profile> riders = approvedRides.map((ride) => ride.rider!).toSet();
+        Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
       List<Ride> pendingRides = _drive!.pendingRides!.toList();
       if (pendingRides.isNotEmpty) {
-        List<Widget> pendingRidesColumn = [
+        List<Widget> pendingRidesColumn = <Widget>[
           const SizedBox(height: 5.0),
           Align(
             alignment: Alignment.centerLeft,
@@ -204,7 +204,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     }
 
     Widget content = Column(
-      children: [
+      children: <Widget>[
         if (_drive?.cancelled ?? false)
           CustomBanner.error(
             S.of(context).pageDriveDetailBannerCancelled,
@@ -223,7 +223,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: [buildChatButton()],
+        actions: <Widget>[buildChatButton()],
       ),
       body: _drive == null
           ? const Center(child: CircularProgressIndicator())
@@ -253,12 +253,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       key: const Key('driveChatButton'),
       onPressed: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => DriveChatPage(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => DriveChatPage(
             drive: _drive!,
           ),
         ),
-      ).then((value) => loadDrive()),
+      ).then((_) => loadDrive()),
       icon: Badge(
         badgeContent: Text(
           _getMessageCount(_drive!).toString(),
@@ -274,14 +274,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   List<Widget> buildCard(Waypoint stop) {
-    List<Widget> list = [];
+    List<Widget> list = <Widget>[];
     list.add(
       MergeSemantics(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               Text(
                 localeManager.formatTime(stop.time),
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
@@ -296,12 +296,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       ),
     );
 
-    final startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
-    final endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
+    final Icon startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
+    final Icon endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
     for (int index = 0, length = stop.actions.length; index < length; index++) {
-      final action = stop.actions[index];
-      final icon = action.isStart ? startIcon : endIcon;
-      final profile = action.profile;
+      final WaypointAction action = stop.actions[index];
+      final Icon icon = action.isStart ? startIcon : endIcon;
+      final Profile profile = action.profile;
 
       Widget container = Semantics(
         button: true,
@@ -324,7 +324,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
@@ -360,13 +360,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   void hideDrive() async {
-    await SupabaseManager.supabaseClient.from('drives').update({'hide_in_list_view': true}).eq('id', widget.drive!.id);
+    await SupabaseManager.supabaseClient
+        .from('drives')
+        .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.drive!.id);
   }
 
   void _showHideDialog() {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageDriveDetailButtonHide),
         content: Text(S.of(context).pageDriveDetailHideDialog),
         actions: <Widget>[
@@ -397,7 +399,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   void _showCancelDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageDriveDetailCancelDialogTitle),
         content: Text(S.of(context).pageDriveDetailCancelDialogMessage),
         actions: <Widget>[
@@ -431,11 +433,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   List<Widget> _pendingRidesList(List<Ride> pendingRides) {
-    List<Widget> pendingRidesColumn = [];
+    List<Widget> pendingRidesColumn = <Widget>[];
     if (pendingRides.isNotEmpty) {
-      pendingRidesColumn = List.generate(
+      pendingRidesColumn = List<PendingRideCard>.generate(
         pendingRides.length,
-        (index) => PendingRideCard(
+        (int index) => PendingRideCard(
           pendingRides.elementAt(index),
           reloadPage: loadDrive,
           drive: _drive!,

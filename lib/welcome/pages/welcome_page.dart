@@ -16,12 +16,12 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   static const double indicatorSize = 10;
   static const double indicatorMargin = 3;
-  static const List<String> images = ['assets/welcome1.png', 'assets/welcome2.png', 'assets/welcome3.png'];
+  static const List<String> images = <String>['assets/welcome1.png', 'assets/welcome2.png', 'assets/welcome3.png'];
 
   int activePage = 0;
 
-  List<Widget> indicators(imagesLength, currentIndex) {
-    return List<Widget>.generate(imagesLength, (index) {
+  List<Widget> indicators(int imagesLength, int currentIndex) {
+    return List<Container>.generate(imagesLength, (int index) {
       return Container(
         margin: const EdgeInsets.all(indicatorMargin),
         width: indicatorSize,
@@ -38,19 +38,19 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     Widget carousel = Column(
-      children: [
+      children: <Widget>[
         SizedBox(
           height: height / 2 - indicatorSize - indicatorMargin * 2,
           child: PageView.builder(
             itemCount: images.length,
             pageSnapping: true,
             padEnds: false,
-            onPageChanged: (page) {
+            onPageChanged: (int page) {
               setState(() {
                 activePage = page;
               });
             },
-            itemBuilder: (context, pagePosition) {
+            itemBuilder: (BuildContext context, int pagePosition) {
               return Container(
                 margin: const EdgeInsets.all(10),
                 child: Image.asset(images[pagePosition]),
@@ -67,14 +67,14 @@ class _WelcomePageState extends State<WelcomePage> {
     Widget buttons = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Hero(
             tag: "LoginButton",
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeLogin,
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const LoginPage()),
+                MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()),
               ),
             ),
           ),
@@ -85,7 +85,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Button(
               S.of(context).pageWelcomeRegister,
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const RegisterPage()),
+                MaterialPageRoute<void>(builder: (BuildContext context) => const RegisterPage()),
               ),
             ),
           ),
@@ -96,10 +96,8 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Button(
               S.of(context).pageWelcomeAnonymousSearch,
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SearchRidePage(
-                    anonymous: true,
-                  ),
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const SearchRidePage(anonymous: true),
                 ),
               ),
             ),
@@ -111,7 +109,7 @@ class _WelcomePageState extends State<WelcomePage> {
       body: SafeArea(
         child: CustomScrollView(
           physics: const ClampingScrollPhysics(),
-          slivers: [
+          slivers: <Widget>[
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
@@ -121,7 +119,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
                 child: height > 378
                     ? Column(
-                        children: [
+                        children: <Widget>[
                           SizedBox(height: height / 2, child: carousel),
                           Expanded(child: buttons),
                         ],

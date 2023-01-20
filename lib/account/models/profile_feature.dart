@@ -34,14 +34,15 @@ class ProfileFeature extends Model {
   }
 
   static List<ProfileFeature> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    final list = jsonList.map((json) => ProfileFeature.fromJson(json)).toList();
-    list.sort((a, b) => a.rank - b.rank);
+    final List<ProfileFeature> list =
+        jsonList.map((Map<String, dynamic> json) => ProfileFeature.fromJson(json)).toList();
+    list.sort((ProfileFeature a, ProfileFeature b) => a.rank - b.rank);
     return list;
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'profile_id': profileId,
       'feature': feature.index,
       'rank': rank,
@@ -51,7 +52,7 @@ class ProfileFeature extends Model {
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
-      ..addAll({
+      ..addAll(<String, dynamic>{
         'profile': profile?.toJsonForApi(),
       });
   }

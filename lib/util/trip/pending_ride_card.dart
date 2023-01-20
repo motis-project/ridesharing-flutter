@@ -18,7 +18,7 @@ class PendingRideCard extends TripCard<Ride> {
   State<PendingRideCard> createState() => _PendingRideCardState();
 }
 
-class _PendingRideCardState extends TripCardState<PendingRideCard> {
+class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   static const Duration extraTime = Duration(minutes: 5);
 
   late Ride _ride;
@@ -61,7 +61,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   @override
   Widget buildRightSide() {
     return ButtonBar(
-      children: [
+      children: <Widget>[
         IconButton(
           onPressed: (() => showApproveDialog(context)),
           icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
@@ -87,7 +87,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   void approveRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'approve_ride',
-      params: {'ride_id': _ride.id},
+      params: <String, dynamic>{'ride_id': _ride.id},
     );
     // todo: notify rider
     widget.reloadPage();
@@ -96,7 +96,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   void rejectRide() async {
     await SupabaseManager.supabaseClient.rpc(
       'reject_ride',
-      params: {'ride_id': _ride.id},
+      params: <String, dynamic>{'ride_id': _ride.id},
     );
     //todo: notify rider
     widget.reloadPage();
@@ -105,7 +105,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   void showApproveDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).cardPendingRideApproveDialogTitle),
         content: Text(S.of(context).cardPendingRideApproveDialogMessage),
         actions: <Widget>[
@@ -145,7 +145,7 @@ class _PendingRideCardState extends TripCardState<PendingRideCard> {
   void showRejectDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).cardPendingRideRejectDialogTitle),
         content: Text(S.of(context).cardPendingRideRejectDialogMessage),
         actions: <Widget>[

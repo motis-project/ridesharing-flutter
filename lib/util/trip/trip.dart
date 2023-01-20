@@ -29,7 +29,7 @@ abstract class Trip extends Model {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'start': start,
       'start_lat': startPosition.lat,
       'start_lng': startPosition.lng,

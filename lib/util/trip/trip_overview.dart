@@ -13,12 +13,12 @@ class TripOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget startDest = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+      children: <Widget>[
         Expanded(
           child: MergeSemantics(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text(trip.start),
                 Text(
                   localeManager.formatTime(trip.startTime),
@@ -33,7 +33,7 @@ class TripOverview extends StatelessWidget {
           child: MergeSemantics(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+              children: <Widget>[
                 Text(trip.end),
                 Text(
                   localeManager.formatTime(trip.endTime),
@@ -46,7 +46,7 @@ class TripOverview extends StatelessWidget {
       ],
     );
 
-    List<Widget> infoRowWidgets = [];
+    List<Widget> infoRowWidgets = <Widget>[];
 
     Widget dateWidget = Text(
       localeManager.formatDate(trip.startTime),
@@ -63,7 +63,7 @@ class TripOverview extends StatelessWidget {
     );
 
     Widget overview = Column(
-      children: [startDest, const SizedBox(height: 10.0), infoRow],
+      children: <Widget>[startDest, const SizedBox(height: 10.0), infoRow],
     );
 
     return overview;

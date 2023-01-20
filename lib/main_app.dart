@@ -17,13 +17,13 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   TabItem _currentTab = TabItem.home;
-  final _navigatorKeys = {
+  final Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = <TabItem, GlobalKey<NavigatorState>>{
     TabItem.home: GlobalKey<NavigatorState>(),
     TabItem.drives: GlobalKey<NavigatorState>(),
     TabItem.rides: GlobalKey<NavigatorState>(),
     TabItem.account: GlobalKey<NavigatorState>(),
   };
-  final _pages = {
+  final Map<TabItem, Widget> _pages = <TabItem, Widget>{
     TabItem.home: const HomePage(),
     TabItem.drives: const DrivesPage(),
     TabItem.rides: const RidesPage(),
@@ -33,7 +33,7 @@ class _MainAppState extends State<MainApp> {
   void _selectTab(TabItem tabItem) {
     if (tabItem == _currentTab) {
       // pop to first route
-      _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst);
+      _navigatorKeys[tabItem]!.currentState!.popUntil((Route<void> route) => route.isFirst);
     } else {
       setState(() => _currentTab = tabItem);
     }
@@ -43,7 +43,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        final isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
+        final bool isFirstRouteInCurrentTab = !await _navigatorKeys[_currentTab]!.currentState!.maybePop();
         if (isFirstRouteInCurrentTab) {
           if (_currentTab == TabItem.home) {
             return true;
@@ -56,7 +56,7 @@ class _MainAppState extends State<MainApp> {
       child: Scaffold(
         body: IndexedStack(
           index: _currentTab.index,
-          children: TabItem.values.map((tabItem) => buildNavigatorForTab(tabItem)).toList(),
+          children: TabItem.values.map((TabItem tabItem) => buildNavigatorForTab(tabItem)).toList(),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -80,7 +80,7 @@ class _MainAppState extends State<MainApp> {
           ],
           currentIndex: _currentTab.index,
           selectedItemColor: Theme.of(context).colorScheme.primary,
-          onTap: (index) {
+          onTap: (int index) {
             _selectTab(TabItem.values[index]);
           },
         ),
@@ -91,8 +91,8 @@ class _MainAppState extends State<MainApp> {
   Widget buildNavigatorForTab(TabItem tabItem) {
     return Navigator(
       key: _navigatorKeys[tabItem]!,
-      onGenerateRoute: (routeSettings) => MaterialPageRoute(
-        builder: (context) => _pages[tabItem]!,
+      onGenerateRoute: (RouteSettings routeSettings) => MaterialPageRoute<void>(
+        builder: (BuildContext context) => _pages[tabItem]!,
       ),
     );
   }

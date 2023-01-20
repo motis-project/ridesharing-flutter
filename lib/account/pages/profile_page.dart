@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +9,7 @@ import '../../util/buttons/button.dart';
 import '../../util/locale_manager.dart';
 import '../../util/supabase.dart';
 import '../models/profile.dart';
+import '../models/report.dart';
 import '../widgets/avatar.dart';
 import '../widgets/editable_row.dart';
 import '../widgets/features_column.dart';
@@ -75,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_profile!.isCurrentUser) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Expanded(child: Container()),
           username,
           Expanded(
@@ -86,8 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 icon: const Icon(Icons.edit),
                 onPressed: () {
                   Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => EditUsernamePage(_profile!)))
-                      .then((value) => loadProfile());
+                      .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
+                      .then((_) => loadProfile());
                 },
               ),
             ),
@@ -119,8 +122,8 @@ class _ProfilePageState extends State<ProfilePage> {
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => EditDescriptionPage(_profile!)))
-            .then((value) => loadProfile());
+            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditDescriptionPage(_profile!)))
+            .then((_) => loadProfile());
       },
     );
   }
@@ -138,8 +141,8 @@ class _ProfilePageState extends State<ProfilePage> {
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => EditFullNamePage(_profile!)))
-            .then((value) => loadProfile());
+            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditFullNamePage(_profile!)))
+            .then((_) => loadProfile());
       },
     );
   }
@@ -157,8 +160,8 @@ class _ProfilePageState extends State<ProfilePage> {
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => EditBirthDatePage(_profile!)))
-            .then((value) => loadProfile());
+            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditBirthDatePage(_profile!)))
+            .then((_) => loadProfile());
       },
     );
   }
@@ -177,8 +180,8 @@ class _ProfilePageState extends State<ProfilePage> {
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => EditGenderPage(_profile!)))
-            .then((value) => loadProfile());
+            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditGenderPage(_profile!)))
+            .then((_) => loadProfile());
       },
     );
   }
@@ -193,14 +196,14 @@ class _ProfilePageState extends State<ProfilePage> {
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => EditProfileFeaturesPage(_profile!)))
-            .then((value) => loadProfile());
+            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditProfileFeaturesPage(_profile!)))
+            .then((_) => loadProfile());
       },
     );
   }
 
   Widget buildReviews() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Text(
         S.of(context).pageProfileReviewsTitle,
         style: Theme.of(context).textTheme.headline6,
@@ -221,11 +224,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [
+    List<Widget> widgets = <Widget>[
       buildAvatar(),
       const SizedBox(height: 8),
       buildUsername(),
-      if (_profile!.isCurrentUser) ...[
+      if (_profile!.isCurrentUser) ...<Widget>[
         buildEmail(),
       ],
       const SizedBox(height: 8),
@@ -233,39 +236,39 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 8),
     ];
     if (_profile!.isCurrentUser || _profile!.fullName.isNotEmpty) {
-      widgets.addAll([
+      widgets.addAll(<Widget>[
         buildFullName(),
         const SizedBox(height: 16),
       ]);
     }
     if (_profile!.isCurrentUser || (_profile!.description?.isNotEmpty ?? false)) {
-      widgets.addAll([
+      widgets.addAll(<Widget>[
         buildDescription(),
         const SizedBox(height: 16),
       ]);
     }
     if (_profile!.isCurrentUser || _profile!.birthDate != null) {
-      widgets.addAll([
+      widgets.addAll(<Widget>[
         buildBirthDate(),
         const SizedBox(height: 16),
       ]);
     }
     if (_profile!.isCurrentUser || _profile!.gender != null) {
-      widgets.addAll([
+      widgets.addAll(<Widget>[
         buildGender(),
         const SizedBox(height: 16),
       ]);
     }
     if (_fullyLoaded) {
       if (_profile!.isCurrentUser || _profile!.profileFeatures!.isNotEmpty) {
-        widgets.addAll([buildFeatures(), const SizedBox(height: 16)]);
+        widgets.addAll(<Widget>[buildFeatures(), const SizedBox(height: 16)]);
       }
       widgets.add(buildReviews());
       if (!_profile!.isCurrentUser) {
         bool hasRecentReport = _profile!.reportsReceived!
-            .any((report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
+            .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
 
-        widgets.addAll([
+        widgets.addAll(<Widget>[
           const SizedBox(height: 32),
           hasRecentReport
               ? Button.disabled(
@@ -275,8 +278,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   S.of(context).pageProfileButtonReport,
                   onPressed: () {
                     Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => WriteReportPage(_profile!)))
-                        .then((reportSent) {
+                        .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
+                        .then((bool? reportSent) {
                       if (reportSent == true) {
                         loadProfile();
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -292,14 +295,14 @@ class _ProfilePageState extends State<ProfilePage> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
-    final content = Column(
+    final Column content = Column(
       children: widgets,
     );
     return Scaffold(
       appBar: AppBar(
         title: Text(_profile?.username ?? ''),
         actions: _profile != null && _profile!.isCurrentUser
-            ? [
+            ? <Widget>[
                 TextButton.icon(
                   onPressed: signOut,
                   icon: const Icon(Icons.logout),
@@ -361,8 +364,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _uploadProfilePicture() async {
-    final picker = ImagePicker();
-    final imageFile = await picker.pickImage(
+    final ImagePicker picker = ImagePicker();
+    final XFile? imageFile = await picker.pickImage(
       source: ImageSource.gallery,
       maxWidth: 300,
       maxHeight: 300,
@@ -372,9 +375,9 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     try {
-      final bytes = await imageFile.readAsBytes();
-      final fileExt = imageFile.path.split('.').last;
-      final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
+      final Uint8List bytes = await imageFile.readAsBytes();
+      final String fileExt = imageFile.path.split('.').last;
+      final String fileName = '${DateTime.now().toIso8601String()}.$fileExt';
 
       await SupabaseManager.supabaseClient.storage.from('avatars').uploadBinary(
             fileName,
@@ -382,13 +385,13 @@ class _ProfilePageState extends State<ProfilePage> {
             fileOptions: FileOptions(contentType: imageFile.mimeType),
           );
 
-      final imageUrlResponse = await SupabaseManager.supabaseClient.storage
+      final String imageUrlResponse = await SupabaseManager.supabaseClient.storage
           .from('avatars')
           .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
 
       await SupabaseManager.supabaseClient
           .from('profiles')
-          .update({"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
+          .update(<String, dynamic>{"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
 
       SupabaseManager.reloadCurrentProfile();
       loadProfile();
@@ -402,7 +405,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _deleteProfilePicture() async {
-    await SupabaseManager.supabaseClient.from('profiles').update({"avatar_url": null}).eq('id', _profile!.id);
+    await SupabaseManager.supabaseClient
+        .from('profiles')
+        .update(<String, dynamic>{"avatar_url": null}).eq('id', _profile!.id);
 
     SupabaseManager.reloadCurrentProfile();
     loadProfile();

@@ -11,7 +11,7 @@ abstract class TripCard<T extends Trip> extends StatefulWidget {
   const TripCard(this.trip, {super.key});
 }
 
-abstract class TripCardState<T extends TripCard> extends State<T> {
+abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends State<U> {
   late Trip trip;
 
   BorderRadius cardBorder = const BorderRadius.only(
@@ -27,7 +27,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
-        children: [
+        children: <Widget>[
           Container(
             foregroundDecoration: pickDecoration(),
             width: MediaQuery.of(context).size.width,
@@ -36,7 +36,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
               borderRadius: cardBorder,
             ),
             margin: const EdgeInsets.only(left: 10),
-            child: buildCardInfo(context),
+            child: buildCardInfo(),
           ),
           if (onTap != null)
             Positioned.fill(
@@ -60,16 +60,16 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
 
   EdgeInsets get middlePadding => const EdgeInsets.all(16);
 
-  FixedTimeline buildRoute(context) {
+  FixedTimeline buildRoute() {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
-      children: [
+      children: <Widget>[
         TimelineTile(
           contents: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 Text(
                   '${localeManager.formatTime(trip.startTime)}  ${trip.start}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -87,10 +87,10 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
             padding: middlePadding,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 SizedBox(
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
@@ -113,7 +113,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
             padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: <Widget>[
                 Text(
                   '${localeManager.formatTime(trip.endTime)}  ${trip.end}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -135,7 +135,7 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Widget>[
           buildTopLeft(),
           buildTopRight(),
         ],
@@ -146,19 +146,19 @@ abstract class TripCardState<T extends TripCard> extends State<T> {
   Widget buildBottom() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+      children: <Widget>[
         buildBottomLeft(),
         buildBottomRight(),
       ],
     );
   }
 
-  Widget buildCardInfo(context) {
+  Widget buildCardInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         buildTop(),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), child: buildRoute(context)),
+        Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), child: buildRoute()),
         buildBottom(),
       ],
     );

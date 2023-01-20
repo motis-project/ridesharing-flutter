@@ -13,7 +13,7 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
   }) : super(
           key: key,
           stream: stream,
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
             if (snapshot.hasData) {
               List<T> trips = snapshot.data!;
               List<T> filteredTrips = filterTrips(trips);
@@ -21,8 +21,8 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
                   ? Center(child: Text(emptyMessage))
                   : ListView.separated(
                       itemCount: filteredTrips.length,
-                      itemBuilder: (context, index) {
-                        final trip = filteredTrips[index];
+                      itemBuilder: (BuildContext context, int index) {
+                        T trip = filteredTrips[index];
 
                         return tripCard(trip);
                       },
