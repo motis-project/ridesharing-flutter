@@ -138,7 +138,7 @@ void main() {
       expect(json['cancelled'], drive.cancelled);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
-      expect(json.keys.length, 11);
+      expect(json.keys.length, 12);
     });
   });
   group('Drive.approvedrides', () {
