@@ -168,6 +168,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                       builder: (BuildContext context) => ChatPage(
                         chatId: _ride!.chat?.id,
                         profile: _ride!.drive!.driver!,
+                        active: _ride!.status.activeChat(),
                       ),
                     ),
                   ),

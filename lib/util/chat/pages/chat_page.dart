@@ -11,10 +11,12 @@ import '../models/message.dart';
 class ChatPage extends StatefulWidget {
   final Profile profile;
   final int chatId;
+  final bool active;
 
   const ChatPage({
     chatId,
     required this.profile,
+    this.active = true,
     super.key,
   }) : chatId = chatId ?? -1;
 
@@ -27,7 +29,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    if (widget.chatId != -1) {
+    if (!widget.active) {
       _messagesStream = SupabaseManager.supabaseClient
           .from('messages')
           .stream(primaryKey: ['id'])
@@ -55,7 +57,7 @@ class _ChatPageState extends State<ChatPage> {
           isTappable: true,
         ),
       ),
-      body: widget.chatId != -1
+      body: widget.active
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
               builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
