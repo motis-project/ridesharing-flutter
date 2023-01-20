@@ -12,6 +12,8 @@ import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/ride.dart';
 
 class SearchRideFilter {
+  bool wholeDay;
+
   static const List<Feature> _commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
@@ -23,7 +25,8 @@ class SearchRideFilter {
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
   static const SearchRideSorting _defaultSorting = SearchRideSorting.relevance;
-  static const String _defaultDeviation = '12';
+  static const String _defaultDeviationHours = '12';
+  static const String _defaultDeviationDays = '1';
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -38,6 +41,8 @@ class SearchRideFilter {
   late SearchRideSorting _sorting;
   final TextEditingController _maxDeviationController = TextEditingController();
 
+  String get _defaultDeviation => wholeDay ? _defaultDeviationDays : _defaultDeviationHours;
+
   void setDefaultFilterValues() {
     _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
 
@@ -51,7 +56,7 @@ class SearchRideFilter {
     _sorting = _defaultSorting;
   }
 
-  SearchRideFilter() {
+  SearchRideFilter({this.wholeDay = true}) {
     setDefaultFilterValues();
   }
 
@@ -209,7 +214,7 @@ class SearchRideFilter {
               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Text(S.of(context).searchRideFilterDeviationHours),
+          Text(wholeDay ? S.of(context).searchRideFilterDeviationDays : S.of(context).searchRideFilterDeviationHours),
         ],
       ),
     );
@@ -432,8 +437,13 @@ class SearchRideFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            final bool maxDeviationSatisfied =
-                date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
+            bool maxDeviationSatisfied;
+            if (wholeDay) {
+              maxDeviationSatisfied = (date.day - ride.startTime.day).abs() < int.parse(_maxDeviationController.text);
+            } else {
+              maxDeviationSatisfied =
+                  date.difference(ride.startTime).abs() < Duration(hours: int.parse(_maxDeviationController.text));
+            }
             return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
           },
         )
@@ -469,7 +479,7 @@ extension SearchRideSortingExtension on SearchRideSorting {
 
   int Function(Ride, Ride) sortFunction(DateTime date) {
     int timeProximityFunc(Ride ride1, Ride ride2) =>
-        (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
+        (date.difference(ride1.startTime).abs() - date.difference(ride2.startTime).abs()).inMinutes;
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {

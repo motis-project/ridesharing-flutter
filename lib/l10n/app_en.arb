@@ -395,6 +395,7 @@
   "searchRideFilterDeviation": "Maximum deviation from selected time",
   "searchRideFilterMinimumRating": "Minimum rating",
   "searchRideFilterDeviationHours": "hours",
+  "searchRideFilterDeviationDays": "days",
   "searchRideFilterSorting": "Sorting",
   "searchRideFilterResetToDefault": "Reset to default",
   "searchRideSortingRelevance": "Relevance",

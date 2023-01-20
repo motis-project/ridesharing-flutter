@@ -280,6 +280,7 @@
   "searchRideFilterFeaturesDeselectTooltip": "Abwählen ",
   "searchRideFilterDeviation": "Maximale Abweichung von ausgewählter Zeit",
   "searchRideFilterDeviationHours": "Stunden",
+  "searchRideFilterDeviationDays": "Tage",
   "searchRideFilterSorting": "Sortierung",
   "searchRideFilterResetToDefault": "Zurücksetzen",
   "searchRideSortingRelevance": "Relevanz",

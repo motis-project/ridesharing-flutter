@@ -21,9 +21,9 @@ class SearchRidePage extends StatefulWidget {
 
 class _SearchRidePageState extends State<SearchRidePage> {
   final TextEditingController _startController = TextEditingController();
-  late AddressSuggestion _startSuggestion;
+  AddressSuggestion? _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
-  late AddressSuggestion _destinationSuggestion;
+  AddressSuggestion? _destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -104,6 +104,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
 
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
+    if (_startSuggestion == null || _destinationSuggestion == null) return;
     final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('drives').select('''
           *,
@@ -119,11 +120,11 @@ class _SearchRidePageState extends State<SearchRidePage> {
         .map(
           (Drive drive) => Ride.previewFromDrive(
             drive,
-            _startSuggestion.name,
-            _startSuggestion.position,
+            _startSuggestion!.name,
+            _startSuggestion!.position,
             drive.startTime,
-            _destinationSuggestion.name,
-            _destinationSuggestion.position,
+            _destinationSuggestion!.name,
+            _destinationSuggestion!.position,
             drive.endTime,
             _dropdownValue,
             SupabaseManager.getCurrentProfile()?.id ?? -1,
@@ -143,20 +144,21 @@ class _SearchRidePageState extends State<SearchRidePage> {
           child: StartDestinationTimeline(
             startController: _startController,
             destinationController: _destinationController,
-            onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
-            onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
+            onStartSelected: (AddressSuggestion suggestion) => setState(() => _startSuggestion = suggestion),
+            onDestinationSelected: (AddressSuggestion suggestion) =>
+                setState(() => _destinationSuggestion = suggestion),
           ),
         ),
         IconButton(
-          onPressed: () {
+          onPressed: () => setState(() {
             final String oldStartText = _startController.text;
             _startController.text = _destinationController.text;
             _destinationController.text = oldStartText;
-            final AddressSuggestion oldStartSuggestion = _startSuggestion;
+            final AddressSuggestion? oldStartSuggestion = _startSuggestion;
             _startSuggestion = _destinationSuggestion;
             _destinationSuggestion = oldStartSuggestion;
             loadRides();
-          },
+          }),
           icon: const Icon(Icons.swap_vert),
         )
       ],
