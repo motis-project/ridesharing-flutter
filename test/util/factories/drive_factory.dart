@@ -49,8 +49,8 @@ class DriveFactory extends TripFactory<Drive> {
         (createDependencies
             ? generatedRides
                 ?.map((ride) => ChatFactory().generateFake(
-                      riderId: ride.riderId,
-                      rider: NullableParameter(ride.rider),
+                      rideId: ride.riderId,
+                      ride: NullableParameter(ride),
                       createDependencies: false,
                     ))
                 .toList()

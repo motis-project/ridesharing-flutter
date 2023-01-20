@@ -70,6 +70,9 @@ class Ride extends Trip {
 
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
+    print(json['drive']);
+    print(json['rider']);
+    print(json['chat']);
     return Ride(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),

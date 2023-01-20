@@ -56,7 +56,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       chats(
         *,
         messages: messages!messages_chat_id_fkey(*),
-        rider: rider_id(*)
+        ride: ride_id(
+          *,
+          rider: rider_id(*)
+        )
       )
     ''').eq('id', widget.id).single();
 

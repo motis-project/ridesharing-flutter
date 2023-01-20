@@ -101,7 +101,7 @@ void main() {
       Chat chat = Chat.fromJson(json);
       expect(chat.id, json["id"]);
       expect(chat.createdAt, DateTime.parse(json["created_at"]));
-      expect(chat.riderId, json["rider_id"]);
+      expect(chat.rideId, json["rider_id"]);
       expect(chat.driveId, json["drive_id"]);
     });
 
@@ -118,7 +118,7 @@ void main() {
         ],
       };
       Chat chat = Chat.fromJson(json);
-      expect(chat.rider, isNotNull);
+      expect(chat.ride, isNotNull);
       expect(chat.messages, isNotNull);
       expect(chat.messages!.length, 2);
     }));
@@ -136,7 +136,7 @@ void main() {
       expect(chats.length, 3);
       expect(chats[0].id, json["id"]);
       expect(chats[2].createdAt, DateTime.parse(json["created_at"]));
-      expect(chats[1].riderId, json["rider_id"]);
+      expect(chats[1].rideId, json["rider_id"]);
       expect(chats[0].driveId, json["drive_id"]);
     });
 
@@ -150,7 +150,7 @@ void main() {
     test('parses a Chat to json', () {
       Chat chat = ChatFactory().generateFake();
       Map<String, dynamic> json = chat.toJson();
-      expect(json["rider_id"], chat.riderId);
+      expect(json["rider_id"], chat.rideId);
       expect(json["drive_id"], chat.driveId);
       expect(json.keys.length, 2);
     });
@@ -161,7 +161,7 @@ void main() {
       Chat chat = ChatFactory().generateFake();
       String string = chat.toString();
       expect(string,
-          "Chat{id: ${chat.id}, createdAt: ${chat.createdAt}, riderId: ${chat.riderId}, driveId: ${chat.driveId}}");
+          "Chat{id: ${chat.id}, createdAt: ${chat.createdAt}, riderId: ${chat.rideId}, driveId: ${chat.driveId}}");
     });
   });
 }

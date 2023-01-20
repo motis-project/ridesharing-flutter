@@ -1,13 +1,13 @@
-import '../../../account/models/profile.dart';
 import '../../../drives/models/drive.dart';
+import '../../../rides/models/ride.dart';
 import '../../model.dart';
 import '../../parse_helper.dart';
 import '../../supabase.dart';
 import 'message.dart';
 
 class Chat extends Model {
-  final int riderId;
-  final Profile? rider;
+  final int rideId;
+  final Ride? ride;
 
   final int driveId;
   final Drive? drive;
@@ -17,9 +17,9 @@ class Chat extends Model {
   Chat({
     super.id,
     super.createdAt,
-    required this.riderId,
+    required this.rideId,
     required this.driveId,
-    this.rider,
+    this.ride,
     this.drive,
     this.messages,
   });
@@ -29,9 +29,9 @@ class Chat extends Model {
     return Chat(
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
-      riderId: json['rider_id'],
+      rideId: json['ride_id'],
+      ride: json.containsKey('rider') ? Ride.fromJson(json['ride']) : null,
       driveId: json['drive_id'],
-      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
       messages:
           json.containsKey('messages') ? Message.fromJsonList(parseHelper.parseListOfMaps(json['messages'])) : null,
@@ -45,7 +45,7 @@ class Chat extends Model {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'rider_id': riderId,
+      'ride_id': rideId,
       'drive_id': driveId,
     };
   }
@@ -59,6 +59,6 @@ class Chat extends Model {
 
   @override
   String toString() {
-    return 'Chat{id: $id, createdAt: $createdAt, riderId: $riderId, driveId: $driveId}';
+    return 'Chat{id: $id, createdAt: $createdAt, riderId: $rideId, driveId: $driveId}';
   }
 }

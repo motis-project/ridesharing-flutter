@@ -102,8 +102,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
     return Card(
       child: InkWell(
         child: ListTile(
-          leading: Avatar(chat.rider!),
-          title: Text(chat.rider!.username),
+          leading: Avatar(chat.ride!.rider!),
+          title: Text(chat.ride!.rider!.username),
           subtitle: lastMessage == null ? null : Text(lastMessage.content, maxLines: 1),
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
@@ -122,7 +122,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => ChatPage(
                       chatId: chat.id!,
-                      profile: chat.rider!,
+                      profile: chat.ride!.rider!,
                     ),
                   ),
                 )

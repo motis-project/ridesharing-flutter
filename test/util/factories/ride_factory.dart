@@ -28,20 +28,21 @@ class RideFactory extends TripFactory<Ride> {
     int? driveId,
     NullableParameter<Drive>? drive,
     int? riderId,
-    NullableParameter<Profile>? rider,
+    NullableParameter<Profile>? ride,
     Chat? chat,
     bool createDependencies = true,
   }) {
     assert(driveId == null || drive?.value == null || drive!.value?.id == driveId);
-    assert(riderId == null || rider?.value == null || rider!.value?.id == riderId);
+    assert(riderId == null || ride?.value == null || ride!.value?.id == riderId);
 
     final Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
     final Profile? generatedRider =
-        getNullableParameterOr(rider, ProfileFactory().generateFake(id: riderId, createDependencies: false));
+        getNullableParameterOr(ride, ProfileFactory().generateFake(id: riderId, createDependencies: false));
+    final int generatedId = id ?? randomId;
 
     return Ride(
-      id: id ?? randomId,
+      id: generatedId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
@@ -58,10 +59,7 @@ class RideFactory extends TripFactory<Ride> {
       riderId: generatedRider?.id ?? randomId,
       rider: generatedRider,
       chat: chat ??
-          (createDependencies
-              ? ChatFactory().generateFake(
-                  riderId: generatedRider?.id, rider: NullableParameter(generatedRider), createDependencies: false)
-              : null),
+          (createDependencies ? ChatFactory().generateFake(rideId: generatedId, createDependencies: false) : null),
     );
   }
 }
