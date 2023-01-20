@@ -374,18 +374,10 @@
 
   "widgetTripBuilderTabUpcoming": "Upcoming",
   "widgetTripBuilderTabPast": "Past",
-  "widgetTripBuilderNoUpcoming": "No upcoming {name}.",
-  "@widgetTripBuilderNoUpcoming": {
-    "placeholders": {
-      "name": {}
-    }
-  },
-  "widgetTripBuilderNoPast": "No past {name}.",
-  "@widgetTripBuilderNoPast": {
-    "placeholders": {
-      "name": {}
-    }
-  },
+  "widgetTripBuilderNoUpcomingDrives": "No upcoming drives.",
+  "widgetTripBuilderNoUpcomingRides": "No upcoming rides.",
+  "widgetTripBuilderNoPastDrives": "No past drives.",
+  "widgetTripBuilderNoPastRides": "No past rides.",
 
   "pageSearchRideTitle": "Search Ride",
   "pageSearchRideButtonSearch": "Search",
