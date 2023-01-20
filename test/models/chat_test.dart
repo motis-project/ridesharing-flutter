@@ -106,7 +106,7 @@ void main() {
       expect(chat.driveId, json["drive_id"]);
     });
 
-    test('can handle associated Modles', (() {
+    test('can handle associated models', (() {
       Map<String, dynamic> json = {
         "id": 1,
         "created_at": "2021-01-01T00:00:00.000Z",
