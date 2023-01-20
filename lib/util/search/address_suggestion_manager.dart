@@ -18,6 +18,7 @@ class AddressSuggestionManager {
   static const int _maxSuggestionsStored = 100;
 
   static late List<AddressSuggestion> _historySuggestions;
+  static bool _historySuggestionsLoaded = false;
 
   // If the search is shorter than this, the server will return an empty list anyways.
   static const int searchLengthRequirement = 3;
@@ -49,6 +50,16 @@ class AddressSuggestionManager {
     Iterable<Map<String, dynamic>> suggestions = data.map((suggestion) => jsonDecode(suggestion));
     _historySuggestions =
         suggestions.map((suggestion) => AddressSuggestion.fromJson(suggestion, fromHistory: true)).toList();
+
+    _historySuggestionsLoaded = true;
+  }
+
+  void reloadHistorySuggestions() {
+    if (_historySuggestionsLoaded) {
+      _historySuggestions.clear();
+    }
+
+    loadHistorySuggestions();
   }
 
   Future<void> storeSuggestion(AddressSuggestion suggestion) async {
