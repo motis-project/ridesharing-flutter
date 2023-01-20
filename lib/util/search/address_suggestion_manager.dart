@@ -118,11 +118,15 @@ class AddressSuggestionManager {
       ),
     );
 
-    request.add(utf8.encode(json.encode(<String, dynamic>{
-      'destination': <String, dynamic>{'type': 'Module', 'target': target},
-      'content_type': contentType,
-      'content': <String, dynamic>{'input': query}
-    }),),);
+    request.add(
+      utf8.encode(
+        json.encode(<String, dynamic>{
+          'destination': <String, dynamic>{'type': 'Module', 'target': target},
+          'content_type': contentType,
+          'content': <String, dynamic>{'input': query}
+        }),
+      ),
+    );
 
     final String response =
         await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());

@@ -281,14 +281,16 @@ class SearchSuggestionFilter {
   }
 
   Widget _buildSmallRatingIndicator(int rating, {Icon? icon}) {
-    return Row(children: <Widget>[
-      if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
-      Text(rating.toString()),
-      const Icon(
-        Icons.star,
-        color: Colors.amber,
-      )
-    ],);
+    return Row(
+      children: <Widget>[
+        if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
+        Text(rating.toString()),
+        const Icon(
+          Icons.star,
+          color: Colors.amber,
+        )
+      ],
+    );
   }
 
   Widget buildIndicatorRow(BuildContext context, void Function(void Function()) setState) {
@@ -364,7 +366,8 @@ class SearchSuggestionFilter {
       widgets.add(ratingsRow);
     }
     if (!isFeaturesDefault) {
-      final Widget featuresRow = Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
+      final Widget featuresRow =
+          Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
     if (!isDeviationDefault) {
