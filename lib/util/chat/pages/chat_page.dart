@@ -29,7 +29,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    if (!widget.active) {
+    if (widget.active) {
       _messagesStream = SupabaseManager.supabaseClient
           .from('messages')
           .stream(primaryKey: ['id'])
