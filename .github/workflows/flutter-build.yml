@@ -34,5 +34,7 @@ jobs:
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
-        run: flutter test
+        run: flutter test --coverage
+
+      - uses: codecov/codecov-action@v3
         

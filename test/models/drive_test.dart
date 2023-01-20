@@ -19,8 +19,7 @@ void main() {
   MockUrlProcessor driveProcessor = MockUrlProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
-    await MockServer.initialize();
-    MockServer.handleRequests(driveProcessor);
+    MockServer.setProcessor(driveProcessor);
   });
 
   group('Drive.fromJson', () {
@@ -58,7 +57,6 @@ void main() {
       expect(drive.hideInListView, json['hide_in_list_view']);
     });
     test('can handle associated models', () {
-      RideFactory().generateFakeJsonList(length: 3);
       Map<String, dynamic> json = {
         "id": 43,
         "created_at": "2021-01-01T00:00:00.000Z",
@@ -139,7 +137,7 @@ void main() {
       expect(json['cancelled'], drive.cancelled);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
-      expect(json.keys.length, 11);
+      expect(json.keys.length, 12);
     });
   });
   group('Drive.approvedrides', () {

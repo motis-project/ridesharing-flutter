@@ -29,11 +29,11 @@ class Ride extends Trip {
     required super.seats,
     this.price,
     required this.status,
+    super.hideInListView,
     required this.driveId,
     this.drive,
     required this.riderId,
     this.rider,
-    super.hideInListView,
   });
 
   factory Ride.previewFromDrive(
@@ -78,11 +78,11 @@ class Ride extends Trip {
       seats: json['seats'],
       price: parseHelper.parseDouble(json['end_lng']),
       status: RideStatus.values[json['status']],
+      hideInListView: json['hide_in_list_view'],
       riderId: json['rider_id'],
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-      hideInListView: json['hide_in_list_view'],
     );
   }
 
@@ -92,21 +92,22 @@ class Ride extends Trip {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'start': start,
-      'start_lat': startPosition.lat,
-      'start_lng': startPosition.lng,
-      'start_time': startTime.toString(),
-      'end': end,
-      'end_lat': endPosition.lat,
-      'end_lng': endPosition.lng,
-      'end_time': endTime.toString(),
-      'seats': seats,
-      'price': price,
-      'status': status.index,
-      'drive_id': driveId,
-      'rider_id': riderId,
-    };
+    return super.toJson()
+      ..addAll({
+        'price': price,
+        'status': status.index,
+        'drive_id': driveId,
+        'rider_id': riderId,
+      });
+  }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'drive': drive?.toJsonForApi(),
+        'rider': rider?.toJsonForApi(),
+      });
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {

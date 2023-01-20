@@ -6,7 +6,6 @@ import '../util/mock_server.mocks.dart';
 void main() {
   MockUrlProcessor rideProcessor = MockUrlProcessor();
   setUp(() async {
-    await MockServer.initialize();
-    MockServer.handleRequests(rideProcessor);
+    MockServer.setProcessor(rideProcessor);
   });
 }

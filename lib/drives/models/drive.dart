@@ -25,10 +25,10 @@ class Drive extends Trip {
     required super.endTime,
     required super.seats,
     this.cancelled = false,
+    super.hideInListView,
     required this.driverId,
     this.driver,
     this.rides,
-    super.hideInListView,
   });
 
   @override
@@ -44,10 +44,10 @@ class Drive extends Trip {
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       cancelled: json['cancelled'],
+      hideInListView: json['hide_in_list_view'],
       driverId: json['driver_id'],
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(json['rides']) : null,
-      hideInListView: json['hide_in_list_view'],
     );
   }
 
@@ -57,19 +57,20 @@ class Drive extends Trip {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'start': start,
-      'start_lat': startPosition.lat,
-      'start_lng': startPosition.lng,
-      'start_time': startTime.toString(),
-      'end': end,
-      'end_lat': endPosition.lat,
-      'end_lng': endPosition.lng,
-      'end_time': endTime.toString(),
-      'cancelled': cancelled,
-      'seats': seats,
-      'driver_id': driverId,
-    };
+    return super.toJson()
+      ..addAll({
+        'cancelled': cancelled,
+        'driver_id': driverId,
+      });
+  }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'driver': driver?.toJsonForApi(),
+        'rides': rides?.map((ride) => ride.toJsonForApi()).toList() ?? [],
+      });
   }
 
   List<Ride>? get approvedRides => rides?.where((ride) => ride.status == RideStatus.approved).toList();

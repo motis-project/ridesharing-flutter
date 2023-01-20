@@ -36,7 +36,7 @@ class ProfileFactory extends ModelFactory<Profile> {
       surname: getNullableParameterOr(surname, faker.person.firstName()),
       name: getNullableParameterOr(name, faker.person.lastName()),
       gender: getNullableParameterOr(gender, Gender.values[random.nextInt(Gender.values.length)]),
-      avatarUrl: getNullableParameterOr(avatarUrl, faker.internet.httpsUrl()),
+      avatarUrl: getNullableParameterOr(avatarUrl, null),
       reviewsReceived:
           reviewsReceived ?? (createDependencies ? ReviewFactory().generateFakeList(createDependencies: false) : []),
       profileFeatures: profileFeatures ??

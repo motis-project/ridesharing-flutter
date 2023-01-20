@@ -20,19 +20,21 @@ class Button extends StatelessWidget {
     this.kind = ButtonKind.big,
   });
 
-  factory Button.error(text, {onPressed}) {
+  factory Button.error(text, {onPressed, Key? key}) {
     return Button(
       text,
       onPressed: onPressed,
       displayColorKind: DisplayColorKind.error,
+      key: key,
     );
   }
 
-  factory Button.disabled(text) {
+  factory Button.disabled(text, {Key? key}) {
     return Button(
       text,
       onPressed: null,
       displayColorKind: DisplayColorKind.disabled,
+      key: key,
     );
   }
 

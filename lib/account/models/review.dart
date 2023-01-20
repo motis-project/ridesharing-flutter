@@ -70,6 +70,15 @@ class Review extends Model implements Comparable<Review> {
   }
 
   @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll({
+        'writer': writer?.toJsonForApi(),
+        'receiver': receiver?.toJsonForApi(),
+      });
+  }
+
+  @override
   int compareTo(Review other) {
     bool thisHasText = text?.isNotEmpty ?? false;
     bool otherHasText = other.text?.isNotEmpty ?? false;
