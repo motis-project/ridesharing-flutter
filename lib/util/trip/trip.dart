@@ -60,7 +60,9 @@ abstract class Trip extends Model {
   }
 
   bool equals(Trip other) {
-    return start == other.start &&
+    return id == other.id &&
+        createdAt == other.createdAt &&
+        start == other.start &&
         startPosition == other.startPosition &&
         startTime == other.startTime &&
         end == other.end &&
