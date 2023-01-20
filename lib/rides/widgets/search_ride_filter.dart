@@ -11,7 +11,7 @@ import '../../util/profiles/reviews/custom_rating_bar.dart';
 import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/ride.dart';
 
-class SearchSuggestionFilter {
+class SearchRideFilter {
   static const List<Feature> _commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
@@ -22,7 +22,7 @@ class SearchSuggestionFilter {
   ];
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
-  static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
+  static const SearchRideSorting _defaultSorting = SearchRideSorting.relevance;
   static const String _defaultDeviation = '12';
 
   bool _isRatingExpanded = false;
@@ -35,7 +35,7 @@ class SearchSuggestionFilter {
   late int _minReliabilityRating;
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
-  late SearchSuggestionSorting _sorting;
+  late SearchRideSorting _sorting;
   final TextEditingController _maxDeviationController = TextEditingController();
 
   void setDefaultFilterValues() {
@@ -51,7 +51,7 @@ class SearchSuggestionFilter {
     _sorting = _defaultSorting;
   }
 
-  SearchSuggestionFilter() {
+  SearchRideFilter() {
     setDefaultFilterValues();
   }
 
@@ -71,7 +71,7 @@ class SearchSuggestionFilter {
   Widget _buildRatingFilter(BuildContext context, void Function(void Function()) innerSetState) {
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterMinimumRating,
+      S.of(context).searchRideFilterMinimumRating,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -134,14 +134,14 @@ class SearchSuggestionFilter {
     }
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterFeatures,
+      S.of(context).searchRideFilterFeatures,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
             runSpacing: -10,
             spacing: 2,
-            children: List<FilterChip>.generate(
+            children: List<Widget>.generate(
               shownFeatures.length,
               (int index) {
                 final Feature feature = shownFeatures[index];
@@ -151,8 +151,8 @@ class SearchSuggestionFilter {
                   label: Text(feature.getDescription(context)),
                   selected: _selectedFeatures.contains(feature),
                   tooltip: featureSelected
-                      ? S.of(context).searchSuggestionsFilterFeaturesDeselectTooltip
-                      : S.of(context).searchSuggestionsFilterFeaturesSelectTooltip,
+                      ? S.of(context).searchRideFilterFeaturesDeselectTooltip
+                      : S.of(context).searchRideFilterFeaturesSelectTooltip,
                   onSelected: (bool selected) {
                     if (featureSelected) {
                       innerSetState(() {
@@ -197,7 +197,7 @@ class SearchSuggestionFilter {
   Widget _buildDeviationFilter(BuildContext context) {
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterDeviation,
+      S.of(context).searchRideFilterDeviation,
       Row(
         children: <Widget>[
           SizedBox(
@@ -209,7 +209,7 @@ class SearchSuggestionFilter {
               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Text(S.of(context).searchSuggestionsFilterDeviationHours),
+          Text(S.of(context).searchRideFilterDeviationHours),
         ],
       ),
     );
@@ -218,18 +218,18 @@ class SearchSuggestionFilter {
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterSorting,
-      DropdownButton<SearchSuggestionSorting>(
+      S.of(context).searchRideFilterSorting,
+      DropdownButton<SearchRideSorting>(
         value: _sorting,
-        items: SearchSuggestionSorting.values
+        items: SearchRideSorting.values
             .map(
-              (SearchSuggestionSorting sorting) => DropdownMenuItem<SearchSuggestionSorting>(
+              (SearchRideSorting sorting) => DropdownMenuItem<SearchRideSorting>(
                 value: sorting,
                 child: Text(sorting.getDescription(context)),
               ),
             )
             .toList(),
-        onChanged: (SearchSuggestionSorting? value) => innerSetState(
+        onChanged: (SearchRideSorting? value) => innerSetState(
           () => _sorting = value!,
         ),
       ),
@@ -241,7 +241,7 @@ class SearchSuggestionFilter {
       context: context,
       builder: (BuildContext context) => ScaffoldMessenger(
         child: StatefulBuilder(
-          builder: (BuildContext context, Function(VoidCallback) innerSetState) {
+          builder: (BuildContext context, void Function(void Function()) innerSetState) {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: AlertDialog(
@@ -261,7 +261,7 @@ class SearchSuggestionFilter {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(S.of(context).searchSuggestionsFilterResetToDefault),
+                    child: Text(S.of(context).searchRideFilterResetToDefault),
                     onPressed: () => innerSetState(() => setDefaultFilterValues()),
                   ),
                   TextButton(
@@ -391,7 +391,7 @@ class SearchSuggestionFilter {
     return IntrinsicHeight(
       child: Semantics(
         button: true,
-        tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
+        tooltip: S.of(context).pageSearchRideTooltipFilter,
         child: InkWell(
           onTap: () => dialog(context, setState),
           child: Padding(
@@ -446,24 +446,24 @@ class SearchSuggestionFilter {
   }
 }
 
-enum SearchSuggestionSorting {
+enum SearchRideSorting {
   relevance,
   timeProximity,
   travelDuration,
   price,
 }
 
-extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
+extension SearchRideSortingExtension on SearchRideSorting {
   String getDescription(BuildContext context) {
     switch (this) {
-      case SearchSuggestionSorting.relevance:
-        return S.of(context).searchSuggestionsSortingRelevance;
-      case SearchSuggestionSorting.timeProximity:
-        return S.of(context).searchSuggestionsSortingTimeProximity;
-      case SearchSuggestionSorting.travelDuration:
-        return S.of(context).searchSuggestionsSortingTravelDuration;
-      case SearchSuggestionSorting.price:
-        return S.of(context).searchSuggestionsSortingPrice;
+      case SearchRideSorting.relevance:
+        return S.of(context).searchRideSortingRelevance;
+      case SearchRideSorting.timeProximity:
+        return S.of(context).searchRideSortingTimeProximity;
+      case SearchRideSorting.travelDuration:
+        return S.of(context).searchRideSortingTravelDuration;
+      case SearchRideSorting.price:
+        return S.of(context).searchRideSortingPrice;
     }
   }
 
@@ -473,14 +473,14 @@ extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     switch (this) {
-      case SearchSuggestionSorting.relevance:
+      case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>
             timeProximityFunc(ride1, ride2) + travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2);
-      case SearchSuggestionSorting.timeProximity:
+      case SearchRideSorting.timeProximity:
         return timeProximityFunc;
-      case SearchSuggestionSorting.travelDuration:
+      case SearchRideSorting.travelDuration:
         return travelDurationFunc;
-      case SearchSuggestionSorting.price:
+      case SearchRideSorting.price:
         return priceFunc;
     }
   }

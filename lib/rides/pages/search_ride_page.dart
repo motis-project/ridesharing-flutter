@@ -12,14 +12,14 @@ import '../../util/trip/ride_card.dart';
 import '../models/ride.dart';
 import '../widgets/search_ride_filter.dart';
 
-class SearchSuggestionPage extends StatefulWidget {
-  const SearchSuggestionPage({super.key});
+class SearchRidePage extends StatefulWidget {
+  const SearchRidePage({super.key});
 
   @override
-  State<SearchSuggestionPage> createState() => _SearchSuggestionPage();
+  State<SearchRidePage> createState() => _SearchRidePageState();
 }
 
-class _SearchSuggestionPage extends State<SearchSuggestionPage> {
+class _SearchRidePageState extends State<SearchRidePage> {
   final TextEditingController _startController = TextEditingController();
   late AddressSuggestion _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
