@@ -26,7 +26,6 @@ class DriveFactory extends TripFactory<Drive> {
     NullableParameter<Profile>? driver,
     List<Ride>? rides,
     bool createDependencies = true,
-    bool hideInListView = false,
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
@@ -48,7 +47,6 @@ class DriveFactory extends TripFactory<Drive> {
       driverId: generatedDriver?.id ?? randomId,
       driver: generatedDriver,
       rides: rides ?? (createDependencies ? RideFactory().generateFakeList(length: random.nextInt(5) + 1) : null),
-      hideInListView: hideInListView,
     );
   }
 }
