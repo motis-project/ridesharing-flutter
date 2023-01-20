@@ -36,6 +36,6 @@ class SupabaseManager {
     }
 
     // Reload the history suggestions to show the new profile's history.
-    addressSuggestionManager.reloadHistorySuggestions();
+    addressSuggestionManager.loadHistorySuggestions();
   }
 }
