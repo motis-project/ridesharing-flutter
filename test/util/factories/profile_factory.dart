@@ -31,7 +31,7 @@ class ProfileFactory extends ModelFactory<Profile> {
       createdAt: createdAt ?? DateTime.now(),
       username: username ?? faker.internet.userName(),
       email: email ?? faker.internet.email(),
-      description: getNullableParameterOr(description, faker.lorem.sentences(random.nextInt(2) + 1).join(" ")),
+      description: getNullableParameterOr(description, faker.lorem.sentences(random.nextInt(2) + 1).join(' ')),
       birthDate: getNullableParameterOr(birthDate, faker.date.dateTime()),
       surname: getNullableParameterOr(surname, faker.person.firstName()),
       name: getNullableParameterOr(name, faker.person.lastName()),

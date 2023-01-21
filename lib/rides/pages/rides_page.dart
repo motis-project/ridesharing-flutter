@@ -20,7 +20,7 @@ class _RidesPageState extends State<RidesPage> {
   @override
   void initState() {
     //todo: method to get userId
-    int userId = SupabaseManager.getCurrentProfile()!.id!;
+    final int userId = SupabaseManager.getCurrentProfile()!.id!;
     _rides = SupabaseManager.supabaseClient
         .from('rides')
         .stream(primaryKey: <String>['id'])

@@ -35,20 +35,20 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
     setState(() {
       _profileId = widget.profileId;
-      if (widget.profile != null) _profile = widget.profile!;
+      if (widget.profile != null) _profile = widget.profile;
     });
 
     load();
   }
 
   Future<void> load() async {
-    Map<String, dynamic> profileData = await SupabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> profileData = await SupabaseManager.supabaseClient.from('profiles').select('''
       *,
       reviews_received: reviews!reviews_receiver_id_fkey(
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
-    List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
+    final List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('rides').select('''
           *,
           drive: drives!inner(*)
@@ -57,7 +57,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
     setState(() {
       _profile = Profile.fromJson(profileData);
-      List<Ride> rides = Ride.fromJsonList(commonRidesData);
+      final List<Ride> rides = Ride.fromJsonList(commonRidesData);
       _hasReviewed = _profile!.reviewsReceived!.any((Review review) => review.writer!.isCurrentUser);
       _reviewable = rides.any((Ride ride) => ride.isFinished && ride.status == RideStatus.approved);
     });
@@ -65,13 +65,13 @@ class _ReviewsPageState extends State<ReviewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    Button reviewButton = Button(
+    final Button reviewButton = Button(
       _hasReviewed ? S.of(context).pageReviewsUpdateRating : S.of(context).pageReviewsRate,
       onPressed: () => _navigateToRatePage(),
     );
-    List<Review> reviews = _profile!.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
-    AggregateReviewWidget aggregated = AggregateReviewWidget(AggregateReview.fromReviews(reviews));
-    Column reviewColumn = Column(
+    final List<Review> reviews = _profile!.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
+    final AggregateReviewWidget aggregated = AggregateReviewWidget(AggregateReview.fromReviews(reviews));
+    final Column reviewColumn = Column(
       mainAxisSize: MainAxisSize.min,
       children: List<ReviewDetail>.generate(
         reviews.length,

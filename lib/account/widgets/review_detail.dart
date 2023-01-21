@@ -12,7 +12,7 @@ class ReviewDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget header = Row(
+    final Widget header = Row(
       children: <Widget>[
         ProfileChip(review.writer!),
         Text(

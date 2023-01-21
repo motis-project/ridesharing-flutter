@@ -11,7 +11,7 @@ class PasswordField extends StatelessWidget {
   const PasswordField({
     super.key,
     required this.labelText,
-    this.hintText = "",
+    this.hintText = '',
     this.errorText,
     this.helperText,
     this.controller,

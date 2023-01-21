@@ -76,14 +76,14 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
     );
   }
 
-  void onPressed() async {
-    String? surname = _surnameController.text == '' ? null : _surnameController.text;
-    String? name = _nameController.text == '' ? null : _nameController.text;
+  Future<void> onPressed() async {
+    final String? surname = _surnameController.text == '' ? null : _surnameController.text;
+    final String? name = _nameController.text == '' ? null : _nameController.text;
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'surname': surname,
       'name': name,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

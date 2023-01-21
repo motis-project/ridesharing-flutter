@@ -5,24 +5,23 @@ import 'trip_card.dart';
 
 class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
   TripStreamBuilder({
-    Key? key,
+    super.key,
     required Stream<List<T>> stream,
     required String emptyMessage,
     required List<T> Function(List<T> trips) filterTrips,
     required TripCard<T> Function(T trip) tripCard,
   }) : super(
-          key: key,
           stream: stream,
           builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
             if (snapshot.hasData) {
-              List<T> trips = snapshot.data!;
-              List<T> filteredTrips = filterTrips(trips);
+              final List<T> trips = snapshot.data!;
+              final List<T> filteredTrips = filterTrips(trips);
               return filteredTrips.isEmpty
                   ? Center(child: Text(emptyMessage))
                   : ListView.separated(
                       itemCount: filteredTrips.length,
                       itemBuilder: (BuildContext context, int index) {
-                        T trip = filteredTrips[index];
+                        final T trip = filteredTrips[index];
 
                         return tripCard(trip);
                       },

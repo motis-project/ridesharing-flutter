@@ -19,16 +19,17 @@ class SearchRidePage extends StatefulWidget {
 class _SearchRidePageState extends State<SearchRidePage> {
   @override
   Widget build(BuildContext context) {
-    Widget scaffold = Scaffold(
+    final Widget scaffold = Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageSearchRideTitle),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(),
+        padding: EdgeInsets.zero,
         child: SingleChildScrollView(
-            child: SearchRideForm(
-          anonymous: widget.anonymous,
-        )),
+          child: SearchRideForm(
+            anonymous: widget.anonymous,
+          ),
+        ),
       ),
     );
     return widget.anonymous
@@ -98,7 +99,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -125,9 +126,9 @@ class _SearchRideFormState extends State<SearchRideForm> {
     return null;
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushReplacement(
+      await Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
           builder: (BuildContext context) => SearchSuggestionPage(
             _startSuggestion!,
@@ -182,7 +183,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
   Widget buildSeatsPicker() {
     return Expanded(
       child: SizedBox(
-        //todo: add same height as time&date.
+        // TODO: add same height as time&date.
         height: 60,
         child: DropdownButtonFormField<int>(
           value: _dropdownValue,
@@ -209,7 +210,7 @@ class _SearchRideFormState extends State<SearchRideForm> {
 
   @override
   Widget build(BuildContext context) {
-    Widget submitButton = Button.submit(
+    final Widget submitButton = Button.submit(
       S.of(context).pageSearchRideButtonSearch,
       onPressed: _onSubmit,
     );
@@ -244,13 +245,13 @@ class _SearchRideFormState extends State<SearchRideForm> {
                 ],
               ),
             ),
-            //Search
-            widget.anonymous
-                ? Hero(
-                    tag: "SearchButton",
-                    child: submitButton,
-                  )
-                : submitButton,
+            if (widget.anonymous)
+              Hero(
+                tag: 'SearchButton',
+                child: submitButton,
+              )
+            else
+              submitButton,
           ],
         ),
       ),

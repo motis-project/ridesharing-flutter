@@ -10,13 +10,13 @@ class FeaturesColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemBuilder: ((BuildContext context, int index) {
-        Feature feature = features[index].feature;
+      itemBuilder: (BuildContext context, int index) {
+        final Feature feature = features[index].feature;
         return ListTile(
           leading: feature.getIcon(context),
           title: Text(feature.getDescription(context)),
         );
-      }),
+      },
       itemCount: features.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

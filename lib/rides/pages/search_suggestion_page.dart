@@ -65,7 +65,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -114,7 +114,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
 
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
-    List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
+    final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
@@ -124,20 +124,22 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           )
         ''').eq('start', _startController.text),
     );
-    List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
-    List<Ride> rides = drives
-        .map((Drive drive) => Ride.previewFromDrive(
-              drive,
-              _startSuggestion.name,
-              _startSuggestion.position,
-              drive.startTime,
-              _destinationSuggestion.name,
-              _destinationSuggestion.position,
-              drive.endTime,
-              _dropdownValue,
-              SupabaseManager.getCurrentProfile()?.id ?? -1,
-              10.25,
-            ))
+    final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
+    final List<Ride> rides = drives
+        .map(
+          (Drive drive) => Ride.previewFromDrive(
+            drive,
+            _startSuggestion.name,
+            _startSuggestion.position,
+            drive.startTime,
+            _destinationSuggestion.name,
+            _destinationSuggestion.position,
+            drive.endTime,
+            _dropdownValue,
+            SupabaseManager.getCurrentProfile()?.id ?? -1,
+            10.25,
+          ),
+        )
         .toList();
     setState(() {
       _rideSuggestions = rides;
@@ -145,28 +147,31 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
   }
 
   FixedTimeline buildSearchFieldViewer() {
-    return FixedTimeline(theme: CustomTimelineTheme.of(context), children: <Widget>[
-      TimelineTile(
-        contents: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: buildLocationPicker(isStart: true),
+    return FixedTimeline(
+      theme: CustomTimelineTheme.of(context),
+      children: <Widget>[
+        TimelineTile(
+          contents: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: buildLocationPicker(isStart: true),
+          ),
+          node: const TimelineNode(
+            indicator: CustomOutlinedDotIndicator(),
+            endConnector: CustomSolidLineConnector(),
+          ),
         ),
-        node: const TimelineNode(
-          indicator: CustomOutlinedDotIndicator(),
-          endConnector: CustomSolidLineConnector(),
+        TimelineTile(
+          contents: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: buildLocationPicker(isStart: false),
+          ),
+          node: const TimelineNode(
+            indicator: CustomOutlinedDotIndicator(),
+            startConnector: CustomSolidLineConnector(),
+          ),
         ),
-      ),
-      TimelineTile(
-        contents: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: buildLocationPicker(isStart: false),
-        ),
-        node: const TimelineNode(
-          indicator: CustomOutlinedDotIndicator(),
-          startConnector: CustomSolidLineConnector(),
-        ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Widget buildDatePicker() {
@@ -233,8 +238,8 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     );
   }
 
-  Widget buildLocationPicker({bool isStart = true}) {
-    TextEditingController controller = isStart ? _startController : _destinationController;
+  Widget buildLocationPicker({required bool isStart}) {
+    final TextEditingController controller = isStart ? _startController : _destinationController;
 
     return ElevatedButton(
       onPressed: () async {
@@ -250,7 +255,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
           } else {
             _destinationSuggestion = suggestion;
           }
-          loadRides();
+          await loadRides();
         }
       },
       child: Align(
@@ -264,7 +269,7 @@ class _SearchSuggestionPage extends State<SearchSuggestionPage> {
     if (_rideSuggestions == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
+    final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
     Widget list;
     if (filteredSuggestions.isEmpty) {
       list = Center(

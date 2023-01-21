@@ -79,8 +79,8 @@ class Review extends Model implements Comparable<Review> {
 
   @override
   int compareTo(Review other) {
-    bool thisHasText = text?.isNotEmpty ?? false;
-    bool otherHasText = other.text?.isNotEmpty ?? false;
+    final bool thisHasText = text?.isNotEmpty ?? false;
+    final bool otherHasText = other.text?.isNotEmpty ?? false;
     if (thisHasText && !otherHasText) {
       return -1;
     } else if (!thisHasText && otherHasText) {
@@ -121,30 +121,30 @@ class AggregateReview {
   bool get isHospitalitySet => hospitalityRating != 0;
 
   factory AggregateReview.fromReviews(List<Review> reviews) {
-    double rating = reviews.isEmpty
+    final double rating = reviews.isEmpty
         ? 0
         : reviews.map((Review review) => review.rating).reduce((int a, int b) => a + b) / reviews.length;
 
-    List<Review> comfortReviews = reviews.where((Review review) => review.comfortRating != null).toList();
-    double comfortRating = comfortReviews.isEmpty
+    final List<Review> comfortReviews = reviews.where((Review review) => review.comfortRating != null).toList();
+    final double comfortRating = comfortReviews.isEmpty
         ? 0
         : comfortReviews.map((Review review) => review.comfortRating!).reduce((int a, int b) => a + b) /
             comfortReviews.length;
 
-    List<Review> safetyReviews = reviews.where((Review review) => review.safetyRating != null).toList();
-    double safetyRating = safetyReviews.isEmpty
+    final List<Review> safetyReviews = reviews.where((Review review) => review.safetyRating != null).toList();
+    final double safetyRating = safetyReviews.isEmpty
         ? 0
         : safetyReviews.map((Review review) => review.safetyRating!).reduce((int a, int b) => a + b) /
             safetyReviews.length;
 
-    List<Review> reliabilityReviews = reviews.where((Review review) => review.reliabilityRating != null).toList();
-    double reliabilityRating = reliabilityReviews.isEmpty
+    final List<Review> reliabilityReviews = reviews.where((Review review) => review.reliabilityRating != null).toList();
+    final double reliabilityRating = reliabilityReviews.isEmpty
         ? 0
         : reliabilityReviews.map((Review review) => review.reliabilityRating!).reduce((int a, int b) => a + b) /
             reliabilityReviews.length;
 
-    List<Review> hospitalityReviews = reviews.where((Review review) => review.hospitalityRating != null).toList();
-    double averageRating = hospitalityReviews.isEmpty
+    final List<Review> hospitalityReviews = reviews.where((Review review) => review.hospitalityRating != null).toList();
+    final double averageRating = hospitalityReviews.isEmpty
         ? 0
         : hospitalityReviews.map((Review review) => review.hospitalityRating!).reduce((int a, int b) => a + b) /
             hospitalityReviews.length;

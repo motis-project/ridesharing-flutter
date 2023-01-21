@@ -58,7 +58,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController passwordController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _state = ButtonState.loading;
@@ -72,26 +72,32 @@ class _LoginFormState extends State<LoginForm> {
           _state = ButtonState.success;
         });
       } on AuthException catch (e) {
-        fail();
+        await fail();
+
+        if (!mounted) return;
         // looks weird but needed later for i18n
-        String text = e.statusCode == '400'
+        final String text = e.statusCode == '400'
             ? e.message.contains('credentials')
                 ? S.of(context).pageLoginFailureCredentials
                 : S.of(context).pageLoginFailureEmailNotConfirmed
             : S.of(context).failureSnackBar;
 
-        SemanticsService.announce(text, TextDirection.ltr);
+        await SemanticsService.announce(text, TextDirection.ltr);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(text),
-        ));
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(text),
+          ),
+        );
       }
     } else {
-      fail();
+      await fail();
     }
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });
@@ -142,7 +148,7 @@ class _LoginFormState extends State<LoginForm> {
               child: Text(S.of(context).pageLoginButtonForgotPassword),
             ),
             Hero(
-              tag: "LoginButton",
+              tag: 'LoginButton',
               transitionOnUserGestures: true,
               child: LoadingButton(onPressed: onSubmit, state: _state),
             ),

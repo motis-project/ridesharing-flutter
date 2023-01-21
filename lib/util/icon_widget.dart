@@ -14,7 +14,7 @@ class IconWidget extends StatelessWidget {
           : <Widget>[
               icon,
               const SizedBox(width: 2),
-              Text("x$count"),
+              Text('x$count'),
             ],
     );
   }

@@ -37,7 +37,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
 
   // [bool mounted = true] is a hack to be able to use context
   // (StatelessWidget is always mounted, so this is fine)
-  void returnFirstResult(BuildContext context, [bool mounted = true]) async {
+  Future<void> returnFirstResult(BuildContext context, {bool mounted = true}) async {
     final List<AddressSuggestion> suggestions = await addressSuggestionManager.getSuggestions(query);
 
     if (mounted) close(context, suggestions.firstOrNull);
@@ -57,14 +57,14 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
           future: addressSuggestionManager.getSuggestions(query),
           builder: (BuildContext context, AsyncSnapshot<List<AddressSuggestion>> snapshot) {
             if (snapshot.hasData) {
-              List<AddressSuggestion> suggestions = snapshot.data!;
+              final List<AddressSuggestion> suggestions = snapshot.data!;
               if (suggestions.isNotEmpty) {
                 return ListView.separated(
                   shrinkWrap: true,
                   itemCount: suggestions.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    AddressSuggestion suggestion = suggestions[index];
+                    final AddressSuggestion suggestion = suggestions[index];
                     return ListTile(
                       leading: suggestion.getIcon(),
                       title: Text(suggestion.toString()),

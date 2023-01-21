@@ -23,8 +23,8 @@ class ProfileWidget extends StatelessWidget {
     this.isTappable = true,
     this.onTap,
     this.onPop,
-  })  : assert(onTap == null || onPop == null, "onTap and onPop cannot be set at the same time."),
-        assert((onTap == null && onPop == null) || isTappable, "isTappable has to be true if onTap or onPop are set");
+  })  : assert(onTap == null || onPop == null, 'onTap and onPop cannot be set at the same time.'),
+        assert((onTap == null && onPop == null) || isTappable, 'isTappable has to be true if onTap or onPop are set');
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class ProfileWidget extends StatelessWidget {
       profileRow = Stack(
         children: <Widget>[
           profileRow,
-          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget!))
+          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget))
         ],
       );
     }

@@ -41,12 +41,12 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    if (widget.profile != null) _profile = widget.profile!;
+    if (widget.profile != null) _profile = widget.profile;
     loadProfile();
   }
 
   Future<void> loadProfile() async {
-    Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
       *,
       profile_features (*),
       reviews_received: reviews!reviews_receiver_id_fkey(
@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildUsername() {
-    Widget username = Text(
+    final Widget username = Text(
       _profile!.username,
       style: Theme.of(context).textTheme.headline5,
     );
@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildDescription() {
-    Widget description = _profile!.description?.isNotEmpty ?? false
+    final Widget description = _profile!.description?.isNotEmpty ?? false
         ? Text(
             _profile!.description!,
             style: Theme.of(context).textTheme.bodyText1,
@@ -129,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildFullName() {
-    Widget fullName = _profile!.fullName.isNotEmpty
+    final Widget fullName = _profile!.fullName.isNotEmpty
         ? Text(
             _profile!.fullName,
             style: Theme.of(context).textTheme.titleMedium,
@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildBirthDate() {
-    Widget birthDate = _profile!.birthDate != null
+    final Widget birthDate = _profile!.birthDate != null
         ? Text(
             localeManager.formatDate(_profile!.birthDate!),
             style: Theme.of(context).textTheme.titleMedium,
@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildGender() {
-    Widget gender = _profile!.gender != null
+    final Widget gender = _profile!.gender != null
         ? Text(
             _profile!.gender!.getName(context),
             style: Theme.of(context).textTheme.titleMedium,
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildFeatures() {
-    Widget features = _profile!.profileFeatures!.isNotEmpty
+    final Widget features = _profile!.profileFeatures!.isNotEmpty
         ? FeaturesColumn(_profile!.profileFeatures!)
         : buildNoInfoText(S.of(context).pageProfileFeaturesEmpty);
     return EditableRow(
@@ -203,19 +203,22 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildReviews() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(
-        S.of(context).pageProfileReviewsTitle,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-      const SizedBox(height: 8),
-      ReviewsPreview(_profile!)
-    ]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          S.of(context).pageProfileReviewsTitle,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        const SizedBox(height: 8),
+        ReviewsPreview(_profile!)
+      ],
+    );
   }
 
   Widget buildNoInfoText(String noInfoText) {
     return Text(
-      "<$noInfoText>",
+      '<$noInfoText>',
       style: Theme.of(context).textTheme.bodyText1?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
@@ -224,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = <Widget>[
+    final List<Widget> widgets = <Widget>[
       buildAvatar(),
       const SizedBox(height: 8),
       buildUsername(),
@@ -265,30 +268,31 @@ class _ProfilePageState extends State<ProfilePage> {
       }
       widgets.add(buildReviews());
       if (!_profile!.isCurrentUser) {
-        bool hasRecentReport = _profile!.reportsReceived!
+        final bool hasRecentReport = _profile!.reportsReceived!
             .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
 
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
-          hasRecentReport
-              ? Button.disabled(
-                  S.of(context).pageProfileButtonReported,
-                )
-              : Button.error(
-                  S.of(context).pageProfileButtonReport,
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
-                        .then((bool? reportSent) {
-                      if (reportSent == true) {
-                        loadProfile();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
-                        );
-                      }
-                    });
-                  },
-                ),
+          if (hasRecentReport)
+            Button.disabled(
+              S.of(context).pageProfileButtonReported,
+            )
+          else
+            Button.error(
+              S.of(context).pageProfileButtonReport,
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute<bool?>(builder: (BuildContext context) => WriteReportPage(_profile!)))
+                    .then((bool? reportSent) {
+                  if (reportSent ?? false) {
+                    loadProfile();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
+                    );
+                  }
+                });
+              },
+            ),
         ]);
       }
     } else {
@@ -326,36 +330,37 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _updateProfilePictureDialog() async {
     setState(() => _isLoadingProfilePicture = true);
     if (_profile!.avatarUrl == null) {
-      _uploadProfilePicture();
+      await _uploadProfilePicture();
       setState(() => _isLoadingProfilePicture = false);
       return;
     }
     switch (await showDialog<ProfilePictureUpdateMethod>(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(S.of(context).pageProfileUpdateProfilePictureTitle),
-            children: <Widget>[
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ProfilePictureUpdateMethod.fromGallery);
-                },
-                child: Text(S.of(context).pageProfileUpdateProfilePictureFromGallery),
-              ),
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ProfilePictureUpdateMethod.delete);
-                },
-                child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
-              ),
-            ],
-          );
-        })) {
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text(S.of(context).pageProfileUpdateProfilePictureTitle),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, ProfilePictureUpdateMethod.fromGallery);
+              },
+              child: Text(S.of(context).pageProfileUpdateProfilePictureFromGallery),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, ProfilePictureUpdateMethod.delete);
+              },
+              child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
+            ),
+          ],
+        );
+      },
+    )) {
       case ProfilePictureUpdateMethod.fromGallery:
-        _uploadProfilePicture();
+        await _uploadProfilePicture();
         break;
       case ProfilePictureUpdateMethod.delete:
-        _deleteProfilePicture();
+        await _deleteProfilePicture();
         break;
       case null:
         break;
@@ -391,10 +396,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
       await SupabaseManager.supabaseClient
           .from('profiles')
-          .update(<String, dynamic>{"avatar_url": imageUrlResponse}).eq('id', _profile!.id);
+          .update(<String, dynamic>{'avatar_url': imageUrlResponse}).eq('id', _profile!.id);
 
-      SupabaseManager.reloadCurrentProfile();
-      loadProfile();
+      await SupabaseManager.reloadCurrentProfile();
+      await loadProfile();
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -407,10 +412,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _deleteProfilePicture() async {
     await SupabaseManager.supabaseClient
         .from('profiles')
-        .update(<String, dynamic>{"avatar_url": null}).eq('id', _profile!.id);
+        .update(<String, dynamic>{'avatar_url': null}).eq('id', _profile!.id);
 
-    SupabaseManager.reloadCurrentProfile();
-    loadProfile();
+    await SupabaseManager.reloadCurrentProfile();
+    await loadProfile();
   }
 
   void signOut() {

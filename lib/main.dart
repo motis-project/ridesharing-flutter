@@ -24,7 +24,7 @@ void main() async {
   await SupabaseManager.reloadCurrentProfile();
   await themeManager.loadTheme();
   await localeManager.loadCurrentLocale();
-  addressSuggestionManager.loadHistorySuggestions();
+  await addressSuggestionManager.loadHistorySuggestions();
 
   runApp(const AppWrapper());
 }

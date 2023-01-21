@@ -19,7 +19,7 @@ class _DrivesPageState extends State<DrivesPage> {
 
   @override
   void initState() {
-    int userId = SupabaseManager.getCurrentProfile()!.id!;
+    final int userId = SupabaseManager.getCurrentProfile()!.id!;
     _drives = SupabaseManager.supabaseClient
         .from('drives')
         .stream(primaryKey: <String>['id'])

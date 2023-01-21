@@ -6,93 +6,93 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/profile_feature_factory.dart';
 
 void main() {
-  group('ProfileFeature.fromJson', (() {
-    test('parses ProfileFeature from json', (() {
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "profile_id": 1,
-        "feature": Feature.noSmoking.index,
-        "rank": 1,
+  group('ProfileFeature.fromJson', () {
+    test('parses ProfileFeature from json', () {
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'profile_id': 1,
+        'feature': Feature.noSmoking.index,
+        'rank': 1,
       };
-      ProfileFeature profileFeature = ProfileFeature.fromJson(json);
+      final ProfileFeature profileFeature = ProfileFeature.fromJson(json);
       expect(profileFeature.id, 1);
-      expect(profileFeature.createdAt, DateTime.parse("2021-01-01T00:00:00.000Z"));
+      expect(profileFeature.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
       expect(profileFeature.profileId, 1);
       expect(profileFeature.feature, Feature.noSmoking);
-    }));
+    });
 
-    test('can handle Profile', (() {
-      Profile profile = ProfileFactory().generateFake();
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "profile_id": profile.id,
-        "feature": Feature.accessible.index,
-        "rank": 1,
-        "profile": profile.toJsonForApi(),
+    test('can handle Profile', () {
+      final Profile profile = ProfileFactory().generateFake();
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'profile_id': profile.id,
+        'feature': Feature.accessible.index,
+        'rank': 1,
+        'profile': profile.toJsonForApi(),
       };
-      ProfileFeature profileFeature = ProfileFeature.fromJson(json);
+      final ProfileFeature profileFeature = ProfileFeature.fromJson(json);
       expect(profileFeature.profile.toString(), profile.toString());
-    }));
+    });
 
-    test('throws error when feature is not in enum', (() {
-      Map<String, dynamic> json1 = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "profile_id": 1,
-        "feature": 20,
-        "rank": 1,
+    test('throws error when feature is not in enum', () {
+      final Map<String, dynamic> json1 = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'profile_id': 1,
+        'feature': 20,
+        'rank': 1,
       };
-      Map<String, dynamic> json2 = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "profile_id": 1,
-        "feature": -1,
-        "rank": 1,
+      final Map<String, dynamic> json2 = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'profile_id': 1,
+        'feature': -1,
+        'rank': 1,
       };
       expect(() => ProfileFeature.fromJson(json1), throwsA(isA<RangeError>()));
       expect(() => ProfileFeature.fromJson(json2), throwsA(isA<RangeError>()));
-    }));
-  }));
+    });
+  });
 
   group('ProfileFeature.fromJsonList', () {
     test('parses a list of ProfileFeatures from json', () {
-      Map<String, dynamic> json = {
-        "id": 1,
-        "created_at": "2021-01-01T00:00:00.000Z",
-        "profile_id": 1,
-        "feature": Feature.noSmoking.index,
-        "rank": 1,
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'profile_id': 1,
+        'feature': Feature.noSmoking.index,
+        'rank': 1,
       };
-      List<Map<String, dynamic>> jsonList = [json, json, json];
-      List<ProfileFeature> profileFeatures = ProfileFeature.fromJsonList(jsonList);
-      expect(profileFeatures.first.id, json["id"]);
-      expect(profileFeatures[1].createdAt, DateTime.parse(json["created_at"]));
-      expect(profileFeatures.last.profileId, json["profile_id"]);
+      final List<Map<String, dynamic>> jsonList = [json, json, json];
+      final List<ProfileFeature> profileFeatures = ProfileFeature.fromJsonList(jsonList);
+      expect(profileFeatures.first.id, json['id']);
+      expect(profileFeatures[1].createdAt, DateTime.parse(json['created_at']));
+      expect(profileFeatures.last.profileId, json['profile_id']);
       expect(profileFeatures.first.feature, Feature.noSmoking);
     });
 
     test('can handle an empty list', () {
-      List<ProfileFeature> profileFeatures = ProfileFeature.fromJsonList([]);
+      final List<ProfileFeature> profileFeatures = ProfileFeature.fromJsonList([]);
       expect(profileFeatures, []);
     });
   });
 
   group('ProfileFeature.toJson', () {
     test('returns a json representation of the ProfileFeature', () async {
-      ProfileFeature profileFeature = ProfileFeatureFactory().generateFake();
-      Map<String, dynamic> json = profileFeature.toJson();
-      expect(json["profile_id"], profileFeature.profileId);
-      expect(json["feature"], profileFeature.feature.index);
-      expect(json["rank"], profileFeature.rank);
+      final ProfileFeature profileFeature = ProfileFeatureFactory().generateFake();
+      final Map<String, dynamic> json = profileFeature.toJson();
+      expect(json['profile_id'], profileFeature.profileId);
+      expect(json['feature'], profileFeature.feature.index);
+      expect(json['rank'], profileFeature.rank);
       expect(json.keys.length, 3);
     });
   });
 
   group('Feature.isMutuallyExclusive', () {
     test('returns true if the features are mutually exclusive', () {
-      bool isMutuallyExclusive = Feature.noSmoking.isMutuallyExclusive(Feature.smoking);
+      final bool isMutuallyExclusive = Feature.noSmoking.isMutuallyExclusive(Feature.smoking);
       expect(isMutuallyExclusive, true);
       expect(Feature.smoking.isMutuallyExclusive(Feature.noSmoking), true);
       expect(Feature.noVaping.isMutuallyExclusive(Feature.vaping), true);
@@ -113,7 +113,7 @@ void main() {
     });
 
     test('always false for features that have no mutual exclusions', () {
-      for (Feature feature in Feature.values) {
+      for (final Feature feature in Feature.values) {
         expect(Feature.accessible.isMutuallyExclusive(feature), false);
         expect(Feature.requires3G.isMutuallyExclusive(feature), false);
         expect(Feature.music.isMutuallyExclusive(feature), false);

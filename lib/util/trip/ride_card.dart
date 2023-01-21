@@ -65,7 +65,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   Future<void> loadRide() async {
     Ride trip = widget.trip;
-    Map<String, dynamic> data =
+    final Map<String, dynamic> data =
         await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
     if (mounted) {
@@ -89,7 +89,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(" ${_ride.price}€");
+    return Text(' ${_ride.price}€');
   }
 
   @override
@@ -97,9 +97,10 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
     return !_fullyLoaded
         ? const Center(
             child: SizedBox(
-            height: 56,
-            width: 72,
-          ))
+              height: 56,
+              width: 72,
+            ),
+          )
         : Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 0, 16),
             child: ProfileWidget(
@@ -128,14 +129,15 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   Widget buildRightSide() {
     if (!_fullyLoaded) {
       return const Center(
-          child: SizedBox(
-        height: 24,
-        width: 24,
-      ));
+        child: SizedBox(
+          height: 24,
+          width: 24,
+        ),
+      );
     }
 
-    List<ProfileFeature> profileFeatures = _driver.profileFeatures!;
-    List<Icon> featureicons = <Icon>[];
+    final List<ProfileFeature> profileFeatures = _driver.profileFeatures!;
+    final List<Icon> featureicons = <Icon>[];
     for (int i = 0; i < min(profileFeatures.length, 3); i++) {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
     }

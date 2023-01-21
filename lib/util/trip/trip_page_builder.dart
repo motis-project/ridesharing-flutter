@@ -17,7 +17,7 @@ class TripPageBuilder {
     TripCard<T> Function(T) tripCard,
     FloatingActionButton floatingActionButton,
   ) {
-    String name = title.toLowerCase();
+    final String name = title.toLowerCase();
 
     return DefaultTabController(
       length: 2,
@@ -40,10 +40,12 @@ class TripPageBuilder {
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoUpcoming(name),
                 filterTrips: (List<T> trips) => trips
-                    .where((T trip) =>
-                        trip.endTime.isAfter(DateTime.now()) &&
-                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
-                        !trip.hideInListView)
+                    .where(
+                      (T trip) =>
+                          trip.endTime.isAfter(DateTime.now()) &&
+                          (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
+                          !trip.hideInListView,
+                    )
                     .toList(),
                 tripCard: tripCard,
               ),
@@ -51,10 +53,12 @@ class TripPageBuilder {
                 stream: trips,
                 emptyMessage: S.of(context).widgetTripBuilderNoPast(name),
                 filterTrips: (List<T> trips) => trips.reversed
-                    .where((T trip) =>
-                        trip.endTime.isBefore(DateTime.now()) &&
-                        (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
-                        !trip.hideInListView)
+                    .where(
+                      (T trip) =>
+                          trip.endTime.isBefore(DateTime.now()) &&
+                          (trip is! Ride || trip.status != RideStatus.withdrawnByRider) &&
+                          !trip.hideInListView,
+                    )
                     .toList(),
                 tripCard: tripCard,
               ),

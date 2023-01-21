@@ -57,11 +57,13 @@ class _WriteReportPageState extends State<WriteReportPage> {
                         final ReportCategory category = ReportCategory.values[index];
                         return RadioListTile<ReportCategory>(
                           visualDensity: VisualDensity.compact,
-                          title: Row(children: <Widget>[
-                            category.getIcon(context),
-                            const SizedBox(width: 15),
-                            Expanded(child: Text(category.getDescription(context))),
-                          ]),
+                          title: Row(
+                            children: <Widget>[
+                              category.getIcon(context),
+                              const SizedBox(width: 15),
+                              Expanded(child: Text(category.getDescription(context))),
+                            ],
+                          ),
                           value: category,
                           groupValue: _category,
                           onChanged: (ReportCategory? value) {
@@ -105,7 +107,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
     );
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -127,6 +129,6 @@ class _WriteReportPageState extends State<WriteReportPage> {
       _state = ButtonState.success;
     });
 
-    if (mounted) Navigator.of(context).maybePop(true);
+    if (mounted) await Navigator.of(context).maybePop(true);
   }
 }

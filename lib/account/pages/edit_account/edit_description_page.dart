@@ -66,12 +66,12 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
     );
   }
 
-  void onPressed() async {
-    String? text = _controller.text == '' ? null : _controller.text;
+  Future<void> onPressed() async {
+    final String? text = _controller.text == '' ? null : _controller.text;
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'description': text,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

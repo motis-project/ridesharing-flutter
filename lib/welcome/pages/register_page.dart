@@ -49,7 +49,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       late final AuthResponse res;
       try {
@@ -62,8 +62,8 @@ class _RegisterFormState extends State<RegisterForm> {
           emailRedirectTo: 'io.supabase.flutter://login-callback/',
         );
       } on AuthException {
-        fail();
-        showSnackBar(S.of(context).failureSnackBar);
+        await fail();
+        if (mounted) await showSnackBar(S.of(context).failureSnackBar);
         return;
       }
       final User? user = res.user;
@@ -76,10 +76,10 @@ class _RegisterFormState extends State<RegisterForm> {
             'username': usernameController.text,
           });
         } on PostgrestException {
-          fail();
+          await fail();
           // TODO: Show error if user exists already?
           // if (e.message.contains('duplicate key value violates unique constraint "users_email_key"')) {
-          if (mounted) showSnackBar(S.of(context).failureSnackBar);
+          if (mounted) await showSnackBar(S.of(context).failureSnackBar);
           return;
         }
         await Future<void>.delayed(const Duration(seconds: 2));
@@ -88,24 +88,28 @@ class _RegisterFormState extends State<RegisterForm> {
         });
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(S.of(context).pageRegisterSuccess),
-            duration: const Duration(seconds: 10),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(S.of(context).pageRegisterSuccess),
+              duration: const Duration(seconds: 10),
+            ),
+          );
         }
       }
     } else {
-      fail();
+      await fail();
     }
   }
 
-  void showSnackBar(String text) async {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(text),
-    ));
+  Future<void> showSnackBar(String text) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+      ),
+    );
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });
@@ -186,7 +190,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 15),
             Hero(
-              tag: "RegisterButton",
+              tag: 'RegisterButton',
               transitionOnUserGestures: true,
               child: LoadingButton(
                 idleText: S.of(context).pageRegisterButtonCreate,

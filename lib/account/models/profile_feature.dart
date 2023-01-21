@@ -34,10 +34,8 @@ class ProfileFeature extends Model {
   }
 
   static List<ProfileFeature> fromJsonList(List<Map<String, dynamic>> jsonList) {
-    final List<ProfileFeature> list =
-        jsonList.map((Map<String, dynamic> json) => ProfileFeature.fromJson(json)).toList();
-    list.sort((ProfileFeature a, ProfileFeature b) => a.rank - b.rank);
-    return list;
+    return jsonList.map((Map<String, dynamic> json) => ProfileFeature.fromJson(json)).toList()
+      ..sort((ProfileFeature a, ProfileFeature b) => a.rank - b.rank);
   }
 
   @override

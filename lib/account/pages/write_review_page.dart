@@ -37,12 +37,12 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     super.dispose();
   }
 
-  void loadReview() async {
-    Map<String, dynamic>? data = await SupabaseManager.supabaseClient
+  Future<void> loadReview() async {
+    final Map<String, dynamic>? data = await SupabaseManager.supabaseClient
         .from('reviews')
         .select('*')
         .eq('receiver_id', widget.profile.id)
-        .eq('writer_id', SupabaseManager.getCurrentProfile()!.id!)
+        .eq('writer_id', SupabaseManager.getCurrentProfile()!.id)
         .limit(1)
         .maybeSingle();
     setState(() {
@@ -182,16 +182,18 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     });
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (_review!.rating == 0) {
       setState(() {
         _state = ButtonState.fail;
       });
-      Duration duration = const Duration(seconds: 1);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(S.of(context).pageWriteReviewRatingRequired),
-        duration: duration,
-      ));
+      const Duration duration = Duration(seconds: 1);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context).pageWriteReviewRatingRequired),
+          duration: duration,
+        ),
+      );
       await Future<void>.delayed(duration);
       setState(() {
         _state = ButtonState.idle;
@@ -211,6 +213,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       _state = ButtonState.success;
     });
 
-    if (mounted) Navigator.of(context).maybePop();
+    if (mounted) await Navigator.of(context).maybePop();
   }
 }

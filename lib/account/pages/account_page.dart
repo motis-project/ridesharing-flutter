@@ -26,16 +26,17 @@ class _AccountPageState extends State<AccountPage> {
             children: List<RadioListTile<ThemeMode>>.generate(
               ThemeMode.values.length,
               (int index) => RadioListTile<ThemeMode>(
-                  title: Text(
-                    ThemeMode.values[index].getName(context),
-                  ),
-                  value: ThemeMode.values[index],
-                  groupValue: themeManager.currentThemeMode,
-                  onChanged: (ThemeMode? value) {
-                    innerSetState(() {
-                      themeManager.setTheme(value);
-                    });
-                  }),
+                title: Text(
+                  ThemeMode.values[index].getName(context),
+                ),
+                value: ThemeMode.values[index],
+                groupValue: themeManager.currentThemeMode,
+                onChanged: (ThemeMode? value) {
+                  innerSetState(() {
+                    themeManager.setTheme(value);
+                  });
+                },
+              ),
             ),
           ),
           actions: <Widget>[

@@ -36,14 +36,13 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    Widget carousel = Column(
+    final double height = MediaQuery.of(context).size.height;
+    final Widget carousel = Column(
       children: <Widget>[
         SizedBox(
           height: height / 2 - indicatorSize - indicatorMargin * 2,
           child: PageView.builder(
             itemCount: images.length,
-            pageSnapping: true,
             padEnds: false,
             onPageChanged: (int page) {
               setState(() {
@@ -64,12 +63,12 @@ class _WelcomePageState extends State<WelcomePage> {
         )
       ],
     );
-    Widget buttons = Center(
+    final Widget buttons = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Hero(
-            tag: "LoginButton",
+            tag: 'LoginButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeLogin,
@@ -80,7 +79,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           const SizedBox(height: 15),
           Hero(
-            tag: "RegisterButton",
+            tag: 'RegisterButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeRegister,
@@ -91,7 +90,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           const SizedBox(height: 15),
           Hero(
-            tag: "SearchButton",
+            tag: 'SearchButton',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeAnonymousSearch,

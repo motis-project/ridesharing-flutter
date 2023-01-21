@@ -41,9 +41,9 @@ class LocaleManager with ChangeNotifier {
   }
 
   String formatDuration(Duration duration, {bool shouldPadHours = true}) {
-    String hours = duration.inHours.toString().padLeft(shouldPadHours ? 2 : 0, "0");
-    String minutes = (duration.inMinutes % 60).toString().padLeft(2, "0");
-    return "$hours:$minutes";
+    final String hours = duration.inHours.toString().padLeft(shouldPadHours ? 2 : 0, '0');
+    final String minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    return '$hours:$minutes';
   }
 }
 

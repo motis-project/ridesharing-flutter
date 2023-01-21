@@ -23,7 +23,7 @@ class SearchSuggestionFilter {
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
   static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
-  static const String _defaultDeviation = "12";
+  static const String _defaultDeviation = '12';
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -144,8 +144,8 @@ class SearchSuggestionFilter {
             children: List<FilterChip>.generate(
               shownFeatures.length,
               (int index) {
-                Feature feature = shownFeatures[index];
-                bool featureSelected = _selectedFeatures.contains(feature);
+                final Feature feature = shownFeatures[index];
+                final bool featureSelected = _selectedFeatures.contains(feature);
                 return FilterChip(
                   avatar: feature.getIcon(context),
                   label: Text(feature.getDescription(context)),
@@ -160,11 +160,11 @@ class SearchSuggestionFilter {
                         if (!_isFeatureListExpanded) _retractedAdditionalFeatures.insert(0, feature);
                       });
                     } else {
-                      Feature? mutuallyExclusiveFeature = _selectedFeatures
+                      final Feature? mutuallyExclusiveFeature = _selectedFeatures
                           .firstWhereOrNull((Feature selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
                       if (mutuallyExclusiveFeature != null) {
-                        String description = mutuallyExclusiveFeature.getDescription(context);
-                        String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
+                        final String description = mutuallyExclusiveFeature.getDescription(context);
+                        final String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
                         SemanticsService.announce(text, TextDirection.ltr);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(text)),
@@ -281,28 +281,30 @@ class SearchSuggestionFilter {
   }
 
   Widget _buildSmallRatingIndicator(int rating, {Icon? icon}) {
-    return Row(children: <Widget>[
-      if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
-      Text(rating.toString()),
-      const Icon(
-        Icons.star,
-        color: Colors.amber,
-      )
-    ]);
+    return Row(
+      children: <Widget>[
+        if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
+        Text(rating.toString()),
+        const Icon(
+          Icons.star,
+          color: Colors.amber,
+        )
+      ],
+    );
   }
 
   Widget buildIndicatorRow(BuildContext context, void Function(void Function()) setState) {
-    bool isRatingDefault = _minRating == _defaultRating &&
+    final bool isRatingDefault = _minRating == _defaultRating &&
         _minComfortRating == _defaultRating &&
         _minSafetyRating == _defaultRating &&
         _minReliabilityRating == _defaultRating &&
         _minHospitalityRating == _defaultRating;
-    bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
-    bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
+    final bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
+    final bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
 
-    List<Widget> widgets = <Widget>[];
+    final List<Widget> widgets = <Widget>[];
     if (!isRatingDefault) {
-      List<Widget> ratingWidgets = <Widget>[];
+      final List<Widget> ratingWidgets = <Widget>[];
       if (_minRating != _defaultRating) {
         ratingWidgets.add(_buildSmallRatingIndicator(_minRating));
         if (_minComfortRating != _defaultRating ||
@@ -356,32 +358,33 @@ class SearchSuggestionFilter {
           ),
         );
       }
-      int numDividers = ratingWidgets.length - 1;
+      final int numDividers = ratingWidgets.length - 1;
       for (int i = 0; i < numDividers; i++) {
         ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 10));
       }
-      Widget ratingsRow = Row(children: ratingWidgets);
+      final Widget ratingsRow = Row(children: ratingWidgets);
       widgets.add(ratingsRow);
     }
     if (!isFeaturesDefault) {
-      Widget featuresRow = Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
+      final Widget featuresRow =
+          Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
     if (!isDeviationDefault) {
-      Widget deviationWidget = Row(
+      final Widget deviationWidget = Row(
         children: <Widget>[
           const Icon(Icons.schedule),
           const SizedBox(width: 6),
-          Text("± ${_maxDeviationController.text}")
+          Text('± ${_maxDeviationController.text}')
         ],
       );
       widgets.add(deviationWidget);
     }
-    Widget sortingWidget = Row(
+    final Widget sortingWidget = Row(
       children: <Widget>[const Icon(Icons.sort), Text(_sorting.getDescription(context))],
     );
     widgets.add(sortingWidget);
-    int numDividers = widgets.length - 1;
+    final int numDividers = widgets.length - 1;
     for (int i = 0; i < numDividers; i++) {
       widgets.insert(i * 2 + 1, const VerticalDivider(thickness: 2));
     }
@@ -421,15 +424,15 @@ class SearchSuggestionFilter {
     return rideSuggestions
         .where(
           (Ride ride) {
-            Profile driver = ride.drive!.driver!;
-            AggregateReview driverReview = AggregateReview.fromReviews(driver.reviewsReceived!);
-            bool ratingSatisfied = (!driverReview.isRatingSet || driverReview.rating >= _minRating) &&
+            final Profile driver = ride.drive!.driver!;
+            final AggregateReview driverReview = AggregateReview.fromReviews(driver.reviewsReceived!);
+            final bool ratingSatisfied = (!driverReview.isRatingSet || driverReview.rating >= _minRating) &&
                 (!driverReview.isComfortSet || driverReview.comfortRating >= _minComfortRating) &&
                 (!driverReview.isSafetySet || driverReview.safetyRating >= _minSafetyRating) &&
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
-            bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            bool maxDeviationSatisfied =
+            final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
+            final bool maxDeviationSatisfied =
                 date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
             return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
           },

@@ -18,7 +18,7 @@ import '../util/pump_material.dart';
 
 void main() {
   late Drive drive;
-  MockUrlProcessor processor = MockUrlProcessor();
+  final MockUrlProcessor processor = MockUrlProcessor();
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
@@ -86,7 +86,7 @@ void main() {
         expect(find.byKey(const Key('hideDriveButton')), findsNothing);
       });
       testWidgets('Shows hide when drive is finished', (WidgetTester tester) async {
-        Drive finishedDrive = DriveFactory().generateFake(
+        final Drive finishedDrive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
           endTime: DateTime.now().subtract(const Duration(days: 1)),
         );
@@ -97,7 +97,7 @@ void main() {
         expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
       });
       testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
-        Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
+        final Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
         when(processor.processUrl(any)).thenReturn(jsonEncode(cancelledDrive.toJsonForApi()));
         await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
         await tester.pump();
@@ -140,12 +140,12 @@ void main() {
     });
 
     testWidgets('Can handle duplicate waypoints', (WidgetTester tester) async {
-      String waypoint = 'Waypoint';
+      const String waypoint = 'Waypoint';
       drive.rides!.addAll(List.generate(
         3,
         (index) => RideFactory().generateFake(
-          start: index % 2 == 0 ? waypoint : null,
-          end: index % 2 == 0 ? null : waypoint,
+          start: index.isEven ? waypoint : null,
+          end: index.isEven ? null : waypoint,
           status: RideStatus.approved,
         ),
       ));
@@ -183,7 +183,7 @@ void main() {
         // Verify that the drive was cancelled (but no way to verify body right now)
         verify(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}')).called(1);
 
-        expect(find.byKey(const Key("cancelledDriveBanner")), findsOneWidget);
+        expect(find.byKey(const Key('cancelledDriveBanner')), findsOneWidget);
       });
 
       testWidgets('Can abort cancelling drive', (WidgetTester tester) async {
@@ -196,7 +196,7 @@ void main() {
 
         verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}'));
 
-        expect(find.byKey(const Key("cancelledDriveBanner")), findsNothing);
+        expect(find.byKey(const Key('cancelledDriveBanner')), findsNothing);
       });
     });
 

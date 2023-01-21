@@ -47,11 +47,9 @@ class CreateDriveForm extends StatefulWidget {
 class _CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _startController = TextEditingController();
-  // ignore: unused_field
-  AddressSuggestion? _startSuggestion;
+  late AddressSuggestion _startSuggestion;
   final TextEditingController _destinationController = TextEditingController();
-  // ignore: unused_field
-  AddressSuggestion? _destinationSuggestion;
+  late AddressSuggestion _destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -79,7 +77,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   void _showDatePicker() {
-    DateTime firstDate = DateTime.now();
+    final DateTime firstDate = DateTime.now();
 
     showDatePicker(
       context: context,
@@ -96,15 +94,20 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     });
   }
 
-  void _onSubmit() async {
+  Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
         //todo: add right end_time from algorithm
-        DateTime endTime = DateTime(
-            _selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedDate.hour + 2, _selectedDate.minute);
+        final DateTime endTime = DateTime(
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          _selectedDate.hour + 2,
+          _selectedDate.minute,
+        );
         final Profile driver = SupabaseManager.getCurrentProfile()!;
 
-        bool hasDrive =
+        final bool hasDrive =
             await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasDrive && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -113,7 +116,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
 
-        bool hasRide = await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
+        final bool hasRide =
+            await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasRide && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveRide)),
@@ -121,12 +125,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           return;
         }
 
-        Drive drive = Drive(
+        final Drive drive = Drive(
           driverId: driver.id!,
-          start: _startSuggestion!.name,
-          startPosition: _startSuggestion!.position,
-          end: _destinationSuggestion!.name,
-          endPosition: _destinationSuggestion!.position,
+          start: _startSuggestion.name,
+          startPosition: _startSuggestion.position,
+          end: _destinationSuggestion.name,
+          endPosition: _destinationSuggestion.position,
           seats: _dropdownValue,
           startTime: _selectedDate,
           endTime: endTime,
@@ -139,7 +143,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             .single()
             .then(
           (Map<String, dynamic> data) {
-            Drive drive = Drive.fromJson(data);
+            final Drive drive = Drive.fromJson(data);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute<void>(
@@ -150,9 +154,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         );
       } on AuthException {
         //todo: change error message when login is implemented
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(S.of(context).failureSnackBar),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(S.of(context).failureSnackBar),
+          ),
+        );
       }
     }
   }

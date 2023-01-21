@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> pumpMaterial(WidgetTester tester, Widget widget) async {
   await tester.pumpWidget(

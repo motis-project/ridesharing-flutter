@@ -20,16 +20,16 @@ class ReportFactory extends ModelFactory<Report> {
     assert(reporterId == null || reporter?.value == null || reporter!.value?.id == reporterId);
     assert(offenderId == null || offender?.value == null || offender!.value?.id == offenderId);
 
-    Profile? generatedReporter =
+    final Profile? generatedReporter =
         reporter == null ? ProfileFactory().generateFake(id: reporterId, createDependencies: false) : reporter.value;
-    Profile? generatedOffender =
+    final Profile? generatedOffender =
         offender == null ? ProfileFactory().generateFake(id: offenderId, createDependencies: false) : offender.value;
 
     return Report(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       category: category ?? ReportCategory.values[random.nextInt(ReportCategory.values.length)],
-      text: getNullableParameterOr(text, faker.lorem.sentences(random.nextInt(2) + 1).join(" ")),
+      text: getNullableParameterOr(text, faker.lorem.sentences(random.nextInt(2) + 1).join(' ')),
       offenderId: generatedReporter?.id ?? randomId,
       offender: generatedReporter,
       reporterId: generatedOffender?.id ?? randomId,

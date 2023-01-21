@@ -74,11 +74,11 @@ class _EditGenderPageState extends State<EditGenderPage> {
     );
   }
 
-  void onPressed() async {
+  Future<void> onPressed() async {
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'gender': _gender?.index,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

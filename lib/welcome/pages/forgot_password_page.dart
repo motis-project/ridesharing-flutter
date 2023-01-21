@@ -9,7 +9,7 @@ import '../../util/supabase.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;
-  const ForgotPasswordPage({super.key, this.initialEmail = ""});
+  const ForgotPasswordPage({super.key, this.initialEmail = ''});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -38,7 +38,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
 class ForgotPasswordForm extends StatefulWidget {
   final String? initialEmail;
-  const ForgotPasswordForm({super.key, this.initialEmail = ""});
+  const ForgotPasswordForm({super.key, this.initialEmail = ''});
 
   @override
   State<ForgotPasswordForm> createState() => _ForgotPasswordFormState();
@@ -55,13 +55,13 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     emailController = TextEditingController(text: widget.initialEmail);
   }
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _state = ButtonState.loading;
       });
 
-      SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
+      await SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
         emailController.text,
         redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
       );
@@ -76,11 +76,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
         Navigator.of(context).pop();
       }
     } else {
-      fail();
+      await fail();
     }
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });

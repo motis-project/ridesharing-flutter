@@ -15,7 +15,7 @@ class SeatIndicator extends StatelessWidget {
     Widget text;
 
     if (trip is Drive) {
-      int? maxUsedSeats = (trip as Drive).getMaxUsedSeats();
+      final int? maxUsedSeats = (trip as Drive).getMaxUsedSeats();
       seatIcons = List<Icon>.generate(
         trip.seats,
         (int index) => Icon(

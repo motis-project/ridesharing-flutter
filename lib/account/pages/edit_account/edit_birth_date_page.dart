@@ -72,9 +72,9 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
     );
   }
 
-  void _showDatePicker() async {
+  Future<void> _showDatePicker() async {
     final DateTime twelveYearsAgo = DateTime.now().subtract(const Duration(days: 365 * 12));
-    DateTime? date = await showDatePicker(
+    final DateTime? date = await showDatePicker(
       context: context,
       initialDate: twelveYearsAgo,
       firstDate: DateTime(1900),
@@ -86,12 +86,12 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
     });
   }
 
-  void onPressed() async {
+  Future<void> onPressed() async {
     final String? date = _date == null ? null : _date!.toString();
     await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'birth_date': date,
     }).eq('id', widget.profile.id);
-    SupabaseManager.reloadCurrentProfile();
+    await SupabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

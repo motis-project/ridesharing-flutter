@@ -16,8 +16,8 @@ class ReviewsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Review> reviews = profile.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
-    AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
+    final List<Review> reviews = profile.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
+    final AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
     return Semantics(
       label: S.of(context).reviewsPreviewReviews,

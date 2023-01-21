@@ -32,7 +32,6 @@ class Button extends StatelessWidget {
   factory Button.disabled(String text, {Key? key}) {
     return Button(
       text,
-      onPressed: null,
       displayColorKind: DisplayColorKind.disabled,
       key: key,
     );

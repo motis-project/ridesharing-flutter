@@ -46,21 +46,21 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   final TextEditingController passwordConfirmationController = TextEditingController();
   ButtonState _state = ButtonState.idle;
 
-  void onSubmit() async {
+  Future<void> onSubmit() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _state = ButtonState.loading;
       });
 
-      UserAttributes newAttributes = UserAttributes(password: passwordController.text);
+      final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
       await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
       // will be redirected to login screen if successful (onAuthStateChange)
     } else {
-      fail();
+      await fail();
     }
   }
 
-  void fail() async {
+  Future<void> fail() async {
     setState(() {
       _state = ButtonState.fail;
     });

@@ -25,16 +25,16 @@ class AddressSuggestion {
   });
 
   factory AddressSuggestion.fromMotisAddressResponse(Map<String, dynamic> json) {
-    String name = json['name'];
-    AddressSuggestionType type = AddressSuggestionType.place;
+    final String name = json['name'];
+    const AddressSuggestionType type = AddressSuggestionType.place;
 
-    Map<String, dynamic> posJson = json['pos'];
-    Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
+    final Map<String, dynamic> posJson = json['pos'];
+    final Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
-    List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions']);
-    String postalCode = _extractFromRegions(regions, <int>[13]);
-    String city = _extractFromRegions(regions, <int>[8, 7, 6, 5, 4]);
-    String country = _extractFromRegions(regions, <int>[2]);
+    final List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions']);
+    final String postalCode = _extractFromRegions(regions, <int>[13]);
+    final String city = _extractFromRegions(regions, <int>[8, 7, 6, 5, 4]);
+    final String country = _extractFromRegions(regions, <int>[2]);
 
     return AddressSuggestion(
       name: name,
@@ -48,11 +48,11 @@ class AddressSuggestion {
   }
 
   factory AddressSuggestion.fromMotisStationResponse(Map<String, dynamic> json) {
-    String name = json['name'];
-    AddressSuggestionType type = AddressSuggestionType.station;
+    final String name = json['name'];
+    const AddressSuggestionType type = AddressSuggestionType.station;
 
-    Map<String, dynamic> posJson = json['pos'];
-    Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
+    final Map<String, dynamic> posJson = json['pos'];
+    final Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
     return AddressSuggestion(
       name: name,
@@ -66,12 +66,12 @@ class AddressSuggestion {
   }
 
   static List<AddressSuggestion> deduplicate(List<AddressSuggestion> suggestions) {
-    Set<AddressSuggestion> seen = <AddressSuggestion>{};
+    final Set<AddressSuggestion> seen = <AddressSuggestion>{};
     return suggestions.where((AddressSuggestion suggestion) => seen.add(suggestion)).toList();
   }
 
   static String _extractFromRegions(List<Map<String, dynamic>> regions, List<int> adminLevels) {
-    for (int adminLevel in adminLevels) {
+    for (final int adminLevel in adminLevels) {
       try {
         return regions.firstWhere((Map<String, dynamic> region) => region['admin_level'] == adminLevel)['name'];
       } catch (e) {
