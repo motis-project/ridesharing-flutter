@@ -30,18 +30,20 @@ class _SearchRidePageState extends State<SearchRidePage> {
   final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
   late bool _wholeDay;
-  late int _dropdownValue;
+  late int _seats;
 
   final SearchRideFilter _filter = SearchRideFilter();
 
   List<Ride>? _rideSuggestions;
+
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
     _wholeDay = true;
-    _dropdownValue = 1;
+    _seats = 1;
     loadRides();
   }
 
@@ -106,6 +108,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
     if (_startSuggestion == null || _destinationSuggestion == null) return;
+    setState(() => _loading = true);
     final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('drives').select('''
           *,
@@ -127,7 +130,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
             _destinationSuggestion!.name,
             _destinationSuggestion!.position,
             drive.endTime,
-            _dropdownValue,
+            _seats,
             SupabaseManager.getCurrentProfile()?.id ?? -1,
             10.25,
           ),
@@ -135,6 +138,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
         .toList();
     setState(() {
       _rideSuggestions = rides;
+      _loading = false;
     });
   }
 
@@ -208,7 +212,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildMainContentSliver() {
-    if (_rideSuggestions == null) {
+    if (_rideSuggestions == null || _loading) {
       if (_startSuggestion == null || _destinationSuggestion == null) {
         return SliverToBoxAdapter(
           child: Column(
@@ -281,7 +285,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     }
   }
 
-  Widget buildDateSeatsRow() {
+  Widget buildDateRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -307,17 +311,23 @@ class _SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildSeats() {
-    return IncrementField(
-      maxValue: 8,
-      icon: Icon(
-        Icons.chair,
-        color: Theme.of(context).colorScheme.primary,
+    return Center(
+      child: SizedBox(
+        width: 150,
+        child: IncrementField(
+          maxValue: 8,
+          icon: Icon(
+            Icons.chair,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          onChanged: (int? value) {
+            setState(() {
+              _seats = value!;
+              loadRides();
+            });
+          },
+        ),
       ),
-      onChanged: (int? value) {
-        setState(() {
-          _dropdownValue = value!;
-        });
-      },
     );
   }
 
@@ -350,7 +360,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
                     ),
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  SliverToBoxAdapter(child: buildDateSeatsRow()),
+                  SliverToBoxAdapter(child: buildDateRow()),
                   SliverToBoxAdapter(child: buildSeats()),
                   SliverToBoxAdapter(child: _filter.buildIndicatorRow(context, setState)),
                   SliverPinnedHeader(
