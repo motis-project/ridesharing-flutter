@@ -106,7 +106,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
   Card _buildChatWidget(Chat chat) {
     chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
-    final Widget? subtitle = lastMessage == null
+    final Widget? subtitle = lastMessage == null || lastMessage.isFromCurrentUser
         ? null
         : Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
