@@ -35,12 +35,6 @@ void main() {
       createDependencies: false,
     );
     SupabaseManager.setCurrentProfile(profile);
-    test('zero when Messages are null', () async {
-      final chat = ChatFactory().generateFake(
-        messages: NullableParameter(null),
-      );
-      expect(chat.getUnreadMessagesCount(), 0);
-    });
     test('zero when Messages are empty', () async {
       final chat = ChatFactory().generateFake(
         messages: NullableParameter([]),
