@@ -7,6 +7,7 @@ import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
+import '../../util/chat/models/chat.dart';
 import '../../util/chat/pages/chat_page.dart';
 import '../../util/custom_timeline_theme.dart';
 import '../../util/icon_widget.dart';
@@ -365,7 +366,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => ChatPage(
-                    chatId: action.rideId,
+                    chatId: _drive!.chats!.firstWhere((Chat chat) => chat.rideId == action.rideId).id,
                     profile: action.profile,
                   ),
                 ),

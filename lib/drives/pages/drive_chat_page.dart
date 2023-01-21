@@ -106,18 +106,19 @@ class _DriveChatPageState extends State<DriveChatPage> {
   Card _buildChatWidget(Chat chat) {
     chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
-    final Widget? subtitle = lastMessage == null || lastMessage.isFromCurrentUser
+    final Widget? subtitle = lastMessage == null
         ? null
         : Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              Icon(
-                Icons.done_all,
-                size: 18,
-                color: lastMessage.read
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
+              if (lastMessage.isFromCurrentUser)
+                Icon(
+                  Icons.done_all,
+                  size: 18,
+                  color: lastMessage.read
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                ),
               Text(lastMessage.content),
             ],
           );
