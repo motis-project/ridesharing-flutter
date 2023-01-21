@@ -74,6 +74,7 @@
   "formAddressStartValidateEmpty": "Please enter your starting location",
   "formAddressDestination": "Destination",
   "formAddressDestinationHint": "Enter your destination",
+  "formAddressDestinationValidateEmpty": "Please enter your destination",
   "formClearInput": "Clear input",
   "formSubmit": "Submit",
   "formSubmitFail": "Failed",
