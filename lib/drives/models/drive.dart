@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
-import '../../util/chat/models/chat.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase.dart';
@@ -15,7 +14,6 @@ class Drive extends Trip {
   final Profile? driver;
 
   final List<Ride>? rides;
-  final List<Chat>? chats;
 
   Drive({
     super.id,
@@ -32,7 +30,6 @@ class Drive extends Trip {
     required this.driverId,
     this.driver,
     this.rides,
-    this.chats,
   });
 
   @override
@@ -52,7 +49,6 @@ class Drive extends Trip {
       driverId: json['driver_id'],
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(parseHelper.parseListOfMaps(json['rides'])) : null,
-      chats: json.containsKey('chats') ? Chat.fromJsonList(parseHelper.parseListOfMaps(json['chats'])) : null,
     );
   }
 
@@ -159,8 +155,7 @@ class Drive extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    if (chats == null) return 0;
-    return chats!.where((Chat chat) => chat.getUnreadMessagesCount() > 0).length;
+    return ridesWithChat!.where((Ride ride) => ride.chat!.getUnreadMessagesCount() > 0).length;
   }
 
   @override

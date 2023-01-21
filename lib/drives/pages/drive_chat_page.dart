@@ -19,18 +19,13 @@ class DriveChatPage extends StatefulWidget {
 
 class _DriveChatPageState extends State<DriveChatPage> {
   late Stream<List<Message>> _messagesStream;
-  late List<Chat> _chats;
+  late List<Ride> _ridesWithChat;
 
   @override
   void initState() {
-    _chats = widget.drive.chats == null
-        ? <Chat>[]
-        : widget.drive.chats!
-            .where(
-              (Chat chat) => widget.drive.rides!.firstWhere((Ride ride) => ride.id == chat.rideId).status.activeChat(),
-            )
-            .toList();
-    final List<int> ids = _chats.map((Chat chat) => chat.id!).toList();
+    _ridesWithChat = widget.drive.rides!.where((Ride ride) => ride.chat != null && ride.status.activeChat()).toList();
+
+    final List<int> ids = _ridesWithChat.map((Ride ride) => ride.chatId!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(
               (List<Map<String, dynamic>> messages) => Message.fromJsonList(
@@ -52,19 +47,19 @@ class _DriveChatPageState extends State<DriveChatPage> {
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: _chats.isNotEmpty
+      body: _ridesWithChat.isNotEmpty
           ? StreamBuilder<List<Message>>(
               stream: _messagesStream,
               builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
                   for (final Message message in snapshot.data!) {
-                    final Chat chat = _chats.firstWhere((Chat chat) => chat.id == message.chatId);
+                    final Chat chat = _ridesWithChat.firstWhere((Ride ride) => ride.chatId == message.chatId).chat!;
                     if (chat.messages!.contains(message)) {
                       chat.messages!.remove(message);
                     }
                     chat.messages!.add(message);
                   }
-                  final List<Card> widgets = _chats.map<Card>((Chat chat) => _buildChatWidget(chat)).toList();
+                  final List<Card> widgets = _ridesWithChat.map<Card>((Ride ride) => _buildChatWidget(ride)).toList();
                   return ListView.separated(
                     itemCount: widgets.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -103,7 +98,9 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
-  Card _buildChatWidget(Chat chat) {
+  Card _buildChatWidget(Ride ride) {
+    final Chat chat = ride.chat!;
+
     chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
     final Widget? subtitle = lastMessage == null
@@ -125,8 +122,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
     return Card(
       child: InkWell(
         child: ListTile(
-          leading: Avatar(chat.ride!.rider!),
-          title: Text(chat.ride!.rider!.username),
+          leading: Avatar(ride.rider!),
+          title: Text(ride.rider!.username),
           subtitle: subtitle,
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
@@ -145,7 +142,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => ChatPage(
                       chatId: chat.id,
-                      profile: chat.ride!.rider!,
+                      profile: ride.rider!,
                     ),
                   ),
                 )

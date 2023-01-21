@@ -50,6 +50,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
         *,
         drive: drive_id(
           $_driveQuery
+        ),
+        chat: chat_id(
+          *,
+          messages(*)
         )
       ''';
 
@@ -80,11 +84,6 @@ class _RideDetailPageState extends State<RideDetailPage> {
       final int id = _ride?.id ?? widget.id!;
       final Map<String, dynamic> data =
           await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
-      final Map<String, dynamic> dataChat = await SupabaseManager.supabaseClient.from('chats').select('''
-      *,
-      messages(*)
-      ''').eq('ride_id', id).single();
-      data.addAll(<String, dynamic>{'chat': dataChat});
       ride = Ride.fromJson(data);
     }
 
@@ -324,12 +323,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   Future<void> confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    final Map<String, dynamic> data =
-        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
-    //chat gets created by trigger
-    setState(() {
-      _ride = Ride.fromJson(data);
-    });
+
+    // chat gets created by trigger, somehow it does not get returned immediately by the insert
+    final Map<String, dynamic> idHash =
+        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
+
+    // TODO: Use copyWith and make id final again
+    ride.id = idHash['id'] as int;
+
+    await loadRide();
     //todo: send notification to driver
   }
 

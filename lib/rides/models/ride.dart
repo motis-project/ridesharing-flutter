@@ -18,6 +18,8 @@ class Ride extends Trip {
   final int driveId;
   Drive? drive;
 
+  // Nullable for preview rides
+  final int? chatId;
   Chat? chat;
 
   Ride({
@@ -37,6 +39,7 @@ class Ride extends Trip {
     this.drive,
     required this.riderId,
     this.rider,
+    this.chatId,
     this.chat,
   });
 
@@ -87,6 +90,7 @@ class Ride extends Trip {
       rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
       driveId: json['drive_id'],
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
+      chatId: json['chat_id'],
       chat: json.containsKey('chat') ? Chat.fromJson(json['chat']) : null,
     );
   }
@@ -103,6 +107,7 @@ class Ride extends Trip {
         'status': status.index,
         'drive_id': driveId,
         'rider_id': riderId,
+        'chat_id': chatId,
       });
   }
 
@@ -110,8 +115,9 @@ class Ride extends Trip {
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
       ..addAll(<String, dynamic>{
-        'drive': drive?.toJsonForApi(),
-        'rider': rider?.toJsonForApi(),
+        ...drive == null ? <String, dynamic>{} : <String, dynamic>{'drive': drive?.toJsonForApi()},
+        ...rider == null ? <String, dynamic>{} : <String, dynamic>{'rider': rider?.toJsonForApi()},
+        ...chat == null ? <String, dynamic>{} : <String, dynamic>{'chat': chat?.toJsonForApi()},
       });
   }
 

@@ -7,7 +7,6 @@ import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
-import '../../util/chat/models/chat.dart';
 import '../../util/chat/pages/chat_page.dart';
 import '../../util/custom_timeline_theme.dart';
 import '../../util/icon_widget.dart';
@@ -52,14 +51,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       *,
       rides(
         *,
-        rider: rider_id(*)
-      ),
-      chats(
-        *,
-        messages: messages!messages_chat_id_fkey(*),
-        ride: ride_id(
+        rider: rider_id(*),
+        chat: chat_id(
           *,
-          rider: rider_id(*)
+          messages: messages!messages_chat_id_fkey(*)
         )
       )
     ''').eq('id', widget.id).single();
@@ -345,13 +340,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     for (int index = 0; index < actionsLength; index++) {
       final WaypointAction action = stop.actions[index];
       final Icon icon = action.isStart ? startIcon : endIcon;
-      final Profile profile = action.profile;
-      final Chat chat = _drive!.chats!.firstWhere((Chat chat) => chat.rideId == action.rideId);
+      final Profile profile = action.ride.rider!;
       final Widget container = Semantics(
         button: true,
         label: action.isStart
-            ? S.of(context).pageDriveDetailLabelPickup(action.seats, action.profile.username)
-            : S.of(context).pageDriveDetailLabelDropoff(action.seats, action.profile.username),
+            ? S.of(context).pageDriveDetailLabelPickup(action.ride.seats, profile.username)
+            : S.of(context).pageDriveDetailLabelDropoff(action.ride.seats, profile.username),
         excludeSemantics: true,
         tooltip: S.of(context).openChat,
         child: Container(
@@ -366,8 +360,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => ChatPage(
-                    chatId: chat.id,
-                    profile: action.profile,
+                    chatId: action.ride.chatId,
+                    profile: profile,
                   ),
                 ),
               ).then((_) => loadDrive()),
@@ -379,7 +373,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: IconWidget(icon: icon, count: action.seats),
+                        child: IconWidget(icon: icon, count: action.ride.seats),
                       ),
                     ),
                     ProfileWidget(profile, size: 15, isTappable: false),
@@ -388,11 +382,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                         alignment: Alignment.centerRight,
                         child: Badge(
                           badgeContent: Text(
-                            chat.getUnreadMessagesCount().toString(),
+                            action.ride.chat!.getUnreadMessagesCount().toString(),
                             style: const TextStyle(color: Colors.white),
                             textScaleFactor: 1.0,
                           ),
-                          showBadge: chat.getUnreadMessagesCount() != 0,
+                          showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
                           position: BadgePosition.topEnd(top: -12),
                           child: const Icon(Icons.chat),
                         ),
@@ -501,15 +495,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 }
 
 class WaypointAction {
-  final Profile profile;
+  final Ride ride;
   final bool isStart;
-  final int seats;
-  final int rideId;
 
-  WaypointAction(Ride ride, {required this.isStart})
-      : profile = ride.rider!,
-        seats = ride.seats,
-        rideId = ride.id!;
+  WaypointAction(this.ride, {required this.isStart});
 }
 
 class Waypoint {
