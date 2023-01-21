@@ -45,8 +45,23 @@ class AddressSearchField extends StatelessWidget {
       label: getLabelText(context),
       tooltip: getHintText(context),
       excludeSemantics: true,
-      child: ElevatedButton(
-        onPressed: () async {
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.location_pin),
+          border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(100))),
+          labelText: getLabelText(context),
+          hintText: getLabelText(context),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ),
+        readOnly: true,
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return getValidatorEmptyText(context);
+          }
+          return null;
+        },
+        onTap: () async {
           final AddressSuggestion? addressSuggestion = await showSearch<AddressSuggestion?>(
             context: context,
             delegate: AddressSearchDelegate(),
@@ -58,17 +73,6 @@ class AddressSearchField extends StatelessWidget {
             if (onSelected != null) onSelected!(addressSuggestion);
           }
         },
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: controller.text != ""
-              ? Text(controller.text)
-              : Text(
-                  getLabelText(context),
-                  style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                      ),
-                ),
-        ),
       ),
     );
   }
@@ -88,6 +92,15 @@ class AddressSearchField extends StatelessWidget {
         return S.of(context).formAddressStartHint;
       case AddressType.destination:
         return S.of(context).formAddressDestinationHint;
+    }
+  }
+
+  String getValidatorEmptyText(BuildContext context) {
+    switch (addressType) {
+      case AddressType.start:
+        return S.of(context).formAddressStartValidateEmpty;
+      case AddressType.destination:
+        return S.of(context).formAddressDestinationValidateEmpty;
     }
   }
 }
