@@ -50,6 +50,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
         *,
         drive: drive_id(
           $_driveQuery
+        ),
+        chat: chats!chats_ride_id_fkey(
+          *,
+          messages: messages!messages_chat_id_fkey(*)
         )
       ''';
 
