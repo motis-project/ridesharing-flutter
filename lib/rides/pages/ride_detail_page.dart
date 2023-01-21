@@ -132,15 +132,19 @@ class _RideDetailPageState extends State<RideDetailPage> {
     Widget content = Column(
       children: <Widget>[
         if (_ride != null && _ride!.status == RideStatus.pending)
-          CustomBanner.warning(S.of(context).pageRideDetailBannerRequested)
+          CustomBanner.warning(S.of(context).pageRideDetailBannerRequested, key: const Key('rideRequestedBanner'))
         else if (_ride != null && _ride!.status == RideStatus.rejected)
-          CustomBanner.error(S.of(context).pageRideDetailBannerRejected)
+          CustomBanner.error(S.of(context).pageRideDetailBannerRejected, key: const Key('rideRejectedBanner'))
         else if (_ride?.status.isCancelled() ?? false)
-          CustomBanner.error(
-            _ride!.status == RideStatus.cancelledByDriver
-                ? S.of(context).pageRideDetailBannerCancelledByDriver
-                : S.of(context).pageRideDetailBannerCancelledByYou,
-          ),
+          _ride!.status == RideStatus.cancelledByDriver
+              ? CustomBanner.error(
+                  S.of(context).pageRideDetailBannerCancelledByDriver,
+                  key: const Key('rideCancelledByDriverBanner'),
+                )
+              : CustomBanner.error(
+                  S.of(context).pageRideDetailBannerCancelledByYou,
+                  key: const Key('rideCancelledByYouBanner'),
+                ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
           child: Column(
@@ -159,6 +163,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             onPressed: () {},
             icon: const Icon(Icons.chat),
             tooltip: S.of(context).openChat,
+            key: const Key('chatButton'),
           )
         ],
       ),
@@ -226,10 +231,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
         content: Text(S.of(context).pageRideDetailCancelDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('cancelRideNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
+            key: const Key('cancelRideYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               _cancelRide();
@@ -261,10 +268,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
         content: Text(S.of(context).pageRideDetailRequestDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('requestRideNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
+            key: const Key('requestRideYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               confirmRequest(_ride!);
@@ -290,10 +299,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
         content: Text(S.of(context).pageRideDetailHideDialog),
         actions: <Widget>[
           TextButton(
+            key: const Key('hideRideNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
+            key: const Key('hideRideYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               hideRide();
@@ -324,10 +335,12 @@ class _RideDetailPageState extends State<RideDetailPage> {
         content: Text(S.of(context).pageRideDetailWithdrawDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('withdrawRideNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
+            key: const Key('withdrawRideYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               _withdrawRide();
@@ -359,17 +372,21 @@ class _RideDetailPageState extends State<RideDetailPage> {
         content: Text(S.of(context).pageRideDetailLoginDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('loginRideCancelButton'),
             child: Text(S.of(context).cancel),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
-              child: Text(S.of(context).pageWelcomeLogin),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                Navigator.popUntil(context, (Route<void> route) => route.isFirst);
-                Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()));
-              }),
+            key: const Key('loginRideLoginButton'),
+            child: Text(S.of(context).pageWelcomeLogin),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              Navigator.popUntil(context, (Route<void> route) => route.isFirst);
+              Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()));
+            },
+          ),
           TextButton(
+            key: const Key('loginRideRegisterButton'),
             child: Text(S.of(context).pageWelcomeRegister),
             onPressed: () {
               Navigator.of(context).pop();

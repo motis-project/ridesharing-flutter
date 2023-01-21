@@ -215,9 +215,9 @@ void main() {
 
         await tester.pump();
 
-        final Finder cancelDriveButton = find.byKey(const Key('hideDriveButton'));
-        await tester.scrollUntilVisible(cancelDriveButton, 500.0);
-        await tester.tap(cancelDriveButton);
+        final Finder hideDriveButton = find.byKey(const Key('hideDriveButton'));
+        await tester.scrollUntilVisible(hideDriveButton, 500.0);
+        await tester.tap(hideDriveButton);
         await tester.pumpAndSettle();
       }
 

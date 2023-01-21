@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/features_column.dart';
 import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
@@ -11,7 +12,10 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
+import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
+import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
+import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/model_factory.dart';
@@ -57,13 +61,14 @@ void main() {
       testWidgets('Works with id parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, RideDetailPage(id: ride.id!));
 
-        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.byType(TripOverview), findsNothing);
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         // Wait for the ride to be fully loaded
         await tester.pump();
 
-        expect(find.text(ride.start), findsOneWidget);
+        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.text(driver.username), findsOneWidget);
       });
 
       testWidgets('Works with object parameter', (WidgetTester tester) async {
@@ -89,156 +94,391 @@ void main() {
       expect(find.text(driver.username), findsOneWidget);
     });
 
-    group('Riders', () {
-      testWidgets('Does not show riders when ride is not approved', (WidgetTester tester) async {
-        Ride notApprovedRide = RideFactory().generateFake(status: RideStatus.pending);
-        when(processor.processUrl(any)).thenReturn(jsonEncode(notApprovedRide.toJsonForApi()));
+    group('when ride is preview', () {
+      setUp(() {
+        ride = RideFactory().generateFake(
+          status: RideStatus.preview,
+          drive: NullableParameter(null),
+          driveId: drive.id,
+        );
 
-        await pumpMaterial(tester, RideDetailPage.fromRide(notApprovedRide));
-        await tester.pump();
-
-        expect(find.text('Riders'), findsNothing);
-        expect(find.byType(ProfileWrapList), findsNothing);
+        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
       });
 
-      testWidgets('Shows riders when ride is approved', (WidgetTester tester) async {
+      testWidgets('It loads the corresponding drive', (WidgetTester tester) async {
         await pumpMaterial(tester, RideDetailPage.fromRide(ride));
         await tester.pump();
 
-        expect(find.text('Riders'), findsOneWidget);
+        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.byKey(const Key('requestRideButton')), findsOneWidget);
+      });
+    });
+
+    group('when ride is pending', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.pending, drive: NullableParameter(drive));
+
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
+
+      testWidgets('it shows a banner and the withdraw button, but no riders', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
+        expect(find.byKey(const Key('rideRequestedBanner')), findsOneWidget);
+        expect(find.byKey(const Key('withdrawRideButton')), findsOneWidget);
+        expect(find.byType(ProfileWrapList), findsNothing);
+      });
+    });
+
+    group('when ride is approved', () {
+      testWidgets('it shows the riders', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
         expect(find.byType(ProfileWrapList), findsOneWidget);
       });
 
-      testWidgets('Shows riders when ride is cancelledByDriver', (WidgetTester tester) async {
-        Ride cancelledRide = RideFactory().generateFake(status: RideStatus.cancelledByDriver);
-        when(processor.processUrl(any)).thenReturn(jsonEncode(cancelledRide.toJsonForApi()));
-
-        await pumpMaterial(tester, RideDetailPage.fromRide(cancelledRide));
+      testWidgets('it shows the cancel button when ride is ongoing', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
         await tester.pump();
 
-        expect(find.text('Riders'), findsOneWidget);
+        expect(find.byKey(const Key('cancelRideButton')), findsOneWidget);
+      });
+
+      testWidgets('it shows the rating button when ride is finished', (WidgetTester tester) async {
+        ride = RideFactory().generateFake(
+          status: RideStatus.approved,
+          endTime: DateTime.now().subtract(const Duration(hours: 1)),
+          drive: NullableParameter(drive),
+        );
+
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
+        expect(find.byKey(const Key('rateDriverButton')), findsOneWidget);
+      });
+    });
+
+    group('when ride is rejected', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.rejected, drive: NullableParameter(drive));
+
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
+
+      testWidgets('it shows the hide button and a banner, but no riders', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
+        expect(find.byKey(const Key('rideRejectedBanner')), findsOneWidget);
+        expect(find.byKey(const Key('hideRideButton')), findsOneWidget);
+        expect(find.byType(ProfileWrapList), findsNothing);
+      });
+    });
+
+    group('when ride is cancelled by driver', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver, drive: NullableParameter(drive));
+
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
+
+      testWidgets('it shows the riders, a hide button and a banner', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
+        expect(find.byKey(const Key('rideCancelledByDriverBanner')), findsOneWidget);
+        expect(find.byKey(const Key('hideRideButton')), findsOneWidget);
         expect(find.byType(ProfileWrapList), findsOneWidget);
       });
     });
 
-    // group('Shows primary button depending on circumstances', () {
-    //   testWidgets('Shows cancel when ride is upcoming and approved', (WidgetTester tester) async {
-    //     await pumpMaterial(tester, RideDetailPage.fromRide(ride));
-    //     await tester.pump();
+    group('when ride is cancelled by rider', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.cancelledByRider, drive: NullableParameter(drive));
 
-    //     expect(find.byKey(const Key('cancelDriveButton')), findsOneWidget);
-    //     expect(find.byKey(const Key('hideDriveButton')), findsNothing);
-    //   });
-    //   testWidgets('Shows rate when drive is finished and approved', (WidgetTester tester) async {
-    //     Ride finishedRide = RideFactory().generateFake(
-    //       startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
-    //       endTime: DateTime.now().subtract(const Duration(days: 1)),
-    //     );
-    //     when(processor.processUrl(any)).thenReturn(jsonEncode(finishedDrive.toJsonForApi()));
-    //     await pumpMaterial(tester, RideDetailPage.fromRide(finishedDrive));
-    //     await tester.pump();
-    //     expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
-    //     expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
-    //   });
-    //   testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
-    //     Drive cancelledDrive = RideFactory().generateFake(cancelled: true);
-    //     when(processor.processUrl(any)).thenReturn(jsonEncode(cancelledDrive.toJsonForApi()));
-    //     await pumpMaterial(tester, RideDetailPage.fromRide(cancelledDrive));
-    //     await tester.pump();
-    //     expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
-    //     expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
-    //   });
-    // });
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
 
-    //   group('Cancelling drive', () {
-    //     Future<void> openCancelDialog(WidgetTester tester) async {
-    //       await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+      testWidgets('it shows the hide button and a banner, but no riders', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
 
-    //       await tester.pump();
+        expect(find.byKey(const Key('rideCancelledByYouBanner')), findsOneWidget);
+        expect(find.byKey(const Key('hideRideButton')), findsOneWidget);
+        expect(find.byType(ProfileWrapList), findsNothing);
+      });
+    });
 
-    //       final Finder cancelDriveButton = find.byKey(const Key('cancelDriveButton'));
-    //       await tester.scrollUntilVisible(cancelDriveButton, 500.0);
-    //       await tester.tap(cancelDriveButton);
-    //       await tester.pumpAndSettle();
-    //     }
+    group('when ride is withdrawn by rider', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.withdrawnByRider, drive: NullableParameter(drive));
 
-    //     testWidgets('Can cancel drive', (WidgetTester tester) async {
-    //       await openCancelDialog(tester);
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
 
-    //       final Finder cancelDriveYesButton = find.byKey(const Key('cancelDriveYesButton'));
-    //       expect(cancelDriveYesButton, findsOneWidget);
-    //       await tester.tap(cancelDriveYesButton);
-    //       await tester.pumpAndSettle();
+      testWidgets('it shows the request button', (WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
 
-    //       // Verify that the drive was cancelled (but no way to verify body right now)
-    //       verify(processor.processUrl('/rest/v1/drives?id=eq.${ride.id}')).called(1);
+        expect(find.byKey(const Key('requestRideButton')), findsOneWidget);
+        expect(find.byType(ProfileWrapList), findsNothing);
+      });
+    });
 
-    //       expect(find.byKey(const Key("cancelledDriveBanner")), findsOneWidget);
-    //     });
+    group('Cancelling ride', () {
+      Future<void> openCancelDialog(WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
 
-    //     testWidgets('Can abort cancelling drive', (WidgetTester tester) async {
-    //       await openCancelDialog(tester);
+        await tester.pump();
 
-    //       final Finder cancelDriveNoButton = find.byKey(const Key('cancelDriveNoButton'));
-    //       expect(cancelDriveNoButton, findsOneWidget);
-    //       await tester.tap(cancelDriveNoButton);
-    //       await tester.pumpAndSettle();
+        final Finder cancelRideButton = find.byKey(const Key('cancelRideButton'));
+        await tester.scrollUntilVisible(cancelRideButton, 500.0, scrollable: find.byType(Scrollable).first);
+        await tester.tap(cancelRideButton);
+        await tester.pumpAndSettle();
+      }
 
-    //       verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${ride.id}'));
+      testWidgets('Can cancel ride', (WidgetTester tester) async {
+        await openCancelDialog(tester);
 
-    //       expect(find.byKey(const Key("cancelledDriveBanner")), findsNothing);
-    //     });
-    //   });
+        final Finder cancelRideYesButton = find.byKey(const Key('cancelRideYesButton'));
+        expect(cancelRideYesButton, findsOneWidget);
+        await tester.tap(cancelRideYesButton);
+        await tester.pumpAndSettle();
 
-    //   group('Hiding drive', () {
-    //     setUp(() {
-    //       ride = RideFactory().generateFake(cancelled: true);
-    //       when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
-    //     });
+        // Verify that the ride was cancelled (but no way to verify body right now)
+        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
 
-    //     Future<void> openHideDialog(WidgetTester tester) async {
-    //       await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        expect(find.byKey(const Key("rideCancelledByYouBanner")), findsOneWidget);
+      });
 
-    //       await tester.pump();
+      testWidgets('Can abort cancelling ride', (WidgetTester tester) async {
+        await openCancelDialog(tester);
 
-    //       final Finder cancelDriveButton = find.byKey(const Key('hideDriveButton'));
-    //       await tester.scrollUntilVisible(cancelDriveButton, 500.0);
-    //       await tester.tap(cancelDriveButton);
-    //       await tester.pumpAndSettle();
-    //     }
+        final Finder cancelRideNoButton = find.byKey(const Key('cancelRideNoButton'));
+        expect(cancelRideNoButton, findsOneWidget);
+        await tester.tap(cancelRideNoButton);
+        await tester.pumpAndSettle();
 
-    //     testWidgets('Can hide drive', (WidgetTester tester) async {
-    //       await openHideDialog(tester);
+        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
 
-    //       final Finder hideDriveYesButton = find.byKey(const Key('hideDriveYesButton'));
-    //       expect(hideDriveYesButton, findsOneWidget);
-    //       await tester.tap(hideDriveYesButton);
-    //       await tester.pumpAndSettle();
+        expect(find.byKey(const Key("rideCancelledByYouBanner")), findsNothing);
+      });
+    });
 
-    //       // Verify that the drive was hidden (but no way to verify body right now)
-    //       verify(processor.processUrl('/rest/v1/drives?id=eq.${ride.id}')).called(1);
-    //     });
+    group('Requesting ride', () {
+      setUp(() {
+        ride = RideFactory().generateFake(
+          status: RideStatus.preview,
+          drive: NullableParameter(null),
+          driveId: drive.id,
+        );
 
-    //     testWidgets('Can abort hiding drive', (WidgetTester tester) async {
-    //       await openHideDialog(tester);
+        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+      });
 
-    //       final Finder hideDriveNoButton = find.byKey(const Key('hideDriveNoButton'));
-    //       expect(hideDriveNoButton, findsOneWidget);
-    //       await tester.tap(hideDriveNoButton);
-    //       await tester.pumpAndSettle();
+      Future<void> openDialog(WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
 
-    //       verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${ride.id}'));
-    //     });
-    //   });
+        await tester.pump();
 
-    //   testWidgets('Can navigate to drive chat page', (WidgetTester tester) async {
-    //     await pumpMaterial(tester, RideDetailPage.fromRide(ride));
-    //     await tester.pump();
+        final Finder requestRideButton = find.byKey(const Key('requestRideButton'));
+        await tester.scrollUntilVisible(requestRideButton, 500.0, scrollable: find.byType(Scrollable).first);
+        await tester.tap(requestRideButton);
+        await tester.pumpAndSettle();
+      }
 
-    //     await tester.tap(find.byKey(const Key('driveChatButton')));
-    //     await tester.pumpAndSettle();
+      group('Request dialog', () {
+        testWidgets('Can request ride', (WidgetTester tester) async {
+          await openDialog(tester);
 
-    //     expect(find.byType(DriveChatPage), findsOneWidget);
-    //   });
+          // TODO: Add copyWith constructor to Ride
+          Ride returnedRide = RideFactory().generateFake(status: RideStatus.pending);
+          when(processor.processUrl(any)).thenReturn(jsonEncode(returnedRide.toJsonForApi()));
+
+          final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));
+          expect(requestRideYesButton, findsOneWidget);
+          await tester.tap(requestRideYesButton);
+          await tester.pumpAndSettle();
+
+          // Verify that the ride was requested (but no way to verify body right now)
+          // verify(processor.processUrl(any)).called(1);
+
+          expect(find.byKey(const Key("rideRequestedBanner")), findsOneWidget);
+        });
+
+        testWidgets('Can abort requesting ride', (WidgetTester tester) async {
+          await openDialog(tester);
+
+          final Finder requestRideNoButton = find.byKey(const Key('requestRideNoButton'));
+          expect(requestRideNoButton, findsOneWidget);
+          await tester.tap(requestRideNoButton);
+          await tester.pumpAndSettle();
+
+          verifyNever(processor.processUrl('/rest/v1/rides'));
+
+          expect(find.byKey(const Key("rideRequestedBanner")), findsNothing);
+        });
+      });
+
+      group('Login Dialog', () {
+        setUp(() {
+          SupabaseManager.setCurrentProfile(null);
+        });
+
+        testWidgets('Can cancel', (WidgetTester tester) async {
+          await openDialog(tester);
+
+          final Finder loginRideCancelButton = find.byKey(const Key('loginRideCancelButton'));
+          expect(loginRideCancelButton, findsOneWidget);
+          await tester.tap(loginRideCancelButton);
+          await tester.pumpAndSettle();
+
+          expect(find.byType(RideDetailPage), findsOneWidget);
+        });
+
+        testWidgets('Can go to login', (WidgetTester tester) async {
+          await openDialog(tester);
+
+          final Finder loginRideLoginButton = find.byKey(const Key('loginRideLoginButton'));
+          expect(loginRideLoginButton, findsOneWidget);
+          await tester.tap(loginRideLoginButton);
+          await tester.pumpAndSettle();
+
+          expect(find.byType(LoginPage), findsOneWidget);
+        });
+
+        testWidgets('Can go to login', (WidgetTester tester) async {
+          await openDialog(tester);
+
+          final Finder loginRideRegisterButton = find.byKey(const Key('loginRideRegisterButton'));
+          expect(loginRideRegisterButton, findsOneWidget);
+          await tester.tap(loginRideRegisterButton);
+          await tester.pumpAndSettle();
+
+          expect(find.byType(RegisterPage), findsOneWidget);
+        });
+      });
+    });
+
+    group('Withdrawing from ride', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.pending, drive: NullableParameter(drive));
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
+
+      Future<void> openWithdrawDialog(WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+
+        await tester.pump();
+
+        final Finder withdrawRideButton = find.byKey(const Key('withdrawRideButton'));
+        await tester.scrollUntilVisible(withdrawRideButton, 500.0, scrollable: find.byType(Scrollable).first);
+        await tester.tap(withdrawRideButton);
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('Can withdraw from ride', (WidgetTester tester) async {
+        await openWithdrawDialog(tester);
+
+        final Finder withdrawRideYesButton = find.byKey(const Key('withdrawRideYesButton'));
+        expect(withdrawRideYesButton, findsOneWidget);
+        await tester.tap(withdrawRideYesButton);
+        await tester.pumpAndSettle();
+
+        // Verify that the drive was withdrawn (but no way to verify body right now)
+        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
+      });
+
+      testWidgets('Can abort withdrawing from ride', (WidgetTester tester) async {
+        await openWithdrawDialog(tester);
+
+        final Finder withdrawRideNoButton = find.byKey(const Key('withdrawRideNoButton'));
+        expect(withdrawRideNoButton, findsOneWidget);
+        await tester.tap(withdrawRideNoButton);
+        await tester.pumpAndSettle();
+
+        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
+      });
+    });
+
+    group('Hiding drive', () {
+      setUp(() {
+        ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver, drive: NullableParameter(drive));
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      });
+
+      Future<void> openHideDialog(WidgetTester tester) async {
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+
+        await tester.pump();
+
+        final Finder hideRideButton = find.byKey(const Key('hideRideButton'));
+        await tester.scrollUntilVisible(hideRideButton, 500.0, scrollable: find.byType(Scrollable).first);
+        await tester.tap(hideRideButton);
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('Can hide drive', (WidgetTester tester) async {
+        await openHideDialog(tester);
+
+        final Finder hideRideYesButton = find.byKey(const Key('hideRideYesButton'));
+        expect(hideRideYesButton, findsOneWidget);
+        await tester.tap(hideRideYesButton);
+        await tester.pumpAndSettle();
+
+        // Verify that the drive was hidden (but no way to verify body right now)
+        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
+      });
+
+      testWidgets('Can abort hiding drive', (WidgetTester tester) async {
+        await openHideDialog(tester);
+
+        final Finder hideRideNoButton = find.byKey(const Key('hideRideNoButton'));
+        expect(hideRideNoButton, findsOneWidget);
+        await tester.tap(hideRideNoButton);
+        await tester.pumpAndSettle();
+
+        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
+      });
+    });
+
+    testWidgets('Can navigate to chat page', (WidgetTester tester) async {
+      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+      await tester.pump();
+
+      await tester.tap(find.byKey(const Key('chatButton')));
+      await tester.pumpAndSettle();
+
+      // TODO: Add after chat page is implemented
+      // expect(find.byType(ChatPage), findsOneWidget);
+    });
+
+    testWidgets('Can navigate to rate page', (WidgetTester tester) async {
+      ride = RideFactory().generateFake(
+        status: RideStatus.approved,
+        endTime: DateTime.now().subtract(const Duration(hours: 1)),
+        drive: NullableParameter(drive),
+      );
+
+      when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+
+      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+
+      await tester.pump();
+
+      // Mock review call
+      when(processor.processUrl(any)).thenReturn(jsonEncode(null));
+
+      final Finder rateDriverButton = find.byKey(const Key('rateDriverButton'));
+      await tester.scrollUntilVisible(rateDriverButton, 500.0, scrollable: find.byType(Scrollable).first);
+      await tester.tap(rateDriverButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(WriteReviewPage), findsOneWidget);
+    });
   });
 }
