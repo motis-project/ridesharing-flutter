@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
+import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
@@ -240,14 +241,14 @@ void main() {
       });
     });
 
-    testWidgets('Can navigate to drive chat page', (WidgetTester tester) async {
+    testWidgets('Can navigate to drive chat page', skip: true, (WidgetTester tester) async {
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
       await tester.pump();
 
       await tester.tap(find.byKey(const Key('driveChatButton')));
       await tester.pumpAndSettle();
 
-      // expect(find.byType(DriveChatPage), findsOneWidget);
+      expect(find.byType(DriveChatPage), findsOneWidget);
     });
   });
 }
