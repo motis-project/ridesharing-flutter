@@ -374,10 +374,10 @@
 
   "widgetTripBuilderTabUpcoming": "Upcoming",
   "widgetTripBuilderTabPast": "Past",
-  "widgetTripBuilderNoUpcomingDrives": "No upcoming drives.",
-  "widgetTripBuilderNoUpcomingRides": "No upcoming rides.",
-  "widgetTripBuilderNoPastDrives": "No past drives.",
-  "widgetTripBuilderNoPastRides": "No past rides.",
+  "widgetTripBuilderNoUpcomingDrives": "No upcoming drives",
+  "widgetTripBuilderNoUpcomingRides": "No upcoming rides",
+  "widgetTripBuilderNoPastDrives": "No past drives",
+  "widgetTripBuilderNoPastRides": "No past rides",
 
   "pageSearchRideTitle": "Search Ride",
   "pageSearchRideButtonSearch": "Search",
