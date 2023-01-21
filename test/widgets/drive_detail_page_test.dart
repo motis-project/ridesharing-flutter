@@ -6,6 +6,7 @@ import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/pending_ride_card.dart';
+import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/ride_factory.dart';
@@ -47,7 +48,10 @@ void main() {
       testWidgets('Works with object parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
+        expect(find.byType(TripOverview), findsOneWidget);
         expect(find.text(drive.start), findsOneWidget);
+
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         // Wait for the drive to be fully loaded
         await tester.pump();
@@ -214,9 +218,9 @@ void main() {
 
         await tester.pump();
 
-        final Finder cancelDriveButton = find.byKey(const Key('hideDriveButton'));
-        await tester.scrollUntilVisible(cancelDriveButton, 500.0);
-        await tester.tap(cancelDriveButton);
+        final Finder hideDriveButton = find.byKey(const Key('hideDriveButton'));
+        await tester.scrollUntilVisible(hideDriveButton, 500.0);
+        await tester.tap(hideDriveButton);
         await tester.pumpAndSettle();
       }
 
