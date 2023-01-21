@@ -237,17 +237,20 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             ],
           ),
           const Divider(),
-          IncrementField(
-            maxValue: 8,
-            icon: Icon(
-              Icons.chair,
-              color: Theme.of(context).colorScheme.primary,
+          SizedBox(
+            width: 150,
+            child: IncrementField(
+              maxValue: 8,
+              icon: Icon(
+                Icons.chair,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onChanged: (int? value) {
+                setState(() {
+                  _dropdownValue = value!;
+                });
+              },
             ),
-            onChanged: (int? value) {
-              setState(() {
-                _dropdownValue = value!;
-              });
-            },
           ),
           const SizedBox(height: 10),
           Button.submit(
