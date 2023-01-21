@@ -55,15 +55,13 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
-  late int _dropdownValue;
-
-  final List<int> list = List<int>.generate(10, (int index) => index + 1);
+  late int _seats;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _dropdownValue = list.first;
+    _seats = 1;
   }
 
   @override
@@ -148,7 +146,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           startPosition: _startSuggestion.position,
           end: _destinationSuggestion.name,
           endPosition: _destinationSuggestion.position,
-          seats: _dropdownValue,
+          seats: _seats,
           startTime: _selectedDate,
           endTime: endTime,
         );
@@ -253,7 +251,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               ),
               onChanged: (int? value) {
                 setState(() {
-                  _dropdownValue = value!;
+                  _seats = value!;
                 });
               },
             ),
