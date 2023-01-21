@@ -33,6 +33,9 @@ jobs:
       - name: Analyze project source
         run: flutter analyze --no-fatal-infos
 
+      - name: Generate coverage_helper file
+        run: ./scripts/coverage_helper.sh
+
       - name: Run tests
         run: flutter test --coverage
 
