@@ -63,7 +63,7 @@ class _MessageBarState extends State<MessageBar> {
     super.dispose();
   }
 
-  void _submitMessage() async {
+  Future<void> _submitMessage() async {
     final String text = _textController.text;
     if (text.isEmpty) {
       return;
@@ -71,7 +71,7 @@ class _MessageBarState extends State<MessageBar> {
     _textController.clear();
     try {
       await SupabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
-        'sender_id': SupabaseManager.getCurrentProfile()!.id!,
+        'sender_id': SupabaseManager.getCurrentProfile()!.id,
         'content': text,
         'chat_id': widget.chatId,
       });
