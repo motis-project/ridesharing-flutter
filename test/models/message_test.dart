@@ -14,8 +14,7 @@ void main() {
 
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
-    await MockServer.initialize();
-    MockServer.handleRequests(messageProcessor);
+    MockServer.setProcessor(messageProcessor);
   });
   group('markAsRead', (() {
     test('marks message as read', () async {

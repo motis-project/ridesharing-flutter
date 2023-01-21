@@ -82,7 +82,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
           await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
       Map<String, dynamic> dataChat =
           await SupabaseManager.supabaseClient.from('chats').select('*').eq('ride_id', id).single();
-      data.addAll({'chat': dataChat});
+      data.addAll(<String, dynamic>{'chat': dataChat});
       ride = Ride.fromJson(data);
     }
 
