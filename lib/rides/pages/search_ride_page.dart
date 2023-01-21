@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../drives/models/drive.dart';
 import '../../util/fields/increment_field.dart';
@@ -144,9 +145,14 @@ class _SearchRidePageState extends State<SearchRidePage> {
           child: StartDestinationTimeline(
             startController: _startController,
             destinationController: _destinationController,
-            onStartSelected: (AddressSuggestion suggestion) => setState(() => _startSuggestion = suggestion),
-            onDestinationSelected: (AddressSuggestion suggestion) =>
-                setState(() => _destinationSuggestion = suggestion),
+            onStartSelected: (AddressSuggestion suggestion) => setState(() {
+              _startSuggestion = suggestion;
+              loadRides();
+            }),
+            onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
+              _destinationSuggestion = suggestion;
+              loadRides();
+            }),
           ),
         ),
         IconButton(
@@ -201,14 +207,34 @@ class _SearchRidePageState extends State<SearchRidePage> {
     );
   }
 
-  Widget buildSearchCardList() {
+  Widget buildMainContentSliver() {
     if (_rideSuggestions == null) {
-      return const Center(child: CircularProgressIndicator());
+      if (_startSuggestion == null || _destinationSuggestion == null) {
+        return SliverToBoxAdapter(
+          child: Column(
+            children: <Widget>[
+              Image.asset('assets/pointing_up.png'),
+              Text(
+                S.of(context).pageSearchRideNoInput,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }
+      return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
     }
     final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
-    Widget list;
     if (filteredSuggestions.isEmpty) {
-      list = Center(
+      return SliverToBoxAdapter(
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
@@ -243,20 +269,16 @@ class _SearchRidePageState extends State<SearchRidePage> {
         ),
       );
     } else {
-      list = ListView.separated(
-        itemBuilder: (BuildContext context, int index) {
-          final Ride ride = filteredSuggestions[index];
-          return RideCard(ride);
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(height: 10);
-        },
-        itemCount: filteredSuggestions.length,
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            final Ride ride = filteredSuggestions[index];
+            return RideCard(ride);
+          },
+          childCount: filteredSuggestions.length,
+        ),
       );
     }
-    return Expanded(
-      child: RefreshIndicator(onRefresh: loadRides, child: list),
-    );
   }
 
   Widget buildDateSeatsRow() {
@@ -304,20 +326,43 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return Hero(
       tag: 'RideFAB',
       child: Scaffold(
-        appBar: AppBar(title: Text(S.of(context).pageSearchRideTitle)),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              buildSearchFieldViewer(),
-              const SizedBox(height: 10),
-              buildDateSeatsRow(),
-              const SizedBox(height: 5),
-              buildSeats(),
-              _filter.buildIndicatorRow(context, setState),
-              const Divider(thickness: 1),
-              buildSearchCardList(),
-            ],
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: RefreshIndicator(
+              onRefresh: loadRides,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    floating: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: ColoredBox(color: Theme.of(context).colorScheme.surface),
+                      title: Text(
+                        S.of(context).pageSearchRideTitle,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    ),
+                  ),
+                  SliverPinnedHeader(
+                    child: ColoredBox(
+                      color: Theme.of(context).canvasColor,
+                      child: buildSearchFieldViewer(),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  SliverToBoxAdapter(child: buildDateSeatsRow()),
+                  SliverToBoxAdapter(child: buildSeats()),
+                  SliverToBoxAdapter(child: _filter.buildIndicatorRow(context, setState)),
+                  SliverPinnedHeader(
+                    child: ColoredBox(
+                      color: Theme.of(context).canvasColor,
+                      child: const Divider(thickness: 1),
+                    ),
+                  ),
+                  buildMainContentSliver(),
+                ],
+              ),
+            ),
           ),
         ),
       ),
