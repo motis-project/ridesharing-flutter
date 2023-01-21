@@ -95,6 +95,20 @@ class Profile extends Model {
     };
   }
 
+  int? get age {
+    if (birthDate == null) return null;
+
+    final DateTime today = DateTime.now();
+
+    final int yearsDifference = today.year - birthDate!.year;
+
+    if (today.month > birthDate!.month || (today.month == birthDate!.month && today.day >= birthDate!.day)) {
+      return yearsDifference;
+    } else {
+      return yearsDifference - 1;
+    }
+  }
+
   @override
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
