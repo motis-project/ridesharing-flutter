@@ -28,13 +28,13 @@ void main() {
   });
   group('create a Drive', () {
     test('The Types are correct for a Drive', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime.now(),
-        start: "Berlin",
+        start: 'Berlin',
         startPosition: Position(1, 1),
         startTime: DateTime.now().add(const Duration(hours: 1)),
-        end: "Frankfurt",
+        end: 'Frankfurt',
         endPosition: Position(2, 2),
         endTime: DateTime.now().add(const Duration(hours: 3)),
         seats: 1,
@@ -292,7 +292,7 @@ void main() {
   group('Drive.getDrivesOfUser', () {
     test('gets a list of drives', () async {
       when(driveProcessor.processUrl(any)).thenReturn(jsonEncode(DriveFactory().generateFakeJsonList(length: 3)));
-      List<Drive> drives = await Drive.getDrivesOfUser(2);
+      final List<Drive> drives = await Drive.getDrivesOfUser(2);
       expect(drives.length, 3);
     });
   });
@@ -364,7 +364,7 @@ void main() {
 
   group('Drive.duration', () {
     test('returns the duration of a drive', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now(),
           endTime: DateTime.now().add(
             const Duration(hours: 2),
@@ -374,13 +374,13 @@ void main() {
   });
   group('Drive.isFinished', () {
     test('returns true if the Drive is before now', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(drive.isFinished, true);
     });
     test('returns false if the Drive is after now', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(drive.isFinished, false);
@@ -388,19 +388,19 @@ void main() {
   });
   group('Drive.isOngoing', () {
     test('returns true if the Drive is started before now and is not done', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 1)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
       expect(drive.isOngoing, true);
     });
     test('returns false if the Drive is in the past', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(drive.isOngoing, false);
     });
     test('returns false if the Drive is upcoming', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(drive.isOngoing, false);
@@ -408,28 +408,28 @@ void main() {
   });
   group('Drive.overlapsWith', () {
     test('returns false if they are in seperated times', () {
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      Drive drive2 = DriveFactory().generateFake(
+      final Drive drive2 = DriveFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(drive1.overlapsWith(drive2), false);
     });
     test('returns true if they are overlapping', () {
-      Drive drive1 = DriveFactory().generateFake(
+      final Drive drive1 = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      Drive drive2 = DriveFactory().generateFake(
+      final Drive drive2 = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 3)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
       expect(drive1.overlapsWith(drive2), true);
     });
     test('can handel Rides as parameter', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      Ride ride = RideFactory().generateFake(
+      final Ride ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 3)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(drive.overlapsWith(ride), true);
@@ -437,7 +437,7 @@ void main() {
   });
   group('Drive.overlapsWithRange', () {
     test('returns false if it is not in range', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(
@@ -448,7 +448,7 @@ void main() {
           false);
     });
     test('returns true if it is in range', () {
-      Drive drive = DriveFactory().generateFake(
+      final Drive drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(
@@ -737,7 +737,7 @@ void main() {
   });
   group('Drive.cancel', () {
     test('cancelled is being changed from false to true', () async {
-      Drive drive = DriveFactory().generateFake(cancelled: false, createDependencies: false);
+      final Drive drive = DriveFactory().generateFake(cancelled: false, createDependencies: false);
       when.call(driveProcessor.processUrl(any)).thenReturn(drive.toString());
       drive.cancel();
       expect(drive.cancelled, true);
