@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/rides/models/ride.dart';
 
+import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
 import '../util/mock_server.mocks.dart';
 
@@ -17,9 +19,6 @@ void main() {
   group('Ride.userHasRideAtTimeRange', () {});
   group('Ride.getRidesOfUser', () {});
   group('Ride.equals', () {});
-  group('Ride.getDrive', () {});
-  group('Ride.getDriver', () {});
-  group('Ride.getRider', () {});
   group('Ride.cancel', () {});
   group('Ride.withdraw', () {});
   group('Ride.toString', () {});
@@ -28,7 +27,28 @@ void main() {
   group('Ride.isOngoing', () {});
   group('Ride.overlapsWith', () {});
   group('Ride.overlapsWithTimeRange', () {});
-  group('RideStatus enum', () {});
-  group('RideStatus.isCancelled', () {});
-  group('RideStatus.isApproved', () {});
+  group('RideStatus.isCancelled', () {
+    test('returns false if ride is not cancelled', () {
+      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      expect(ride.status.isCancelled(), false);
+    });
+    test('returns true if ride is cancelledByDriver', () {
+      Ride ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver);
+      expect(ride.status.isCancelled(), true);
+    });
+    test('returns true if ride is cancelledByRide', () {
+      Ride ride = RideFactory().generateFake(status: RideStatus.cancelledByRider);
+      expect(ride.status.isCancelled(), true);
+    });
+  });
+  group('RideStatus.isApproved', () {
+    test('returns true if ride is approved', () {
+      Ride ride = RideFactory().generateFake(status: RideStatus.approved);
+      expect(ride.status.isApproved(), true);
+    });
+    test('returns false if ride is not approved', () {
+      Ride ride = RideFactory().generateFake(status: RideStatus.pending);
+      expect(ride.status.isApproved(), false);
+    });
+  });
 }

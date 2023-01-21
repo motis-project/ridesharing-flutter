@@ -141,23 +141,6 @@ class Ride extends Trip {
         riderId == ride.riderId;
   }
 
-  Future<Drive> getDrive() async {
-    drive ??= Drive.fromJson(await SupabaseManager.supabaseClient.from('drives').select().eq('id', driveId).single());
-    return drive!;
-  }
-
-  Future<Profile> getDriver() async {
-    Drive drive = await getDrive();
-    return Profile.fromJson(
-        await SupabaseManager.supabaseClient.from('profiles').select().eq('id', drive.driverId).single());
-  }
-
-  Future<Profile> getRider() async {
-    rider ??=
-        Profile.fromJson(await SupabaseManager.supabaseClient.from('profiles').select().eq('id', riderId).single());
-    return rider!;
-  }
-
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
     await SupabaseManager.supabaseClient.from('rides').update({'status': status.index}).eq('id', id);
