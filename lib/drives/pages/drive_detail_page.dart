@@ -346,7 +346,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       final WaypointAction action = stop.actions[index];
       final Icon icon = action.isStart ? startIcon : endIcon;
       final Profile profile = action.profile;
-
+      final Chat chat = _drive!.chats!.firstWhere((Chat chat) => chat.rideId == action.rideId);
       final Widget container = Semantics(
         button: true,
         label: action.isStart
@@ -366,7 +366,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => ChatPage(
-                    chatId: _drive!.chats!.firstWhere((Chat chat) => chat.rideId == action.rideId).id,
+                    chatId: chat.id,
                     profile: action.profile,
                   ),
                 ),
@@ -386,10 +386,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: Icon(
-                          Icons.chat,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          size: 30.0,
+                        child: Badge(
+                          badgeContent: Text(
+                            chat.getUnreadMessagesCount().toString(),
+                            style: const TextStyle(color: Colors.white),
+                            textScaleFactor: 1.0,
+                          ),
+                          showBadge: chat.getUnreadMessagesCount() != 0,
+                          position: BadgePosition.topEnd(top: -12),
+                          child: const Icon(Icons.chat),
                         ),
                       ),
                     ),
