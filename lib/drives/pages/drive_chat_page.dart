@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../account/widgets/avatar.dart';
-import '../../rides/models/ride.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
@@ -25,12 +24,11 @@ class _DriveChatPageState extends State<DriveChatPage> {
   @override
   void initState() {
     _chats = widget.drive.chats!
-        .where((Chat chat) =>
-            ,final widget.drive.rides!.firstWhere((Ride element) => element.id == chat.rideId).status.activeChat())
+        .where((Chat chat) => ,final widget.drive.rides!.firstWhere((Ride ride) => ride.id == chat.rideId).status.activeChat())
         .toList();
     final List<int> ids = _chats.map((Chat chat) => chat.id!).toList();
     _messagesStream =
-        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: ['id']).order('created_at').map(
+        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(
               (SupabaseStreamEvent messages) => Message.fromJsonList(
                 messages.where((Map<String, dynamic> element) => ids.contains(element['chat_id'])).toList(),
               ),

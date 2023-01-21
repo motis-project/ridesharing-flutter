@@ -70,7 +70,7 @@ class _MessageBarState extends State<MessageBar> {
     }
     _textController.clear();
     try {
-      await SupabaseManager.supabaseClient.from('messages').insert({
+      await SupabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
         'sender_id': SupabaseManager.getCurrentProfile()!.id!,
         'content': text,
         'chat_id': widget.chatId,

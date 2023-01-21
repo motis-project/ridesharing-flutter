@@ -80,7 +80,7 @@ class Drive extends Trip {
 
   List<Ride>? get approvedRides => rides?.where((Ride ride) => ride.status == RideStatus.approved).toList();
   List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
-  List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.allowsChat()).toList();
+  List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.activeChat()).toList();
 
   static Future<List<Drive>> getDrivesOfUser(int userId) async {
     return Drive.fromJsonList(await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId));

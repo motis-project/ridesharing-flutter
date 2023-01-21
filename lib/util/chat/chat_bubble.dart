@@ -92,11 +92,11 @@ class ChatBubblePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var h = size.height;
-    var w = size.width;
+    double h = size.height;
+    double w = size.width;
     if (alignment == Alignment.topRight) {
       if (tail) {
-        var path = Path();
+        Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 2, 0);
@@ -135,7 +135,7 @@ class ChatBubblePainter extends CustomPainter {
               ..color = color
               ..style = PaintingStyle.fill);
       } else {
-        var path = Path();
+        Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 2, 0);
@@ -170,7 +170,7 @@ class ChatBubblePainter extends CustomPainter {
       }
     } else {
       if (tail) {
-        var path = Path();
+        Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 3, 0);
@@ -207,7 +207,7 @@ class ChatBubblePainter extends CustomPainter {
               ..color = color
               ..style = PaintingStyle.fill);
       } else {
-        var path = Path();
+        Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 3, 0);

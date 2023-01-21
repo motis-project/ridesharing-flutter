@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../../account/models/profile.dart';
 import '../../profiles/profile_widget.dart';
@@ -14,7 +15,7 @@ class ChatPage extends StatefulWidget {
   final bool active;
 
   const ChatPage({
-    chatId,
+    int? chatId,
     required this.profile,
     this.active = true,
     super.key,
@@ -32,12 +33,12 @@ class _ChatPageState extends State<ChatPage> {
     if (widget.active) {
       _messagesStream = SupabaseManager.supabaseClient
           .from('messages')
-          .stream(primaryKey: ['id'])
+          .stream(primaryKey: <String>['id'])
           .eq('chat_id', widget.chatId)
           .order('created_at')
-          .map((messages) => Message.fromJsonList(messages));
+          .map((SupabaseStreamEvent messages) => Message.fromJsonList(messages));
     } else {
-      _messagesStream = Stream.value([]);
+      _messagesStream = Stream<List<Message>>.value(<Message>[]);
     }
     super.initState();
   }

@@ -362,13 +362,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             child: InkWell(
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (BuildContext context) => ChatPage(
                     chatId: action.rideId,
                     profile: action.profile,
                   ),
                 ),
-              ).then((value) => loadDrive()),
+              ).then((_) => loadDrive()),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: Row(
