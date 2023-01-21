@@ -60,22 +60,16 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
   }
 
   Widget getFloatingActionButton(BuildContext context, {required bool isRide}) {
-    if (isRide) {
-      return FloatingActionButton(
-        heroTag: 'RideFAB',
-        tooltip: S.of(context).pageRidesTooltipSearchRide,
-        onPressed: onFabPressed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.search),
-      );
-    } else {
-      return FloatingActionButton(
-        heroTag: 'DriveFAB',
-        tooltip: S.of(context).pageDrivesTooltipOfferRide,
-        onPressed: onFabPressed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.add),
-      );
-    }
+    final String heroTag = isRide ? 'RideFAB' : 'DriveFAB';
+    final String tooltip = isRide ? S.of(context).pageRidesTooltipSearchRide : S.of(context).pageDrivesTooltipOfferRide;
+    final Icon icon = isRide ? const Icon(Icons.search) : const Icon(Icons.add);
+
+    return FloatingActionButton(
+      heroTag: heroTag,
+      tooltip: tooltip,
+      onPressed: onFabPressed,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      child: icon,
+    );
   }
 }
