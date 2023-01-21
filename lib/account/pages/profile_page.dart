@@ -110,10 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildDescription() {
     final Widget description = _profile!.description?.isNotEmpty ?? false
-        ? Text(
-            _profile!.description!,
-            style: Theme.of(context).textTheme.bodyText1,
-          )
+        ? Text(_profile!.description!)
         : buildNoInfoText(S.of(context).pageProfileDescriptionEmpty);
     return EditableRow(
       title: S.of(context).pageProfileDescriptionTitle,
