@@ -244,6 +244,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           SizedBox(
             width: 150,
             child: IncrementField(
+              initialValue: _seats,
               maxValue: 8,
               icon: Icon(
                 Icons.chair,
