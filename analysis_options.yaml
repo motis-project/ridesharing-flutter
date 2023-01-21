@@ -70,7 +70,6 @@ linter:
     - list_remove_unrelated_type
     - missing_whitespace_between_adjacent_strings
     - no_adjacent_strings_in_list
-    # - no_default_cases # DO WE WANT THIS?
     - no_duplicate_case_values
     - no_leading_underscores_for_library_prefixes
     - no_leading_underscores_for_local_identifiers
@@ -125,7 +124,6 @@ linter:
     - sized_box_shrink_expand
     - slash_for_doc_comments
     - sort_child_properties_last
-    # - sort_pub_dependencies # DO WE WANT THIS?
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally
