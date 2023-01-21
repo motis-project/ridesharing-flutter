@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/models/profile.dart';
+import 'search/address_suggestion_manager.dart';
 
 class SupabaseManager {
   static Profile? _currentProfile;
@@ -33,5 +34,8 @@ class SupabaseManager {
     } catch (e) {
       setCurrentProfile(null);
     }
+
+    // Reload the history suggestions to show the new profile's history.
+    addressSuggestionManager.loadHistorySuggestions();
   }
 }
