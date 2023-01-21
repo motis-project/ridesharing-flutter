@@ -297,6 +297,21 @@ void main() {
     });
   });
   group('Drive.userHasDriveAtTimeRange', () {
+    test('returns true when there is a Drive at set time', () async {
+      when.call(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().add(const Duration(hours: 2)),
+                  endTime: DateTime.now().add(const Duration(hours: 4)),
+                )
+                .toJsonForApi()
+          ]));
+      expect(
+          await Drive.userHasDriveAtTimeRange(
+              DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))), 2),
+          true);
+    });
     test('returns false if there is no cancelled drive at the time range', () async {
       when.call(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
             DriveFactory()
