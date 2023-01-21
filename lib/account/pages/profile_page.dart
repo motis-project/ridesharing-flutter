@@ -147,9 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildAge() {
-    final Widget age = _profile!.birthDate != null
+    final Widget age = _profile!.age != null
         ? Text(
-            (DateTime.now().difference(_profile!.birthDate!).inDays ~/ 365).toString(),
+            _profile!.age!.toString(),
             style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText(S.of(context).pageProfileAgeEmpty);
