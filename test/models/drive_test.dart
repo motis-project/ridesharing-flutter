@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
@@ -21,7 +26,37 @@ void main() {
   setUp(() async {
     MockServer.setProcessor(driveProcessor);
   });
-
+  group('create a Drive', () {
+    test('The Types are correct for a Drive', () {
+      Drive drive = DriveFactory().generateFake(
+        id: 1,
+        createdAt: DateTime.now(),
+        start: "Berlin",
+        startPosition: Position(1, 1),
+        startTime: DateTime.now().add(const Duration(hours: 1)),
+        end: "Frankfurt",
+        endPosition: Position(2, 2),
+        endTime: DateTime.now().add(const Duration(hours: 3)),
+        seats: 1,
+        cancelled: true,
+        driverId: 2,
+      );
+      expect(drive.id.runtimeType, int);
+      expect(drive.createdAt.runtimeType, DateTime);
+      expect(drive.start.runtimeType, String);
+      expect(drive.startPosition.runtimeType, Position);
+      expect(drive.startTime.runtimeType, DateTime);
+      expect(drive.end.runtimeType, String);
+      expect(drive.endPosition.runtimeType, Position);
+      expect(drive.endTime.runtimeType, DateTime);
+      expect(drive.seats.runtimeType, int);
+      expect(drive.cancelled.runtimeType, bool);
+      expect(drive.driverId.runtimeType, int);
+      expect(drive.driver.runtimeType, Profile);
+      expect(drive.rides.runtimeType, List<Ride>);
+      expect(drive.hideInListView.runtimeType, bool);
+    });
+  });
   group('Drive.fromJson', () {
     test('parses a drive from json with no driver and no rides', () {
       final Map<String, dynamic> json = {
@@ -254,8 +289,161 @@ void main() {
       expect(drive.pendingRides, [ride1, ride2, ride3]);
     });
   });
-  group('Drive.getDrivesOfUser', () {});
-  group('Drive.userHasDriveAtTimeRange', () {});
+  group('Drive.getDrivesOfUser', () {
+    test('gets a list of drives', () async {
+      when(driveProcessor.processUrl(any)).thenReturn(jsonEncode(DriveFactory().generateFakeJsonList(length: 3)));
+      List<Drive> drives = await Drive.getDrivesOfUser(2);
+      expect(drives.length, 3);
+    });
+  });
+  group('Drive.userHasDriveAtTimeRange', () {
+    test('returns false if there is no cancelled drive at the time range', () async {
+      when.call(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().add(const Duration(hours: 8)),
+                  endTime: DateTime.now().add(const Duration(hours: 10)),
+                )
+                .toJsonForApi(),
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().add(const Duration(hours: 2)),
+                  endTime: DateTime.now().add(const Duration(hours: 4)),
+                )
+                .toJsonForApi(),
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().subtract(const Duration(hours: 4)),
+                  endTime: DateTime.now().subtract(const Duration(hours: 2)),
+                )
+                .toJsonForApi(),
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().add(const Duration(hours: 16)),
+                  endTime: DateTime.now().add(const Duration(hours: 20)),
+                )
+                .toJsonForApi(),
+            DriveFactory()
+                .generateFake(
+                  driverId: 2,
+                  startTime: DateTime.now().add(const Duration(hours: 12)),
+                  endTime: DateTime.now().add(const Duration(hours: 15)),
+                  cancelled: true,
+                )
+                .toJsonForApi(),
+          ]));
+      expect(
+          await Drive.userHasDriveAtTimeRange(
+              DateTimeRange(
+                start: DateTime.now().add(const Duration(hours: 12)),
+                end: DateTime.now().add(const Duration(hours: 15)),
+              ),
+              2),
+          false);
+    });
+  });
+
+  group('Drive.duration', () {
+    test('returns the duration of a drive', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now(),
+          endTime: DateTime.now().add(
+            const Duration(hours: 2),
+          ));
+      expect(drive.duration, const Duration(hours: 2));
+    });
+  });
+  group('Drive.isFinished', () {
+    test('returns true if the Drive is before now', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(drive.isFinished, true);
+    });
+    test('returns false if the Drive is after now', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 4)));
+      expect(drive.isFinished, false);
+    });
+  });
+  group('Drive.isOngoing', () {
+    test('returns true if the Drive is started before now and is not done', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 1)),
+          endTime: DateTime.now().add(const Duration(hours: 2)));
+      expect(drive.isOngoing, true);
+    });
+    test('returns false if the Drive is in the past', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 6)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(drive.isOngoing, false);
+    });
+    test('returns false if the Drive is upcoming', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 6)));
+      expect(drive.isOngoing, false);
+    });
+  });
+  group('Drive.overlapsWith', () {
+    test('returns false if they are in seperated times', () {
+      Drive drive1 = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 6)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      Drive drive2 = DriveFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 6)));
+      expect(drive1.overlapsWith(drive2), false);
+    });
+    test('returns true if they are overlapping', () {
+      Drive drive1 = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 6)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      Drive drive2 = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 3)),
+          endTime: DateTime.now().add(const Duration(hours: 2)));
+      expect(drive1.overlapsWith(drive2), true);
+    });
+    test('can handel Rides as parameter', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 6)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      Ride ride = RideFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 3)),
+          endTime: DateTime.now().add(const Duration(hours: 6)));
+      expect(drive.overlapsWith(ride), true);
+    });
+  });
+  group('Drive.overlapsWithRange', () {
+    test('returns false if it is not in range', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(
+          drive.overlapsWithTimeRange(DateTimeRange(
+            start: DateTime.now().add(const Duration(hours: 3)),
+            end: DateTime.now().add(const Duration(hours: 6)),
+          )),
+          false);
+    });
+    test('returns true if it is in range', () {
+      Drive drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(
+          drive.overlapsWithTimeRange(DateTimeRange(
+            start: DateTime.now().subtract(const Duration(hours: 3)),
+            end: DateTime.now().add(const Duration(hours: 6)),
+          )),
+          true);
+    });
+  });
   // What to do if we use more seats than we have
   group('Drive.getMaxUsedSeats', () {
     test('returns null if rides are null', () async {
@@ -532,7 +720,14 @@ void main() {
       expect(drive.isRidePossible(ride), false);
     });
   });
-  group('Drive.cancel', () {});
+  group('Drive.cancel', () {
+    test('cancelled is being changed from false to true', () async {
+      Drive drive = DriveFactory().generateFake(cancelled: false, createDependencies: false);
+      when.call(driveProcessor.processUrl(any)).thenReturn(drive.toString());
+      drive.cancel();
+      expect(drive.cancelled, true);
+    });
+  });
   group('Drive.toString', () {
     test('returns a string representation of the drive', () async {
       final Drive drive = DriveFactory().generateFake(
