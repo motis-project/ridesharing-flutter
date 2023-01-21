@@ -25,6 +25,7 @@ class CustomRatingBarIndicator extends StatelessWidget {
           Icons.star,
           color: Colors.amber,
         ),
+        // Keep the next line for more explicitness, and to avoid breaking changes
         // ignore: avoid_redundant_argument_values
         itemCount: Review.maxRating,
         itemSize: size.itemSize,
