@@ -91,6 +91,7 @@ class _MainAppState extends State<MainApp> {
   Widget buildNavigatorForTab(TabItem tabItem) {
     return Navigator(
       key: _navigatorKeys[tabItem],
+      observers: <NavigatorObserver>[HeroController()],
       onGenerateRoute: (RouteSettings routeSettings) => MaterialPageRoute<void>(
         builder: (BuildContext context) => _pages[tabItem]!,
       ),
