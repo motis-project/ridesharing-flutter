@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:supabase/src/supabase_stream_builder.dart';
 
 import '../../../account/models/profile.dart';
 import '../../profiles/profile_widget.dart';
@@ -36,7 +35,7 @@ class _ChatPageState extends State<ChatPage> {
           .stream(primaryKey: <String>['id'])
           .eq('chat_id', widget.chatId)
           .order('created_at')
-          .map((SupabaseStreamEvent messages) => Message.fromJsonList(messages));
+          .map((List<Map<String, dynamic>> messages) => Message.fromJsonList(messages));
     } else {
       _messagesStream = Stream<List<Message>>.value(<Message>[]);
     }
@@ -55,7 +54,6 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         title: ProfileWidget(
           widget.profile,
-          isTappable: true,
         ),
       ),
       body: widget.active
@@ -63,7 +61,7 @@ class _ChatPageState extends State<ChatPage> {
               stream: _messagesStream,
               builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
-                  List<Message> messages = snapshot.data!;
+                  final List<Message> messages = snapshot.data!;
                   return Column(
                     children: <Widget>[
                       Expanded(
@@ -125,7 +123,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   List<ChatBubble> _buildChatBubbles(List<Message> messages) {
-    List<ChatBubble> chatBubbles = <ChatBubble>[];
+    final List<ChatBubble> chatBubbles = <ChatBubble>[];
     for (int i = 0; i < messages.length; i++) {
       if (!messages[i].read && messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
         messages[i].markAsRead();
