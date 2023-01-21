@@ -181,15 +181,25 @@ class _RideDetailPageState extends State<RideDetailPage> {
         return Button(
           S.of(context).pageRideDetailButtonRequest,
           onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+          key: const Key('requestRideButton'),
         );
       case RideStatus.approved:
         return _ride!.isFinished
-            ? Button(S.of(context).pageRideDetailButtonRate, onPressed: () => _navigateToRatePage(driver))
-            : Button.error(S.of(context).pageRideDetailButtonCancel, onPressed: _showCancelDialog);
+            ? Button(
+                S.of(context).pageRideDetailButtonRate,
+                onPressed: () => _navigateToRatePage(driver),
+                key: const Key('rateDriverButton'),
+              )
+            : Button.error(
+                S.of(context).pageRideDetailButtonCancel,
+                onPressed: _showCancelDialog,
+                key: const Key('cancelRideButton'),
+              );
       case RideStatus.pending:
         return Button.error(
           S.of(context).pageRideDetailButtonWithdraw,
           onPressed: _showWithdrawDialog,
+          key: const Key('withdrawRideButton'),
         );
       case RideStatus.cancelledByDriver:
       case RideStatus.rejected:
@@ -197,6 +207,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
         return Button.error(
           S.of(context).pageRideDetailButtonHide,
           onPressed: _showHideDialog,
+          key: const Key('hideRideButton'),
         );
     }
   }
