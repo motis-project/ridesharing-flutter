@@ -46,4 +46,12 @@ class Chat extends Model {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{};
   }
+
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll(<String, dynamic>{
+        'messages': messages!.map((Message message) => message.toJsonForApi()).toList(),
+      });
+  }
 }

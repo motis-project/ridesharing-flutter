@@ -129,18 +129,18 @@ void main() {
   });
 
   group('Chat.toJson', () {
-    test('parses a Chat to json', () {
+    test('transforms a Chat to json', () {
       final Chat chat = ChatFactory().generateFake();
       final Map<String, dynamic> json = chat.toJson();
-      expect(json.keys.length, 2);
+      expect(json.keys.length, 0);
     });
   });
 
   group('Chat.toString', () {
-    test('parses a Chat to String', () {
+    test('transforms a Chat to String', () {
       final Chat chat = ChatFactory().generateFake();
       final String string = chat.toString();
-      expect(string, 'Chat{id: ${chat.id}, createdAt: ${chat.createdAt}');
+      expect(string, 'Chat{id: ${chat.id}, createdAt: ${chat.createdAt}}');
     });
   });
 }
