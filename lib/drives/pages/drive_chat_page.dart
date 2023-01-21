@@ -23,9 +23,13 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   void initState() {
-    _chats = widget.drive.chats!
-        .where((Chat chat) => widget.drive.rides!.firstWhere((Ride ride) => ride.id == chat.rideId).status.activeChat())
-        .toList();
+    _chats = widget.drive.chats == null
+        ? <Chat>[]
+        : widget.drive.chats!
+            .where(
+              (Chat chat) => widget.drive.rides!.firstWhere((Ride ride) => ride.id == chat.rideId).status.activeChat(),
+            )
+            .toList();
     final List<int> ids = _chats.map((Chat chat) => chat.id!).toList();
     _messagesStream =
         SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(

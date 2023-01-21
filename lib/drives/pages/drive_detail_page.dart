@@ -243,6 +243,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         actions: _fullyLoaded
             ? <Widget>[
                 IconButton(
+                  key: const Key('driveChatButton'),
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute<void>(
