@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
@@ -19,11 +20,13 @@ void main() {
   late Drive drive;
   final MockRequestProcessor processor = MockRequestProcessor();
 
-  setUpAll(() async {
+  setUpAll(() {
     MockServer.setProcessor(processor);
   });
 
   setUp(() {
+    reset(processor);
+
     drive = DriveFactory().generateFake(
       start: 'Start',
       end: 'End',

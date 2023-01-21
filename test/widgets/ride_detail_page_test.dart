@@ -30,13 +30,13 @@ void main() {
   late Profile driver;
   late Drive drive;
   late Ride ride;
-  MockUrlProcessor processor = MockUrlProcessor();
 
-  setUpAll(() async {
-    MockServer.setProcessor(processor);
-  });
+  late MockUrlProcessor processor;
 
   setUp(() {
+    processor = MockUrlProcessor();
+    MockServer.setProcessor(processor);
+
     driver = ProfileFactory().generateFake(
       reviewsReceived: ReviewFactory().generateFakeList(),
     );
@@ -59,7 +59,7 @@ void main() {
   group('RideDetailPage', () {
     group('constructors', () {
       testWidgets('Works with id parameter', (WidgetTester tester) async {
-        await pumpMaterial(tester, RideDetailPage(id: ride.id!));
+        await pumpMaterial(tester, RideDetailPage(id: ride.id));
 
         expect(find.byType(TripOverview), findsNothing);
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -252,7 +252,7 @@ void main() {
         // Verify that the ride was cancelled (but no way to verify body right now)
         verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
 
-        expect(find.byKey(const Key("rideCancelledByYouBanner")), findsOneWidget);
+        expect(find.byKey(const Key('rideCancelledByYouBanner')), findsOneWidget);
       });
 
       testWidgets('Can abort cancelling ride', (WidgetTester tester) async {
@@ -265,7 +265,7 @@ void main() {
 
         verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
 
-        expect(find.byKey(const Key("rideCancelledByYouBanner")), findsNothing);
+        expect(find.byKey(const Key('rideCancelledByYouBanner')), findsNothing);
       });
     });
 
@@ -296,7 +296,7 @@ void main() {
           await openDialog(tester);
 
           // TODO: Add copyWith constructor to Ride
-          Ride returnedRide = RideFactory().generateFake(status: RideStatus.pending);
+          final Ride returnedRide = RideFactory().generateFake(status: RideStatus.pending);
           when(processor.processUrl(any)).thenReturn(jsonEncode(returnedRide.toJsonForApi()));
 
           final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));
@@ -305,9 +305,9 @@ void main() {
           await tester.pumpAndSettle();
 
           // Verify that the ride was requested (but no way to verify body right now)
-          // verify(processor.processUrl(any)).called(1);
+          verify(processor.processUrl(argThat(startsWith('/rest/v1/rides')))).called(1);
 
-          expect(find.byKey(const Key("rideRequestedBanner")), findsOneWidget);
+          expect(find.byKey(const Key('rideRequestedBanner')), findsOneWidget);
         });
 
         testWidgets('Can abort requesting ride', (WidgetTester tester) async {
@@ -320,7 +320,7 @@ void main() {
 
           verifyNever(processor.processUrl('/rest/v1/rides'));
 
-          expect(find.byKey(const Key("rideRequestedBanner")), findsNothing);
+          expect(find.byKey(const Key('rideRequestedBanner')), findsNothing);
         });
       });
 
