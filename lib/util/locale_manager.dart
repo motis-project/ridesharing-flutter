@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -7,14 +9,18 @@ import 'storage_manager.dart';
 LocaleManager localeManager = LocaleManager();
 
 class LocaleManager with ChangeNotifier {
+  static const Locale defaultLocale = Locale('en');
   final List<Locale> supportedLocales = S.supportedLocales;
   late Locale currentLocale;
 
   Future<void> loadCurrentLocale() async {
     await StorageManager.readData('locale').then((dynamic value) {
-      value ??= 'en';
-      currentLocale = supportedLocales.firstWhere((Locale element) => element.languageCode == value);
-      notifyListeners();
+      value ??= Platform.localeName.split('_').first;
+
+      Locale locale =
+          supportedLocales.firstWhere((Locale element) => element.languageCode == value, orElse: () => defaultLocale);
+
+      setCurrentLocale(locale);
     });
   }
 
