@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
-import '../../util/trip/ride_card.dart';
 import '../../util/trip/trip_page_builder.dart';
 import '../models/ride.dart';
 import 'search_ride_page.dart';
@@ -32,18 +30,9 @@ class _RidesPageState extends State<RidesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TripPageBuilder.build(
-      context,
-      S.of(context).pageRidesTitle,
+    return TripPageBuilder<Ride>(
       _rides,
-      (Ride ride) => RideCard(ride),
-      FloatingActionButton(
-        heroTag: 'RideFAB',
-        tooltip: S.of(context).pageRidesTooltipSearchRide,
-        onPressed: searchRide,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.search),
-      ),
+      onFabPressed: searchRide,
     );
   }
 

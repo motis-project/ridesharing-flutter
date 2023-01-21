@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../drives/models/drive.dart';
+import '../../rides/models/ride.dart';
+import 'drive_card.dart';
+import 'ride_card.dart';
 import 'trip.dart';
-import 'trip_card.dart';
 
 class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
   TripStreamBuilder({
     super.key,
-    required Stream<List<T>> stream,
+    super.stream,
     required String emptyMessage,
     required List<T> Function(List<T> trips) filterTrips,
-    required TripCard<T> Function(T trip) tripCard,
   }) : super(
-          stream: stream,
           builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
             if (snapshot.hasData) {
               final List<T> trips = snapshot.data!;
@@ -23,7 +24,7 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
                       itemBuilder: (BuildContext context, int index) {
                         final T trip = filteredTrips[index];
 
-                        return tripCard(trip);
+                        return trip is Ride ? RideCard(trip) : DriveCard(trip as Drive);
                       },
                       separatorBuilder: (BuildContext context, int index) {
                         return const SizedBox(height: 10);

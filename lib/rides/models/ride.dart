@@ -127,6 +127,12 @@ class Ride extends Trip {
   }
 
   @override
+  bool shouldShowInListView({required bool past}) {
+    return super.shouldShowInListView(past: past) &&
+        (!past || (status != RideStatus.pending && status != RideStatus.withdrawnByRider));
+  }
+
+  @override
   bool equals(Trip other) {
     if (other is! Ride) return false;
     final Ride ride = other;

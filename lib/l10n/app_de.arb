@@ -259,8 +259,10 @@
 
   "widgetTripBuilderTabUpcoming": "Zukünftig",
   "widgetTripBuilderTabPast": "Vergangen",
-  "widgetTripBuilderNoUpcoming": "Keine zukünftigen {name}.",
-  "widgetTripBuilderNoPast": "Keine vergangenen {name}.",
+  "widgetTripBuilderNoUpcomingDrives": "Keine zukünftigen Fahrten",
+  "widgetTripBuilderNoUpcomingRides": "Keine zukünftigen Mitfahrten",
+  "widgetTripBuilderNoPastDrives": "Keine vergangenen Fahrten",
+  "widgetTripBuilderNoPastRides": "Keine vergangenen Mitfahrten",
 
   "pageSearchRideTitle": "Mitfahrt suchen",
   "pageSearchRideButtonSearch": "Suchen",

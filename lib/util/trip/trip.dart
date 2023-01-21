@@ -55,6 +55,10 @@ abstract class Trip extends Model {
     return startTime.isBefore(range.end) && endTime.isAfter(range.start);
   }
 
+  bool shouldShowInListView({required bool past}) {
+    return !hideInListView && (past ? isFinished : !isFinished);
+  }
+
   bool equals(Trip other) {
     return start == other.start &&
         startPosition == other.startPosition &&

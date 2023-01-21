@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase.dart';
-import '../../util/trip/drive_card.dart';
 import '../../util/trip/trip_page_builder.dart';
 import '../models/drive.dart';
 import 'create_drive_page.dart';
@@ -32,18 +30,9 @@ class _DrivesPageState extends State<DrivesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return TripPageBuilder.build<Drive>(
-      context,
-      S.of(context).pageDrivesTitle,
+    return TripPageBuilder<Drive>(
       _drives,
-      (Drive drive) => DriveCard(drive),
-      FloatingActionButton(
-        heroTag: 'DriveFAB',
-        tooltip: S.of(context).pageDrivesTooltipOfferRide,
-        onPressed: onPressed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.add),
-      ),
+      onFabPressed: onPressed,
     );
   }
 
