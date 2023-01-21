@@ -27,7 +27,7 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Icon? stateIcon = isSender
+    final Icon? stateIcon = isSender
         ? Icon(
             Icons.done_all,
             size: 18,
@@ -61,13 +61,14 @@ class ChatBubble extends StatelessWidget {
                     textAlign: TextAlign.left,
                   ),
                 ),
-                stateIcon == null
-                    ? const SizedBox(width: 0, height: 0)
-                    : Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: stateIcon,
-                      )
+                if (stateIcon == null)
+                  const SizedBox.shrink()
+                else
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: stateIcon,
+                  )
               ],
             ),
           ),
@@ -92,11 +93,11 @@ class ChatBubblePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double h = size.height;
-    double w = size.width;
+    final double h = size.height;
+    final double w = size.width;
     if (alignment == Alignment.topRight) {
       if (tail) {
-        Path path = Path();
+        final Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 2, 0);
@@ -130,12 +131,13 @@ class ChatBubblePainter extends CustomPainter {
 
         canvas.clipPath(path);
         canvas.drawRRect(
-            RRect.fromLTRBR(0, 0, w, h, Radius.zero),
-            Paint()
-              ..color = color
-              ..style = PaintingStyle.fill);
+          RRect.fromLTRBR(0, 0, w, h, Radius.zero),
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.fill,
+        );
       } else {
-        Path path = Path();
+        final Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 2, 0);
@@ -163,14 +165,15 @@ class ChatBubblePainter extends CustomPainter {
 
         canvas.clipPath(path);
         canvas.drawRRect(
-            RRect.fromLTRBR(0, 0, w, h, Radius.zero),
-            Paint()
-              ..color = color
-              ..style = PaintingStyle.fill);
+          RRect.fromLTRBR(0, 0, w, h, Radius.zero),
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.fill,
+        );
       }
     } else {
       if (tail) {
-        Path path = Path();
+        final Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 3, 0);
@@ -202,12 +205,13 @@ class ChatBubblePainter extends CustomPainter {
         path.quadraticBezierTo(w, 0, w - _radius * 2, 0);
         canvas.clipPath(path);
         canvas.drawRRect(
-            RRect.fromLTRBR(0, 0, w, h, Radius.zero),
-            Paint()
-              ..color = color
-              ..style = PaintingStyle.fill);
+          RRect.fromLTRBR(0, 0, w, h, Radius.zero),
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.fill,
+        );
       } else {
-        Path path = Path();
+        final Path path = Path();
 
         /// starting point
         path.moveTo(_radius * 3, 0);
@@ -234,10 +238,11 @@ class ChatBubblePainter extends CustomPainter {
         path.quadraticBezierTo(w, 0, w - _radius * 2, 0);
         canvas.clipPath(path);
         canvas.drawRRect(
-            RRect.fromLTRBR(0, 0, w, h, Radius.zero),
-            Paint()
-              ..color = color
-              ..style = PaintingStyle.fill);
+          RRect.fromLTRBR(0, 0, w, h, Radius.zero),
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.fill,
+        );
       }
     }
   }

@@ -20,15 +20,15 @@ class ChatFactory extends ModelFactory<Chat> {
     NullableParameter<List<Message>>? messages,
     bool createDependencies = true,
   }) {
-    assert(rideId == null || ride?.value == null || ride!.value?.id == rideId, "riderId and rider.id must be equal");
+    assert(rideId == null || ride?.value == null || ride!.value?.id == rideId, 'riderId and rider.id must be equal');
     assert(
-        driveId == null || drive?.value == null || drive!.value?.id == driveId, "driveId and drive.id must be equal");
+        driveId == null || drive?.value == null || drive!.value?.id == driveId, 'driveId and drive.id must be equal');
 
-    Ride? generatedRide =
+    final Ride? generatedRide =
         getNullableParameterOr(ride, RideFactory().generateFake(id: rideId, createDependencies: false));
-    Drive? generatedDrive =
+    final Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
-    List<Message>? generatedMessages =
+    final List<Message>? generatedMessages =
         getNullableParameterOr(messages, MessageFactory().generateFakeList(length: 20, createDependencies: false));
 
     return Chat(

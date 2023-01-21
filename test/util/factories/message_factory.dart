@@ -21,13 +21,13 @@ class MessageFactory extends ModelFactory<Message> {
     bool? read,
     bool createDependencies = true,
   }) {
-    assert(chatId == null || chat?.value == null || chat!.value?.id == chatId, "chatId and chat.id must be equal");
+    assert(chatId == null || chat?.value == null || chat!.value?.id == chatId, 'chatId and chat.id must be equal');
     assert(senderId == null || sender?.value == null || sender!.value?.id == senderId,
-        "senderId and sender.id must be equal");
+        'senderId and sender.id must be equal');
 
-    Profile? generatedSender =
+    final Profile? generatedSender =
         getNullableParameterOr(sender, ProfileFactory().generateFake(id: senderId, createDependencies: false));
-    Chat? generatedChat = createDependencies
+    final Chat? generatedChat = createDependencies
         ? getNullableParameterOr(chat, ChatFactory().generateFake(id: chatId, createDependencies: false))
         : null;
 
@@ -36,7 +36,7 @@ class MessageFactory extends ModelFactory<Message> {
       createdAt: createdAt ?? DateTime.now(),
       chatId: generatedChat?.id ?? randomId,
       chat: generatedChat,
-      content: content ?? faker.lorem.sentences(random.nextInt(2) + 1).join(" "),
+      content: content ?? faker.lorem.sentences(random.nextInt(2) + 1).join(' '),
       senderId: generatedSender?.id ?? randomId,
       sender: generatedSender,
       read: read ?? Random().nextBool(),

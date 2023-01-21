@@ -131,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
       chatBubbles.add(
         ChatBubble.fromMessage(
           messages[i],
-          tail: i == 0 ? true : messages[i].senderId != messages[i - 1].senderId,
+          tail: i == 0 || messages[i].senderId != messages[i - 1].senderId,
         ),
       );
     }

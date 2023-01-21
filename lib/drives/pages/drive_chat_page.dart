@@ -139,7 +139,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 .push(
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => ChatPage(
-                      chatId: chat.id!,
+                      chatId: chat.id,
                       profile: chat.ride!.rider!,
                     ),
                   ),
