@@ -159,7 +159,6 @@ class Drive extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    if (chats == null) return 0;
     return chats!.where((Chat chat) => chat.getUnreadMessagesCount() > 0).length;
   }
 

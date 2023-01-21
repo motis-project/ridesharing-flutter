@@ -51,7 +51,6 @@ class Chat extends Model {
   }
 
   int getUnreadMessagesCount() {
-    if (messages == null) return 0;
     return messages!
         .where((Message message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
         .length;
