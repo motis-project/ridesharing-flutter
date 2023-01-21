@@ -18,7 +18,7 @@ class AddressSuggestionManager {
   static const String _storageKey = 'suggestions';
   static const int _maxSuggestionsStored = 100;
 
-  static List<AddressSuggestion> _historySuggestions = [];
+  static List<AddressSuggestion> _historySuggestions = <AddressSuggestion>[];
 
   // If the search is shorter than this, the server will return an empty list anyways.
   static const int searchLengthRequirement = 3;

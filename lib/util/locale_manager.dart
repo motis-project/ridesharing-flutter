@@ -17,7 +17,7 @@ class LocaleManager with ChangeNotifier {
     await StorageManager.readData('locale').then((dynamic value) {
       value ??= Platform.localeName.split('_').first;
 
-      Locale locale =
+      final Locale locale =
           supportedLocales.firstWhere((Locale element) => element.languageCode == value, orElse: () => defaultLocale);
 
       setCurrentLocale(locale);

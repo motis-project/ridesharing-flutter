@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/models/profile.dart';
@@ -36,6 +38,6 @@ class SupabaseManager {
     }
 
     // Reload the history suggestions to show the new profile's history.
-    addressSuggestionManager.loadHistorySuggestions();
+    unawaited(addressSuggestionManager.loadHistorySuggestions());
   }
 }
