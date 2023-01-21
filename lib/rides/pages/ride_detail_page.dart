@@ -172,7 +172,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                         active: _ride!.status.activeChat(),
                       ),
                     ),
-                  ),
+                  ).then((_) => loadRide()),
                   icon: Badge(
                     badgeContent: Text(
                       _ride!.chat?.getUnreadMessagesCount().toString() ?? '',
