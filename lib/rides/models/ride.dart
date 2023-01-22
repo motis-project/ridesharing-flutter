@@ -80,7 +80,7 @@ class Ride extends Trip {
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
       startTime: DateTime.parse(json['start_time']),
       end: json['end'],
-      endPosition: Position(json['end_lat'], json['end_lng']),
+      endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
       endTime: DateTime.parse(json['end_time']),
       seats: json['seats'],
       price: parseHelper.parseDouble(json['price']),
