@@ -87,7 +87,6 @@
   "pageWelcomeRegister": "Register",
 
   "pageRegisterTitle": "Register",
-  "pageRegisterSuccess": "Account created. Please check your email.",
   "pageRegisterUsername": "Username",
   "pageRegisterUsernameHint": "We recommend you choose your real name",
   "pageRegisterUsernameValidateEmpty": "Please enter your username",
