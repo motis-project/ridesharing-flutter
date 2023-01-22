@@ -8,15 +8,15 @@ import 'address_suggestion.dart';
 class StartDestinationTimeline extends StatelessWidget {
   final TextEditingController startController;
   final TextEditingController destinationController;
-  final void Function(AddressSuggestion)? onStartSelected;
-  final void Function(AddressSuggestion)? onDestinationSelected;
+  final void Function(AddressSuggestion) onStartSelected;
+  final void Function(AddressSuggestion) onDestinationSelected;
 
   const StartDestinationTimeline({
     super.key,
     required this.startController,
     required this.destinationController,
-    this.onStartSelected,
-    this.onDestinationSelected,
+    required this.onStartSelected,
+    required this.onDestinationSelected,
   });
 
   @override

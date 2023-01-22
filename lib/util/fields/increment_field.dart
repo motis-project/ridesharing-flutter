@@ -5,10 +5,16 @@ class IncrementField extends StatefulWidget {
   final int maxValue;
   final int initialValue;
   final Widget? icon;
-  final void Function(int?)? onChanged;
+  final void Function(int) onChanged;
 
-  const IncrementField(
-      {super.key, this.minValue = 1, this.initialValue = 1, this.maxValue = 10, this.icon, this.onChanged});
+  const IncrementField({
+    super.key,
+    this.minValue = 1,
+    this.initialValue = 1,
+    this.maxValue = 10,
+    this.icon,
+    required this.onChanged,
+  });
 
   @override
   State<IncrementField> createState() => _IncrementFieldState();
@@ -36,7 +42,7 @@ class _IncrementFieldState extends State<IncrementField> {
                   ? null
                   : () {
                       _value -= 1;
-                      if (widget.onChanged != null) widget.onChanged!(_value);
+                      widget.onChanged(_value);
                     },
             ),
           ),
@@ -61,7 +67,7 @@ class _IncrementFieldState extends State<IncrementField> {
                   ? null
                   : () {
                       _value += 1;
-                      if (widget.onChanged != null) widget.onChanged!(_value);
+                      widget.onChanged(_value);
                     },
             ),
           ),

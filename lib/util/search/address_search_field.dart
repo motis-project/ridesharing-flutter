@@ -7,18 +7,18 @@ import 'address_suggestion.dart';
 class AddressSearchField extends StatelessWidget {
   final AddressType addressType;
   final TextEditingController controller;
-  final void Function(AddressSuggestion)? onSelected;
+  final void Function(AddressSuggestion) onSelected;
 
   const AddressSearchField({
     super.key,
     required this.addressType,
     required this.controller,
-    this.onSelected,
+    required this.onSelected,
   });
 
   factory AddressSearchField.start({
     required TextEditingController controller,
-    void Function(AddressSuggestion)? onSelected,
+    required void Function(AddressSuggestion) onSelected,
   }) {
     return AddressSearchField(
       addressType: AddressType.start,
@@ -29,7 +29,7 @@ class AddressSearchField extends StatelessWidget {
 
   factory AddressSearchField.destination({
     required TextEditingController controller,
-    void Function(AddressSuggestion)? onSelected,
+    required void Function(AddressSuggestion) onSelected,
   }) {
     return AddressSearchField(
       addressType: AddressType.destination,
@@ -70,7 +70,7 @@ class AddressSearchField extends StatelessWidget {
 
           if (addressSuggestion != null) {
             controller.text = addressSuggestion.name;
-            if (onSelected != null) onSelected!(addressSuggestion);
+            onSelected(addressSuggestion);
           }
         },
       ),

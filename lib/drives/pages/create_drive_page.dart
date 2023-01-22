@@ -10,6 +10,7 @@ import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/supabase.dart';
+import '../../util/trip/trip.dart';
 import '../models/drive.dart';
 import '../pages/drive_detail_page.dart';
 
@@ -245,7 +246,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             width: 150,
             child: IncrementField(
               initialValue: _seats,
-              maxValue: 8,
+              maxValue: Trip.maxSelectableSeats,
               icon: Icon(
                 Icons.chair,
                 color: Theme.of(context).colorScheme.primary,

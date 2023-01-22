@@ -4,6 +4,8 @@ import '../model.dart';
 import '../search/position.dart';
 
 abstract class Trip extends Model {
+  static const int maxSelectableSeats = 8;
+
   final String start;
   final Position startPosition;
   final DateTime startTime;
