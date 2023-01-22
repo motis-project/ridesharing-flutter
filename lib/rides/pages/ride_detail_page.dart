@@ -114,11 +114,11 @@ class _RideDetailPageState extends State<RideDetailPage> {
       if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
       widgets.add(FeaturesColumn(driver.profileFeatures!));
 
-      if (ride.status == RideStatus.approved || ride.status == RideStatus.cancelledByDriver) {
+      if (ride.status.isRealRider()) {
         widgets.add(const Divider(thickness: 1));
 
         final Set<Profile> riders = ride.drive!.rides!
-            .where((Ride otherRide) => ride.overlapsWith(otherRide))
+            .where((Ride otherRide) => otherRide.status.isRealRider() && ride.overlapsWith(otherRide))
             .map((Ride ride) => ride.rider!)
             .toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));

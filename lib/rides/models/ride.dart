@@ -203,6 +203,10 @@ extension RideStatusExtension on RideStatus {
     return this == RideStatus.approved;
   }
 
+  bool isRealRider() {
+    return this == RideStatus.approved || this == RideStatus.cancelledByDriver;
+  }
+
   bool activeChat() {
     return this == RideStatus.approved || this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
   }

@@ -10,6 +10,7 @@ import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
+import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
@@ -226,6 +227,72 @@ void main() {
 
         expect(find.byKey(const Key('requestRideButton')), findsOneWidget);
         expect(find.byType(ProfileWrapList), findsNothing);
+      });
+    });
+
+    group('Riders view', () {
+      testWidgets('it shows only visible riders that overlap', (WidgetTester tester) async {
+        final List<Ride> rideWithStatuses = RideStatus.values
+            .where((status) => !status.isRealRider())
+            .map(
+              (status) => RideFactory().generateFake(
+                status: status,
+                endTime: DateTime.now().add(const Duration(hours: 1)),
+              ),
+            )
+            .toList();
+
+        final Ride approvedRide = RideFactory().generateFake(
+          status: RideStatus.approved,
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+        );
+
+        final Ride approvedRideWithoutOverlap = RideFactory().generateFake(
+          status: RideStatus.approved,
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 3)),
+        );
+
+        final Ride cancelledByDriverRide = RideFactory().generateFake(
+          status: RideStatus.cancelledByDriver,
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+        );
+
+        final Ride cancelledByDriverRideWithoutOverlap = RideFactory().generateFake(
+          status: RideStatus.cancelledByDriver,
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 3)),
+        );
+
+        // The drive has "the" ride, but we redefine that ride later to avoid StackOverflow
+        drive = DriveFactory().generateFake(
+          driver: NullableParameter(driver),
+          rides: [ride] +
+              rideWithStatuses +
+              [approvedRide] +
+              [approvedRideWithoutOverlap] +
+              [cancelledByDriverRide] +
+              [cancelledByDriverRideWithoutOverlap],
+        );
+
+        ride = RideFactory().generateFake(
+          rider: NullableParameter(ride.rider),
+          status: RideStatus.approved,
+          drive: NullableParameter(drive),
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+        );
+
+        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+
+        await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+        await tester.pump();
+
+        final Finder profileChipFinder =
+            find.descendant(of: find.byType(ProfileWrapList), matching: find.byType(ProfileChip));
+
+        final Iterable<ProfileChip> profileChips = tester.widgetList<ProfileChip>(profileChipFinder);
+        final Set<int> profileIds = profileChips.map((ProfileChip profileChip) => profileChip.profile.id!).toSet();
+        expect(profileIds, {ride.rider!.id, approvedRide.rider!.id, cancelledByDriverRide.rider!.id});
       });
     });
 
