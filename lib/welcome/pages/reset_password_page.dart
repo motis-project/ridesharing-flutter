@@ -8,7 +8,9 @@ import '../../util/fields/password_field.dart';
 import '../../util/supabase.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  const ResetPasswordPage({super.key});
+  final Function() onPasswordReset;
+
+  const ResetPasswordPage({super.key, required this.onPasswordReset});
 
   @override
   State<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -21,11 +23,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       appBar: AppBar(
         title: Text(S.of(context).pageResetPasswordTitle),
       ),
-      body: const Center(
+      body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: ResetPasswordForm(),
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            child: ResetPasswordForm(onPasswordReset: widget.onPasswordReset),
           ),
         ),
       ),
@@ -34,7 +36,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 }
 
 class ResetPasswordForm extends StatefulWidget {
-  const ResetPasswordForm({super.key});
+  final Function() onPasswordReset;
+
+  const ResetPasswordForm({super.key, required this.onPasswordReset});
 
   @override
   State<ResetPasswordForm> createState() => _ResetPasswordFormState();
@@ -54,6 +58,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
       final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
       await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
+
+      widget.onPasswordReset();
+
       // will be redirected to login screen if successful (onAuthStateChange)
     } else {
       await fail();

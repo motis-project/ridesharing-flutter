@@ -84,7 +84,7 @@
   "pageForgotPasswordButtonSent": "Gesendet",
 
   "pageResetPasswordTitle": "Passwort zurücksetzen",
-  "pageResetPasswordButtonReset": "Passwort zurücksetzen",
+  "pageResetPasswordButtonReset": "Passwort setzen",
   "pageResetPasswordHint": "Gib dein neues Passwort ein",
   "pageResetPasswordValidateEmpty": "Bitte gib dein neues Passwort ein",
   "pageResetPasswordConfirmHint": "Bitte gib dein neues Passwort erneut ein",

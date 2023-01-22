@@ -105,7 +105,7 @@
   "pageForgotPasswordButtonSent": "Sent",
 
   "pageResetPasswordTitle": "Reset Password",
-  "pageResetPasswordButtonReset": "Reset password",
+  "pageResetPasswordButtonReset": "Set password",
   "pageResetPasswordHint": "Enter your new password",
   "pageResetPasswordValidateEmpty": "Please enter your new password",
   "pageResetPasswordConfirmHint": "Re-enter your new password",

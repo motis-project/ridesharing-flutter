@@ -92,7 +92,9 @@ class _AuthAppState extends State<AuthApp> {
 
         setState(() {
           _isLoggedIn = session != null;
-          _resettingPassword = event == AuthChangeEvent.passwordRecovery;
+          if (event == AuthChangeEvent.passwordRecovery) {
+            _resettingPassword = true;
+          }
 
           if (event == AuthChangeEvent.signedOut ||
               event == AuthChangeEvent.signedIn ||
@@ -126,7 +128,7 @@ class _AuthAppState extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     if (_resettingPassword) {
-      return const ResetPasswordPage();
+      return ResetPasswordPage(onPasswordReset: () => _resettingPassword = false);
     } else if (_isLoggedIn) {
       return const MainApp();
     } else {
