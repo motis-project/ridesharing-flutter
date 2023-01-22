@@ -351,5 +351,7 @@
   "pageChatNoChatMessage": "You can chat with your driver as soon as your ride has been accepted",
   "pageChatMessageBarHint": "Write a Message",
 
+  "pageHomeTitle": "Homepage",
+
   "appName": "Motis Ride-Sharing App"
 }

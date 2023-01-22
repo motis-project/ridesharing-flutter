@@ -12,6 +12,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
     RideEventCategory? category,
     bool? read,
     int? rideId,
+    int? senderId,
     bool createDependencies = true,
   }) {
     return RideEvent(
@@ -20,6 +21,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
       category: category ?? RideEventCategory.values[random.nextInt(RideEventCategory.values.length)],
       read: read ?? Random().nextBool(),
       rideId: rideId ?? randomId,
+      senderId: senderId ?? randomId,
     );
   }
 }
