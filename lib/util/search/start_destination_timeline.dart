@@ -21,27 +21,30 @@ class StartDestinationTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FixedTimeline(theme: CustomTimelineTheme.of(context), children: <Widget>[
-      TimelineTile(
-        contents: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: AddressSearchField.start(controller: startController, onSelected: onStartSelected),
+    return FixedTimeline(
+      theme: CustomTimelineTheme.of(context),
+      children: <Widget>[
+        TimelineTile(
+          contents: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: AddressSearchField.start(controller: startController, onSelected: onStartSelected),
+          ),
+          node: const TimelineNode(
+            indicator: CustomOutlinedDotIndicator(),
+            endConnector: CustomSolidLineConnector(),
+          ),
         ),
-        node: const TimelineNode(
-          indicator: CustomOutlinedDotIndicator(),
-          endConnector: CustomSolidLineConnector(),
+        TimelineTile(
+          contents: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: AddressSearchField.destination(controller: destinationController, onSelected: onDestinationSelected),
+          ),
+          node: const TimelineNode(
+            indicator: CustomOutlinedDotIndicator(),
+            startConnector: CustomSolidLineConnector(),
+          ),
         ),
-      ),
-      TimelineTile(
-        contents: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: AddressSearchField.destination(controller: destinationController, onSelected: onDestinationSelected),
-        ),
-        node: const TimelineNode(
-          indicator: CustomOutlinedDotIndicator(),
-          startConnector: CustomSolidLineConnector(),
-        ),
-      ),
-    ]);
+      ],
+    );
   }
 }
