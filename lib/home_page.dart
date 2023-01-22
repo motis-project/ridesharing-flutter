@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'util/buttons/button.dart';
 import 'util/chat/models/message.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Stream<List<RideEvent>> _events;
   late Stream<List<Message>> _messages;
+  bool _fullyLoaded = false;
 
   @override
   void initState() {
@@ -33,21 +35,30 @@ class _HomePageState extends State<HomePage> {
         .order('created_at')
         .map(
           (List<Map<String, dynamic>> rideEvents) => RideEvent.fromJsonList(
-              rideEvents.where((Map<String, dynamic> rideEvent) => rideEvent['sender_id'] != profileId).toList()),
+            rideEvents.where((Map<String, dynamic> rideEvent) => rideEvent['sender_id'] != profileId).toList(),
+          ),
         );
-    _messages =
-        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).eq('read', false).map(
-              (List<Map<String, dynamic>> messages) => Message.fromJsonList(
-                  messages.where((Map<String, dynamic> rideEvent) => rideEvent['sender_id'] != profileId).toList()),
-            );
+    _messages = SupabaseManager.supabaseClient
+        .from('messages')
+        .stream(primaryKey: <String>['id'])
+        .eq('read', false)
+        .order('created_at')
+        .map(
+          (List<Map<String, dynamic>> messages) => Message.fromJsonList(
+            messages.where((Map<String, dynamic> message) => message['sender_id'] != profileId).toList(),
+          ),
+        );
+    setState(() {
+      _fullyLoaded = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // title: Text(S.of(context).homePageTitle),
-          ),
+        title: Text(S.of(context).pageHomeTitle),
+      ),
       body: Center(
         child: Column(
           children: <Widget>[
@@ -90,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                   return const SizedBox(height: 12);
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  return buildcard(index, context);
+                  return;
                 },
               ),
             )
@@ -107,17 +118,17 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget buildcard(int index, context) => Container(
-      color: Colors.blueAccent,
-      width: double.infinity,
-      height: 50,
-      child: const Center(
-        child: InkWell(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) => DriveDetailPage.fromDrive(trip),
-            ),
-          ),
-        ),
-      ),
-    );
+// Widget buildcard(int index, context) => Container(
+//       color: Colors.blueAccent,
+//       width: double.infinity,
+//       height: 50,
+//       child: const Center(
+//         child: InkWell(
+//           onTap: () => Navigator.of(context).push(
+//             MaterialPageRoute(
+//               builder: (BuildContext context) => DriveDetailPage(trip),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
