@@ -73,6 +73,9 @@
   "pageRegisterButtonCreate": "Account erstellen",
   "pageRegisterButtonCreated": "Account erstellt",
 
+  "pageAfterRegistrationHi": "Hi!",
+  "pageAfterRegistrationHelpText": "Willkommen! Um die Registrierung abzuschließen, bitte öffne dein Email-Programm und bestätige deine Email-Adresse.",
+
   "pageLoginTitle": "Login",
   "pageLoginFailureCredentials": "Falsche E-Mail-Adresse oder Passwort",
   "pageLoginFailureEmailNotConfirmed": "Bitte bestätige deine E-Mail-Adresse",

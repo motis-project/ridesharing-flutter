@@ -94,6 +94,9 @@
   "pageRegisterButtonCreate": "Create Account",
   "pageRegisterButtonCreated": "Account created",
 
+  "pageAfterRegistrationHi": "Hi!",
+  "pageAfterRegistrationHelpText": "Nice to see you! To finish the registration, please open your email app and confirm your address.",
+
   "pageLoginTitle": "Login",
   "pageLoginFailureCredentials": "Invalid username or password",
   "pageLoginFailureEmailNotConfirmed": "Please confirm your email address",

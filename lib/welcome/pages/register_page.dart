@@ -90,7 +90,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
         if (mounted) {
           await Navigator.of(context)
-              .push(MaterialPageRoute(builder: (BuildContext context) => const AfterRegistrationPage()));
+              .push(MaterialPageRoute<void>(builder: (BuildContext context) => const AfterRegistrationPage()));
         }
       }
     } else {
