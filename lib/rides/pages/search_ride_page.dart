@@ -10,6 +10,7 @@ import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/ride_card.dart';
+import '../../util/trip/trip.dart';
 import '../models/ride.dart';
 import '../widgets/search_ride_filter.dart';
 
@@ -28,11 +29,11 @@ class _SearchRidePageState extends State<SearchRidePage> {
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  late DateTime _selectedDate;
-  late bool _wholeDay;
-  late int _seats;
+  DateTime _selectedDate = DateTime.now();
+  bool _wholeDay = true;
+  int _seats = 1;
 
-  final SearchRideFilter _filter = SearchRideFilter();
+  late final SearchRideFilter _filter;
 
   List<Ride>? _rideSuggestions;
 
@@ -41,9 +42,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now();
-    _wholeDay = true;
-    _seats = 1;
+    _filter = SearchRideFilter(wholeDay: _wholeDay);
     loadRides();
   }
 
@@ -53,7 +52,6 @@ class _SearchRidePageState extends State<SearchRidePage> {
     _timeController.dispose();
     _startController.dispose();
     _destinationController.dispose();
-    _filter.dispose();
     super.dispose();
   }
 
@@ -206,7 +204,6 @@ class _SearchRidePageState extends State<SearchRidePage> {
         readOnly: true,
         onTap: _showTimePicker,
         controller: _timeController,
-        validator: _dateTimeValidator,
       ),
     );
   }
@@ -218,6 +215,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
           child: Column(
             children: <Widget>[
               Image.asset('assets/pointing_up.png'),
+              const SizedBox(height: 10),
               Text(
                 S.of(context).pageSearchRideNoInput,
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -244,6 +242,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
           child: Column(
             children: <Widget>[
               Image.asset('assets/shrug.png'),
+              const SizedBox(height: 10),
               Text(
                 S.of(context).pageSearchRideEmpty,
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -289,22 +288,42 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Expanded(child: buildDatePicker()),
-        const SizedBox(width: 10),
+        if (_wholeDay) ...<Widget>[
+          Row(
+            children: <Widget>[
+              IconButton(
+                onPressed: _selectedDate.isSameDayAs(DateTime.now())
+                    ? null
+                    : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
+                icon: const Icon(Icons.chevron_left),
+              ),
+              Text(localeManager.formatDate(_selectedDate)),
+              IconButton(
+                onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          ),
+          const Expanded(child: SizedBox(height: 59))
+        ],
         if (!_wholeDay) ...<Widget>[
+          Expanded(child: buildDatePicker()),
+          const SizedBox(width: 10),
           Expanded(child: buildTimePicker()),
           const SizedBox(width: 10),
         ],
-        Expanded(
-          child: Row(
-            children: <Widget>[
-              Checkbox(
-                value: _wholeDay,
-                onChanged: (bool? value) => setState(() => _wholeDay = value!),
-              ),
-              const Text('Whole day')
-            ],
-          ),
+        Row(
+          children: <Widget>[
+            Checkbox(
+              value: _wholeDay,
+              onChanged: (bool? value) => setState(() {
+                _wholeDay = value!;
+                _filter.wholeDay = _wholeDay;
+              }),
+            ),
+            Text(S.of(context).pageSearchRideWholeDay),
+            const SizedBox(width: 10)
+          ],
         ),
       ],
     );
@@ -315,7 +334,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
       child: SizedBox(
         width: 150,
         child: IncrementField(
-          maxValue: 8,
+          maxValue: Trip.maxSelectableSeats,
           icon: Icon(
             Icons.chair,
             color: Theme.of(context).colorScheme.primary,

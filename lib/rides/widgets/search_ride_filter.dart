@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../account/models/profile.dart';
@@ -12,8 +11,6 @@ import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/ride.dart';
 
 class SearchRideFilter {
-  bool wholeDay;
-
   static const List<Feature> _commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
@@ -25,8 +22,6 @@ class SearchRideFilter {
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
   static const SearchRideSorting _defaultSorting = SearchRideSorting.relevance;
-  static const String _defaultDeviationHours = '12';
-  static const String _defaultDeviationDays = '1';
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -39,9 +34,8 @@ class SearchRideFilter {
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
   late SearchRideSorting _sorting;
-  final TextEditingController _maxDeviationController = TextEditingController();
 
-  String get _defaultDeviation => wholeDay ? _defaultDeviationDays : _defaultDeviationHours;
+  bool _wholeDay;
 
   void setDefaultFilterValues() {
     _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
@@ -52,12 +46,20 @@ class SearchRideFilter {
     _minReliabilityRating = _defaultRating;
     _minHospitalityRating = _defaultRating;
     _selectedFeatures = <Feature>[..._defaultFeatures];
-    _maxDeviationController.text = _defaultDeviation;
     _sorting = _defaultSorting;
   }
 
-  SearchRideFilter({this.wholeDay = true}) {
+  SearchRideFilter({required bool wholeDay}) : _wholeDay = wholeDay {
     setDefaultFilterValues();
+  }
+
+  bool get wholeDay => _wholeDay;
+
+  set wholeDay(bool wholeDay) {
+    _wholeDay = wholeDay;
+    if (_wholeDay && _sorting == SearchRideSorting.timeProximity) {
+      _sorting = SearchRideFilter._defaultSorting;
+    }
   }
 
   Widget _filterCategory(BuildContext context, String title, Widget content) {
@@ -123,7 +125,12 @@ class SearchRideFilter {
           ],
           TextButton(
             onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
-            child: Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
+            child: Row(
+              children: <Widget>[
+                Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
+                Icon(_isRatingExpanded ? Icons.expand_less : Icons.expand_more)
+              ],
+            ),
           ),
         ],
       ),
@@ -192,29 +199,13 @@ class SearchRideFilter {
                 _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
               }
             }),
-            child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeviationFilter(BuildContext context) {
-    return _filterCategory(
-      context,
-      S.of(context).searchRideFilterDeviation,
-      Row(
-        children: <Widget>[
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: TextField(
-              controller: _maxDeviationController,
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+            child: Row(
+              children: <Widget>[
+                Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
+                Icon(_isFeatureListExpanded ? Icons.expand_less : Icons.expand_more)
+              ],
             ),
           ),
-          Text(wholeDay ? S.of(context).searchRideFilterDeviationDays : S.of(context).searchRideFilterDeviationHours),
         ],
       ),
     );
@@ -226,14 +217,17 @@ class SearchRideFilter {
       S.of(context).searchRideFilterSorting,
       DropdownButton<SearchRideSorting>(
         value: _sorting,
-        items: SearchRideSorting.values
-            .map(
-              (SearchRideSorting sorting) => DropdownMenuItem<SearchRideSorting>(
-                value: sorting,
-                child: Text(sorting.getDescription(context)),
-              ),
-            )
-            .toList(),
+        items: SearchRideSorting.values.map((SearchRideSorting sorting) {
+          final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
+          return DropdownMenuItem<SearchRideSorting>(
+            enabled: enabled,
+            value: sorting,
+            child: Text(
+              sorting.getDescription(context),
+              style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
+            ),
+          );
+        }).toList(),
         onChanged: (SearchRideSorting? value) => innerSetState(
           () => _sorting = value!,
         ),
@@ -257,9 +251,6 @@ class SearchRideFilter {
                     children: <Widget>[
                       _buildRatingFilter(context, innerSetState),
                       _buildFeaturesFilter(context, innerSetState),
-                      _buildDeviationFilter(
-                        context,
-                      ),
                       _buildSortingFilter(context, innerSetState),
                     ],
                   ),
@@ -305,7 +296,6 @@ class SearchRideFilter {
         _minReliabilityRating == _defaultRating &&
         _minHospitalityRating == _defaultRating;
     final bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
-    final bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
 
     final List<Widget> widgets = <Widget>[];
     if (!isRatingDefault) {
@@ -375,16 +365,6 @@ class SearchRideFilter {
           Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
-    if (!isDeviationDefault) {
-      final Widget deviationWidget = Row(
-        children: <Widget>[
-          const Icon(Icons.schedule),
-          const SizedBox(width: 6),
-          Text('± ${_maxDeviationController.text}')
-        ],
-      );
-      widgets.add(deviationWidget);
-    }
     final Widget sortingWidget = Row(
       children: <Widget>[const Icon(Icons.sort), Text(_sorting.getDescription(context))],
     );
@@ -437,30 +417,21 @@ class SearchRideFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            bool maxDeviationSatisfied;
-            if (wholeDay) {
-              maxDeviationSatisfied = (date.day - ride.startTime.day).abs() < int.parse(_maxDeviationController.text);
-            } else {
-              maxDeviationSatisfied =
-                  date.difference(ride.startTime).abs() < Duration(hours: int.parse(_maxDeviationController.text));
-            }
-            return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
+            final bool wholeDaySatisfied =
+                !_wholeDay || date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
+            return ratingSatisfied && featuresSatisfied && wholeDaySatisfied;
           },
         )
         .sorted(_sorting.sortFunction(date))
         .toList();
   }
-
-  void dispose() {
-    _maxDeviationController.dispose();
-  }
 }
 
 enum SearchRideSorting {
   relevance,
-  timeProximity,
   travelDuration,
   price,
+  timeProximity,
 }
 
 extension SearchRideSortingExtension on SearchRideSorting {
@@ -468,30 +439,36 @@ extension SearchRideSortingExtension on SearchRideSorting {
     switch (this) {
       case SearchRideSorting.relevance:
         return S.of(context).searchRideSortingRelevance;
-      case SearchRideSorting.timeProximity:
-        return S.of(context).searchRideSortingTimeProximity;
       case SearchRideSorting.travelDuration:
         return S.of(context).searchRideSortingTravelDuration;
       case SearchRideSorting.price:
         return S.of(context).searchRideSortingPrice;
+      case SearchRideSorting.timeProximity:
+        return S.of(context).searchRideSortingTimeProximity;
     }
   }
 
   int Function(Ride, Ride) sortFunction(DateTime date) {
-    int timeProximityFunc(Ride ride1, Ride ride2) =>
-        (date.difference(ride1.startTime).abs() - date.difference(ride2.startTime).abs()).inMinutes;
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
+    int timeProximityFunc(Ride ride1, Ride ride2) =>
+        (date.difference(ride1.startTime).abs() - date.difference(ride2.startTime).abs()).inMinutes;
     switch (this) {
       case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>
-            timeProximityFunc(ride1, ride2) + travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2);
-      case SearchRideSorting.timeProximity:
-        return timeProximityFunc;
+            travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2) + timeProximityFunc(ride1, ride2);
       case SearchRideSorting.travelDuration:
         return travelDurationFunc;
       case SearchRideSorting.price:
         return priceFunc;
+      case SearchRideSorting.timeProximity:
+        return timeProximityFunc;
     }
+  }
+}
+
+extension CustomDateTime on DateTime {
+  bool isSameDayAs(DateTime other) {
+    return day == other.day && month == other.month && year == other.year;
   }
 }

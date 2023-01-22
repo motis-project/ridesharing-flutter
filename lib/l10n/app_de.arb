@@ -271,9 +271,10 @@
   "pageSearchRideTitle": "Mitfahrt suchen",
   "pageSearchRideNoInput": "Gib dein Start und Ziel ein",
   "pageSearchRideEmpty": "Nichts zu sehen",
-  "pageSearchRideRelaxRestrictions": "Bitte locker deine Suchbeschränkungen.",
+  "pageSearchRideRelaxRestrictions": "Bitte lockere deine Suchbeschränkungen.",
   "pageSearchRideNoResults": "Es tut uns leid, wir konnten für diese Route keine Mitfahrgelegenheit finden.",
   "pageSearchRideTooltipFilter": "Filter",
+  "pageSearchRideWholeDay": "Ganztägig",
 
   "searchRideFilterMinimumRating": "Mindest-Bewertung",
   "searchRideFilterFeatures": "Features",

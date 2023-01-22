@@ -389,6 +389,7 @@
   "pageSearchRideRelaxRestrictions": "Relax your search restrictions.",
   "pageSearchRideNoResults": "We're sorry, we couldn't find a ride for this route.",
   "pageSearchRideTooltipFilter": "Filter",
+  "pageSearchRideWholeDay": "Whole day",
 
   "searchRideFilterFeatures": "Features",
   "searchRideFilterFeaturesSelectTooltip": "Select",
