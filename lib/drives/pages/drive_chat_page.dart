@@ -23,7 +23,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
   @override
   void initState() {
-    _ridesWithChat = widget.drive.rides!.where((Ride ride) => ride.chat != null && ride.status.activeChat()).toList();
+    _ridesWithChat = widget.drive.ridesWithChat!;
 
     final List<int> ids = _ridesWithChat.map((Ride ride) => ride.chatId!).toList();
     _messagesStream =
