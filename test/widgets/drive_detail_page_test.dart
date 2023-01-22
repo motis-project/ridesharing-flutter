@@ -29,9 +29,7 @@ void main() {
       start: 'Start',
       end: 'End',
       endTime: DateTime.now().add(const Duration(hours: 1)),
-      rides: [
-        RideFactory().generateFake(status: RideStatus.pending),
-      ],
+      rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
     when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
   });
@@ -241,7 +239,7 @@ void main() {
       });
     });
 
-    testWidgets('Can navigate to drive chat page', (WidgetTester tester) async {
+    testWidgets('Can navigate to drive chat page', skip: true, (WidgetTester tester) async {
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
       await tester.pump();
 

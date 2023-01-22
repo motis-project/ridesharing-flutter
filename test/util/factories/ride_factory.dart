@@ -1,8 +1,10 @@
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
+import 'chat_factory.dart';
 import 'drive_factory.dart';
 import 'model_factory.dart';
 import 'profile_factory.dart';
@@ -26,19 +28,26 @@ class RideFactory extends TripFactory<Ride> {
     int? driveId,
     NullableParameter<Drive>? drive,
     int? riderId,
-    NullableParameter<Profile>? rider,
+    NullableParameter<Profile>? ride,
+    int? chatId,
+    NullableParameter<Chat>? chat,
     bool createDependencies = true,
   }) {
     assert(driveId == null || drive?.value == null || drive!.value?.id == driveId);
-    assert(riderId == null || rider?.value == null || rider!.value?.id == riderId);
+    assert(riderId == null || ride?.value == null || ride!.value?.id == riderId);
+    assert(chatId == null || chat?.value == null || chat!.value?.id == chatId);
 
     final Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
     final Profile? generatedRider =
-        getNullableParameterOr(rider, ProfileFactory().generateFake(id: riderId, createDependencies: false));
+        getNullableParameterOr(ride, ProfileFactory().generateFake(id: riderId, createDependencies: false));
+    final Chat? generatedChat =
+        getNullableParameterOr(chat, ChatFactory().generateFake(id: chatId, createDependencies: false));
+
+    final int generatedId = id ?? randomId;
 
     return Ride(
-      id: id ?? randomId,
+      id: generatedId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
@@ -54,6 +63,8 @@ class RideFactory extends TripFactory<Ride> {
       drive: generatedDrive,
       riderId: generatedRider?.id ?? randomId,
       rider: generatedRider,
+      chatId: generatedChat?.id ?? randomId,
+      chat: generatedChat,
     );
   }
 }

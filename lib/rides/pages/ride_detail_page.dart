@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -8,6 +9,7 @@ import '../../account/widgets/reviews_preview.dart';
 import '../../drives/models/drive.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/custom_banner.dart';
+import '../../util/chat/pages/chat_page.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/supabase.dart';
@@ -48,6 +50,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
         *,
         drive: drive_id(
           $_driveQuery
+        ),
+        chat: chat_id(
+          *,
+          messages(*)
         )
       ''';
 
@@ -154,13 +160,33 @@ class _RideDetailPageState extends State<RideDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageRideDetailTitle),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.chat),
-            tooltip: S.of(context).openChat,
-          )
-        ],
+        actions: _fullyLoaded
+            ? <Widget>[
+                IconButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => ChatPage(
+                        chatId: _ride!.chat?.id,
+                        profile: _ride!.drive!.driver!,
+                        active: _ride!.status.activeChat(),
+                      ),
+                    ),
+                  ).then((_) => loadRide()),
+                  icon: Badge(
+                    badgeContent: Text(
+                      _ride!.chat?.getUnreadMessagesCount().toString() ?? '',
+                      style: const TextStyle(color: Colors.white),
+                      textScaleFactor: 1.0,
+                    ),
+                    showBadge: _ride!.chat != null && _ride!.chat!.getUnreadMessagesCount() != 0,
+                    position: BadgePosition.topEnd(top: -12),
+                    child: const Icon(Icons.chat),
+                  ),
+                  tooltip: S.of(context).openChat,
+                )
+              ]
+            : null,
       ),
       body: _ride == null
           ? const Center(child: CircularProgressIndicator())
@@ -297,11 +323,15 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
   Future<void> confirmRequest(Ride ride) async {
     ride.status = RideStatus.pending;
-    final Map<String, dynamic> data =
-        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select(_rideQuery).single();
-    setState(() {
-      _ride = Ride.fromJson(data);
-    });
+
+    // chat gets created by trigger, somehow it does not get returned immediately by the insert
+    final Map<String, dynamic> idHash =
+        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
+
+    // TODO: Use copyWith and make id final again
+    ride.id = idHash['id'] as int;
+
+    await loadRide();
     //todo: send notification to driver
   }
 

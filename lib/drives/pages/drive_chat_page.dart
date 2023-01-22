@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../account/models/profile.dart';
+import '../../account/widgets/avatar.dart';
 import '../../rides/models/ride.dart';
-import '../../util/profiles/profile_widget.dart';
+import '../../util/chat/models/chat.dart';
+import '../../util/chat/models/message.dart';
+import '../../util/chat/pages/chat_page.dart';
 import '../../util/supabase.dart';
 import '../models/drive.dart';
 
@@ -16,107 +18,138 @@ class DriveChatPage extends StatefulWidget {
 }
 
 class _DriveChatPageState extends State<DriveChatPage> {
-  late Drive _drive;
-  bool _fullyLoaded = false;
+  late Stream<List<Message>> _messagesStream;
+  late List<Ride> _ridesWithChat;
 
   @override
   void initState() {
+    _ridesWithChat = widget.drive.ridesWithChat!;
+
+    final List<int> ids = _ridesWithChat.map((Ride ride) => ride.chatId!).toList();
+    _messagesStream =
+        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(
+              (List<Map<String, dynamic>> messages) => Message.fromJsonList(
+                messages.where((Map<String, dynamic> element) => ids.contains(element['chat_id'])).toList(),
+              ),
+            );
     super.initState();
-    setState(() {
-      _drive = widget.drive;
-    });
-    loadDrive();
+  }
+
+  @override
+  void dispose() {
+    _messagesStream.drain();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> widgets = <Widget>[];
-    if (_fullyLoaded) {
-      final Set<Profile> riders = _drive.approvedRides!.map((Ride ride) => ride.rider!).toSet();
-      final List<Ride> pendingRides = _drive.pendingRides!.toList();
-      if (riders.isEmpty && pendingRides.isEmpty) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(S.of(context).pageDriveChatTitle),
-          ),
-          body: Center(
-            child: Text(S.of(context).pageDriveChatEmptyMessage),
-          ),
-        );
-      } else {
-        if (riders.isNotEmpty) {
-          final List<Widget> riderColumn = <Widget>[
-            const SizedBox(height: 5.0),
-            Text(
-              S.of(context).pageDriveChatRiderHeadline,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 10.0),
-            _riderList(riders),
-          ];
-          widgets.addAll(riderColumn);
-        }
-        widgets.add(const SizedBox(height: 10.0));
-      }
-    } else {
-      widgets.add(const SizedBox(height: 10));
-      widgets.add(const Center(child: CircularProgressIndicator()));
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveChatTitle),
       ),
-      body: RefreshIndicator(
-        onRefresh: loadDrive,
-        child: ListView.separated(
-          itemCount: widgets.length,
-          itemBuilder: (BuildContext context, int index) {
-            return widgets[index];
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const SizedBox(height: 10);
+      body: _ridesWithChat.isNotEmpty
+          ? StreamBuilder<List<Message>>(
+              stream: _messagesStream,
+              builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
+                if (snapshot.hasData) {
+                  for (final Message message in snapshot.data!) {
+                    final Chat chat = _ridesWithChat.firstWhere((Ride ride) => ride.chatId == message.chatId).chat!;
+                    if (chat.messages!.contains(message)) {
+                      chat.messages!.remove(message);
+                    }
+                    chat.messages!.add(message);
+                  }
+                  final List<Card> widgets = _ridesWithChat.map<Card>((Ride ride) => _buildChatWidget(ride)).toList();
+                  return ListView.separated(
+                    itemCount: widgets.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return widgets[index];
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 10);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset('assets/chat_shrug.png', scale: 8),
+                const SizedBox(height: 16),
+                Text(
+                  S.of(context).pageChatEmptyTitle,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    S.of(context).pageDriveChatEmptyMessage,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Card _buildChatWidget(Ride ride) {
+    final Chat chat = ride.chat!;
+
+    chat.messages!.sort((Message a, Message b) => b.createdAt!.compareTo(a.createdAt!));
+    final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
+    final Widget? subtitle = lastMessage == null
+        ? null
+        : Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              if (lastMessage.isFromCurrentUser)
+                Icon(
+                  Icons.done_all,
+                  size: 18,
+                  color: lastMessage.read
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                ),
+              Text(lastMessage.content),
+            ],
+          );
+    return Card(
+      child: InkWell(
+        child: ListTile(
+          leading: Avatar(ride.rider!),
+          title: Text(ride.rider!.username),
+          subtitle: subtitle,
+          trailing: chat.getUnreadMessagesCount() == 0
+              ? null
+              : Container(
+                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      chat.getUnreadMessagesCount().toString(),
+                    ),
+                  ),
+                ),
+          onTap: () {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ChatPage(
+                      chatId: chat.id,
+                      profile: ride.rider!,
+                    ),
+                  ),
+                )
+                .then((_) => setState(() {}));
           },
         ),
       ),
     );
-  }
-
-  Widget _riderList(Set<Profile> riders) {
-    Widget ridersColumn = Container();
-    if (riders.isNotEmpty) {
-      ridersColumn = Column(
-        children: List<Padding>.generate(
-          riders.length,
-          (int index) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-            child: ProfileWidget(
-              riders.elementAt(index),
-              //TODO go to chat
-              onTap: () {},
-              actionWidget: const Icon(
-                Icons.chat,
-                color: Colors.black,
-                size: 36.0,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-    return ridersColumn;
-  }
-
-  Future<void> loadDrive() async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
-      *,
-      rides(
-        *,
-        rider: rider_id(*)
-      )
-    ''').eq('id', widget.drive.id).single();
-    setState(() {
-      _drive = Drive.fromJson(data);
-      _fullyLoaded = true;
-    });
   }
 }
