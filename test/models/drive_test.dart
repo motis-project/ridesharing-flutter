@@ -173,6 +173,7 @@ void main() {
       expect(json['cancelled'], drive.cancelled);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
+      expect(json['hide_in_list_view'], drive.hideInListView);
       expect(json.keys.length, 12);
     });
   });
@@ -289,13 +290,6 @@ void main() {
       expect(drive.pendingRides, [ride1, ride2, ride3]);
     });
   });
-  group('Drive.getDrivesOfUser', () {
-    test('gets a list of drives', () async {
-      when(driveProcessor.processUrl(any)).thenReturn(jsonEncode(DriveFactory().generateFakeJsonList(length: 3)));
-      final List<Drive> drives = await Drive.getDrivesOfUser(2);
-      expect(drives.length, 3);
-    });
-  });
   group('Drive.userHasDriveAtTimeRange', () {
     test('returns true when there is a Drive at set time', () async {
       when.call(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
@@ -361,7 +355,40 @@ void main() {
           false);
     });
   });
-
+  group('Drive.shouldShowInListView', () {
+    test('returns true if it should show in ListView', () {
+      final Drive drive = DriveFactory().generateFake(
+        cancelled: false,
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(drive.shouldShowInListView(past: false), true);
+    });
+    test('returns false because of hideInListView', () {
+      final Drive drive = DriveFactory().generateFake(
+        hideInListView: true,
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(drive.shouldShowInListView(past: false), false);
+    });
+    test('returns true past finished', () {
+      final Drive drive = DriveFactory().generateFake(
+        cancelled: false,
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
+      expect(drive.shouldShowInListView(past: true), true);
+    });
+    test('returns false in past', () {
+      final Drive drive = DriveFactory().generateFake(
+        cancelled: true,
+        startTime: DateTime.now().subtract(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(drive.shouldShowInListView(past: true), false);
+    });
+  });
   group('Drive.duration', () {
     test('returns the duration of a drive', () {
       final Drive drive = DriveFactory().generateFake(
