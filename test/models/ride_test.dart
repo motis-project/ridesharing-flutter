@@ -199,7 +199,7 @@ void main() {
     });
   });
   group('Ride.userHasRideAtTimeRange', () {
-    test('returns true when there is a approved not finished Ride at set time', () async {
+    test('returns true when there is a approved not finished Ride at the time range', () async {
       when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
             RideFactory()
                 .generateFake(
@@ -283,7 +283,7 @@ void main() {
       );
       expect(ride.shouldShowInListView(past: false), false);
     });
-    test('returns true past finished', () {
+    test('returns true for past finsihed ride', () {
       final Ride ride = RideFactory().generateFake(
         status: RideStatus.approved,
         startTime: DateTime.now().subtract(const Duration(hours: 4)),
@@ -291,7 +291,7 @@ void main() {
       );
       expect(ride.shouldShowInListView(past: true), true);
     });
-    test('returns false in past', () {
+    test('returns false in ongoing ride', () {
       final Ride ride = RideFactory().generateFake(
         status: RideStatus.pending,
         startTime: DateTime.now().subtract(const Duration(hours: 2)),
