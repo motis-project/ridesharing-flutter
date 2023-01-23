@@ -175,7 +175,29 @@ void main() {
       expect(json.keys.length, 14);
     });
   });
-  group('Ride.toJsonforApi', () {});
+  group('Ride.toJsonforApi', () {
+    test('returns a JsonforApi representation of the ride', () async {
+      final Ride ride = RideFactory().generateFake();
+      final Map<String, dynamic> json = ride.toJsonForApi();
+      expect(json['start'], ride.start);
+      expect(json['start_lat'], ride.startPosition.lat);
+      expect(json['start_lng'], ride.startPosition.lng);
+      expect(json['start_time'], ride.startTime.toString());
+      expect(json['end'], ride.end);
+      expect(json['end_lat'], ride.endPosition.lat);
+      expect(json['end_lng'], ride.endPosition.lng);
+      expect(json['end_time'], ride.endTime.toString());
+      expect(json['status'], ride.status.index);
+      expect(json['seats'], ride.seats);
+      expect(json['price'], ride.price);
+      expect(json['drive_id'], ride.driveId);
+      expect(json['rider_id'], ride.riderId);
+      expect(json['hide_in_list_view'], ride.hideInListView);
+      expect(json['id'], ride.id);
+      expect(json['created_at'], ride.createdAt?.toIso8601String());
+      expect(json.keys.length, 18);
+    });
+  });
   group('Ride.userHasRideAtTimeRange', () {
     test('returns true when there is a approved not finished Ride at set time', () async {
       when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
