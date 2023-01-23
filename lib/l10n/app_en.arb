@@ -352,6 +352,51 @@
   "pageChatMessageBarHint": "Write a Message",
 
   "pageHomeTitle": "Homepage",
+  "pageHomeSearchButton": "Search Ride",
+  "pageHomeCreateButton": "Create Drive",
+
+  "rideEventPendingTitle": "Ride requested!",
+  "rideEventApprovedTitle": "Ride approved!",
+  "rideEventRejectedTitle": "Ride rejected!",
+  "rideEventWithdrawnTitle": "Ride withdrawn!",
+  "rideEventCancelledByDriverTitle": "Ride cancelled!",
+  "rideEventCancelledByRiderTitle": "Ride cancelled!",
+  "rideEventPendingMessage": "{username} has requested a ride",
+  "@rideEventPendingMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "rideEventApprovedMessage": "{username} has approved your ride",
+  "@rideEventApprovedMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "rideEventRejectedMessage": "{username} has rejected your ride",
+  "@rideEventRejectedMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "rideEventWithdrawnMessage": "{username} has withdrawn his ride",
+  "@rideEventWithdrawnMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "rideEventCancelledByDriverMessage": "{username} has cancelled his drive",
+  "@rideEventCancelledByDriverMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+ "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
+  "@rideEventCancelledByRiderMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
 
   "appName": "Motis Ride-Sharing App"
 }

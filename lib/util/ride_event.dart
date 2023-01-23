@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../rides/models/ride.dart';
 import 'model.dart';
 import 'supabase.dart';
 
 class RideEvent extends Model {
   RideEventCategory category;
   bool read;
-  int rideId;
-  int senderId;
+  final int rideId;
+  final Ride? ride;
 
   RideEvent({
     super.id,
@@ -16,7 +17,7 @@ class RideEvent extends Model {
     required this.category,
     this.read = false,
     required this.rideId,
-    required this.senderId,
+    this.ride,
   });
 
   factory RideEvent.fromJson(Map<String, dynamic> json) {
@@ -24,9 +25,9 @@ class RideEvent extends Model {
       id: json['id'],
       createdAt: DateTime.parse(json['created_at']),
       rideId: json['ride_id'],
+      ride: json.containsKey('ride') ? Ride.fromJson(json['ride']) : null,
       category: RideEventCategory.values.elementAt(json['category'] as int),
       read: json['read'],
-      senderId: json['sender_id'],
     );
   }
 
@@ -49,20 +50,48 @@ class RideEvent extends Model {
     await SupabaseManager.supabaseClient.rpc('mark_ride_event_as_read', params: <String, dynamic>{'ride_event_id': id});
   }
 
-  Future<bool> isForCurrentUser() async {
+  bool isForCurrentUser() {
     final int profileId = SupabaseManager.getCurrentProfile()!.id!;
     if (category == RideEventCategory.approved ||
         category == RideEventCategory.cancelledByDriver ||
         category == RideEventCategory.rejected) {
-      final int riderId =
-          await SupabaseManager.supabaseClient.from('rides').select('rider_id').eq('id', rideId).single();
-      return profileId != riderId;
+      return ride!.rider!.id == profileId;
     } else {
-      final int driveId =
-          await SupabaseManager.supabaseClient.from('rides').select('drive_id').eq('id', rideId).single();
-      final int driverId =
-          await SupabaseManager.supabaseClient.from('drives').select('driver_id').eq('id', driveId).single();
-      return driverId != profileId;
+      return ride!.drive!.driver!.id == profileId;
+    }
+  }
+
+  String getTitle(BuildContext context) {
+    switch (category) {
+      case RideEventCategory.pending:
+        return S.of(context).rideEventPendingTitle;
+      case RideEventCategory.approved:
+        return S.of(context).rideEventApprovedTitle;
+      case RideEventCategory.rejected:
+        return S.of(context).rideEventRejectedTitle;
+      case RideEventCategory.cancelledByDriver:
+        return S.of(context).rideEventCancelledByDriverTitle;
+      case RideEventCategory.cancelledByRider:
+        return S.of(context).rideEventCancelledByRiderTitle;
+      case RideEventCategory.withdrawn:
+        return S.of(context).rideEventWithdrawnTitle;
+    }
+  }
+
+  String getMessage(BuildContext context) {
+    switch (category) {
+      case RideEventCategory.pending:
+        return S.of(context).rideEventPendingMessage(ride!.rider!.username);
+      case RideEventCategory.approved:
+        return S.of(context).rideEventApprovedMessage(ride!.drive!.driver!.username);
+      case RideEventCategory.rejected:
+        return S.of(context).rideEventRejectedMessage(ride!.drive!.driver!.username);
+      case RideEventCategory.cancelledByDriver:
+        return S.of(context).rideEventCancelledByDriverMessage(ride!.drive!.driver!.username);
+      case RideEventCategory.cancelledByRider:
+        return S.of(context).rideEventCancelledByRiderMessage(ride!.rider!.username);
+      case RideEventCategory.withdrawn:
+        return S.of(context).rideEventWithdrawnMessage(ride!.rider!.username);
     }
   }
 
@@ -74,7 +103,7 @@ class RideEvent extends Model {
 
 // Stored in the database as an integer
 // The order of the enum values is important
-enum RideEventCategory { pending, approved, rejected, cancelledByDriver, cancelledByRider, withdrawnByRider }
+enum RideEventCategory { pending, approved, rejected, cancelledByDriver, cancelledByRider, withdrawn }
 
 extension CategoryExtension on RideEventCategory {
   String getDescription(BuildContext context) {
@@ -89,7 +118,7 @@ extension CategoryExtension on RideEventCategory {
         return S.of(context).modelProfileFeatureNoSmoking;
       case RideEventCategory.cancelledByRider:
         return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.withdrawnByRider:
+      case RideEventCategory.withdrawn:
         return S.of(context).modelProfileFeatureNoSmoking;
     }
   }
