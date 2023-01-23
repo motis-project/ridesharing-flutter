@@ -373,7 +373,7 @@ void main() {
           await tester.pumpAndSettle();
 
           // Verify that the ride was requested (but no way to verify body right now)
-          // One call to update the ride, one call to load it again
+          // One call to insert the ride, one call to load it again
           verify(processor.processUrl(argThat(startsWith('/rest/v1/rides')))).called(2);
 
           expect(find.byKey(const Key('rideRequestedBanner')), findsOneWidget);
