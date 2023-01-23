@@ -1,8 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/ride_event.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
+import '../util/factories/drive_factory.dart';
+import '../util/factories/model_factory.dart';
+import '../util/factories/profile_factory.dart';
 import '../util/factories/ride_event_factory.dart';
+import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
 
 void main() {
@@ -18,13 +24,139 @@ void main() {
         read: false,
       );
       await rideEvent.markAsRead();
-      SupabaseManager.supabaseClient.from('messages').update({
-        'read': true,
-      }).eq('id', rideEvent.id);
       expect(rideEvent.read, true);
     });
   });
 
+  group('RideEvent.isForCurrentUser', () {
+    final Profile user = ProfileFactory().generateFake(id: 1);
+    final Drive driveWithUserAsDriver = DriveFactory().generateFake(
+      driverId: user.id,
+    );
+    final Drive driveWithUserNotDriver = DriveFactory().generateFake(
+      id: 1,
+      driverId: user.id! + 1,
+    );
+    final RideEvent rideEventWithUserAsDriver = RideEventFactory().generateFake(
+      ride: NullableParameter(
+        RideFactory().generateFake(drive: NullableParameter(driveWithUserAsDriver)),
+      ),
+    );
+    final RideEvent rideEventWithUserNotDriver = RideEventFactory().generateFake(
+      ride: NullableParameter(
+        RideFactory().generateFake(drive: NullableParameter(driveWithUserNotDriver)),
+      ),
+    );
+    final RideEvent rideEventWithUserAsRider = RideEventFactory().generateFake(
+      ride: NullableParameter(RideFactory().generateFake(
+        drive: NullableParameter(driveWithUserNotDriver),
+        riderId: user.id,
+      )),
+    );
+    final RideEvent rideEventWithUserNotRider = RideEventFactory().generateFake(
+      ride: NullableParameter(RideFactory().generateFake(
+        drive: NullableParameter(driveWithUserNotDriver),
+        riderId: user.id! + 1,
+      )),
+    );
+    setUp(() {
+      SupabaseManager.setCurrentProfile(user);
+    });
+    test('returns true if rideEvent is for current user', () async {
+      final RideEvent rideEventApproved = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+        )),
+        category: RideEventCategory.approved,
+      );
+
+      final RideEvent rideEventRejected = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+        )),
+        category: RideEventCategory.rejected,
+      );
+      final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+        )),
+        category: RideEventCategory.cancelledByDriver,
+      );
+      final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.cancelledByRider,
+      );
+      final RideEvent rideEventPending = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.pending,
+      );
+      final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.withdrawn,
+      );
+      expect(rideEventApproved.isForCurrentUser(), true);
+      expect(rideEventRejected.isForCurrentUser(), true);
+      expect(rideEventCancelledByDriver.isForCurrentUser(), true);
+      expect(rideEventCancelledByRider.isForCurrentUser(), true);
+      expect(rideEventPending.isForCurrentUser(), true);
+      expect(rideEventWithdrawn.isForCurrentUser(), true);
+    });
+
+    test('returns false if rideEvent is not current user', () async {
+      final RideEvent rideEventApproved = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.approved,
+      );
+
+      final RideEvent rideEventRejected = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.rejected,
+      );
+      final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          drive: NullableParameter(driveWithUserAsDriver),
+        )),
+        category: RideEventCategory.cancelledByDriver,
+      );
+      final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+          drive: NullableParameter(driveWithUserNotDriver),
+        )),
+        category: RideEventCategory.cancelledByRider,
+      );
+      final RideEvent rideEventPending = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+          drive: NullableParameter(driveWithUserNotDriver),
+        )),
+        category: RideEventCategory.pending,
+      );
+      final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
+        ride: NullableParameter(RideFactory().generateFake(
+          riderId: user.id,
+          drive: NullableParameter(driveWithUserNotDriver),
+        )),
+        category: RideEventCategory.withdrawn,
+      );
+      expect(rideEventApproved.isForCurrentUser(), false);
+      expect(rideEventRejected.isForCurrentUser(), false);
+      expect(rideEventCancelledByDriver.isForCurrentUser(), false);
+      expect(rideEventCancelledByRider.isForCurrentUser(), false);
+      expect(rideEventPending.isForCurrentUser(), false);
+      expect(rideEventWithdrawn.isForCurrentUser(), false);
+    });
+  });
   group('RideEvent.fromJson', () {
     test('parses a message from json', () {
       final Map<String, dynamic> json = {
@@ -38,8 +170,19 @@ void main() {
       expect(rideEvent.id, 1);
       expect(rideEvent.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
       expect(rideEvent.rideId, 2);
-      expect(rideEvent.category, RideEventCategory.approved.index);
-      expect(rideEvent.read, true);
+      expect(rideEvent.category, RideEventCategory.approved);
+      expect(rideEvent.read, false);
+    });
+    test('can handle ride', () {
+      final Map<String, dynamic> json = {
+        'id': 1,
+        'created_at': '2021-01-01T00:00:00.000Z',
+        'category': RideEventCategory.approved.index,
+        'ride_id': 2,
+        'read': false,
+        'ride': RideFactory().generateFake(id: 2).toJsonForApi(),
+      };
+      expect(json['ride'], isNotNull);
     });
   });
 
@@ -65,13 +208,13 @@ void main() {
       expect(rideEvent.length, 2);
       expect(rideEvent[0].id, 1);
       expect(rideEvent[0].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
-      expect(rideEvent[0].rideId, 1);
-      expect(rideEvent[0].category, RideEventCategory.approved.index);
+      expect(rideEvent[0].rideId, 2);
+      expect(rideEvent[0].category, RideEventCategory.approved);
       expect(rideEvent[0].read, true);
       expect(rideEvent[1].id, 2);
       expect(rideEvent[1].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
-      expect(rideEvent[1].rideId, 1);
-      expect(rideEvent[1].category, RideEventCategory.pending.index);
+      expect(rideEvent[1].rideId, 3);
+      expect(rideEvent[1].category, RideEventCategory.pending);
       expect(rideEvent[1].read, true);
     });
 
@@ -83,12 +226,14 @@ void main() {
   });
 
   group('RideEvent.toJson', () {
-    final RideEvent rideEvent = RideEventFactory().generateFake();
-    final json = rideEvent.toJson();
-    expect(json['ride_id'], rideEvent.rideId);
-    expect(json['category'], rideEvent.category.index);
-    expect(json['read'], rideEvent.read);
-    expect(json.keys.length, 3);
+    test('converts rideEvent to json', () {
+      final RideEvent rideEvent = RideEventFactory().generateFake();
+      final json = rideEvent.toJson();
+      expect(json['ride_id'], rideEvent.rideId);
+      expect(json['category'], rideEvent.category.index);
+      expect(json['read'], rideEvent.read);
+      expect(json.keys.length, 3);
+    });
   });
 
   group('Message.toString', () {

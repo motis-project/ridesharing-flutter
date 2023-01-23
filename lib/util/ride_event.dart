@@ -38,8 +38,8 @@ class RideEvent extends Model {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'ride_id': read,
-      'category': category,
+      'ride_id': rideId,
+      'category': category.index,
       'read': read,
     };
   }
@@ -103,23 +103,11 @@ class RideEvent extends Model {
 
 // Stored in the database as an integer
 // The order of the enum values is important
-enum RideEventCategory { pending, approved, rejected, cancelledByDriver, cancelledByRider, withdrawn }
-
-extension CategoryExtension on RideEventCategory {
-  String getDescription(BuildContext context) {
-    switch (this) {
-      case RideEventCategory.pending:
-        return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.approved:
-        return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.rejected:
-        return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.cancelledByDriver:
-        return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.cancelledByRider:
-        return S.of(context).modelProfileFeatureNoSmoking;
-      case RideEventCategory.withdrawn:
-        return S.of(context).modelProfileFeatureNoSmoking;
-    }
-  }
+enum RideEventCategory {
+  pending,
+  approved,
+  rejected,
+  cancelledByDriver,
+  cancelledByRider,
+  withdrawn,
 }
