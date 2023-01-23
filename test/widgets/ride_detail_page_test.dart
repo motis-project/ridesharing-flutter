@@ -10,6 +10,7 @@ import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
+import 'package:motis_mitfahr_app/util/buttons/custom_banner.dart';
 import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
@@ -107,11 +108,12 @@ void main() {
         when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
       });
 
-      testWidgets('It loads the corresponding drive', (WidgetTester tester) async {
+      testWidgets('It shows the request button, but no riders', (WidgetTester tester) async {
         await pumpMaterial(tester, RideDetailPage.fromRide(ride));
         await tester.pump();
 
-        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.byType(CustomBanner), findsNothing);
+        expect(find.byType(ProfileWrapList), findsNothing);
         expect(find.byKey(const Key('requestRideButton')), findsOneWidget);
       });
     });
