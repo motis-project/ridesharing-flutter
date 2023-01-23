@@ -23,7 +23,7 @@ void main() {
       final message = MessageFactory().generateFake(
         read: false,
       );
-      whenRequest(messageProcessor, '');
+      whenRequest(messageProcessor).thenReturn('');
 
       await message.markAsRead();
 

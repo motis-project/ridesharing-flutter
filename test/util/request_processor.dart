@@ -13,20 +13,25 @@ class RequestProcessor {
   }
 }
 
-void whenRequest(
-  MockRequestProcessor processor,
-  dynamic response, {
+PostExpectation whenRequest(
+  MockRequestProcessor processor, {
   Matcher? urlMatcher,
   Matcher? methodMatcher,
   Matcher? bodyMatcher,
 }) {
-  when(
+  return when(
     processor.process(
       argThat(urlMatcher ?? anything),
       method: argThat(methodMatcher ?? anything, named: 'method'),
       body: argThat(bodyMatcher ?? anything, named: 'body'),
     ),
-  ).thenReturn(jsonEncode(response));
+  );
+}
+
+extension JsonEncodedReturn on PostExpectation {
+  void thenReturnJson(dynamic json) {
+    return thenReturn(jsonEncode(json));
+  }
 }
 
 VerificationResult verifyRequest(

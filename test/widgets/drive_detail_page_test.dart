@@ -29,7 +29,7 @@ void main() {
       endTime: DateTime.now().add(const Duration(hours: 1)),
       rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
-    whenRequest(processor, drive.toJsonForApi());
+    whenRequest(processor).thenReturnJson(drive.toJsonForApi());
   });
 
   group('DriveDetailPage', () {
@@ -86,7 +86,8 @@ void main() {
           startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
           endTime: DateTime.now().subtract(const Duration(days: 1)),
         );
-        whenRequest(processor, finishedDrive.toJsonForApi());
+        whenRequest(processor).thenReturnJson(finishedDrive.toJsonForApi());
+
         await pumpMaterial(tester, DriveDetailPage.fromDrive(finishedDrive));
         await tester.pump();
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
@@ -94,7 +95,8 @@ void main() {
       });
       testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
         final Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
-        whenRequest(processor, cancelledDrive.toJsonForApi());
+
+        whenRequest(processor).thenReturnJson(cancelledDrive.toJsonForApi());
 
         await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
         await tester.pump();
@@ -119,7 +121,7 @@ void main() {
         status: RideStatus.cancelledByDriver,
       ));
 
-      whenRequest(processor, drive.toJsonForApi());
+      whenRequest(processor).thenReturnJson(drive.toJsonForApi());
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
@@ -147,7 +149,7 @@ void main() {
         ),
       ));
 
-      whenRequest(processor, drive.toJsonForApi());
+      whenRequest(processor).thenReturnJson(drive.toJsonForApi());
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
@@ -204,7 +206,7 @@ void main() {
     group('Hiding drive', () {
       setUp(() {
         drive = DriveFactory().generateFake(cancelled: true);
-        whenRequest(processor, drive.toJsonForApi());
+        whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 
       Future<void> openHideDialog(WidgetTester tester) async {

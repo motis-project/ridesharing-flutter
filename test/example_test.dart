@@ -20,7 +20,7 @@ void main() {
 
   group('basic test', () {
     test('test with explicit URL', () async {
-      whenRequest(driveProcessor, [
+      whenRequest(driveProcessor).thenReturnJson([
         {
           'id': 1,
           'driver_id': 1,
@@ -38,6 +38,7 @@ void main() {
           'hide_in_list_view': false,
         }
       ]);
+
       final List<dynamic> data =
           await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
       final Drive drive = Drive.fromJson(data[0]);
@@ -45,7 +46,7 @@ void main() {
     });
 
     test('test without explicit URL', () async {
-      whenRequest(driveProcessor, [
+      whenRequest(driveProcessor).thenReturnJson([
         {
           'id': 1,
           'driver_id': 1,
