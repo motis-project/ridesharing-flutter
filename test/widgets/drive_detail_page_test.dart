@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
@@ -13,12 +10,13 @@ import 'package:motis_mitfahr_app/util/trip/pending_ride_card.dart';
 import '../util/factories/drive_factory.dart';
 import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
-import '../util/mock_server.mocks.dart';
 import '../util/pump_material.dart';
+import '../util/request_processor.dart';
+import '../util/request_processor.mocks.dart';
 
 void main() {
   late Drive drive;
-  final MockUrlProcessor processor = MockUrlProcessor();
+  final MockRequestProcessor processor = MockRequestProcessor();
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
@@ -31,7 +29,7 @@ void main() {
       endTime: DateTime.now().add(const Duration(hours: 1)),
       rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
-    when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+    whenRequest(processor, drive.toJsonForApi());
   });
 
   group('DriveDetailPage', () {
@@ -88,7 +86,7 @@ void main() {
           startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
           endTime: DateTime.now().subtract(const Duration(days: 1)),
         );
-        when(processor.processUrl(any)).thenReturn(jsonEncode(finishedDrive.toJsonForApi()));
+        whenRequest(processor, finishedDrive.toJsonForApi());
         await pumpMaterial(tester, DriveDetailPage.fromDrive(finishedDrive));
         await tester.pump();
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
@@ -96,7 +94,8 @@ void main() {
       });
       testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
         final Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
-        when(processor.processUrl(any)).thenReturn(jsonEncode(cancelledDrive.toJsonForApi()));
+        whenRequest(processor, cancelledDrive.toJsonForApi());
+
         await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
         await tester.pump();
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
@@ -120,7 +119,7 @@ void main() {
         status: RideStatus.cancelledByDriver,
       ));
 
-      when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+      whenRequest(processor, drive.toJsonForApi());
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
@@ -148,7 +147,7 @@ void main() {
         ),
       ));
 
-      when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+      whenRequest(processor, drive.toJsonForApi());
 
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
@@ -178,8 +177,12 @@ void main() {
         await tester.tap(cancelDriveYesButton);
         await tester.pumpAndSettle();
 
-        // Verify that the drive was cancelled (but no way to verify body right now)
-        verify(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}')).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'cancelled': true}),
+        ).called(1);
 
         expect(find.byKey(const Key('cancelledDriveBanner')), findsOneWidget);
       });
@@ -192,7 +195,7 @@ void main() {
         await tester.tap(cancelDriveNoButton);
         await tester.pumpAndSettle();
 
-        verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}'));
+        verifyRequestNever(processor, urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'));
 
         expect(find.byKey(const Key('cancelledDriveBanner')), findsNothing);
       });
@@ -201,7 +204,7 @@ void main() {
     group('Hiding drive', () {
       setUp(() {
         drive = DriveFactory().generateFake(cancelled: true);
-        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+        whenRequest(processor, drive.toJsonForApi());
       });
 
       Future<void> openHideDialog(WidgetTester tester) async {
@@ -223,8 +226,12 @@ void main() {
         await tester.tap(hideDriveYesButton);
         await tester.pumpAndSettle();
 
-        // Verify that the drive was hidden (but no way to verify body right now)
-        verify(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}')).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'hide_in_list_view': true}),
+        ).called(1);
       });
 
       testWidgets('Can abort hiding drive', (WidgetTester tester) async {
@@ -235,7 +242,7 @@ void main() {
         await tester.tap(hideDriveNoButton);
         await tester.pumpAndSettle();
 
-        verifyNever(processor.processUrl('/rest/v1/drives?id=eq.${drive.id}'));
+        verifyRequestNever(processor, urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'));
       });
     });
 

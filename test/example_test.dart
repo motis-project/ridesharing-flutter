@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
 import 'util/mock_server.dart';
-import 'util/mock_server.mocks.dart';
+import 'util/request_processor.dart';
+import 'util/request_processor.mocks.dart';
 
 // Die Klasse UrlProcessor muss zu Beginn jeder Testdatei implementiert werden und die Methode processUrl überschrieben werden
 // Wird die Methode ProcessUrl aufgrufen, wird für den dort definierten Fall (in dem Beispiel client.from('drives').select('driver_id,seats')) die Antwort definiert
@@ -14,7 +12,7 @@ import 'util/mock_server.mocks.dart';
 // Um herauszufinden welche URL durch die jeweilige Datenbankabfrage generiert wird, einfach den auskommentierten Print-Aufruf in der mockServer.Dart Datei aktivieren
 
 void main() {
-  final MockUrlProcessor driveProcessor = MockUrlProcessor();
+  final MockRequestProcessor driveProcessor = MockRequestProcessor();
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
     MockServer.setProcessor(driveProcessor);
@@ -22,7 +20,7 @@ void main() {
 
   group('basic test', () {
     test('test with explicit URL', () async {
-      when(driveProcessor.processUrl('/rest/v1/drives?select=driver_id%2Cseats&driver_id=eq.1')).thenReturn(jsonEncode([
+      whenRequest(driveProcessor, [
         {
           'id': 1,
           'driver_id': 1,
@@ -39,7 +37,7 @@ void main() {
           'cancelled': false,
           'hide_in_list_view': false,
         }
-      ]));
+      ]);
       final List<dynamic> data =
           await SupabaseManager.supabaseClient.from('drives').select('driver_id, seats').eq('driver_id', '1');
       final Drive drive = Drive.fromJson(data[0]);
@@ -47,7 +45,7 @@ void main() {
     });
 
     test('test without explicit URL', () async {
-      when(driveProcessor.processUrl(any)).thenReturn(jsonEncode([
+      whenRequest(driveProcessor, [
         {
           'id': 1,
           'driver_id': 1,
@@ -64,7 +62,7 @@ void main() {
           'cancelled': false,
           'hide_in_list_view': false,
         }
-      ]));
+      ]);
     });
   });
 }
