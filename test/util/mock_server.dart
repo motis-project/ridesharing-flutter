@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:http/testing.dart';
 import 'package:mockito/annotations.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MockServer {
   static void setProcessor(UrlProcessor processor) {
