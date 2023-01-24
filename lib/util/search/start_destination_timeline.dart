@@ -26,7 +26,7 @@ class StartDestinationTimeline extends StatelessWidget {
       children: <Widget>[
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.fromLTRB(10, 0, 0, 4),
             child: AddressSearchField.start(controller: startController, onSelected: onStartSelected),
           ),
           node: const TimelineNode(
@@ -36,7 +36,7 @@ class StartDestinationTimeline extends StatelessWidget {
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.fromLTRB(10, 4, 0, 0),
             child: AddressSearchField.destination(controller: destinationController, onSelected: onDestinationSelected),
           ),
           node: const TimelineNode(

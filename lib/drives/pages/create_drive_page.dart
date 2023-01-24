@@ -199,11 +199,14 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          StartDestinationTimeline(
-            startController: _startController,
-            destinationController: _destinationController,
-            onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
-            onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: StartDestinationTimeline(
+              startController: _startController,
+              destinationController: _destinationController,
+              onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
+              onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
+            ),
           ),
           const Divider(),
           Row(
@@ -250,6 +253,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               icon: Icon(
                 Icons.chair,
                 color: Theme.of(context).colorScheme.primary,
+                size: 32,
               ),
               onChanged: (int? value) {
                 setState(() {
