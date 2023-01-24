@@ -41,7 +41,7 @@ void main() {
             id: 1,
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: false,
-            ride: NullableParameter(null),
+            rider: NullableParameter(null),
             drive: NullableParameter(null),
             driveId: 3,
             createDependencies: false,
@@ -52,7 +52,7 @@ void main() {
             id: 2,
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: false,
-            ride: NullableParameter(null),
+            rider: NullableParameter(null),
             drive: NullableParameter(null),
             driveId: 4,
             createDependencies: false,
@@ -125,14 +125,14 @@ void main() {
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
         DriveFactory().generateFake(
             id: 2,
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
       ];
       whenRequest(processor,
@@ -154,14 +154,14 @@ void main() {
             endTime: DateTime.now().subtract(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
         DriveFactory().generateFake(
             id: 2,
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: true,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
       ];
       whenRequest(processor,
@@ -194,14 +194,14 @@ void main() {
             endTime: DateTime.now().subtract(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
         DriveFactory().generateFake(
             id: 2,
             endTime: DateTime.now().subtract(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
       ];
       whenRequest(processor,
@@ -228,14 +228,14 @@ void main() {
             endTime: DateTime.now().add(const Duration(days: 1)),
             hideInListView: false,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
         DriveFactory().generateFake(
             id: 2,
             endTime: DateTime.now().subtract(const Duration(days: 1)),
             hideInListView: true,
             rides: [
-              RideFactory().generateFake(id: 1, ride: NullableParameter(ProfileFactory().generateFake(id: 1)))
+              RideFactory().generateFake(id: 1, rider: NullableParameter(ProfileFactory().generateFake(id: 1)))
             ]).toJsonForApi(),
       ];
       whenRequest(processor,
