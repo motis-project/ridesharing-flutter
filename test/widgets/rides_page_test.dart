@@ -31,7 +31,7 @@ void main() {
     expect(subscription[0].topic, 'realtime:public:rides:1');
     verifyRequest(
       processor,
-      urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.1&order=start_time.asc.nullslast'),
+      urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_time.asc.nullslast'),
     );
   });
 
