@@ -145,17 +145,20 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return Row(
       children: <Widget>[
         Expanded(
-          child: StartDestinationTimeline(
-            startController: _startController,
-            destinationController: _destinationController,
-            onStartSelected: (AddressSuggestion suggestion) => setState(() {
-              _startSuggestion = suggestion;
-              loadRides();
-            }),
-            onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
-              _destinationSuggestion = suggestion;
-              loadRides();
-            }),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: StartDestinationTimeline(
+              startController: _startController,
+              destinationController: _destinationController,
+              onStartSelected: (AddressSuggestion suggestion) => setState(() {
+                _startSuggestion = suggestion;
+                loadRides();
+              }),
+              onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
+                _destinationSuggestion = suggestion;
+                loadRides();
+              }),
+            ),
           ),
         ),
         IconButton(
