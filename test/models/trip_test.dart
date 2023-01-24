@@ -25,9 +25,10 @@ void main() {
       expect(ride.duration, const Duration(hours: 2));
     });
     test('returns the duration of a drive', () {
+      final DateTime now = DateTime.now();
       final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now(),
-          endTime: DateTime.now().add(
+          startTime: now,
+          endTime: now.add(
             const Duration(hours: 2),
           ));
       expect(drive.duration, const Duration(hours: 2));
