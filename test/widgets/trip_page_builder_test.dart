@@ -90,7 +90,8 @@ void main() {
     });
     testWidgets('shows upcoming Trips at beginning', (WidgetTester tester) async {
       whenRequest(processor,
-              urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.1&order=start_time.asc.nullslast'))
+              urlMatcher:
+                  equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'))
           .thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
       expect(find.byKey(const Key('upcomingTrips')), findsOneWidget);
