@@ -3,12 +3,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../util/buttons/button.dart';
 import 'account/widgets/avatar.dart';
 import 'drives/pages/create_drive_page.dart';
 import 'drives/pages/drive_detail_page.dart';
 import 'rides/pages/ride_detail_page.dart';
 import 'rides/pages/search_ride_page.dart';
-import 'util/buttons/button.dart';
 import 'util/chat/models/message.dart';
 import 'util/chat/pages/chat_page.dart';
 import 'util/model.dart';
@@ -24,7 +24,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Model> _items = <Model>[];
+  //needs to be initialized in case the subscription gets something new before load is done
+  List<Model> _items = <Model>[];
   bool _fullyLoaded = false;
 
   @override
@@ -39,6 +40,17 @@ class _HomePageState extends State<HomePage> {
           _loadNewMessage(payload['new']['id']);
         }
       },
+    ).on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
+      (payload, [ref]) {
+        if (payload['new']['read'] == true) {
+          setState(() {
+            _items =
+                _items.where((Model element) => element is RideEvent || element.id != payload['new']['id']).toList();
+          });
+        }
+      },
     ).subscribe();
     SupabaseManager.supabaseClient.channel('public:ride_events').on(
       RealtimeListenTypes.postgresChanges,
@@ -46,6 +58,16 @@ class _HomePageState extends State<HomePage> {
       (payload, [ref]) {
         if (payload['new']['sender_id'] != profileId) {
           _loadNewRideEvent(payload['new']['id']);
+        }
+      },
+    ).on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'), //, filter: 'sender_id=neq.$profileId'
+      (payload, [ref]) {
+        if (payload['new']['read'] == true) {
+          setState(() {
+            _items = _items.where((Model element) => element is Message || element.id != payload['new']['id']).toList();
+          });
         }
       },
     ).subscribe();
@@ -60,6 +82,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> load() async {
+    final List<Model> items = <Model>[];
     final int profileId = SupabaseManager.getCurrentProfile()!.id!;
     final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('messages').select('''
@@ -68,22 +91,23 @@ class _HomePageState extends State<HomePage> {
       )
     ''').eq('read', false).neq('sender_id', profileId).order('created_at'),
     );
-    _items.addAll(Message.fromJsonList(messagesData));
+    items.addAll(Message.fromJsonList(messagesData));
     final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
       await SupabaseManager.supabaseClient.from('ride_events').select('''
       *,
-      ride: ride_id(*, 
-        rider: rider_id(*), 
-        drive: drive_id(*, 
+      ride: ride_id(*,
+        rider: rider_id(*),
+        drive: drive_id(*,
           driver: driver_id(*)
           )
       )
       ''').eq('read', false).order('created_at'),
     );
-    _items.addAll(RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()));
-    _items.sort((Model a, Model b) => b.createdAt!.compareTo(a.createdAt!));
+    items.addAll(RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()));
+    items.sort((Model a, Model b) => b.createdAt!.compareTo(a.createdAt!));
 
     setState(() {
+      _items = items;
       _fullyLoaded = true;
     });
   }
@@ -94,54 +118,86 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(S.of(context).pageHomeTitle),
       ),
-      body: Column(
-        children: <Widget>[
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Hero(
-                tag: 'SearchButton',
-                transitionOnUserGestures: true,
-                child: Button.submit(
-                  S.of(context).pageHomeSearchButton,
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
+        ),
+        child: Column(
+          children: <Widget>[
+            const SizedBox(height: 30),
+            if (_fullyLoaded)
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).primaryColor),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: _items.isNotEmpty
+                      ? ListView.separated(
+                          itemCount: _items.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(height: 12);
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return _buildWidget(_items[index], context);
+                          },
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Image.asset(
+                              'assets/chat_shrug.png',
+                              scale: 8,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              S.of(context).pageHomePageEmpty,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            const SizedBox(height: 3),
+                          ],
+                        ),
+                ),
+              )
+            else
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+            const SizedBox(height: 35),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Hero(
+                  tag: 'SearchButton',
+                  transitionOnUserGestures: true,
+                  child: Button(
+                    S.of(context).pageHomeSearchButton,
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Hero(
-                tag: 'createButton',
-                transitionOnUserGestures: true,
-                child: Button.submit(
-                  S.of(context).pageHomeCreateButton,
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
+                const SizedBox(height: 15),
+                Hero(
+                  tag: 'createButton',
+                  transitionOnUserGestures: true,
+                  child: Button(
+                    S.of(context).pageHomeCreateButton,
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 35),
-          if (_fullyLoaded)
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-                itemCount: _items.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 12);
-                },
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildWidget(_items[index], context);
-                },
-              ),
-            )
-          else
-            const Center(
-              child: CircularProgressIndicator(),
+                const SizedBox(
+                  height: 35,
+                )
+              ],
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -149,9 +205,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadNewRideEvent(int rideEventId) async {
     final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('ride_events').select('''
       *,
-      ride: ride_id(*, 
-        rider: rider_id(*), 
-        drive: drive_id(*, 
+      ride: ride_id(*,
+        rider: rider_id(*),
+        drive: drive_id(*,
           driver: driver_id(*)
           )
       )
@@ -190,16 +246,14 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.caption,
           ),
           onTap: () {
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ChatPage(
-                      chatId: message.chatId,
-                      profile: message.sender!,
-                    ),
-                  ),
-                )
-                .then((_) => load());
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => ChatPage(
+                  chatId: message.chatId,
+                  profile: message.sender!,
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -220,15 +274,12 @@ class _HomePageState extends State<HomePage> {
           ),
           onTap: () {
             rideEvent.markAsRead();
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => isforDrive
-                        ? DriveDetailPage(id: rideEvent.ride!.driveId)
-                        : RideDetailPage(id: rideEvent.rideId),
-                  ),
-                )
-                .then((_) => load());
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) =>
+                    isforDrive ? DriveDetailPage(id: rideEvent.ride!.driveId) : RideDetailPage(id: rideEvent.rideId),
+              ),
+            );
           },
         ),
       ),

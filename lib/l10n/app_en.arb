@@ -351,7 +351,7 @@
   "pageChatNoChatMessage": "You can chat with your driver as soon as your ride has been accepted",
   "pageChatMessageBarHint": "Write a Message",
 
-  "pageHomeTitle": "Homepage",
+  "pageHomeTitle": "Home",
   "pageHomeSearchButton": "Search Ride",
   "pageHomeCreateButton": "Create Drive",
 
@@ -359,7 +359,7 @@
   "rideEventApprovedTitle": "Ride approved!",
   "rideEventRejectedTitle": "Ride rejected!",
   "rideEventWithdrawnTitle": "Ride withdrawn!",
-  "rideEventCancelledByDriverTitle": "Ride cancelled!",
+  "rideEventCancelledByDriverTitle": "Drive cancelled!",
   "rideEventCancelledByRiderTitle": "Ride cancelled!",
   "rideEventPendingMessage": "{username} has requested a ride",
   "@rideEventPendingMessage": {
@@ -397,6 +397,8 @@
       "username": {}
     }
   },
+
+  "pageHomePageEmpty": "No new messages",
 
   "appName": "Motis Ride-Sharing App"
 }
