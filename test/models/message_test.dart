@@ -8,9 +8,11 @@ import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/mock_server.dart';
+import '../util/request_processor.dart';
+import '../util/request_processor.mocks.dart';
 
 void main() {
-  final UrlProcessor messageProcessor = UrlProcessor();
+  final MockRequestProcessor messageProcessor = MockRequestProcessor();
 
   //setup muss in jeder Testklasse einmal aufgerufen werden
   setUp(() async {
@@ -21,10 +23,18 @@ void main() {
       final message = MessageFactory().generateFake(
         read: false,
       );
+      whenRequest(messageProcessor).thenReturn('');
+
       await message.markAsRead();
-      SupabaseManager.supabaseClient.from('messages').update({
-        'read': true,
-      }).eq('id', message.id);
+
+      verifyRequest(
+        messageProcessor,
+        urlMatcher: equals('/rest/v1/rpc/mark_message_as_read'),
+        bodyMatcher: equals({
+          'message_id': message.id,
+        }),
+      );
+
       expect(message.read, true);
     });
   });
