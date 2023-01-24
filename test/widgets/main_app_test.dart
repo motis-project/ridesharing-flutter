@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/pages/account_page.dart';
 import 'package:motis_mitfahr_app/account/pages/help_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drives_page.dart';
@@ -9,15 +8,16 @@ import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:motis_mitfahr_app/rides/pages/rides_page.dart';
 
 import '../util/mock_server.dart';
-import '../util/mock_server.mocks.dart';
 import '../util/pump_material.dart';
+import '../util/request_processor.dart';
+import '../util/request_processor.mocks.dart';
 
 void main() {
-  final MockUrlProcessor processor = MockUrlProcessor();
+  final MockRequestProcessor processor = MockRequestProcessor();
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    when(processor.processUrl(any)).thenReturn('');
+    whenRequest(processor).thenReturn('');
   });
 
   setUp(() {});
