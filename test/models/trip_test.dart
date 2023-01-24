@@ -15,7 +15,7 @@ void main() {
     MockServer.setProcessor(tripProcessor);
   });
   group('Trip.duration', () {
-    test('returns the duration of a ride', () {
+    test('can handel a Ride', () {
       final DateTime now = DateTime.now();
       final Trip trip = RideFactory().generateFake(
           startTime: now,
@@ -24,7 +24,7 @@ void main() {
           ));
       expect(trip.duration, const Duration(hours: 2));
     });
-    test('returns the duration of a drive', () {
+    test('can handel a Drive', () {
       final DateTime now = DateTime.now();
       final Trip trip = DriveFactory().generateFake(
           startTime: now,
@@ -35,67 +35,57 @@ void main() {
     });
   });
   group('Trip.isFinished', () {
-    test('returns true if the ride is before now', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns true if the trip is before now', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(trip.isFinished, true);
-    });
-    test('returns false if the ride is after now', () {
-      final Trip trip = RideFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)));
-      expect(trip.isFinished, false);
-    });
-    test('returns true if the Drive is before now', () {
-      final Trip trip = DriveFactory().generateFake(
+      expect(ride.isFinished, true);
+      final Trip drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(trip.isFinished, true);
+      expect(drive.isFinished, true);
     });
-    test('returns false if the Drive is after now', () {
-      final Trip trip = DriveFactory().generateFake(
+    test('returns false if the trip is after now', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
-      expect(trip.isFinished, false);
+      expect(ride.isFinished, false);
+      final Trip drive = DriveFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 4)));
+      expect(drive.isFinished, false);
     });
   });
-  group('Ride.isOngoing', () {
-    test('returns true if the Ride is started before now and is not done', () {
-      final Trip trip = RideFactory().generateFake(
+  group('Trip.isOngoing', () {
+    test('returns true if the Trip is started before now and is not done', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 1)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
-      expect(trip.isOngoing, true);
-    });
-    test('returns false if the Ride is in the past', () {
-      final Trip trip = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(trip.isOngoing, false);
-    });
-    test('returns false if the Ride is upcoming', () {
-      final Trip trip = RideFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(trip.isOngoing, false);
-    });
-    test('returns true if the Drive started before now and is not done', () {
-      final Trip trip = DriveFactory().generateFake(
+      expect(ride.isOngoing, true);
+      final Trip drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 1)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
-      expect(trip.isOngoing, true);
+      expect(drive.isOngoing, true);
     });
-    test('returns false if the Drive is in the past', () {
-      final Trip trip = DriveFactory().generateFake(
+    test('returns false if the trip is in the past', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(trip.isOngoing, false);
+      expect(ride.isOngoing, false);
+      final Trip drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 6)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(drive.isOngoing, false);
     });
-    test('returns false if the Drive is upcoming', () {
-      final Trip trip = DriveFactory().generateFake(
+    test('returns false if the trip is upcoming', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(trip.isOngoing, false);
+      expect(ride.isOngoing, false);
+      final Trip drive = DriveFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 6)));
+      expect(drive.isOngoing, false);
     });
   });
   group('Trip.overlapsWith', () {
@@ -137,45 +127,41 @@ void main() {
     });
   });
   group('Trip.overlapswithRange', () {
-    test('returns false if ride is not in range', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns false if trip is not in range', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(
-          trip.overlapsWithTimeRange(DateTimeRange(
+          ride.overlapsWithTimeRange(DateTimeRange(
+            start: DateTime.now().add(const Duration(hours: 3)),
+            end: DateTime.now().add(const Duration(hours: 6)),
+          )),
+          false);
+      final Trip drive = DriveFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+      expect(
+          drive.overlapsWithTimeRange(DateTimeRange(
             start: DateTime.now().add(const Duration(hours: 3)),
             end: DateTime.now().add(const Duration(hours: 6)),
           )),
           false);
     });
-    test('returns true if ride is in range', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns true if trip is in range', () {
+      final Trip ride = RideFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(
-          trip.overlapsWithTimeRange(DateTimeRange(
+          ride.overlapsWithTimeRange(DateTimeRange(
             start: DateTime.now().add(const Duration(hours: 2)),
             end: DateTime.now().add(const Duration(hours: 6)),
           )),
           true);
-    });
-    test('returns false if drive is not in range', () {
-      final Trip trip = DriveFactory().generateFake(
+      final Trip drive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(
-          trip.overlapsWithTimeRange(DateTimeRange(
-            start: DateTime.now().add(const Duration(hours: 3)),
-            end: DateTime.now().add(const Duration(hours: 6)),
-          )),
-          false);
-    });
-    test('returns true drive it is in range', () {
-      final Trip trip = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(
-          trip.overlapsWithTimeRange(DateTimeRange(
+          drive.overlapsWithTimeRange(DateTimeRange(
             start: DateTime.now().subtract(const Duration(hours: 3)),
             end: DateTime.now().add(const Duration(hours: 6)),
           )),
@@ -183,69 +169,61 @@ void main() {
     });
   });
   group('Trip.shouldShowInListView', () {
-    test('returns true if ride should show in ListView', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns true if trip should show in ListView', () {
+      final Trip ride = RideFactory().generateFake(
         status: RideStatus.approved,
         startTime: DateTime.now().add(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
-      expect(trip.shouldShowInListView(past: false), true);
+      expect(ride.shouldShowInListView(past: false), true);
+      final Trip drive = DriveFactory().generateFake(
+        cancelled: false,
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(drive.shouldShowInListView(past: false), true);
     });
-    test('returns false for ride with hideInListView', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns false for trip with hideInListView', () {
+      final Trip ride = RideFactory().generateFake(
         hideInListView: true,
         startTime: DateTime.now().add(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
-      expect(trip.shouldShowInListView(past: false), false);
+      expect(ride.shouldShowInListView(past: false), false);
+      final Trip drive = DriveFactory().generateFake(
+        hideInListView: true,
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(drive.shouldShowInListView(past: false), false);
     });
-    test('returns true for past finsihed ride', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns true for past finsihed trip', () {
+      final Trip ride = RideFactory().generateFake(
         status: RideStatus.approved,
         startTime: DateTime.now().subtract(const Duration(hours: 4)),
         endTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
-      expect(trip.shouldShowInListView(past: true), true);
+      expect(ride.shouldShowInListView(past: true), true);
+      final Trip drive = DriveFactory().generateFake(
+        cancelled: false,
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
+      expect(drive.shouldShowInListView(past: true), true);
     });
-    test('returns false in ongoing ride', () {
-      final Trip trip = RideFactory().generateFake(
+    test('returns false in ongoing trip', () {
+      final Trip ride = RideFactory().generateFake(
         status: RideStatus.pending,
         startTime: DateTime.now().subtract(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
-      expect(trip.shouldShowInListView(past: true), false);
-    });
-    test('returns true if drive should show in ListView', () {
-      final Trip trip = DriveFactory().generateFake(
-        cancelled: false,
-        startTime: DateTime.now().add(const Duration(hours: 2)),
-        endTime: DateTime.now().add(const Duration(hours: 4)),
-      );
-      expect(trip.shouldShowInListView(past: false), true);
-    });
-    test('returns false for drive with hideInListView', () {
-      final Trip trip = DriveFactory().generateFake(
-        hideInListView: true,
-        startTime: DateTime.now().add(const Duration(hours: 2)),
-        endTime: DateTime.now().add(const Duration(hours: 4)),
-      );
-      expect(trip.shouldShowInListView(past: false), false);
-    });
-    test('returns true for past finished drive', () {
-      final Trip trip = DriveFactory().generateFake(
-        cancelled: false,
-        startTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endTime: DateTime.now().subtract(const Duration(hours: 2)),
-      );
-      expect(trip.shouldShowInListView(past: true), true);
-    });
-    test('returns false in past for ongoing drive', () {
-      final Trip trip = DriveFactory().generateFake(
+      expect(ride.shouldShowInListView(past: true), false);
+      final Trip drive = DriveFactory().generateFake(
         cancelled: true,
         startTime: DateTime.now().subtract(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
-      expect(trip.shouldShowInListView(past: true), false);
+      expect(drive.shouldShowInListView(past: true), false);
     });
   });
 }
