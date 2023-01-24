@@ -62,19 +62,19 @@ class _MainAppState extends State<MainApp> {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: const Icon(Icons.home),
+              icon: const Icon(Icons.home, key: Key('homeIcon')),
               label: S.of(context).pageHomeTitle,
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.drive_eta),
+              icon: const Icon(Icons.drive_eta, key: Key('drivesIcon')),
               label: S.of(context).pageDrivesTitle,
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.chair),
+              icon: const Icon(Icons.chair, key: Key('ridesIcon')),
               label: S.of(context).pageRidesTitle,
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.account_circle),
+              icon: const Icon(Icons.account_circle, key: Key('accountIcon')),
               label: S.of(context).pageAccountTitle,
             ),
           ],

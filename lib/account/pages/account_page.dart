@@ -132,6 +132,7 @@ class _AccountPageState extends State<AccountPage> {
                 builder: (BuildContext context) => const HelpPage(),
               ),
             ),
+            key: const Key('accountHelp'),
           ),
           ListTile(
             leading: const Icon(Icons.info),
