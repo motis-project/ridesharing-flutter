@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../drives/models/drive.dart';
+import '../../util/buttons/labeled_checkbox.dart';
 import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/parse_helper.dart';
@@ -312,18 +313,13 @@ class _SearchRidePageState extends State<SearchRidePage> {
           Expanded(child: buildTimePicker()),
           const SizedBox(width: 10),
         ],
-        Row(
-          children: <Widget>[
-            Checkbox(
-              value: _wholeDay,
-              onChanged: (bool? value) => setState(() {
-                _wholeDay = value!;
-                _filter.wholeDay = _wholeDay;
-              }),
-            ),
-            Text(S.of(context).pageSearchRideWholeDay),
-            const SizedBox(width: 10)
-          ],
+        LabeledCheckbox(
+          label: S.of(context).pageSearchRideWholeDay,
+          value: _wholeDay,
+          onChanged: (bool? value) => setState(() {
+            _wholeDay = value!;
+            _filter.wholeDay = _wholeDay;
+          }),
         ),
       ],
     );
