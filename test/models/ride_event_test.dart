@@ -37,28 +37,6 @@ void main() {
       id: 1,
       driverId: user.id! + 1,
     );
-    final RideEvent rideEventWithUserAsDriver = RideEventFactory().generateFake(
-      ride: NullableParameter(
-        RideFactory().generateFake(drive: NullableParameter(driveWithUserAsDriver)),
-      ),
-    );
-    final RideEvent rideEventWithUserNotDriver = RideEventFactory().generateFake(
-      ride: NullableParameter(
-        RideFactory().generateFake(drive: NullableParameter(driveWithUserNotDriver)),
-      ),
-    );
-    final RideEvent rideEventWithUserAsRider = RideEventFactory().generateFake(
-      ride: NullableParameter(RideFactory().generateFake(
-        drive: NullableParameter(driveWithUserNotDriver),
-        riderId: user.id,
-      )),
-    );
-    final RideEvent rideEventWithUserNotRider = RideEventFactory().generateFake(
-      ride: NullableParameter(RideFactory().generateFake(
-        drive: NullableParameter(driveWithUserNotDriver),
-        riderId: user.id! + 1,
-      )),
-    );
     setUp(() {
       SupabaseManager.setCurrentProfile(user);
     });

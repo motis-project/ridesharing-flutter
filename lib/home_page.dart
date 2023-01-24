@@ -35,18 +35,25 @@ class _HomePageState extends State<HomePage> {
     SupabaseManager.supabaseClient.channel('public:messages').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
+      // ignore: always_specify_types
       (payload, [ref]) {
+        // ignore: avoid_dynamic_calls
         if (payload['new']['sender_id'] != profileId) {
+          // ignore: avoid_dynamic_calls
           _loadNewMessage(payload['new']['id']);
         }
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
+
+      // ignore: always_specify_types
       (payload, [ref]) {
+        // ignore: avoid_dynamic_calls
         if (payload['new']['read'] == true) {
           setState(() {
             _items =
+                // ignore: avoid_dynamic_calls
                 _items.where((Model element) => element is RideEvent || element.id != payload['new']['id']).toList();
           });
         }
@@ -55,17 +62,23 @@ class _HomePageState extends State<HomePage> {
     SupabaseManager.supabaseClient.channel('public:ride_events').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'), //, filter: 'sender_id=neq.$profileId'
+      // ignore: always_specify_types
       (payload, [ref]) {
+        // ignore: avoid_dynamic_calls
         if (payload['new']['sender_id'] != profileId) {
+          // ignore: avoid_dynamic_calls
           _loadNewRideEvent(payload['new']['id']);
         }
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'), //, filter: 'sender_id=neq.$profileId'
+      // ignore: always_specify_types
       (payload, [ref]) {
+        // ignore: avoid_dynamic_calls
         if (payload['new']['read'] == true) {
           setState(() {
+            // ignore: avoid_dynamic_calls
             _items = _items.where((Model element) => element is Message || element.id != payload['new']['id']).toList();
           });
         }
