@@ -87,12 +87,14 @@
   "pageWelcomeRegister": "Register",
 
   "pageRegisterTitle": "Register",
-  "pageRegisterSuccess": "Account created. Please check your email.",
   "pageRegisterUsername": "Username",
   "pageRegisterUsernameHint": "We recommend you choose your real name",
   "pageRegisterUsernameValidateEmpty": "Please enter your username",
   "pageRegisterButtonCreate": "Create Account",
   "pageRegisterButtonCreated": "Account created",
+
+  "pageAfterRegistrationHi": "Hi!",
+  "pageAfterRegistrationHelpText": "Nice to see you! To finish the registration, please open your email app and confirm your address.",
 
   "pageLoginTitle": "Login",
   "pageLoginFailureCredentials": "Invalid username or password",

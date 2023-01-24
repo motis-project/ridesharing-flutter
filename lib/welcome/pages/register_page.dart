@@ -7,6 +7,7 @@ import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
 import '../../util/supabase.dart';
+import 'after_registration_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -88,12 +89,8 @@ class _RegisterFormState extends State<RegisterForm> {
         });
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(S.of(context).pageRegisterSuccess),
-              duration: const Duration(seconds: 10),
-            ),
-          );
+          await Navigator.of(context)
+              .push(MaterialPageRoute<void>(builder: (BuildContext context) => const AfterRegistrationPage()));
         }
       }
     } else {

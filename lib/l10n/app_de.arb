@@ -66,12 +66,14 @@
   "pageWelcomeRegister": "Registrieren",
 
   "pageRegisterTitle": "Registrieren",
-  "pageRegisterSuccess": "Account erfolgreich erstellt. Bitte bestätige deine E-Mail-Adresse.",
   "pageRegisterUsername": "Nutzername",
   "pageRegisterUsernameHint": "Wir empfehlen deinen Vornamen",
   "pageRegisterUsernameValidateEmpty": "Bitte gib deinen Nutzernamen ein",
   "pageRegisterButtonCreate": "Account erstellen",
   "pageRegisterButtonCreated": "Account erstellt",
+
+  "pageAfterRegistrationHi": "Hi!",
+  "pageAfterRegistrationHelpText": "Willkommen! Um die Registrierung abzuschließen, bitte öffne dein Email-Programm und bestätige deine Email-Adresse.",
 
   "pageLoginTitle": "Login",
   "pageLoginFailureCredentials": "Falsche E-Mail-Adresse oder Passwort",
