@@ -59,11 +59,11 @@ class RideFactory extends TripFactory<Ride> {
       price: getNullableParameterOr(price, double.parse((random.nextDouble() * 10).toStringAsFixed(2))),
       status: status ?? RideStatus.values[random.nextInt(RideStatus.values.length)],
       hideInListView: hideInListView ?? false,
-      driveId: generatedDrive?.id ?? randomId,
+      driveId: generatedDrive?.id ?? driveId ?? randomId,
       drive: generatedDrive,
-      riderId: generatedRider?.id ?? randomId,
+      riderId: generatedRider?.id ?? riderId ?? randomId,
       rider: generatedRider,
-      chatId: generatedChat?.id ?? randomId,
+      chatId: generatedChat?.id ?? chatId ?? randomId,
       chat: generatedChat,
     );
   }

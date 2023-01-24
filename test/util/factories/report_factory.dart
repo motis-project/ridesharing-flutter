@@ -30,10 +30,10 @@ class ReportFactory extends ModelFactory<Report> {
       createdAt: createdAt ?? DateTime.now(),
       category: category ?? ReportCategory.values[random.nextInt(ReportCategory.values.length)],
       text: getNullableParameterOr(text, faker.lorem.sentences(random.nextInt(2) + 1).join(' ')),
-      offenderId: generatedReporter?.id ?? randomId,
-      offender: generatedReporter,
-      reporterId: generatedOffender?.id ?? randomId,
-      reporter: generatedOffender,
+      offenderId: generatedOffender?.id ?? offenderId ?? randomId,
+      offender: generatedOffender,
+      reporterId: generatedReporter?.id ?? reporterId ?? randomId,
+      reporter: generatedReporter,
     );
   }
 }

@@ -25,7 +25,7 @@ class ProfileFeatureFactory extends ModelFactory<ProfileFeature> {
       createdAt: createdAt ?? DateTime.now(),
       feature: feature ?? Feature.values[random.nextInt(Feature.values.length)],
       rank: rank ?? random.nextInt(5),
-      profileId: generatedProfile?.id ?? randomId,
+      profileId: generatedProfile?.id ?? profileId ?? randomId,
       profile: generatedProfile,
     );
   }
