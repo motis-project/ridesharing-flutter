@@ -43,7 +43,7 @@ void main() {
             hideInListView: false,
             rider: NullableParameter(null),
             drive: NullableParameter(null),
-            driveId: 3,
+            driveId: 6,
             createDependencies: false,
           )
           .toJsonForApi(),
@@ -54,7 +54,7 @@ void main() {
             hideInListView: false,
             rider: NullableParameter(null),
             drive: NullableParameter(null),
-            driveId: 4,
+            driveId: 7,
             createDependencies: false,
           )
           .toJsonForApi(),
@@ -62,10 +62,10 @@ void main() {
     whenRequest(processor,
             urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_time.asc.nullslast'))
         .thenReturnJson(rides);
-    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/drives.*id=eq\.3')), methodMatcher: equals('GET'))
-        .thenReturnJson(DriveFactory().generateFake(id: 3).toJsonForApi());
-    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/drives.*id=eq\.4')), methodMatcher: equals('GET'))
-        .thenReturnJson(DriveFactory().generateFake(id: 4).toJsonForApi());
+    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/drives.*id=eq\.6')), methodMatcher: equals('GET'))
+        .thenReturnJson(DriveFactory().generateFake(id: 6).toJsonForApi());
+    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/drives.*id=eq\.7')), methodMatcher: equals('GET'))
+        .thenReturnJson(DriveFactory().generateFake(id: 7).toJsonForApi());
 
     await pumpMaterial(tester, const RidesPage());
     await tester.pump();
