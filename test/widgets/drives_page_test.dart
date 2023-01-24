@@ -22,7 +22,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
   setUp(() async {
-    profile = ProfileFactory().generateFake();
+    profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(processor).thenReturn(jsonEncode([]));
   });
@@ -31,6 +31,10 @@ void main() {
     final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
     expect(subscription.length, 1);
     expect(subscription[0].topic, 'realtime:public:drives:1');
+    verifyRequest(
+      processor,
+      urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.1&order=start_time.asc.nullslast'),
+    ).called(1);
   });
 
   testWidgets('FAB works', (WidgetTester tester) async {

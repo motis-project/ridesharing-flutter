@@ -83,8 +83,7 @@ void main() {
       expect(tabBar, findsOneWidget);
       expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(2));
       await tester.pump();
-      final Finder tabBarLoaded = find.byType(TabBar);
-      expect(tabBarLoaded, findsOneWidget);
+      expect(tabBar, findsOneWidget);
       expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(2));
     });
     testWidgets('shows upcoming Trips at beginning', (WidgetTester tester) async {
