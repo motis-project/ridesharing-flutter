@@ -21,9 +21,9 @@ class ReportFactory extends ModelFactory<Report> {
     assert(offenderId == null || offender?.value == null || offender!.value?.id == offenderId);
 
     final Profile? generatedReporter =
-        reporter == null ? ProfileFactory().generateFake(id: reporterId, createDependencies: false) : reporter.value;
+        getNullableParameterOr(reporter, ProfileFactory().generateFake(id: reporterId, createDependencies: false));
     final Profile? generatedOffender =
-        offender == null ? ProfileFactory().generateFake(id: offenderId, createDependencies: false) : offender.value;
+        getNullableParameterOr(offender, ProfileFactory().generateFake(id: offenderId, createDependencies: false));
 
     return Report(
       id: id ?? randomId,

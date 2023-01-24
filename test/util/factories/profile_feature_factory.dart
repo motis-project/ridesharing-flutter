@@ -18,7 +18,7 @@ class ProfileFeatureFactory extends ModelFactory<ProfileFeature> {
     assert(profileId == null || profile?.value == null || profile!.value?.id == profileId);
 
     final Profile? generatedProfile =
-        profile == null ? ProfileFactory().generateFake(id: profileId, createDependencies: false) : profile.value;
+        getNullableParameterOr(profile, ProfileFactory().generateFake(id: profileId, createDependencies: false));
 
     return ProfileFeature(
       id: id ?? randomId,
