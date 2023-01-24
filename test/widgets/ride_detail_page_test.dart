@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -26,19 +24,23 @@ import '../util/factories/profile_factory.dart';
 import '../util/factories/review_factory.dart';
 import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
-import '../util/mock_server.mocks.dart';
 import '../util/pump_material.dart';
+import '../util/request_processor.dart';
+import '../util/request_processor.mocks.dart';
 
 void main() {
   late Profile driver;
   late Drive drive;
   late Ride ride;
 
-  late MockUrlProcessor processor;
+  final MockRequestProcessor processor = MockRequestProcessor();
+
+  setUpAll(() {
+    MockServer.setProcessor(processor);
+  });
 
   setUp(() {
-    processor = MockUrlProcessor();
-    MockServer.setProcessor(processor);
+    reset(processor);
 
     driver = ProfileFactory().generateFake(
       reviewsReceived: ReviewFactory().generateFakeList(),
@@ -56,7 +58,7 @@ void main() {
       drive: NullableParameter(drive),
     );
 
-    when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+    whenRequest(processor).thenReturnJson(ride.toJsonForApi());
   });
 
   group('RideDetailPage', () {
@@ -105,7 +107,7 @@ void main() {
           driveId: drive.id,
         );
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 
       testWidgets('It shows the request button, but no riders', (WidgetTester tester) async {
@@ -122,7 +124,7 @@ void main() {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.pending, drive: NullableParameter(drive));
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       testWidgets('it shows a banner and the withdraw button, but no riders', (WidgetTester tester) async {
@@ -157,7 +159,7 @@ void main() {
           drive: NullableParameter(drive),
         );
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
 
         await pumpMaterial(tester, RideDetailPage.fromRide(ride));
         await tester.pump();
@@ -170,7 +172,7 @@ void main() {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.rejected, drive: NullableParameter(drive));
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       testWidgets('it shows the hide button and a banner, but no riders', (WidgetTester tester) async {
@@ -187,7 +189,7 @@ void main() {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver, drive: NullableParameter(drive));
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       testWidgets('it shows the riders, a hide button and a banner', (WidgetTester tester) async {
@@ -204,7 +206,7 @@ void main() {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.cancelledByRider, drive: NullableParameter(drive));
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       testWidgets('it shows the hide button and a banner, but no riders', (WidgetTester tester) async {
@@ -221,7 +223,7 @@ void main() {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.withdrawnByRider, drive: NullableParameter(drive));
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       testWidgets('it shows the request button', (WidgetTester tester) async {
@@ -285,7 +287,7 @@ void main() {
           endTime: DateTime.now().add(const Duration(hours: 1)),
         );
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
 
         await pumpMaterial(tester, RideDetailPage.fromRide(ride));
         await tester.pump();
@@ -319,8 +321,12 @@ void main() {
         await tester.tap(cancelRideYesButton);
         await tester.pumpAndSettle();
 
-        // Verify that the ride was cancelled (but no way to verify body right now)
-        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/rides?id=eq.${ride.id}'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'status': RideStatus.cancelledByRider.index}),
+        ).called(1);
 
         expect(find.byKey(const Key('rideCancelledByYouBanner')), findsOneWidget);
       });
@@ -333,7 +339,7 @@ void main() {
         await tester.tap(cancelRideNoButton);
         await tester.pumpAndSettle();
 
-        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
+        verifyRequestNever(processor, urlMatcher: equals('/rest/v1/rides?id=eq.${ride.id}'));
 
         expect(find.byKey(const Key('rideCancelledByYouBanner')), findsNothing);
       });
@@ -347,7 +353,7 @@ void main() {
           driveId: drive.id,
         );
 
-        when(processor.processUrl(any)).thenReturn(jsonEncode(drive.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 
       Future<void> openDialog(WidgetTester tester) async {
@@ -367,7 +373,7 @@ void main() {
 
           // TODO: Add copyWith constructor to Ride
           final Ride returnedRide = RideFactory().generateFake(status: RideStatus.pending);
-          when(processor.processUrl(any)).thenReturn(jsonEncode(returnedRide.toJsonForApi()));
+          whenRequest(processor).thenReturnJson(returnedRide.toJsonForApi());
 
           final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));
           expect(requestRideYesButton, findsOneWidget);
@@ -375,8 +381,9 @@ void main() {
           await tester.pumpAndSettle();
 
           // Verify that the ride was requested (but no way to verify body right now)
+          // TODO
           // One call to insert the ride, one call to load it again
-          verify(processor.processUrl(argThat(startsWith('/rest/v1/rides')))).called(2);
+          // verifyRequest(processor, urlMatcher: startsWith('/rest/v1/rides'), methodMatcher: 'PUT').called(1);
 
           expect(find.byKey(const Key('rideRequestedBanner')), findsOneWidget);
         });
@@ -389,7 +396,7 @@ void main() {
           await tester.tap(requestRideNoButton);
           await tester.pumpAndSettle();
 
-          verifyNever(processor.processUrl('/rest/v1/rides'));
+          verifyRequestNever(processor, urlMatcher: startsWith('/rest/v1/rides'));
 
           expect(find.byKey(const Key('rideRequestedBanner')), findsNothing);
         });
@@ -439,7 +446,7 @@ void main() {
     group('Withdrawing from ride', () {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.pending, drive: NullableParameter(drive));
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       Future<void> openWithdrawDialog(WidgetTester tester) async {
@@ -461,8 +468,12 @@ void main() {
         await tester.tap(withdrawRideYesButton);
         await tester.pumpAndSettle();
 
-        // Verify that the drive was withdrawn (but no way to verify body right now)
-        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/rides?id=eq.${ride.id}'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: containsPair('status', RideStatus.withdrawnByRider.index),
+        ).called(1);
       });
 
       testWidgets('Can abort withdrawing from ride', (WidgetTester tester) async {
@@ -473,14 +484,14 @@ void main() {
         await tester.tap(withdrawRideNoButton);
         await tester.pumpAndSettle();
 
-        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
+        verifyRequestNever(processor, urlMatcher: equals('/rest/v1/rides?id=eq.${ride.id}'));
       });
     });
 
     group('Hiding drive', () {
       setUp(() {
         ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver, drive: NullableParameter(drive));
-        when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+        whenRequest(processor).thenReturnJson(ride.toJsonForApi());
       });
 
       Future<void> openHideDialog(WidgetTester tester) async {
@@ -502,8 +513,12 @@ void main() {
         await tester.tap(hideRideYesButton);
         await tester.pumpAndSettle();
 
-        // Verify that the drive was hidden (but no way to verify body right now)
-        verify(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}')).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/rides?id=eq.${ride.id}'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'hide_in_list_view': true}),
+        ).called(1);
       });
 
       testWidgets('Can abort hiding drive', (WidgetTester tester) async {
@@ -514,7 +529,7 @@ void main() {
         await tester.tap(hideRideNoButton);
         await tester.pumpAndSettle();
 
-        verifyNever(processor.processUrl('/rest/v1/rides?id=eq.${ride.id}'));
+        verifyRequestNever(processor, urlMatcher: startsWith('/rest/v1/rides?id=eq.${ride.id}'));
       });
     });
 
@@ -536,14 +551,14 @@ void main() {
         drive: NullableParameter(drive),
       );
 
-      when(processor.processUrl(any)).thenReturn(jsonEncode(ride.toJsonForApi()));
+      whenRequest(processor).thenReturnJson(ride.toJsonForApi());
 
       await pumpMaterial(tester, RideDetailPage.fromRide(ride));
 
       await tester.pump();
 
       // Mock review call
-      when(processor.processUrl(any)).thenReturn(jsonEncode(null));
+      whenRequest(processor).thenReturnJson(null);
 
       final Finder rateDriverButton = find.byKey(const Key('rateDriverButton'));
       await tester.scrollUntilVisible(rateDriverButton, 500.0, scrollable: find.byType(Scrollable).first);
