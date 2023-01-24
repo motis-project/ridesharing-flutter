@@ -331,6 +331,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
           icon: Icon(
             Icons.chair,
             color: Theme.of(context).colorScheme.primary,
+            size: 32,
           ),
           onChanged: (int? value) {
             setState(() {

@@ -281,7 +281,7 @@
   "searchRideFilterMinimumRating": "Mindest-Bewertung",
   "searchRideFilterFeatures": "Features",
   "searchRideFilterFeaturesSelectTooltip": "Auswählen",
-  "searchRideFilterFeaturesDeselectTooltip": "Abwählen ",
+  "searchRideFilterFeaturesDeselectTooltip": "Entfernen",
   "searchRideFilterDeviation": "Maximale Abweichung von ausgewählter Zeit",
   "searchRideFilterDeviationHours": "Stunden",
   "searchRideFilterDeviationDays": "Tage",
