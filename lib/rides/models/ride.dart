@@ -203,6 +203,11 @@ extension RideStatusExtension on RideStatus {
     return this == RideStatus.approved;
   }
 
+  // This is used to determine if the rider can see and be seen in the riders list
+  bool isRealRider() {
+    return this == RideStatus.approved || this == RideStatus.cancelledByDriver;
+  }
+
   bool activeChat() {
     return this == RideStatus.approved || this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
   }

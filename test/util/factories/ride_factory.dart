@@ -28,19 +28,19 @@ class RideFactory extends TripFactory<Ride> {
     int? driveId,
     NullableParameter<Drive>? drive,
     int? riderId,
-    NullableParameter<Profile>? ride,
+    NullableParameter<Profile>? rider,
     int? chatId,
     NullableParameter<Chat>? chat,
     bool createDependencies = true,
   }) {
     assert(driveId == null || drive?.value == null || drive!.value?.id == driveId);
-    assert(riderId == null || ride?.value == null || ride!.value?.id == riderId);
+    assert(riderId == null || rider?.value == null || rider!.value?.id == riderId);
     assert(chatId == null || chat?.value == null || chat!.value?.id == chatId);
 
     final Drive? generatedDrive =
         getNullableParameterOr(drive, DriveFactory().generateFake(id: driveId, createDependencies: false));
     final Profile? generatedRider =
-        getNullableParameterOr(ride, ProfileFactory().generateFake(id: riderId, createDependencies: false));
+        getNullableParameterOr(rider, ProfileFactory().generateFake(id: riderId, createDependencies: false));
     final Chat? generatedChat =
         getNullableParameterOr(chat, ChatFactory().generateFake(id: chatId, createDependencies: false));
 
