@@ -353,6 +353,7 @@ void main() {
           driveId: drive.id,
         );
 
+        // We return the drive when ride is preview
         whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 
@@ -378,12 +379,23 @@ void main() {
           final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));
           expect(requestRideYesButton, findsOneWidget);
           await tester.tap(requestRideYesButton);
+
           await tester.pumpAndSettle();
 
-          // Verify that the ride was requested (but no way to verify body right now)
-          // TODO
-          // One call to insert the ride, one call to load it again
-          // verifyRequest(processor, urlMatcher: startsWith('/rest/v1/rides'), methodMatcher: 'PUT').called(1);
+          // Ride is requested by uploading a new ride
+          verifyRequest(
+            processor,
+            urlMatcher: equals('/rest/v1/rides?select=%2A'),
+            methodMatcher: equals('POST'),
+            bodyMatcher: containsPair('start', ride.start),
+          ).called(1);
+
+          // Ride is reloaded to pick up supabase function changes
+          verifyRequest(
+            processor,
+            urlMatcher: matches(RegExp('/rest/v1/rides.*id=eq.${returnedRide.id}')),
+            methodMatcher: equals('GET'),
+          ).called(1);
 
           expect(find.byKey(const Key('rideRequestedBanner')), findsOneWidget);
         });
