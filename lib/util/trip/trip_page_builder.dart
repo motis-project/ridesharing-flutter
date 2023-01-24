@@ -34,19 +34,19 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
           child: TabBarView(
             children: <Widget>[
               TripStreamBuilder<T>(
+                key: const Key('upcomingTrips'),
                 stream: trips,
                 emptyMessage: isRide
                     ? S.of(context).widgetTripBuilderNoUpcomingRides
                     : S.of(context).widgetTripBuilderNoUpcomingDrives,
-                filterTrips: (List<T> trips) =>
-                    trips.where((T trip) => trip.shouldShowInListView(past: false)).toList(),
+                filterTrips: getFilterTrips(past: false),
               ),
               TripStreamBuilder<T>(
+                key: const Key('pastTrips'),
                 stream: trips,
                 emptyMessage:
                     isRide ? S.of(context).widgetTripBuilderNoPastRides : S.of(context).widgetTripBuilderNoPastDrives,
-                filterTrips: (List<T> trips) =>
-                    trips.reversed.where((T trip) => trip.shouldShowInListView(past: true)).toList(),
+                filterTrips: getFilterTrips(past: true),
               ),
             ],
           ),
@@ -59,16 +59,23 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
     );
   }
 
+  List<T> Function(List<T>) getFilterTrips({required bool past}) => (List<T> trips) {
+        if (past) trips = trips.reversed.toList();
+        return trips.where((T trip) => trip.shouldShowInListView(past: past)).toList();
+      };
+
   Widget getFloatingActionButton(BuildContext context, {required bool isRide}) {
     final String heroTag = isRide ? 'RideFAB' : 'DriveFAB';
     final String tooltip = isRide ? S.of(context).pageRidesTooltipSearchRide : S.of(context).pageDrivesTooltipOfferRide;
     final Icon icon = isRide ? const Icon(Icons.search) : const Icon(Icons.add);
+    final Key key = isRide ? const Key('ridesFAB') : const Key('drivesFAB');
 
     return FloatingActionButton(
       heroTag: heroTag,
       tooltip: tooltip,
       onPressed: onFabPressed,
       backgroundColor: Theme.of(context).colorScheme.primary,
+      key: key,
       child: icon,
     );
   }
