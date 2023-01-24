@@ -14,6 +14,8 @@
   "save": "Save",
   "add": "Add",
   "remove": "Remove",
+  "before": "Before",
+  "after": "After",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",

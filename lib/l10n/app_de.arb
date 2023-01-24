@@ -14,6 +14,8 @@
   "save": "Speichern",
   "add": "Hinzufügen",
   "remove": "Entfernen",
+  "before": "Vorher",
+  "after": "Nachher",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
 
   "riders": "Mitfahrer",

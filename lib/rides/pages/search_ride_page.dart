@@ -290,22 +290,19 @@ class _SearchRidePageState extends State<SearchRidePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         if (_wholeDay) ...<Widget>[
-          Row(
-            children: <Widget>[
-              IconButton(
-                onPressed: _selectedDate.isSameDayAs(DateTime.now())
-                    ? null
-                    : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
-                icon: const Icon(Icons.chevron_left),
-              ),
-              Text(localeManager.formatDate(_selectedDate)),
-              IconButton(
-                onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
+          IconButton(
+            tooltip: S.of(context).before,
+            onPressed: _selectedDate.isSameDayAs(DateTime.now())
+                ? null
+                : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
+            icon: const Icon(Icons.chevron_left),
           ),
-          const Expanded(child: SizedBox(height: 59))
+          Expanded(child: buildDatePicker()),
+          IconButton(
+            tooltip: S.of(context).after,
+            onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
+            icon: const Icon(Icons.chevron_right),
+          ),
         ],
         if (!_wholeDay) ...<Widget>[
           Expanded(child: buildDatePicker()),
