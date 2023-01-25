@@ -182,9 +182,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
     return const SizedBox();
   }
 
-  Widget buildRightSide() {
-    return const SizedBox();
-  }
+  Widget buildRightSide();
 
   Color pickStatusColor() {
     return Theme.of(context).cardColor;
