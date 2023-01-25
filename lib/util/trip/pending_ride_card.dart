@@ -40,7 +40,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text('+${localeManager.formatDuration(extraTime, shouldPadHours: false)}');
+    return Text(key: const Key('extraTime'), '+${localeManager.formatDuration(extraTime, shouldPadHours: false)}');
   }
 
   @override
@@ -55,7 +55,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   Widget buildBottomRight() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text('${_ride.price}€'),
+      child: Text(key: const Key('price'), '${_ride.price}€'),
     );
   }
 
@@ -64,11 +64,13 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
     return ButtonBar(
       children: <Widget>[
         IconButton(
+          key: const Key('approveButton'),
           onPressed: () => showApproveDialog(context),
           icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
           tooltip: S.of(context).approve,
         ),
         IconButton(
+          key: const Key('rejectButton'),
           onPressed: () => showRejectDialog(context),
           icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
           tooltip: S.of(context).reject,
@@ -115,10 +117,12 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
         content: Text(S.of(context).cardPendingRideApproveDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('approveCancelButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(dialogContext).pop(),
           ),
           TextButton(
+            key: const Key('approveConfirmButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               // check if there are enough seats available
@@ -129,11 +133,13 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
                   context,
                   S.of(context).cardPendingRideApproveDialogSuccessSnackbar,
                   durationType: SnackBarDurationType.medium,
+                  key: const Key('approveSuccesSnackbar'),
                 );
               } else {
                 Navigator.of(dialogContext).pop();
                 showSnackBar(
                   context,
+                  key: const Key('approveErrorSnackbar'),
                   S.of(context).cardPendingRideApproveDialogErrorSnackbar,
                   durationType: SnackBarDurationType.medium,
                 );
@@ -153,16 +159,19 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
         content: Text(S.of(context).cardPendingRideRejectDialogMessage),
         actions: <Widget>[
           TextButton(
+            key: const Key('rejectCancelButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
+            key: const Key('rejectConfirmButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
               rejectRide();
               Navigator.of(context).pop();
               showSnackBar(
                 context,
+                key: const Key('rejectSuccessSnackbar'),
                 S.of(context).cardPendingRideRejectDialogSuccessSnackBar,
                 durationType: SnackBarDurationType.medium,
               );

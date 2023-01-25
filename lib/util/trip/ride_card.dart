@@ -89,7 +89,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(' ${_ride.price}€');
+    return Text(key: const Key('price'), ' ${_ride.price}€');
   }
 
   @override
