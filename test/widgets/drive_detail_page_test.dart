@@ -143,6 +143,7 @@ void main() {
       final Finder profileWidget = find.byType(ProfileWidget);
       tester.tap(profileWidget.first);
     });
+
     testWidgets('can Navigate to chatPage on Waypoint', (WidgetTester tester) async {
       drive.rides!.add(RideFactory().generateFake(
         id: 1,
@@ -156,13 +157,16 @@ void main() {
           .thenReturnJson([]);
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
+      //wait for page to be loaded
       await tester.pump();
-      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
-      await tester.pump();
+
+      //navigate to ChatPage
       await tester.tap(find.byKey(Key('chatPageButton${drive.rides!.last.id}Start')));
-      await tester.pumpAndSettle();
+
+      // wait for Page to be loaded (two times because of the Stream)
       await tester.pump();
-      await tester.pumpAndSettle();
+      await tester.pump();
+
       final Finder chatPageFinder = find.byType(ChatPage);
       expect(chatPageFinder, findsOneWidget);
       final ChatPage chatPage = tester.widget(chatPageFinder);
@@ -283,11 +287,17 @@ void main() {
 
     testWidgets('Can navigate to drive chat page', (WidgetTester tester) async {
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+
+      // wait for Page to be loaded
       await tester.pump();
 
+      // navigate to ChatPage
       await tester.tap(find.byKey(const Key('driveChatButton')));
+
+      // wait for Page to be loaded (two times because of the Stream)
       await tester.pump();
       await tester.pump();
+
       expect(find.byType(DriveChatPage), findsOneWidget);
     });
   });
