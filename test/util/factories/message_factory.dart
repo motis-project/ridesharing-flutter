@@ -37,7 +37,7 @@ class MessageFactory extends ModelFactory<Message> {
       chatId: generatedChat?.id ?? randomId,
       chat: generatedChat,
       content: content ?? faker.lorem.sentences(random.nextInt(2) + 1).join(' '),
-      senderId: generatedSender?.id ?? randomId,
+      senderId: generatedSender?.id ?? senderId ?? randomId,
       sender: generatedSender,
       read: read ?? Random().nextBool(),
     );

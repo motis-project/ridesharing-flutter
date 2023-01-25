@@ -57,7 +57,7 @@ class DriveFactory extends TripFactory<Drive> {
       seats: seats ?? random.nextInt(5) + 1,
       cancelled: cancelled ?? false,
       hideInListView: hideInListView ?? false,
-      driverId: generatedDriver?.id ?? randomId,
+      driverId: generatedDriver?.id ?? driverId ?? randomId,
       driver: generatedDriver,
       rides: generatedRides,
     );
