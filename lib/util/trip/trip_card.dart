@@ -71,6 +71,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
+                  key: const Key('start'),
                   '${localeManager.formatTime(trip.startTime)}  ${trip.start}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
@@ -115,6 +116,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
+                  key: const Key('end'),
                   '${localeManager.formatTime(trip.endTime)}  ${trip.end}',
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
