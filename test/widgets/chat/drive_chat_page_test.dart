@@ -34,6 +34,7 @@ void main() {
     setUp(() async {
       whenRequest(processor).thenReturnJson([]);
     });
+
     testWidgets('when Drive has rides with active chat', (WidgetTester tester) async {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
@@ -41,6 +42,7 @@ void main() {
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       verifyRequest(
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
@@ -57,6 +59,7 @@ void main() {
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       verifyRequestNever(
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
@@ -72,6 +75,7 @@ void main() {
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       verifyRequestNever(
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
@@ -93,6 +97,7 @@ void main() {
     whenRequest(processor).thenReturnJson([]);
     await pumpMaterial(tester, DriveChatPage(drive: drive));
     await tester.pump();
+
     expect(find.byKey(Key('chatWidget${drive.rides![0].chatId}')), findsOneWidget);
     expect(find.byKey(Key('chatWidget${drive.rides![1].chatId}')), findsOneWidget);
     expect(find.byKey(Key('chatWidget${drive.rides![2].chatId}')), findsOneWidget);
@@ -111,6 +116,7 @@ void main() {
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       expect(find.byKey(Key('chatWidget${drive.rides![0].chatId}')), findsNothing);
       expect(find.byKey(Key('chatWidget${drive.rides![1].chatId}')), findsNothing);
       expect(find.byKey(Key('chatWidget${drive.rides![2].chatId}')), findsNothing);
@@ -125,6 +131,7 @@ void main() {
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       expect(find.byKey(const Key('noChatsImage')), findsOneWidget);
     });
   });
@@ -143,6 +150,7 @@ void main() {
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       final Finder chatWidget = find.byKey(Key('chatWidget${drive.rides![0].chatId}'));
       expect(chatWidget, findsOneWidget);
       final Finder avatar = find.descendant(of: chatWidget, matching: find.byType(Avatar));
@@ -170,6 +178,7 @@ void main() {
         whenRequest(processor).thenReturnJson([MessageFactory().generateFake().toJsonForApi()]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
+
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.text(message.content)), findsOneWidget);
@@ -191,6 +200,7 @@ void main() {
         whenRequest(processor).thenReturnJson([]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
+
         expect(find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle')), findsNothing);
       });
     });
@@ -218,6 +228,7 @@ void main() {
         whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
+
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.byIcon(Icons.done_all)), findsOneWidget);
@@ -242,6 +253,7 @@ void main() {
         whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
+
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.byIcon(Icons.done_all)), findsNothing);
@@ -251,6 +263,7 @@ void main() {
       setUp(() {
         SupabaseManager.setCurrentProfile(profile);
       });
+
       testWidgets('when there are unread Messages', (WidgetTester tester) async {
         final Message message = MessageFactory().generateFake(
           senderId: profile.id! + 1,
@@ -280,6 +293,7 @@ void main() {
                 matching: find.text(drive.rides![0].chat!.getUnreadMessagesCount().toString())),
             findsOneWidget);
       });
+
       testWidgets('not when there are no unread Messages', (WidgetTester tester) async {
         final Message message = MessageFactory().generateFake(
           senderId: profile.id! + 1,
@@ -301,10 +315,12 @@ void main() {
         whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
+
         final Finder unreadMessageWidget = find.byKey(Key('chatWidget${drive.rides![0].chatId}UnreadMessageCount'));
         expect(unreadMessageWidget, findsNothing);
       });
     });
+
     testWidgets('can Navigate to ChatPage with Rider', (WidgetTester tester) async {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
@@ -319,10 +335,12 @@ void main() {
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
+
       final Finder chatWidget = find.byKey(Key('chatWidget${drive.rides![0].chatId}'));
       expect(chatWidget, findsOneWidget);
       await tester.tap(chatWidget);
       await tester.pumpAndSettle();
+
       final Finder chatPageFinder = find.byType(ChatPage);
       expect(chatPageFinder, findsOneWidget);
       final ChatPage chatPage = tester.widget(chatPageFinder);

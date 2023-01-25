@@ -26,6 +26,7 @@ void main() {
 
   testWidgets('Page has stream subscription', (WidgetTester tester) async {
     await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
+
     verifyRequest(
       processor,
       urlMatcher: equals('/rest/v1/messages?select=%2A&chat_id=eq.$chatId&order=created_at.desc.nullslast'),
@@ -34,8 +35,10 @@ void main() {
     expect(subscription.length, 1);
     expect(subscription[0].topic, 'realtime:public:messages:1');
   });
+
   testWidgets('shows ProfileWidget of given Profile', (WidgetTester tester) async {
     await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
+
     final Finder profileWidgetFinder = find.byType(ProfileWidget);
     expect(profileWidgetFinder, findsOneWidget);
     final ProfileWidget profileWidget = tester.widget(profileWidgetFinder);
@@ -44,20 +47,26 @@ void main() {
 
   group('Messagebar', () {
     setUp(() => whenRequest(processor).thenReturnJson([]));
+
     testWidgets('is shown when Active', (WidgetTester tester) async {
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       expect(find.byType(MessageBar), findsOneWidget);
     });
+
     testWidgets('is not shown when not Active', (WidgetTester tester) async {
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId, active: false));
       await tester.pump();
+
       expect(find.byType(MessageBar), findsNothing);
     });
+
     testWidgets('can send Message', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       final Finder messageBar = find.byType(MessageBar);
       expect(messageBar, findsOneWidget);
       final textField = find.descendant(of: messageBar, matching: find.byType(TextFormField));
@@ -76,6 +85,7 @@ void main() {
       ).called(1);
     });
   });
+
   group('ChatBubbles', () {
     testWidgets('are shown', (WidgetTester tester) async {
       whenRequest(processor).thenReturnJson([
@@ -88,14 +98,18 @@ void main() {
       ]);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       expect(find.byType(ChatBubble), findsNWidgets(6));
     });
+
     testWidgets('are not when there are no messages', (WidgetTester tester) async {
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       expect(find.byType(ChatBubble), findsNothing);
     });
+
     testWidgets('shows Icon.done_all when message is from current user', (WidgetTester tester) async {
       whenRequest(processor).thenReturnJson([
         MessageFactory().generateFake(senderId: profile.id).toJsonForApi(),
@@ -103,20 +117,24 @@ void main() {
       SupabaseManager.setCurrentProfile(profile);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       final Finder chatBubble = find.byType(ChatBubble);
       expect(chatBubble, findsOneWidget);
       expect(find.descendant(of: chatBubble, matching: find.byIcon(Icons.done_all)), findsOneWidget);
     });
+
     testWidgets('shows Icon.done_all not when message is from other user', (WidgetTester tester) async {
       whenRequest(processor).thenReturnJson([
         MessageFactory().generateFake(senderId: profile.id! + 1).toJsonForApi(),
       ]);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       final Finder chatBubble = find.byType(ChatBubble);
       expect(chatBubble, findsOneWidget);
       expect(find.descendant(of: chatBubble, matching: find.byIcon(Icons.done_all)), findsNothing);
     });
+
     testWidgets('shows tail iff it should be shown', (WidgetTester tester) async {
       final Profile currentProfile = ProfileFactory().generateFake(id: 2);
       SupabaseManager.setCurrentProfile(currentProfile);
@@ -167,6 +185,7 @@ void main() {
       whenRequest(processor).thenReturnJson(messages);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
+
       final Finder chatBubbles = find.byType(ChatBubble);
       expect(chatBubbles, findsNWidgets(7));
       expect(chatBubbles.evaluate().map((e) => e.widget as ChatBubble).map((e) => e.tail).toList(),
