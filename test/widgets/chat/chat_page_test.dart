@@ -143,43 +143,50 @@ void main() {
             .generateFake(
               senderId: profile.id,
               createdAt: DateTime.now(),
-            )
+              content: 'newest Message from other user',
+            ) // has Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: currentProfile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 1)),
-            )
+              content: 'Message from current user',
+            ) // has Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: profile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 2)),
-            )
+              content: 'Message from other User',
+            ) // has Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: profile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 3)),
-            )
+              content: 'another Message from other User',
+            ) // does not have Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: currentProfile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 4)),
-            )
+              content: 'Message from current User',
+            ) // has Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: currentProfile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 5)),
-            )
+              content: 'another Message from current User',
+            ) // does not have Tail
             .toJsonForApi(),
         MessageFactory()
             .generateFake(
               senderId: currentProfile.id,
               createdAt: DateTime.now().subtract(const Duration(seconds: 6)),
-            )
+              content: 'a third Message from current User',
+            ) // does not have Tail
             .toJsonForApi(),
       ];
       whenRequest(processor).thenReturnJson(messages);
