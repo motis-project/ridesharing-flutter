@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/pending_ride_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
@@ -141,8 +142,33 @@ void main() {
 
       final Finder profileWidget = find.byType(ProfileWidget);
       tester.tap(profileWidget.first);
+    });
+    testWidgets('can Navigate to chatPage on Waypoint', (WidgetTester tester) async {
+      drive.rides!.add(RideFactory().generateFake(
+        id: 1,
+        start: 'Waypoint',
+        status: RideStatus.approved,
+      ));
+      whenRequest(processor).thenReturnJson(drive.toJsonForApi());
+      whenRequest(processor,
+              urlMatcher: equals(equals(
+                  '/rest/v1/messages?select=%2A&chat_id=eq.${drive.rides!.last.chatId}&order=created_at.desc.nullslast')))
+          .thenReturnJson([]);
+      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
-      // Add navigating to chat here
+      await tester.pump();
+      await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
+      await tester.pump();
+      await tester.tap(find.byKey(Key('chatPageButton${drive.rides!.last.id}Start')));
+      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pumpAndSettle();
+      final Finder chatPageFinder = find.byType(ChatPage);
+      expect(chatPageFinder, findsOneWidget);
+      final ChatPage chatPage = tester.widget(chatPageFinder);
+      expect(chatPage.profile, drive.rides!.last.rider);
+      expect(chatPage.chatId, drive.rides!.last.chatId);
+      expect(chatPage.active, true);
     });
 
     testWidgets('Can handle duplicate waypoints', (WidgetTester tester) async {
@@ -255,13 +281,13 @@ void main() {
       });
     });
 
-    testWidgets('Can navigate to drive chat page', skip: true, (WidgetTester tester) async {
+    testWidgets('Can navigate to drive chat page', (WidgetTester tester) async {
       await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
       await tester.pump();
 
       await tester.tap(find.byKey(const Key('driveChatButton')));
-      await tester.pumpAndSettle();
-
+      await tester.pump();
+      await tester.pump();
       expect(find.byType(DriveChatPage), findsOneWidget);
     });
   });
