@@ -220,7 +220,6 @@ void main() {
         await tester.pump();
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
         expect(subtitle, findsOneWidget);
-        final Widget widget = tester.widget(subtitle);
         expect(find.descendant(of: subtitle, matching: find.byIcon(Icons.done_all)), findsOneWidget);
       });
       testWidgets('is not shown when last Message is not from current User', (WidgetTester tester) async {
