@@ -38,7 +38,10 @@ void main() {
     testWidgets('when Drive has rides with active chat', (WidgetTester tester) async {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
-        rides: [RideFactory().generateFake(chatId: 1, status: RideStatus.approved)],
+        rides: [
+          RideFactory().generateFake(chatId: 1, status: RideStatus.approved),
+          RideFactory().generateFake(chatId: 2, status: RideStatus.pending),
+        ],
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
@@ -71,7 +74,11 @@ void main() {
     testWidgets('not when Drive has rides without active chat', (WidgetTester tester) async {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
-        rides: [RideFactory().generateFake(status: RideStatus.pending)],
+        rides: [
+          RideFactory().generateFake(status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+        ],
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
