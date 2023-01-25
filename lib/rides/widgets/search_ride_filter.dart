@@ -212,25 +212,22 @@ class SearchRideFilter {
   }
 
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    return _filterCategory(
-      context,
-      S.of(context).searchRideFilterSorting,
-      DropdownButton<SearchRideSorting>(
-        value: _sorting,
-        items: SearchRideSorting.values.map((SearchRideSorting sorting) {
-          final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
-          return DropdownMenuItem<SearchRideSorting>(
-            enabled: enabled,
-            value: sorting,
-            child: Text(
-              sorting.getDescription(context),
-              style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
-            ),
-          );
-        }).toList(),
-        onChanged: (SearchRideSorting? value) => innerSetState(
-          () => _sorting = value!,
-        ),
+    return DropdownButton<SearchRideSorting>(
+      icon: const Icon(Icons.sort),
+      value: _sorting,
+      items: SearchRideSorting.values.map((SearchRideSorting sorting) {
+        final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
+        return DropdownMenuItem<SearchRideSorting>(
+          enabled: enabled,
+          value: sorting,
+          child: Text(
+            sorting.getDescription(context),
+            style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
+          ),
+        );
+      }).toList(),
+      onChanged: (SearchRideSorting? value) => innerSetState(
+        () => _sorting = value!,
       ),
     );
   }
@@ -251,7 +248,6 @@ class SearchRideFilter {
                     children: <Widget>[
                       _buildRatingFilter(context, innerSetState),
                       _buildFeaturesFilter(context, innerSetState),
-                      _buildSortingFilter(context, innerSetState),
                     ],
                   ),
                 ),
@@ -365,42 +361,43 @@ class SearchRideFilter {
           Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
-    final Widget sortingWidget = Row(
-      children: <Widget>[const Icon(Icons.sort), Text(_sorting.getDescription(context))],
-    );
-    widgets.add(sortingWidget);
     final int numDividers = widgets.length - 1;
     for (int i = 0; i < numDividers; i++) {
       widgets.insert(i * 2 + 1, const VerticalDivider(thickness: 2));
     }
     return IntrinsicHeight(
-      child: Semantics(
-        button: true,
-        tooltip: S.of(context).pageSearchRideTooltipFilter,
-        child: InkWell(
-          onTap: () => dialog(context, setState),
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              children: <Widget>[
-                const Icon(Icons.tune),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: widgets,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Semantics(
+              button: true,
+              tooltip: S.of(context).pageSearchRideTooltipFilter,
+              child: InkWell(
+                onTap: () => dialog(context, setState),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Row(
+                    children: <Widget>[
+                      const Icon(Icons.tune),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: widgets,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          const SizedBox(width: 4),
+          _buildSortingFilter(context, setState)
+        ],
       ),
     );
   }
