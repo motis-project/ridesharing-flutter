@@ -142,11 +142,11 @@ class _SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildSearchFieldViewer() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
             child: StartDestinationTimeline(
               startController: _startController,
               destinationController: _destinationController,
@@ -160,20 +160,20 @@ class _SearchRidePageState extends State<SearchRidePage> {
               }),
             ),
           ),
-        ),
-        IconButton(
-          onPressed: () => setState(() {
-            final String oldStartText = _startController.text;
-            _startController.text = _destinationController.text;
-            _destinationController.text = oldStartText;
-            final AddressSuggestion? oldStartSuggestion = _startSuggestion;
-            _startSuggestion = _destinationSuggestion;
-            _destinationSuggestion = oldStartSuggestion;
-            loadRides();
-          }),
-          icon: const Icon(Icons.swap_vert),
-        )
-      ],
+          IconButton(
+            onPressed: () => setState(() {
+              final String oldStartText = _startController.text;
+              _startController.text = _destinationController.text;
+              _destinationController.text = oldStartText;
+              final AddressSuggestion? oldStartSuggestion = _startSuggestion;
+              _startSuggestion = _destinationSuggestion;
+              _destinationSuggestion = oldStartSuggestion;
+              loadRides();
+            }),
+            icon: const Icon(Icons.swap_vert),
+          ),
+        ],
+      ),
     );
   }
 
@@ -208,6 +208,68 @@ class _SearchRidePageState extends State<SearchRidePage> {
         readOnly: true,
         onTap: _showTimePicker,
         controller: _timeController,
+      ),
+    );
+  }
+
+  Widget buildDateRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          if (_wholeDay) ...<Widget>[
+            IconButton(
+              tooltip: S.of(context).before,
+              onPressed: _selectedDate.isSameDayAs(DateTime.now())
+                  ? null
+                  : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
+              icon: const Icon(Icons.chevron_left),
+            ),
+            Expanded(child: buildDatePicker()),
+            IconButton(
+              tooltip: S.of(context).after,
+              onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
+              icon: const Icon(Icons.chevron_right),
+            ),
+          ],
+          if (!_wholeDay) ...<Widget>[
+            Expanded(child: buildDatePicker()),
+            const SizedBox(width: 10),
+            Expanded(child: buildTimePicker()),
+            const SizedBox(width: 10),
+          ],
+          LabeledCheckbox(
+            label: S.of(context).pageSearchRideWholeDay,
+            value: _wholeDay,
+            onChanged: (bool? value) => setState(() {
+              _wholeDay = value!;
+              _filter.wholeDay = _wholeDay;
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSeats() {
+    return Center(
+      child: SizedBox(
+        width: 150,
+        child: IncrementField(
+          maxValue: Trip.maxSelectableSeats,
+          icon: Icon(
+            Icons.chair,
+            color: Theme.of(context).colorScheme.primary,
+            size: 32,
+          ),
+          onChanged: (int? value) {
+            setState(() {
+              _seats = value!;
+              loadRides();
+            });
+          },
+        ),
       ),
     );
   }
@@ -288,106 +350,49 @@ class _SearchRidePageState extends State<SearchRidePage> {
     }
   }
 
-  Widget buildDateRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        if (_wholeDay) ...<Widget>[
-          IconButton(
-            tooltip: S.of(context).before,
-            onPressed: _selectedDate.isSameDayAs(DateTime.now())
-                ? null
-                : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
-            icon: const Icon(Icons.chevron_left),
-          ),
-          Expanded(child: buildDatePicker()),
-          IconButton(
-            tooltip: S.of(context).after,
-            onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
-        if (!_wholeDay) ...<Widget>[
-          Expanded(child: buildDatePicker()),
-          const SizedBox(width: 10),
-          Expanded(child: buildTimePicker()),
-          const SizedBox(width: 10),
-        ],
-        LabeledCheckbox(
-          label: S.of(context).pageSearchRideWholeDay,
-          value: _wholeDay,
-          onChanged: (bool? value) => setState(() {
-            _wholeDay = value!;
-            _filter.wholeDay = _wholeDay;
-          }),
-        ),
-      ],
-    );
-  }
-
-  Widget buildSeats() {
-    return Center(
-      child: SizedBox(
-        width: 150,
-        child: IncrementField(
-          maxValue: Trip.maxSelectableSeats,
-          icon: Icon(
-            Icons.chair,
-            color: Theme.of(context).colorScheme.primary,
-            size: 32,
-          ),
-          onChanged: (int? value) {
-            setState(() {
-              _seats = value!;
-              loadRides();
-            });
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Hero(
       tag: 'RideFAB',
       child: Scaffold(
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: RefreshIndicator(
-              onRefresh: loadRides,
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(
-                    floating: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: ColoredBox(color: Theme.of(context).colorScheme.surface),
-                      title: Text(
-                        S.of(context).pageSearchRideTitle,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                      ),
+          child: RefreshIndicator(
+            onRefresh: loadRides,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverAppBar(
+                  floating: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: ColoredBox(color: Theme.of(context).colorScheme.surface),
+                    title: Text(
+                      S.of(context).pageSearchRideTitle,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
-                  SliverPinnedHeader(
-                    child: ColoredBox(
-                      color: Theme.of(context).canvasColor,
-                      child: buildSearchFieldViewer(),
-                    ),
+                ),
+                SliverPinnedHeader(
+                  child: ColoredBox(
+                    color: Theme.of(context).canvasColor,
+                    child: buildSearchFieldViewer(),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  SliverToBoxAdapter(child: buildDateRow()),
-                  SliverToBoxAdapter(child: buildSeats()),
-                  SliverToBoxAdapter(child: _filter.buildIndicatorRow(context, setState)),
-                  SliverPinnedHeader(
-                    child: ColoredBox(
-                      color: Theme.of(context).canvasColor,
-                      child: const Divider(thickness: 1),
-                    ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                SliverToBoxAdapter(child: buildDateRow()),
+                SliverToBoxAdapter(child: buildSeats()),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: _filter.buildIndicatorRow(context, setState),
                   ),
-                  buildMainContentSliver(),
-                ],
-              ),
+                ),
+                SliverPinnedHeader(
+                  child: ColoredBox(
+                    color: Theme.of(context).canvasColor,
+                    child: const Divider(thickness: 1),
+                  ),
+                ),
+                buildMainContentSliver(),
+              ],
             ),
           ),
         ),

@@ -372,24 +372,27 @@ class SearchRideFilter {
             child: Semantics(
               button: true,
               tooltip: S.of(context).pageSearchRideTooltipFilter,
-              child: InkWell(
-                onTap: () => dialog(context, setState),
-                child: Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: Row(
-                    children: <Widget>[
-                      const Icon(Icons.tune),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: widgets,
+              child: SizedBox(
+                height: double.infinity,
+                child: InkWell(
+                  onTap: () => dialog(context, setState),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      children: <Widget>[
+                        const Icon(Icons.tune),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: widgets,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
