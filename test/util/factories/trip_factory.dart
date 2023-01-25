@@ -16,5 +16,6 @@ abstract class TripFactory<T extends Trip> extends ModelFactory<T> {
     DateTime? endTime,
     int? seats,
     bool createDependencies = true,
+    bool hideInListView = false,
   });
 }

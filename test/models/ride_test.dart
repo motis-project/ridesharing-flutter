@@ -22,7 +22,7 @@ void main() {
   });
 
   group('Ride.previewFromDrive', () {
-    test('generates a Ride out of a Drive', () {
+    test('generates a ride out of a drive', () {
       final DateTime startTime = DateTime.now();
       final DateTime endTime = DateTime.now().add(const Duration(hours: 2));
 
@@ -199,7 +199,7 @@ void main() {
     });
   });
   group('Ride.userHasRideAtTimeRange', () {
-    test('returns true when there is a approved not finished Ride at the time range', () async {
+    test('has ride in time range', () async {
       when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
             RideFactory()
                 .generateFake(
@@ -215,12 +215,12 @@ void main() {
               DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))), 2),
           true);
     });
-    test('returns false if there is no approved and not finished ride at the time range', () async {
+    test('has no ride at time range', () async {
       when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
             RideFactory()
                 .generateFake(
                   riderId: 2,
-                  status: RideStatus.pending,
+                  status: RideStatus.approved,
                   startTime: DateTime.now().add(const Duration(hours: 8)),
                   endTime: DateTime.now().add(const Duration(hours: 10)),
                 )
@@ -232,67 +232,105 @@ void main() {
                   endTime: DateTime.now().add(const Duration(hours: 4)),
                 )
                 .toJsonForApi(),
+          ]));
+      expect(
+          await Ride.userHasRideAtTimeRange(
+              DateTimeRange(
+                start: DateTime.now().add(const Duration(hours: 4)),
+                end: DateTime.now().add(const Duration(hours: 6)),
+              ),
+              2),
+          false);
+    });
+    test('not approved ride overlaps with time range', () async {
+      when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
             RideFactory()
                 .generateFake(
                   riderId: 2,
-                  startTime: DateTime.now().subtract(const Duration(hours: 4)),
-                  endTime: DateTime.now().subtract(const Duration(hours: 2)),
-                )
-                .toJsonForApi(),
-            RideFactory()
-                .generateFake(
-                  riderId: 2,
-                  status: RideStatus.approved,
-                  startTime: DateTime.now().add(const Duration(hours: 16)),
-                  endTime: DateTime.now().add(const Duration(hours: 20)),
-                )
-                .toJsonForApi(),
-            RideFactory()
-                .generateFake(
-                  riderId: 2,
-                  startTime: DateTime.now().add(const Duration(hours: 12)),
-                  endTime: DateTime.now().add(const Duration(hours: 15)),
-                  status: RideStatus.cancelledByDriver,
+                  status: RideStatus.pending,
+                  startTime: DateTime.now().add(const Duration(hours: 7)),
+                  endTime: DateTime.now().add(const Duration(hours: 10)),
                 )
                 .toJsonForApi(),
           ]));
       expect(
           await Ride.userHasRideAtTimeRange(
               DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 4)),
-                end: DateTime.now().add(const Duration(hours: 15)),
+                start: DateTime.now().add(const Duration(hours: 6)),
+                end: DateTime.now().add(const Duration(hours: 8)),
               ),
               2),
           false);
     });
+    test('ride overlaps with time range', () async {
+      when.call(rideProcessor.processUrl(any)).thenReturn(jsonEncode([
+            RideFactory()
+                .generateFake(
+                  riderId: 2,
+                  status: RideStatus.approved,
+                  startTime: DateTime.now().add(const Duration(hours: 7)),
+                  endTime: DateTime.now().add(const Duration(hours: 10)),
+                )
+                .toJsonForApi(),
+          ]));
+      expect(
+          await Ride.userHasRideAtTimeRange(
+              DateTimeRange(
+                start: DateTime.now().add(const Duration(hours: 6)),
+                end: DateTime.now().add(const Duration(hours: 8)),
+              ),
+              2),
+          true);
+    });
+  });
+  group('Ride.shouldShowInListView', () {
+    test('show in Listview', () {
+      final Ride ride = RideFactory().generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 2)),
+          endTime: DateTime.now().add(const Duration(hours: 4)),
+          status: RideStatus.pending);
+      expect(ride.shouldShowInListView(past: false), true);
+    });
+    test('show in past Listview', () {
+      final Ride ride = RideFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)),
+          status: RideStatus.approved);
+      expect(ride.shouldShowInListView(past: true), true);
+    });
+    test('does not show in past Listview', () {
+      final Ride ride = RideFactory().generateFake(
+          startTime: DateTime.now().subtract(const Duration(hours: 4)),
+          endTime: DateTime.now().subtract(const Duration(hours: 2)),
+          status: RideStatus.withdrawnByRider);
+      expect(ride.shouldShowInListView(past: true), false);
+    });
   });
   group('Ride.equals', () {
-    test('retrurns true when the rides are the same', () async {
-      final Ride ride = RideFactory().generateFake();
-      expect(ride.equals(ride), true);
+    final Ride ride0 = RideFactory().generateFake(
+      id: 1,
+      createdAt: DateTime(2022, 10),
+      start: 'Berlin',
+      startPosition: Position(1, 1),
+      startTime: DateTime(2022, 11),
+      end: 'Frankfurt',
+      endPosition: Position(2, 2),
+      endTime: DateTime(2022, 12),
+      seats: 1,
+      createDependencies: false,
+      driveId: 2,
+      riderId: 3,
+      status: RideStatus.approved,
+      price: NullableParameter(6),
+    );
+    test('same ride', () async {
+      expect(ride0.equals(ride0), true);
     });
-    test('returns false when parameter is not a ride', () async {
+    test('handle drive', () async {
       final Drive drive = DriveFactory().generateFake(createDependencies: false);
-      final Ride ride = RideFactory().generateFake(createDependencies: false);
-      expect(ride.equals(drive), false);
+      expect(ride0.equals(drive), false);
     });
-    test('returns false when ride has not the same status', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        createDependencies: false,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-      );
+    test('different status', () async {
       final Ride ride1 = RideFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
@@ -305,29 +343,13 @@ void main() {
         seats: 1,
         driveId: 2,
         riderId: 3,
-        status: RideStatus.cancelledByDriver,
+        status: RideStatus.pending,
         price: NullableParameter(6),
         createDependencies: false,
       );
       expect(ride0.equals(ride1), false);
     });
-    test('returns false when ride has not the same driveId', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
+    test('different driveId', () async {
       final Ride ride1 = RideFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
@@ -346,233 +368,7 @@ void main() {
       );
       expect(ride0.equals(ride1), false);
     });
-    test('returns false when ride has not the same id', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 2,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same createdAt', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 9),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same start', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Hamburg',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same startPosition', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(2, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same startTime', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 10),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same end', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Darmstadt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same endPosition', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 1),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
+    test('different price', () async {
       final Ride ride1 = RideFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
@@ -586,169 +382,12 @@ void main() {
         driveId: 2,
         riderId: 3,
         status: RideStatus.approved,
-        price: NullableParameter(6),
+        price: NullableParameter(5),
         createDependencies: false,
       );
       expect(ride0.equals(ride1), false);
     });
-    test('returns false when ride has not the same endTime', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 11),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same seats', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 2,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same hideInListView', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-        hideInListView: true,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same price', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(7),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('returns false when ride has not the same riderId', () async {
-      final Ride ride0 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
+    test('different riderId', () async {
       final Ride ride1 = RideFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
@@ -769,7 +408,7 @@ void main() {
     });
   });
   group('Ride.cancel', () {
-    test('The Status is being changed to canncelledByRider', () async {
+    test('status changes to canncelledByRider', () async {
       final Ride ride = RideFactory().generateFake(status: RideStatus.approved, createDependencies: false);
       when.call(rideProcessor.processUrl(any)).thenReturn(ride.toString());
       ride.cancel();
@@ -777,7 +416,7 @@ void main() {
     });
   });
   group('Ride.withdraw', () {
-    test('Status is changed to withdrawnByRider', () async {
+    test('status changes to withdrawnByRider', () async {
       final Ride ride = RideFactory().generateFake(status: RideStatus.pending, createDependencies: false);
       when.call(rideProcessor.processUrl(any)).thenReturn(ride.toString());
       ride.withdraw();
@@ -803,25 +442,25 @@ void main() {
     });
   });
   group('RideStatus.isCancelled', () {
-    test('returns false if ride is not cancelled', () {
+    test('not cancelled', () {
       final Ride ride = RideFactory().generateFake(status: RideStatus.approved);
       expect(ride.status.isCancelled(), false);
     });
-    test('returns true if ride is cancelledByDriver', () {
+    test('cancelledByDriver', () {
       final Ride ride = RideFactory().generateFake(status: RideStatus.cancelledByDriver);
       expect(ride.status.isCancelled(), true);
     });
-    test('returns true if ride is cancelledByRide', () {
+    test('cancelledByRider', () {
       final Ride ride = RideFactory().generateFake(status: RideStatus.cancelledByRider);
       expect(ride.status.isCancelled(), true);
     });
   });
   group('RideStatus.isApproved', () {
-    test('returns true if ride is approved', () {
+    test('approved', () {
       final Ride ride = RideFactory().generateFake(status: RideStatus.approved);
       expect(ride.status.isApproved(), true);
     });
-    test('returns false if ride is not approved', () {
+    test('not approved', () {
       final Ride ride = RideFactory().generateFake(status: RideStatus.pending);
       expect(ride.status.isApproved(), false);
     });

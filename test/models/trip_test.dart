@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/ride_factory.dart';
+import '../util/factories/trip_factory.dart';
 import '../util/mock_server.dart';
 import '../util/mock_server.mocks.dart';
 
@@ -14,19 +18,17 @@ void main() {
   setUp(() async {
     MockServer.setProcessor(tripProcessor);
   });
+
+  Object randomTripFactory() {
+    final Random random = Random();
+    final int type = random.nextInt(2);
+    return type == 0 ? RideFactory() : DriveFactory();
+  }
+
   group('Trip.duration', () {
-    test('can handel a Ride', () {
+    test('duration of a trip', () {
       final DateTime now = DateTime.now();
-      final Trip trip = RideFactory().generateFake(
-          startTime: now,
-          endTime: now.add(
-            const Duration(hours: 2),
-          ));
-      expect(trip.duration, const Duration(hours: 2));
-    });
-    test('can handel a Drive', () {
-      final DateTime now = DateTime.now();
-      final Trip trip = DriveFactory().generateFake(
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: now,
           endTime: now.add(
             const Duration(hours: 2),
@@ -35,137 +37,79 @@ void main() {
     });
   });
   group('Trip.isFinished', () {
-    test('returns true if the trip is before now', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip is finsihed', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(ride.isFinished, true);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(drive.isFinished, true);
+      expect(trip.isFinished, true);
     });
-    test('returns false if the trip is after now', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip is not finished', () {
+      final Trip ride = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(ride.isFinished, false);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)));
-      expect(drive.isFinished, false);
     });
   });
   group('Trip.isOngoing', () {
-    test('returns true if the Trip is started before now and is not done', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip is on going', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 1)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
-      expect(ride.isOngoing, true);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 1)),
-          endTime: DateTime.now().add(const Duration(hours: 2)));
-      expect(drive.isOngoing, true);
+      expect(trip.isOngoing, true);
     });
-    test('returns false if the trip is in the past', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip is in the past', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(ride.isOngoing, false);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(drive.isOngoing, false);
+      expect(trip.isOngoing, false);
     });
-    test('returns false if the trip is upcoming', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip is upcoming', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(ride.isOngoing, false);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(drive.isOngoing, false);
+      expect(trip.isOngoing, false);
     });
   });
   group('Trip.overlapsWith', () {
-    test('returns false if they are in seperated times', () {
-      final Trip trip1 = RideFactory().generateFake(
+    test('trip is before other', () {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip2 = RideFactory().generateFake(
+      final Trip trip2 = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(trip1.overlapsWith(trip2), false);
     });
-    test('returns true if they are overlapping', () {
-      final Trip trip1 = DriveFactory().generateFake(
+    test('trip overlaps the other', () {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip2 = DriveFactory().generateFake(
+      final Trip trip2 = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 3)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
       expect(trip1.overlapsWith(trip2), true);
     });
-    test('can handel Rides as parameter', () {
-      final Trip trip0 = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip1 = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 3)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(trip0.overlapsWith(trip1), true);
-    });
-    test('can handel Drive as parameter', () {
-      final Trip trip0 = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip1 = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 3)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
-      expect(trip0.overlapsWith(trip1), true);
-    });
   });
   group('Trip.overlapswithRange', () {
-    test('returns false if trip is not in range', () {
-      final Trip ride = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(
-          ride.overlapsWithTimeRange(DateTimeRange(
-            start: DateTime.now().add(const Duration(hours: 3)),
-            end: DateTime.now().add(const Duration(hours: 6)),
-          )),
-          false);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(
-          drive.overlapsWithTimeRange(DateTimeRange(
-            start: DateTime.now().add(const Duration(hours: 3)),
-            end: DateTime.now().add(const Duration(hours: 6)),
-          )),
-          false);
+    test('trip is after range', () {
+      final DateTimeRange range = DateTimeRange(
+        start: DateTime.now().subtract(const Duration(hours: 6)),
+        end: DateTime.now().subtract(const Duration(hours: 3)),
+      );
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
+          startTime: DateTime.now().add(const Duration(hours: 4)),
+          endTime: DateTime.now().add(const Duration(hours: 2)));
+      expect(trip.overlapsWithTimeRange(range), false);
     });
-    test('returns true if trip is in range', () {
-      final Trip ride = RideFactory().generateFake(
+    test('trip overlaps with range', () {
+      final DateTimeRange range = DateTimeRange(
+        start: DateTime.now().add(const Duration(hours: 3)),
+        end: DateTime.now().add(const Duration(hours: 6)),
+      );
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
-      expect(
-          ride.overlapsWithTimeRange(DateTimeRange(
-            start: DateTime.now().add(const Duration(hours: 2)),
-            end: DateTime.now().add(const Duration(hours: 6)),
-          )),
-          true);
-      final Trip drive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      expect(
-          drive.overlapsWithTimeRange(DateTimeRange(
-            start: DateTime.now().subtract(const Duration(hours: 3)),
-            end: DateTime.now().add(const Duration(hours: 6)),
-          )),
-          true);
+      expect(trip.overlapsWithTimeRange(range), true);
     });
   });
   group('Trip.shouldShowInListView', () {
@@ -224,6 +168,202 @@ void main() {
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(drive.shouldShowInListView(past: true), false);
+    });
+  });
+  group('Trip.shouldShowInListView', () {
+    test('shows in ListView', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
+      expect(trip.shouldShowInListView(past: false), true);
+    });
+    test('hideInListView', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+        hideInListView: true,
+      );
+      expect(trip.shouldShowInListView(past: false), false);
+    });
+    test('shows in past ListView', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
+      expect(trip.shouldShowInListView(past: true), true);
+    });
+    test('not showing in ListView', () {
+      final Trip trip = (randomTripFactory() as TripFactory).generateFake(
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
+      expect(trip.shouldShowInListView(past: false), false);
+    });
+  });
+  group('Trip.equals', () {
+    final Trip trip0 = (randomTripFactory() as TripFactory).generateFake(
+      id: 1,
+      createdAt: DateTime(2022, 10),
+      start: 'Berlin',
+      startPosition: Position(1, 1),
+      startTime: DateTime(2022, 11),
+      end: 'Frankfurt',
+      endPosition: Position(2, 2),
+      endTime: DateTime(2022, 12),
+      seats: 1,
+      createDependencies: false,
+    );
+    test('different id', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different createdAt', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 1,
+        createdAt: DateTime(2022, 9),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different start', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Hamburg',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different startPosition', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 2),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different startTime', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11, 30),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different end', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Hamburg',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different endPosition', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(1, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different endTime', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12, 30),
+        seats: 1,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different seats', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 3,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
+    });
+    test('different hideInListView', () async {
+      final Trip trip1 = (randomTripFactory() as TripFactory).generateFake(
+        id: 2,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        hideInListView: true,
+        createDependencies: false,
+      );
+      expect(trip0.equals(trip1), false);
     });
   });
 }
