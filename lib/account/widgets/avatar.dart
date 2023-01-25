@@ -29,18 +29,15 @@ class AvatarState extends State<Avatar> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Hero(
-          tag: 'Avatar-${widget.profile.id}',
-          child: CircleAvatar(
-            radius: widget.size,
-            backgroundImage: widget.profile.avatarUrl?.isEmpty ?? true ? null : NetworkImage(widget.profile.avatarUrl!),
-            child: widget.profile.avatarUrl?.isEmpty ?? true
-                ? Text(
-                    widget.profile.username[0].toUpperCase(),
-                    style: TextStyle(fontSize: widget.size),
-                  )
-                : null,
-          ),
+        CircleAvatar(
+          radius: widget.size,
+          backgroundImage: widget.profile.avatarUrl?.isEmpty ?? true ? null : NetworkImage(widget.profile.avatarUrl!),
+          child: widget.profile.avatarUrl?.isEmpty ?? true
+              ? Text(
+                  widget.profile.username[0].toUpperCase(),
+                  style: TextStyle(fontSize: widget.size),
+                )
+              : null,
         ),
         if (widget.isTappable)
           Positioned.fill(

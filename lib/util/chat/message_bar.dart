@@ -69,18 +69,10 @@ class _MessageBarState extends State<MessageBar> {
       return;
     }
     _textController.clear();
-    try {
-      await SupabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
-        'sender_id': SupabaseManager.getCurrentProfile()!.id,
-        'content': text,
-        'chat_id': widget.chatId,
-      });
-    } on Exception {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(S.of(context).failureSnackBar),
-        ),
-      );
-    }
+    await SupabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
+      'sender_id': SupabaseManager.getCurrentProfile()!.id,
+      'content': text,
+      'chat_id': widget.chatId,
+    });
   }
 }
