@@ -45,7 +45,7 @@ void main() {
     expect(profileWidget.profile, profile);
   });
 
-  group('Messagebar', () {
+  group('MessageBar', () {
     setUp(() => whenRequest(processor).thenReturnJson([]));
 
     testWidgets('is shown when Active', (WidgetTester tester) async {
