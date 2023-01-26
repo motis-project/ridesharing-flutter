@@ -96,9 +96,9 @@ void main() {
     drive = DriveFactory().generateFake(
       driverId: profile.id,
       rides: [
-        RideFactory().generateFake(chatId: 1, status: RideStatus.approved),
-        RideFactory().generateFake(chatId: 2, status: RideStatus.cancelledByDriver),
-        RideFactory().generateFake(chatId: 3, status: RideStatus.cancelledByRider),
+        RideFactory().generateFake(status: RideStatus.approved),
+        RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+        RideFactory().generateFake(status: RideStatus.cancelledByRider),
       ],
     );
     whenRequest(processor).thenReturnJson([]);
