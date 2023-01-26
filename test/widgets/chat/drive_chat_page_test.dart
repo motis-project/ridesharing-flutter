@@ -39,8 +39,8 @@ void main() {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
         rides: [
-          RideFactory().generateFake(chatId: 1, status: RideStatus.approved),
-          RideFactory().generateFake(chatId: 2, status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.approved),
+          RideFactory().generateFake(status: RideStatus.pending),
         ],
       );
       await pumpMaterial(tester, DriveChatPage(drive: drive));
@@ -115,9 +115,9 @@ void main() {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
         rides: [
-          RideFactory().generateFake(chatId: 1, status: RideStatus.pending),
-          RideFactory().generateFake(chatId: 2, status: RideStatus.rejected),
-          RideFactory().generateFake(chatId: 3, status: RideStatus.withdrawnByRider),
+          RideFactory().generateFake(status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.rejected),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
         ],
       );
       whenRequest(processor).thenReturnJson([]);
@@ -147,12 +147,7 @@ void main() {
     testWidgets('shows Avatar of Rider', (WidgetTester tester) async {
       drive = DriveFactory().generateFake(
         driverId: profile.id,
-        rides: [
-          RideFactory().generateFake(
-            chatId: 1,
-            status: RideStatus.approved,
-          ),
-        ],
+        rides: [RideFactory().generateFake(status: RideStatus.approved)],
       );
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));

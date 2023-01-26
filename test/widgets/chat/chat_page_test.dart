@@ -25,6 +25,7 @@ void main() {
   });
 
   testWidgets('Page has stream subscription', (WidgetTester tester) async {
+    whenRequest(processor).thenReturnJson([]);
     await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
 
     verifyRequest(
@@ -63,7 +64,8 @@ void main() {
     });
 
     testWidgets('can send Message', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      final Profile profile = ProfileFactory().generateFake();
+      SupabaseManager.setCurrentProfile(profile);
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
 
@@ -80,7 +82,7 @@ void main() {
         bodyMatcher: equals({
           'chat_id': chatId,
           'content': 'Hello World',
-          'sender_id': 2,
+          'sender_id': profile.id,
         }),
       ).called(1);
     });
@@ -135,8 +137,8 @@ void main() {
       expect(find.descendant(of: chatBubble, matching: find.byIcon(Icons.done_all)), findsNothing);
     });
 
-    testWidgets('shows tail when it should be shown', (WidgetTester tester) async {
-      final Profile currentProfile = ProfileFactory().generateFake(id: 2);
+    testWidgets('shows tail exactly when it should be shown', (WidgetTester tester) async {
+      final Profile currentProfile = ProfileFactory().generateFake();
       SupabaseManager.setCurrentProfile(currentProfile);
       final List<Map<String, dynamic>> messages = [
         MessageFactory()
