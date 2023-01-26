@@ -135,7 +135,7 @@ void main() {
       expect(find.descendant(of: chatBubble, matching: find.byIcon(Icons.done_all)), findsNothing);
     });
 
-    testWidgets('shows tail iff it should be shown', (WidgetTester tester) async {
+    testWidgets('shows tail when it should be shown', (WidgetTester tester) async {
       final Profile currentProfile = ProfileFactory().generateFake(id: 2);
       SupabaseManager.setCurrentProfile(currentProfile);
       final List<Map<String, dynamic>> messages = [
