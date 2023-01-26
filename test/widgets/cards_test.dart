@@ -29,9 +29,11 @@ void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
   late Ride ride;
   late Drive drive;
+
   setUpAll(() {
     MockServer.setProcessor(processor);
   });
+
   setUp(() {
     reset(processor);
   });
@@ -41,17 +43,23 @@ void main() {
     drive = DriveFactory().generateFake();
     whenRequest(processor).thenReturnJson(drive.toJsonForApi());
     await pumpMaterial(tester, DriveCard(drive, key: const Key('driveCard')));
+
     //wait for card to load
     await tester.pump();
+
     //date is shown
     expect(find.text(localeManager.formatDate(ride.startTime)), findsOneWidget);
+
     //duration is shown
     expect(find.byIcon(Icons.access_time_outlined), findsOneWidget);
+
     //start location is shown
     expect(find.byKey(const Key('start')), findsOneWidget);
+
     //end location is shown
     expect(find.byKey(const Key('end')), findsOneWidget);
   });
+
   group('PendingRideCard', () {
     ride = RideFactory().generateFake(
       status: RideStatus.pending,
@@ -59,26 +67,34 @@ void main() {
       seats: 1,
     );
     drive = DriveFactory().generateFake(rides: [ride], seats: 2);
+
     setUp(() {
       whenRequest(processor).thenReturnJson([]);
     });
+
     testWidgets('shows the correct information', (WidgetTester tester) async {
       await pumpMaterial(tester, PendingRideCard(ride, reloadPage: () {}, drive: drive));
+
       //Profile Widget from rider is shown
       final Finder profileWidgetFinder = find.byType(ProfileWidget);
       expect(profileWidgetFinder, findsOneWidget);
       final ProfileWidget profileWidget = tester.widget(profileWidgetFinder);
       expect(profileWidget.profile, ride.rider);
+
       //Extra time is shown
       expect(find.byKey(const Key('extraTime')), findsOneWidget);
+
       //Seats indicator is shown
       final Finder seatsIndicator = find.byType(IconWidget);
       expect(seatsIndicator, findsOneWidget);
       expect(find.descendant(of: seatsIndicator, matching: find.byIcon(Icons.chair)), findsOneWidget);
+
       //Price is shown
       expect(find.byKey(const Key('price')), findsOneWidget);
+
       //Approve button is shown
       expect(find.byKey(const Key('approveButton')), findsOneWidget);
+
       //Reject button is shown
       expect(find.byKey(const Key('rejectButton')), findsOneWidget);
     });
@@ -87,18 +103,24 @@ void main() {
       Future<void> openApproveDialog(WidgetTester tester) async {
         //need scaffold for dialog
         await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        //open dialog
         final Finder approveButton = find.byKey(const Key('approveButton'));
         await tester.tap(approveButton);
+        //load dialog
         await tester.pumpAndSettle();
       }
 
       testWidgets('can approve Ride if possible', (WidgetTester tester) async {
         await openApproveDialog(tester);
+
+        //confirm dialog
         final Finder confimrButton = find.byKey(const Key('approveConfirmButton'));
         expect(confimrButton, findsOneWidget);
         await tester.tap(confimrButton);
+
+        //load page
         await tester.pumpAndSettle();
-        expect(find.byType(SnackBar), findsOneWidget);
+
         expect(find.byKey(const Key('approveSuccesSnackbar')), findsOneWidget);
         verifyRequest(
           processor,
@@ -107,46 +129,72 @@ void main() {
           bodyMatcher: equals({'ride_id': ride.id}),
         ).called(1);
       });
+
       testWidgets('can not approve Ride if not possible', (WidgetTester tester) async {
+        drive = DriveFactory().generateFake(rides: [ride], seats: 1);
         ride = RideFactory().generateFake(
           status: RideStatus.pending,
           rider: NullableParameter(ProfileFactory().generateFake(id: 1)),
           seats: 3,
         );
-        await openApproveDialog(tester);
+        //need scaffold for dialog
+        await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        //open dialog
+        final Finder approveButton = find.byKey(const Key('approveButton'));
+        await tester.tap(approveButton);
+        //load dialog
+        await tester.pumpAndSettle();
+
+        //confirm dialog
         final Finder confimrButton = find.byKey(const Key('approveConfirmButton'));
         expect(confimrButton, findsOneWidget);
         await tester.tap(confimrButton);
+
+        //load page
         await tester.pumpAndSettle();
-        expect(find.byKey(const Key('approveErrorSnackbar')), findsOneWidget);
+
         verifyRequestNever(processor, urlMatcher: equals('/rest/v1/rpc/approve_ride'));
+        expect(find.byKey(const Key('approveErrorSnackbar')), findsOneWidget);
       });
+
       testWidgets('can abort approving Ride', (WidgetTester tester) async {
         await openApproveDialog(tester);
+
+        //abort dialog
         final Finder cancelButton = find.byKey(const Key('approveCancelButton'));
         expect(cancelButton, findsOneWidget);
         await tester.tap(cancelButton);
+
+        //load page
         await tester.pumpAndSettle();
+
         expect(find.byType(SnackBar), findsNothing);
         verifyRequestNever(processor, urlMatcher: equals('/rest/v1/rpc/approve_ride'));
       });
     });
+
     group('reject Ride', () {
       Future<void> openRejectDialog(WidgetTester tester) async {
         //need scaffold for dialog
         await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        //open dialog
         final Finder rejectButton = find.byKey(const Key('rejectButton'));
         await tester.tap(rejectButton);
+        //load page
         await tester.pumpAndSettle();
       }
 
       testWidgets('can reject Ride', (WidgetTester tester) async {
         await openRejectDialog(tester);
+
+        //confirm dialog
         final Finder confimrButton = find.byKey(const Key('rejectConfirmButton'));
         expect(confimrButton, findsOneWidget);
         await tester.tap(confimrButton);
+
+        //load page
         await tester.pumpAndSettle();
-        await tester.pump();
+
         expect(find.byType(SnackBar), findsOneWidget);
         verifyRequest(
           processor,
@@ -155,12 +203,18 @@ void main() {
           bodyMatcher: equals({'ride_id': ride.id}),
         ).called(1);
       });
+
       testWidgets('can abort rejecting Ride', (WidgetTester tester) async {
         await openRejectDialog(tester);
+
+        //abort dialog
         final Finder cancelButton = find.byKey(const Key('rejectCancelButton'));
         expect(cancelButton, findsOneWidget);
         await tester.tap(cancelButton);
+
+        //load page
         await tester.pumpAndSettle();
+
         expect(find.byKey(const Key('rejectSuccessSnackbar')), findsNothing);
         verifyRequestNever(processor, urlMatcher: equals('/rest/v1/rpc/reject_ride'));
       });
@@ -192,11 +246,14 @@ void main() {
       expect(profileWidgetFinder, findsOneWidget);
       final ProfileWidget profileWidget = tester.widget(profileWidgetFinder);
       expect(profileWidget.profile, ride.drive!.driver);
+
       //Rating is shown
       expect(find.byType(CustomRatingBarIndicator), findsOneWidget);
+
       //Price is shown
       expect(find.byKey(const Key('price')), findsOneWidget);
     });
+
     group('Profile Features', () {
       testWidgets('shows only first 3 Features', (WidgetTester tester) async {
         await loadRideCard(tester, [
@@ -205,6 +262,7 @@ void main() {
           ProfileFeatureFactory().generateFake(rank: 3, feature: Feature.noVaping),
           ProfileFeatureFactory().generateFake(rank: 4, feature: Feature.noPetsAllowed),
         ]);
+
         expect(find.byIcon(Icons.accessibility), findsOneWidget);
         expect(find.byIcon(Icons.smoke_free), findsOneWidget);
         expect(find.byIcon(Icons.vape_free), findsOneWidget);
@@ -212,23 +270,28 @@ void main() {
         ///7 Icons are always shown
         expect(find.byType(Icon), findsNWidgets(10));
       });
+
       testWidgets('can handle less than 3 Features', (WidgetTester tester) async {
         await loadRideCard(tester, [
           ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.accessible),
           ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.noSmoking),
         ]);
+
         expect(find.byIcon(Icons.accessibility), findsOneWidget);
         expect(find.byIcon(Icons.smoke_free), findsOneWidget);
 
         ///7 Icons are always shown
         expect(find.byType(Icon), findsNWidgets(9));
       });
+
       testWidgets('can handle no Features', (WidgetTester tester) async {
         await loadRideCard(tester, []);
+
         //7 Icons are always shown
         expect(find.byType(Icon), findsNWidgets(7));
       });
     });
+
     testWidgets('can Navigate to RideDetailPage', (WidgetTester tester) async {
       ride = RideFactory().generateFake();
       whenRequest(processor).thenReturnJson(ride.drive!.toJsonForApi());
@@ -237,9 +300,13 @@ void main() {
       //wait for card to load
       await tester.pump();
 
+      //open RideDetailPage
       await tester.tap(find.byType(RideCard));
+
+      //load page
       await tester.pump();
       await tester.pump();
+
       expect(find.byType(RideDetailPage), findsOneWidget);
     });
   });
@@ -249,24 +316,29 @@ void main() {
       drive = DriveFactory().generateFake();
       whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       await pumpMaterial(tester, DriveCard(drive));
+
       //wait for card to load
       await tester.pump();
 
       expect(find.byType(SeatIndicator), findsOneWidget);
     });
+
     testWidgets('can Navigate to Drive DetailPage', (WidgetTester tester) async {
       drive = DriveFactory().generateFake();
       whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       await pumpMaterial(tester, DriveCard(drive));
+
       //wait for card to load
       await tester.pump();
 
+      //open DriveDetailPage
       await tester.tap(find.byType(DriveCard));
+
+      //load page
       await tester.pump();
       await tester.pump();
+
       expect(find.byType(DriveDetailPage), findsOneWidget);
     });
-    testWidgets('description', (WidgetTester tester) async {});
-    testWidgets('description', (WidgetTester tester) async {});
   });
 }
