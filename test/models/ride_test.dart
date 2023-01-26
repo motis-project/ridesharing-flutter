@@ -81,7 +81,7 @@ void main() {
       expect(ride.rider, null);
       expect(ride.hideInListView, json['hide_in_list_view']);
     });
-    test('can handle associated models', () {
+    test('associated models', () {
       RideFactory().generateFakeJsonList(length: 3);
       final Map<String, dynamic> json = {
         'id': 43,
@@ -149,7 +149,7 @@ void main() {
       expect(rides[1].start, json['start']);
       expect(rides.last.seats, 2);
     });
-    test('can handle an empty list', () {
+    test('empty list', () {
       final List<Ride> drives = Ride.fromJsonList([]);
       expect(drives, []);
     });
@@ -175,8 +175,8 @@ void main() {
       expect(json.keys.length, 14);
     });
   });
-  group('Ride.toJsonforApi', () {
-    test('returns a JsonforApi representation of the ride', () async {
+  group('Ride.toJsonForApi', () {
+    test('returns a Json for Api representation of the ride', () async {
       final Ride ride = RideFactory().generateFake();
       final Map<String, dynamic> json = ride.toJsonForApi();
       expect(json['start'], ride.start);
@@ -284,21 +284,21 @@ void main() {
     });
   });
   group('Ride.shouldShowInListView', () {
-    test('show in Listview', () {
+    test('this ride should show in ListView when built', () {
       final Ride ride = RideFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)),
           status: RideStatus.pending);
       expect(ride.shouldShowInListView(past: false), true);
     });
-    test('show in past Listview', () {
+    test('this trip will  show in past ListView when built', () {
       final Ride ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)),
           status: RideStatus.approved);
       expect(ride.shouldShowInListView(past: true), true);
     });
-    test('does not show in past Listview', () {
+    test('this trip will not show in past ListView when built', () {
       final Ride ride = RideFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)),
@@ -324,91 +324,52 @@ void main() {
       price: NullableParameter(6),
     );
     test('same ride', () async {
-      expect(ride0.equals(ride0), true);
+      final Ride ride1 = RideFactory().generateFake(
+        id: 1,
+        createdAt: DateTime(2022, 10),
+        start: 'Berlin',
+        startPosition: Position(1, 1),
+        startTime: DateTime(2022, 11),
+        end: 'Frankfurt',
+        endPosition: Position(2, 2),
+        endTime: DateTime(2022, 12),
+        seats: 1,
+        price: NullableParameter(6),
+        status: RideStatus.approved,
+        driveId: 2,
+        riderId: 3,
+        createDependencies: false,
+      );
+      expect(ride0.equals(ride1), true);
     });
     test('handle drive', () async {
       final Drive drive = DriveFactory().generateFake(createDependencies: false);
       expect(ride0.equals(drive), false);
     });
-    test('different status', () async {
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.pending,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('different driveId', () async {
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 4,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('different price', () async {
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 3,
-        status: RideStatus.approved,
-        price: NullableParameter(5),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
-    });
-    test('different riderId', () async {
-      final Ride ride1 = RideFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        driveId: 2,
-        riderId: 4,
-        status: RideStatus.approved,
-        price: NullableParameter(6),
-        createDependencies: false,
-      );
-      expect(ride0.equals(ride1), false);
+    test('different parameter', () {
+      for (int i = 0; i < 4; i++) {
+        final Ride ride1 = RideFactory().generateFake(
+          id: 1,
+          createdAt: DateTime(2022, 10),
+          start: 'Berlin',
+          startPosition: Position(1, 1),
+          startTime: DateTime(2022, 11),
+          end: 'Frankfurt',
+          endPosition: Position(2, 2),
+          endTime: DateTime(2022, 12),
+          seats: 1,
+          price: i == 0 ? NullableParameter(5) : NullableParameter(6),
+          status: i == 1 ? RideStatus.pending : RideStatus.approved,
+          driveId: i == 2 ? 5 : 2,
+          riderId: i == 3 ? 6 : 3,
+          createDependencies: false,
+        );
+        expect(ride0.equals(ride1), false);
+      }
     });
   });
   group('Ride.cancel', () {
-    test('status changes to canncelledByRider', () async {
+    test('status changes to cancelledByRider', () async {
       final Ride ride = RideFactory().generateFake(status: RideStatus.approved, createDependencies: false);
       when.call(rideProcessor.processUrl(any)).thenReturn(ride.toString());
       ride.cancel();

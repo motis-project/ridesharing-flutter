@@ -8,7 +8,6 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
 import '../util/factories/drive_factory.dart';
-import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/factories/ride_factory.dart';
 import '../util/mock_server.dart';
@@ -53,7 +52,7 @@ void main() {
       expect(drive.rides, null);
       expect(drive.hideInListView, json['hide_in_list_view']);
     });
-    test('can handle associated models', () {
+    test('associated models', () {
       final Map<String, dynamic> json = {
         'id': 43,
         'created_at': '2021-01-01T00:00:00.000Z',
@@ -114,7 +113,7 @@ void main() {
       expect(drives[1].start, json['start']);
       expect(drives.last.seats, 2);
     });
-    test('can handle an empty list', () {
+    test('empty list', () {
       final List<Drive> drives = Drive.fromJsonList([]);
       expect(drives, []);
     });
@@ -147,10 +146,10 @@ void main() {
     });
     test('has no approved rides', () async {
       final Drive drive = DriveFactory().generateFake(
-        rides: [
-          RideFactory().generateFake(status: RideStatus.pending),
-          RideFactory().generateFake(status: RideStatus.cancelledByRider),
-        ],
+        rides: List.generate(
+                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
+            .where((element) => element.status != RideStatus.approved)
+            .toList(),
       );
       expect(drive.approvedRides, []);
     });
@@ -159,14 +158,12 @@ void main() {
       final Ride ride2 = RideFactory().generateFake(status: RideStatus.approved);
 
       final Drive drive = DriveFactory().generateFake(
-        rides: [
-          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
-          ride1,
-          RideFactory().generateFake(status: RideStatus.rejected),
-          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
-          ride2,
-        ],
+        rides: List.generate(
+                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
+            .where((element) => element.status != RideStatus.approved)
+            .toList(),
       );
+      drive.rides!.addAll([ride1, ride2]);
       expect(drive.approvedRides, [ride1, ride2]);
     });
   });
@@ -179,10 +176,10 @@ void main() {
     });
     test('has no pending rides', () async {
       final Drive drive = DriveFactory().generateFake(
-        rides: [
-          RideFactory().generateFake(status: RideStatus.approved),
-          RideFactory().generateFake(status: RideStatus.cancelledByRider),
-        ],
+        rides: List.generate(
+                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
+            .where((element) => element.status != RideStatus.pending)
+            .toList(),
       );
       expect(drive.pendingRides, []);
     });
@@ -191,15 +188,12 @@ void main() {
       final Ride ride2 = RideFactory().generateFake(status: RideStatus.pending);
 
       final Drive drive = DriveFactory().generateFake(
-        rides: [
-          RideFactory().generateFake(status: RideStatus.approved),
-          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
-          ride1,
-          ride2,
-          RideFactory().generateFake(status: RideStatus.rejected),
-          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
-        ],
+        rides: List.generate(
+                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
+            .where((element) => element.status != RideStatus.pending)
+            .toList(),
       );
+      drive.rides!.addAll([ride1, ride2]);
       expect(drive.pendingRides, [ride1, ride2]);
     });
   });
@@ -337,7 +331,7 @@ void main() {
     });
   });
   group('Drive.isRidePossible', () {
-    test('can handle empty drive', () async {
+    test('empty drive', () async {
       final Drive drive = DriveFactory().generateFake(
         startTime: DateTime(2022, 2, 2, 14),
         endTime: DateTime(2022, 2, 2, 16),
@@ -445,30 +439,6 @@ void main() {
       createDependencies: false,
     );
     test('same drive', () async {
-      expect(drive0.equals(drive0), true);
-    });
-    test('handle ride', () async {
-      final Ride ride = RideFactory().generateFake(createDependencies: false);
-      expect(drive0.equals(ride), false);
-    });
-    test('different cancelled', () async {
-      final Drive drive1 = DriveFactory().generateFake(
-        id: 1,
-        createdAt: DateTime(2022, 10),
-        start: 'Berlin',
-        startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
-        seats: 1,
-        cancelled: true,
-        driver: NullableParameter(drive0.driver),
-        createDependencies: false,
-      );
-      expect(drive0.equals(drive1), false);
-    });
-    test('different driverId', () async {
       final Drive drive1 = DriveFactory().generateFake(
         id: 1,
         createdAt: DateTime(2022, 10),
@@ -480,10 +450,34 @@ void main() {
         endTime: DateTime(2022, 12),
         seats: 1,
         cancelled: false,
-        driverId: 3,
+        driverId: 2,
         createDependencies: false,
       );
-      expect(drive0.equals(drive1), false);
+      expect(drive0.equals(drive1), true);
+    });
+    test('handle ride', () async {
+      final Ride ride = RideFactory().generateFake(createDependencies: false);
+      expect(drive0.equals(ride), false);
+    });
+    test('different parameter', () async {
+      for (int i = 0; i < 2; i++) {
+        final Drive drive1 = DriveFactory().generateFake(
+          id: 1,
+          createdAt: DateTime(2022, 10),
+          start: 'Berlin',
+          startPosition: Position(1, 1),
+          startTime: DateTime(2022, 11),
+          end: 'Frankfurt',
+          endPosition: Position(2, 2),
+          endTime: DateTime(2022, 12),
+          seats: 1,
+          // ignore: avoid_bool_literals_in_conditional_expressions
+          cancelled: i == 0 ? false : true,
+          driverId: i == 1 ? 2 : 3,
+          createDependencies: false,
+        );
+        expect(drive0.equals(drive1), false);
+      }
     });
   });
 }
