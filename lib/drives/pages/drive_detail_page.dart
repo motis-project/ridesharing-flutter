@@ -236,32 +236,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: _fullyLoaded
-            ? <Widget>[
-                IconButton(
-                  key: const Key('driveChatButton'),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => DriveChatPage(
-                        drive: _drive!,
-                      ),
-                    ),
-                  ).then((_) => loadDrive()),
-                  icon: Badge(
-                    badgeContent: Text(
-                      _drive!.getUnreadMessagesCount().toString(),
-                      style: const TextStyle(color: Colors.white),
-                      textScaleFactor: 1.0,
-                    ),
-                    showBadge: _drive!.getUnreadMessagesCount() != 0,
-                    position: BadgePosition.topEnd(top: -12),
-                    child: const Icon(Icons.chat),
-                  ),
-                  tooltip: S.of(context).openChat,
-                ),
-              ]
-            : null,
+        actions: <Widget>[buildChatButton()],
       ),
       body: _drive == null
           ? const Center(child: CircularProgressIndicator())
@@ -356,6 +331,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
+              key: Key('chatPageButton${action.ride.id}${action.isStart ? 'Start' : 'End'}'),
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(

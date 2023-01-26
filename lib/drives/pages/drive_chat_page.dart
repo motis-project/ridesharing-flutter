@@ -36,12 +36,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
   }
 
   @override
-  void dispose() {
-    _messagesStream.drain();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +73,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset('assets/chat_shrug.png', scale: 8),
+                Image.asset(key: const Key('noChatsImage'), 'assets/chat_shrug.png', scale: 8),
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).pageChatEmptyTitle,
@@ -106,6 +100,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
     final Widget? subtitle = lastMessage == null
         ? null
         : Wrap(
+            key: Key('chatWidget${chat.id}Subtitle'),
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
               if (lastMessage.isFromCurrentUser)
@@ -120,6 +115,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
             ],
           );
     return Card(
+      key: Key('chatWidget${chat.id}'),
       child: InkWell(
         child: ListTile(
           leading: Avatar(ride.rider!),
@@ -128,6 +124,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
           trailing: chat.getUnreadMessagesCount() == 0
               ? null
               : Container(
+                  key: Key('chatWidget${chat.id}UnreadMessageCount'),
                   decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

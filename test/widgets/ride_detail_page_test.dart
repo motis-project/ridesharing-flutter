@@ -18,6 +18,7 @@ import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 
+import '../util/factories/chat_factory.dart';
 import '../util/factories/drive_factory.dart';
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
@@ -544,18 +545,6 @@ void main() {
         verifyRequestNever(processor, urlMatcher: startsWith('/rest/v1/rides?id=eq.${ride.id}'));
       });
     });
-
-    // TODO: Write this when we know how streams work
-    testWidgets('Can navigate to chat page', skip: true, (WidgetTester tester) async {
-      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
-      await tester.pump();
-
-      await tester.tap(find.byKey(const Key('chatButton')));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(ChatPage), findsOneWidget);
-    });
-
     testWidgets('Can navigate to rate page', (WidgetTester tester) async {
       ride = RideFactory().generateFake(
         status: RideStatus.approved,
@@ -578,6 +567,73 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(WriteReviewPage), findsOneWidget);
+    });
+  });
+
+  group('can Navigate to chatPage', () {
+    setUp(() {
+      ride = RideFactory().generateFake(
+        status: RideStatus.approved,
+        endTime: DateTime.now().subtract(const Duration(hours: 1)),
+        drive: NullableParameter(drive),
+        chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
+      );
+      whenRequest(processor).thenReturnJson(ride.toJsonForApi());
+      whenRequest(processor,
+              urlMatcher:
+                  equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'))
+          .thenReturnJson([]);
+    });
+    testWidgets('with the right profile and chatId', (WidgetTester tester) async {
+      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('chatButton')));
+      await tester.pump();
+      await tester.pump();
+      final Finder chatPageFinder = find.byType(ChatPage);
+      expect(chatPageFinder, findsOneWidget);
+      final ChatPage chatPage = tester.widget(chatPageFinder);
+      expect(chatPage.profile, ride.drive!.driver);
+      expect(chatPage.chatId, ride.chatId);
+    });
+    testWidgets('active = true when ride has active chat', (WidgetTester tester) async {
+      ride = RideFactory().generateFake(
+        status: RideStatus.approved,
+        endTime: DateTime.now().subtract(const Duration(hours: 1)),
+        drive: NullableParameter(drive),
+        chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
+      );
+      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('chatButton')));
+      await tester.pump();
+      await tester.pump();
+      final Finder chatPageFinder = find.byType(ChatPage);
+      expect(chatPageFinder, findsOneWidget);
+      final ChatPage chatPage = tester.widget(chatPageFinder);
+      expect(chatPage.active, true);
+    });
+    testWidgets('active = false when ride has inactive chat', (WidgetTester tester) async {
+      ride = RideFactory().generateFake(
+        status: RideStatus.pending,
+        endTime: DateTime.now().subtract(const Duration(hours: 1)),
+        drive: NullableParameter(drive),
+        chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
+      );
+      whenRequest(processor).thenReturnJson(ride.toJsonForApi());
+      whenRequest(processor,
+              urlMatcher:
+                  equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'))
+          .thenReturnJson([]);
+      await pumpMaterial(tester, RideDetailPage.fromRide(ride));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('chatButton')));
+      await tester.pump();
+      await tester.pump();
+      final Finder chatPageFinder = find.byType(ChatPage);
+      expect(chatPageFinder, findsOneWidget);
+      final ChatPage chatPage = tester.widget(chatPageFinder);
+      expect(chatPage.active, false);
     });
   });
 }

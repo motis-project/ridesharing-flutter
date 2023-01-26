@@ -10,15 +10,15 @@ import '../models/message.dart';
 
 class ChatPage extends StatefulWidget {
   final Profile profile;
-  final int chatId;
+  final int? chatId;
   final bool active;
 
   const ChatPage({
-    int? chatId,
+    required this.chatId,
     required this.profile,
     this.active = true,
     super.key,
-  }) : chatId = chatId ?? -1;
+  });
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -40,12 +40,6 @@ class _ChatPageState extends State<ChatPage> {
       _messagesStream = Stream<List<Message>>.value(<Message>[]);
     }
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _messagesStream.drain();
-    super.dispose();
   }
 
   @override
@@ -89,7 +83,7 @@ class _ChatPageState extends State<ChatPage> {
                                 children: _buildChatBubbles(messages),
                               ),
                       ),
-                      MessageBar(widget.chatId),
+                      MessageBar(widget.chatId!),
                     ],
                   );
                 } else {

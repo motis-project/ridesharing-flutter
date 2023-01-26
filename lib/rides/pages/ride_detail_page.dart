@@ -171,7 +171,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                     context,
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) => ChatPage(
-                        chatId: _ride!.chat?.id,
+                        chatId: _ride!.chatId,
                         profile: _ride!.drive!.driver!,
                         active: _ride!.status.activeChat(),
                       ),
