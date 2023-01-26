@@ -46,9 +46,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: ProfileWidget(
-          widget.profile,
-        ),
+        title: ProfileWidget(widget.profile, withHero: true),
       ),
       body: widget.active
           ? StreamBuilder<List<Message>>(

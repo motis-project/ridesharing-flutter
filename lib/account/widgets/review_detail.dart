@@ -8,13 +8,14 @@ import '../models/review.dart';
 
 class ReviewDetail extends StatelessWidget {
   final Review review;
-  const ReviewDetail({super.key, required this.review});
+  final bool withHero;
+  const ReviewDetail({super.key, required this.review, this.withHero = false});
 
   @override
   Widget build(BuildContext context) {
     final Widget header = Row(
       children: <Widget>[
-        ProfileChip(review.writer!),
+        ProfileChip(review.writer!, withHero: withHero),
         Text(
           localeManager.formatDate(review.createdAt!),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),

@@ -75,7 +75,8 @@ class _ReviewsPageState extends State<ReviewsPage> {
       mainAxisSize: MainAxisSize.min,
       children: List<ReviewDetail>.generate(
         reviews.length,
-        (int index) => ReviewDetail(review: reviews[index]),
+        //TODO forbid own reviews, change this line
+        (int index) => ReviewDetail(review: reviews[index], withHero: reviews[index].writerId != _profileId),
       ),
     );
 
@@ -93,7 +94,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
                   child: Column(
                     children: <Widget>[
-                      ProfileWidget(_profile!),
+                      ProfileWidget(_profile!, withHero: true),
                       const SizedBox(
                         height: 20,
                       ),

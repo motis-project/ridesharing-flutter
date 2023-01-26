@@ -72,9 +72,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildUsername() {
-    final Widget username = Text(
-      _profile!.username,
-      style: Theme.of(context).textTheme.headline5,
+    final Widget username = Hero(
+      tag: 'Username-${_profile!.id}',
+      child: Text(
+        _profile!.username,
+        style: Theme.of(context).textTheme.headline5,
+      ),
     );
     if (_profile!.isCurrentUser) {
       return Row(

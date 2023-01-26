@@ -30,6 +30,8 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget usernameText = Text(profile.username, style: TextStyle(fontSize: size));
+    if (withHero) usernameText = Hero(tag: 'Username-${profile.id}', child: usernameText);
     Widget profileRow = Semantics(
       label: profile.username,
       excludeSemantics: true,
@@ -39,7 +41,7 @@ class ProfileWidget extends StatelessWidget {
         children: <Widget>[
           Avatar(profile, size: size, withHero: withHero),
           const SizedBox(width: 5),
-          Text(profile.username, style: TextStyle(fontSize: size)),
+          usernameText,
         ],
       ),
     );

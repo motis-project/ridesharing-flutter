@@ -28,9 +28,7 @@ class ProfileWrapList extends StatelessWidget {
               profiles.length,
               (int index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                child: ProfileChip(
-                  profiles.elementAt(index),
-                ),
+                child: ProfileChip(profiles.elementAt(index), withHero: true),
               ),
             ),
           ),

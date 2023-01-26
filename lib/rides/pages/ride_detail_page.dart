@@ -107,7 +107,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       final Ride ride = _ride!;
 
       final Profile driver = ride.drive!.driver!;
-      widgets.add(ProfileWidget(driver, showDescription: true));
+      widgets.add(ProfileWidget(driver, showDescription: true, withHero: true));
       widgets.add(const Divider(thickness: 1));
 
       widgets.add(ReviewsPreview(driver));
