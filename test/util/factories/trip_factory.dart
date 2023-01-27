@@ -3,7 +3,7 @@ import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
 import 'model_factory.dart';
 
-abstract class TripFactory<T extends Trip> extends ModelFactory<T> {
+class TripFactory<T extends Trip> extends ModelFactory<T> {
   @override
   T generateFake({
     int? id,
@@ -17,5 +17,18 @@ abstract class TripFactory<T extends Trip> extends ModelFactory<T> {
     int? seats,
     bool hideInListView = false,
     bool createDependencies = true,
-  });
+  }) {
+    return Trip(
+      id: id ?? randomId,
+      createdAt: createdAt ?? DateTime.now(),
+      start: start ?? faker.address.city(),
+      startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      startTime: startTime ?? DateTime.now(),
+      end: end ?? faker.address.city(),
+      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      endTime: endTime ?? DateTime.now(),
+      seats: seats ?? random.nextInt(5) + 1,
+      hideInListView: hideInListView,
+    ) as T;
+  }
 }

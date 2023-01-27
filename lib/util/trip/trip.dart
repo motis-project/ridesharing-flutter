@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../model.dart';
 import '../search/position.dart';
 
-abstract class Trip extends Model {
+class Trip extends Model {
   final String start;
   final Position startPosition;
   final DateTime startTime;
