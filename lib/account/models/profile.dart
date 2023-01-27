@@ -9,6 +9,8 @@ import 'report.dart';
 import 'review.dart';
 
 class Profile extends Model {
+  static const int maxUsernameLength = 15;
+
   final String username;
   final String email;
 

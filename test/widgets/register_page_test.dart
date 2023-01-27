@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/welcome/pages/after_registration_page.dart';
@@ -98,12 +98,8 @@ void main() {
       // Not empty, so no error
       expect(usernameField.hasError, isFalse);
 
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.backspace);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(usernameField.hasError, isTrue);
+      await tester.enterText(usernameFieldFinder, 'a' * Profile.maxUsernameLength * 2);
+      expect(formState.usernameController.text.length, Profile.maxUsernameLength);
     });
 
     testWidgets('Validates the password', (WidgetTester tester) async {

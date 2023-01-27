@@ -38,7 +38,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  maxLength: 15,
+                  maxLength: Profile.maxUsernameLength,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     hintText: S.of(context).pageProfileEditUsernameHint,
