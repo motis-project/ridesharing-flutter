@@ -33,7 +33,7 @@ void main() {
     );
     final Finder loginButtonFinder = find.byType(LoadingButton);
 
-    testWidgets('Shows the login page', (WidgetTester tester) async {
+    testWidgets('Shows the login form', (WidgetTester tester) async {
       await pumpMaterial(tester, const LoginPage());
 
       final Finder loginFormFinder = find.byType(LoginForm);
