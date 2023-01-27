@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
+import 'package:motis_mitfahr_app/util/fields/email_field.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -23,10 +24,7 @@ void main() {
   });
 
   group('ForgotPasswordPage', () {
-    final Finder emailFieldFinder = find.descendant(
-      of: find.byKey(const Key('forgotPasswordEmailField')),
-      matching: find.byType(TextFormField),
-    );
+    final Finder emailFieldFinder = find.descendant(of: find.byType(EmailField), matching: find.byType(TextFormField));
     final Finder forgotPasswordButtonFinder = find.byType(LoadingButton);
 
     testWidgets('Shows the email form', (WidgetTester tester) async {
@@ -36,8 +34,8 @@ void main() {
       final ForgotPasswordFormState formState = tester.state(forgotPasswordFormFinder);
 
       expect(formState.buttonState, ButtonState.idle);
-
-      expect(emailFieldFinder, findsOneWidget);
+      expect(find.byType(ForgotPasswordForm), findsOneWidget);
+      expect(find.byType(EmailField), findsOneWidget);
     });
 
     testWidgets('Can handle initial email', (WidgetTester tester) async {
@@ -45,34 +43,6 @@ void main() {
 
       final TextFormField emailField = tester.widget(emailFieldFinder);
       expect(emailField.controller!.text, email);
-    });
-
-    testWidgets('Validates the email', (WidgetTester tester) async {
-      await pumpMaterial(tester, const ForgotPasswordPage());
-
-      final ForgotPasswordFormState formState = tester.state(find.byType(ForgotPasswordForm));
-
-      final FormFieldState emailField = tester.state(emailFieldFinder);
-
-      // Not validated yet, so no error
-      expect(emailField.hasError, isFalse);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(emailField.hasError, isTrue);
-
-      await tester.enterText(emailFieldFinder, '123noemail');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Not real email, so error
-      expect(emailField.hasError, isTrue);
-
-      await tester.enterText(emailFieldFinder, email);
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Real email, so no error
-      expect(emailField.hasError, isFalse);
     });
 
     group('submitting the form', () {

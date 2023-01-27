@@ -10,9 +10,9 @@ extension EmailValidator on String {
 }
 
 class EmailField extends StatelessWidget {
-  final TextEditingController? controller;
+  final TextEditingController controller;
 
-  const EmailField({super.key, this.controller});
+  const EmailField({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

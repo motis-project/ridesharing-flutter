@@ -135,7 +135,7 @@ class RegisterFormState extends State<RegisterForm> {
         key: formKey,
         child: Column(
           children: <Widget>[
-            EmailField(controller: emailController, key: const Key('registerEmailField')),
+            EmailField(controller: emailController),
             const SizedBox(height: 15),
             TextFormField(
               maxLength: Profile.maxUsernameLength,

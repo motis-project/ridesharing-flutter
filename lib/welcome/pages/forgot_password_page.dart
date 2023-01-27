@@ -92,10 +92,7 @@ class ForgotPasswordFormState extends State<ForgotPasswordForm> {
         key: formKey,
         child: Column(
           children: <Widget>[
-            EmailField(
-              key: const Key('forgotPasswordEmailField'),
-              controller: emailController,
-            ),
+            EmailField(controller: emailController),
             const SizedBox(height: 15),
             LoadingButton(
               onPressed: onSubmit,

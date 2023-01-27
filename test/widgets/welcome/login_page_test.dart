@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
+import 'package:motis_mitfahr_app/util/fields/email_field.dart';
+import 'package:motis_mitfahr_app/util/fields/password_field.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
@@ -24,50 +26,24 @@ void main() {
 
   group('LoginPage', () {
     final Finder emailFieldFinder = find.descendant(
-      of: find.byKey(const Key('loginEmailField')),
+      of: find.byType(EmailField),
       matching: find.byType(TextFormField),
     );
     final Finder passwordFieldFinder = find.descendant(
-      of: find.byKey(const Key('loginPasswordField')),
+      of: find.byType(PasswordField),
       matching: find.byType(TextFormField),
     );
     final Finder loginButtonFinder = find.byType(LoadingButton);
 
-    testWidgets('Shows the login form', (WidgetTester tester) async {
+    testWidgets('Shows the login page', (WidgetTester tester) async {
       await pumpMaterial(tester, const LoginPage());
 
       final Finder loginFormFinder = find.byType(LoginForm);
       final LoginFormState formState = tester.state(loginFormFinder);
 
+      expect(loginFormFinder, findsOneWidget);
       expect(formState.buttonState, ButtonState.idle);
-    });
-
-    testWidgets('Validates the email', (WidgetTester tester) async {
-      await pumpMaterial(tester, const LoginPage());
-
-      final LoginFormState formState = tester.state(find.byType(LoginForm));
-
-      final FormFieldState emailField = tester.state(emailFieldFinder);
-
-      // Not validated yet, so no error
-      expect(emailField.hasError, isFalse);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(emailField.hasError, isTrue);
-
-      await tester.enterText(emailFieldFinder, '123noemail');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Not real email, so error
-      expect(emailField.hasError, isTrue);
-
-      await tester.enterText(emailFieldFinder, email);
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Real email, so no error
-      expect(emailField.hasError, isFalse);
+      expect(find.byType(EmailField), findsOneWidget);
     });
 
     testWidgets('Validates the password (not so strictly)', (WidgetTester tester) async {

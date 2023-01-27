@@ -120,13 +120,12 @@ class LoginFormState extends State<LoginForm> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(child: Container()),
-            EmailField(controller: emailController, key: const Key('loginEmailField')),
+            EmailField(controller: emailController),
             const SizedBox(height: 15),
             PasswordField(
               labelText: S.of(context).formPassword,
               hintText: S.of(context).formPasswordHint,
               controller: passwordController,
-              key: const Key('loginPasswordField'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).formPasswordValidateEmpty;
