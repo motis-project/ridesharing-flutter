@@ -48,9 +48,11 @@ class AddressSearchField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.location_pin),
+          border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(100))),
           labelText: getLabelText(context),
-          hintText: getHintText(context),
+          hintText: getLabelText(context),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
         readOnly: true,
         validator: (String? value) {

@@ -12,6 +12,8 @@
   "retract": "Retract",
   "edit": "Edit",
   "save": "Save",
+  "add": "Add",
+  "remove": "Remove",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",

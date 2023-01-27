@@ -5,10 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
+import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
-import '../../util/search/address_search_field.dart';
 import '../../util/search/address_suggestion.dart';
+import '../../util/search/start_destination_timeline.dart';
 import '../../util/supabase.dart';
+import '../../util/trip/trip.dart';
 import '../models/drive.dart';
 import '../pages/drive_detail_page.dart';
 
@@ -54,9 +56,23 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   late DateTime _selectedDate;
-  late int _dropdownValue;
+  late int _seats;
 
-  final List<int> list = List<int>.generate(10, (int index) => index + 1);
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = DateTime.now();
+    _seats = 1;
+  }
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _timeController.dispose();
+    _startController.dispose();
+    _destinationController.dispose();
+    super.dispose();
+  }
 
   void _showTimePicker() {
     showTimePicker(
@@ -131,7 +147,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           startPosition: _startSuggestion.position,
           end: _destinationSuggestion.name,
           endPosition: _destinationSuggestion.position,
-          seats: _dropdownValue,
+          seats: _seats,
           startTime: _selectedDate,
           endTime: endTime,
         );
@@ -174,22 +190,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _selectedDate = DateTime.now();
-    _dropdownValue = list.first;
-  }
-
-  @override
-  void dispose() {
-    _dateController.dispose();
-    _timeController.dispose();
-    _startController.dispose();
-    _destinationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // This needs to happen on rebuild to make sure we pick up locale changes
     _dateController.text = localeManager.formatDate(_selectedDate);
@@ -199,78 +199,70 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          AddressSearchField.start(
-            controller: _startController,
-            onSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
-          ),
-          const SizedBox(height: 15),
-          AddressSearchField.destination(
-            controller: _destinationController,
-            onSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: S.of(context).formDate,
-                      ),
-                      readOnly: true,
-                      onTap: _showDatePicker,
-                      controller: _dateController,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: S.of(context).formTime,
-                      ),
-                      readOnly: true,
-                      onTap: _showTimePicker,
-                      controller: _timeController,
-                      validator: _timeValidator,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 50),
-                Expanded(
-                  child: SizedBox(
-                    //todo: add same height as time&date.
-                    height: 60,
-                    child: DropdownButtonFormField<int>(
-                      value: _dropdownValue,
-                      icon: const Icon(Icons.arrow_downward),
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: S.of(context).seats,
-                      ),
-                      onChanged: (int? value) {
-                        setState(() {
-                          _dropdownValue = value!;
-                        });
-                      },
-                      items: list.map<DropdownMenuItem<int>>((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: StartDestinationTimeline(
+              startController: _startController,
+              destinationController: _destinationController,
+              onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
+              onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
             ),
           ),
+          const Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).formDate,
+                    ),
+                    readOnly: true,
+                    onTap: _showDatePicker,
+                    controller: _dateController,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: S.of(context).formTime,
+                    ),
+                    readOnly: true,
+                    onTap: _showTimePicker,
+                    controller: _timeController,
+                    validator: _timeValidator,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
+          SizedBox(
+            width: 150,
+            child: IncrementField(
+              initialValue: _seats,
+              maxValue: Trip.maxSelectableSeats,
+              icon: Icon(
+                Icons.chair,
+                color: Theme.of(context).colorScheme.primary,
+                size: 32,
+              ),
+              onChanged: (int? value) {
+                setState(() {
+                  _seats = value!;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 10),
           Button.submit(
             S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
