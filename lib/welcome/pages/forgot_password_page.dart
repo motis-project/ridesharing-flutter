@@ -12,10 +12,10 @@ class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key, this.initialEmail = ''});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  State<ForgotPasswordPage> createState() => ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,12 +41,12 @@ class ForgotPasswordForm extends StatefulWidget {
   const ForgotPasswordForm({super.key, this.initialEmail = ''});
 
   @override
-  State<ForgotPasswordForm> createState() => _ForgotPasswordFormState();
+  State<ForgotPasswordForm> createState() => ForgotPasswordFormState();
 }
 
-class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
-  ButtonState _state = ButtonState.idle;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class ForgotPasswordFormState extends State<ForgotPasswordForm> {
+  ButtonState buttonState = ButtonState.idle;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late final TextEditingController emailController;
 
   @override
@@ -56,38 +56,26 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   Future<void> onSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _state = ButtonState.loading;
-      });
+    if (!formKey.currentState!.validate()) return;
 
-      await SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
-        emailController.text,
-        redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
-      );
-
-      await Future<void>.delayed(const Duration(seconds: 1));
-      setState(() {
-        _state = ButtonState.success;
-      });
-      await Future<void>.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-    } else {
-      await fail();
-    }
-  }
-
-  Future<void> fail() async {
     setState(() {
-      _state = ButtonState.fail;
+      buttonState = ButtonState.loading;
+    });
+
+    await SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
+      emailController.text,
+      redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
+    );
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      buttonState = ButtonState.success;
     });
     await Future<void>.delayed(const Duration(seconds: 2));
-    setState(() {
-      _state = ButtonState.idle;
-    });
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -99,18 +87,19 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      absorbing: buttonState == ButtonState.loading || buttonState == ButtonState.success,
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: <Widget>[
             EmailField(
+              key: const Key('forgotPasswordEmailField'),
               controller: emailController,
             ),
             const SizedBox(height: 15),
             LoadingButton(
               onPressed: onSubmit,
-              state: _state,
+              state: buttonState,
               idleText: S.of(context).pageForgotPasswordButtonSend,
               successText: S.of(context).pageForgotPasswordButtonSent,
             )

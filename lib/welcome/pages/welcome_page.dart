@@ -51,6 +51,7 @@ class _WelcomePageState extends State<WelcomePage> {
             },
             itemBuilder: (BuildContext context, int pagePosition) {
               return Container(
+                key: Key('welcomeImage$pagePosition'),
                 margin: const EdgeInsets.all(10),
                 child: Image.asset(images[pagePosition]),
               );
@@ -72,6 +73,7 @@ class _WelcomePageState extends State<WelcomePage> {
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeLogin,
+              key: const Key('LoginButton'),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()),
               ),
@@ -83,6 +85,7 @@ class _WelcomePageState extends State<WelcomePage> {
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeRegister,
+              key: const Key('RegisterButton'),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (BuildContext context) => const RegisterPage()),
               ),
@@ -94,6 +97,7 @@ class _WelcomePageState extends State<WelcomePage> {
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeAnonymousSearch,
+              key: const Key('AnonymousSearchButton'),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => const SearchRidePage(),

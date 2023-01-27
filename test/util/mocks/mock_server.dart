@@ -19,14 +19,18 @@ class MockServer {
             // Uncomment this to see the requests
             // print('Request: ${request.url}');
             // print('Body: ${request.body}');
+            // print('Method: ${request.method}');
+
+            final ProcessorResult result = processor.process(
+              request.url.toString(),
+              method: request.method,
+              body: request.body.isEmpty ? null : jsonDecode(request.body),
+            );
+
             return Future.value(
               Response(
-                processor.process(
-                  request.url.toString(),
-                  method: request.method,
-                  body: request.body.isEmpty ? null : jsonDecode(request.body),
-                ),
-                200,
+                result.body,
+                result.statusCode,
                 headers: {
                   'content-type': 'application/json',
                 },

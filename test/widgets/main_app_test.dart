@@ -7,17 +7,17 @@ import 'package:motis_mitfahr_app/home_page.dart';
 import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:motis_mitfahr_app/rides/pages/rides_page.dart';
 
-import '../util/mock_server.dart';
+import '../util/mocks/mock_server.dart';
+import '../util/mocks/request_processor.dart';
+import '../util/mocks/request_processor.mocks.dart';
 import '../util/pump_material.dart';
-import '../util/request_processor.dart';
-import '../util/request_processor.mocks.dart';
 
 void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    whenRequest(processor).thenReturn('');
+    whenRequest(processor).thenReturnJson('');
   });
 
   setUp(() {});

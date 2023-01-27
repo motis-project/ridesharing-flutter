@@ -6,32 +6,45 @@ import 'package:mockito/mockito.dart';
 
 import 'request_processor.mocks.dart';
 
+class ProcessorResult {
+  final String body;
+  final int statusCode;
+
+  ProcessorResult(this.body, {required this.statusCode});
+}
+
+class ProcessorPostExpectation {
+  final PostExpectation expectation;
+
+  ProcessorPostExpectation(this.expectation);
+
+  void thenReturnJson(dynamic json, {int statusCode = 200}) {
+    expectation.thenReturn(
+      ProcessorResult(jsonEncode(json), statusCode: statusCode),
+    );
+  }
+}
+
 @GenerateMocks([RequestProcessor])
 class RequestProcessor {
-  String process(String url, {String? method, Map<String, dynamic>? body}) {
+  ProcessorResult process(String url, {String? method, Map<String, dynamic>? body}) {
     throw UnimplementedError();
   }
 }
 
-PostExpectation whenRequest(
+ProcessorPostExpectation whenRequest(
   MockRequestProcessor processor, {
   Matcher? urlMatcher,
   Matcher? methodMatcher,
   Matcher? bodyMatcher,
 }) {
-  return when(
-    processor.process(
+  return ProcessorPostExpectation(
+    when(processor.process(
       argThat(urlMatcher ?? anything),
       method: argThat(methodMatcher ?? anything, named: 'method'),
       body: argThat(bodyMatcher ?? anything, named: 'body'),
-    ),
+    )),
   );
-}
-
-extension JsonEncodedReturn on PostExpectation {
-  void thenReturnJson(dynamic json) {
-    return thenReturn(jsonEncode(json));
-  }
 }
 
 VerificationResult verifyRequest(

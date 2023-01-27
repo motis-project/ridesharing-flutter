@@ -36,6 +36,7 @@ class AfterRegistrationPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 Button(
                   S.of(context).pageWelcomeLogin,
+                  key: const Key('afterRegistrationLoginButton'),
                   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()),
                     (Route<void> route) => route.isFirst,

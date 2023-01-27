@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
@@ -17,10 +18,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,61 +50,56 @@ class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  State<LoginForm> createState() => LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class LoginFormState extends State<LoginForm> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  ButtonState _state = ButtonState.idle;
+  ButtonState buttonState = ButtonState.idle;
 
   Future<void> onSubmit() async {
-    if (_formKey.currentState!.validate()) {
+    if (!formKey.currentState!.validate()) return;
+
+    setState(() {
+      buttonState = ButtonState.loading;
+    });
+
+    try {
+      await SupabaseManager.supabaseClient.auth.signInWithPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
       setState(() {
-        _state = ButtonState.loading;
+        buttonState = ButtonState.success;
       });
-      try {
-        await SupabaseManager.supabaseClient.auth.signInWithPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        setState(() {
-          _state = ButtonState.success;
-        });
-      } on AuthException catch (e) {
-        await fail();
-
-        if (!mounted) return;
-        // looks weird but needed later for i18n
-        final String text = e.statusCode == '400'
-            ? e.message.contains('credentials')
-                ? S.of(context).pageLoginFailureCredentials
-                : S.of(context).pageLoginFailureEmailNotConfirmed
-            : S.of(context).failureSnackBar;
-
-        await SemanticsService.announce(text, TextDirection.ltr);
-
-        if (!mounted) return;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(text),
-          ),
-        );
-      }
-    } else {
+    } on AuthException catch (e) {
       await fail();
+
+      if (!mounted) return;
+
+      final String text = e.statusCode == '400'
+          ? e.message.contains('credentials')
+              ? S.of(context).pageLoginFailureCredentials
+              : S.of(context).pageLoginFailureEmailNotConfirmed
+          : S.of(context).failureSnackBar;
+
+      unawaited(SemanticsService.announce(text, TextDirection.ltr));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(text)),
+      );
     }
   }
 
   Future<void> fail() async {
     setState(() {
-      _state = ButtonState.fail;
+      buttonState = ButtonState.fail;
     });
     await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
-      _state = ButtonState.idle;
+      buttonState = ButtonState.idle;
     });
   }
 
@@ -117,19 +113,20 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      absorbing: buttonState == ButtonState.loading || buttonState == ButtonState.success,
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(child: Container()),
-            EmailField(controller: emailController),
+            EmailField(controller: emailController, key: const Key('loginEmailField')),
             const SizedBox(height: 15),
             PasswordField(
               labelText: S.of(context).formPassword,
               hintText: S.of(context).formPasswordHint,
               controller: passwordController,
+              key: const Key('loginPasswordField'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).formPasswordValidateEmpty;
@@ -138,6 +135,7 @@ class _LoginFormState extends State<LoginForm> {
               },
             ),
             TextButton(
+              key: const Key('loginForgotPasswordButton'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -150,12 +148,13 @@ class _LoginFormState extends State<LoginForm> {
             Hero(
               tag: 'LoginButton',
               transitionOnUserGestures: true,
-              child: LoadingButton(onPressed: onSubmit, state: _state),
+              child: LoadingButton(onPressed: onSubmit, state: buttonState),
             ),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: TextButton(
+                  key: const Key('loginNoAccountButton'),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
