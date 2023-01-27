@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
-import '../util/factories/mock_trip_factory.dart';
+import '../util/factories/trip_factory.dart';
 import '../util/mock_server.dart';
 import '../util/mock_server.mocks.dart';
 
@@ -16,7 +16,7 @@ void main() {
   group('Trip.duration', () {
     test('duration of a trip', () {
       final DateTime now = DateTime.now();
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: now,
           endTime: now.add(
             const Duration(hours: 2),
@@ -26,13 +26,13 @@ void main() {
   });
   group('Trip.isFinished', () {
     test('trip is finished', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(trip.isFinished, true);
     });
     test('trip is not finished', () {
-      final Trip ride = MockTripFactory().generateFake(
+      final Trip ride = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(ride.isFinished, false);
@@ -40,19 +40,19 @@ void main() {
   });
   group('Trip.isOngoing', () {
     test('trip is on going', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 1)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
       expect(trip.isOngoing, true);
     });
     test('trip is in the past', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(trip.isOngoing, false);
     });
     test('trip is upcoming', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(trip.isOngoing, false);
@@ -60,28 +60,28 @@ void main() {
   });
   group('Trip.overlapsWith', () {
     test('trip is before other', () {
-      final Trip trip1 = MockTripFactory().generateFake(
+      final Trip trip1 = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip2 = MockTripFactory().generateFake(
+      final Trip trip2 = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip is after other', () {
-      final Trip trip1 = MockTripFactory().generateFake(
+      final Trip trip1 = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 6)));
-      final Trip trip2 = MockTripFactory().generateFake(
+      final Trip trip2 = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip overlaps the other', () {
-      final Trip trip1 = MockTripFactory().generateFake(
+      final Trip trip1 = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 6)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
-      final Trip trip2 = MockTripFactory().generateFake(
+      final Trip trip2 = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 3)),
           endTime: DateTime.now().add(const Duration(hours: 2)));
       expect(trip1.overlapsWith(trip2), true);
@@ -93,7 +93,7 @@ void main() {
         start: DateTime.now().subtract(const Duration(hours: 6)),
         end: DateTime.now().subtract(const Duration(hours: 3)),
       );
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(trip.overlapsWithTimeRange(range), false);
@@ -103,7 +103,7 @@ void main() {
         start: DateTime.now().add(const Duration(hours: 3)),
         end: DateTime.now().add(const Duration(hours: 6)),
       );
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(hours: 4)),
           endTime: DateTime.now().subtract(const Duration(hours: 2)));
       expect(trip.overlapsWithTimeRange(range), false);
@@ -113,7 +113,7 @@ void main() {
         start: DateTime.now().add(const Duration(hours: 3)),
         end: DateTime.now().add(const Duration(hours: 6)),
       );
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
           startTime: DateTime.now().add(const Duration(hours: 2)),
           endTime: DateTime.now().add(const Duration(hours: 4)));
       expect(trip.overlapsWithTimeRange(range), true);
@@ -121,14 +121,14 @@ void main() {
   });
   group('Trip.shouldShowInListView', () {
     test('this trip should show in ListView when built', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
         startTime: DateTime.now().add(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(trip.shouldShowInListView(past: false), true);
     });
     test('this trip will not show in ListView when built because of hideInListView', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
         startTime: DateTime.now().add(const Duration(hours: 2)),
         endTime: DateTime.now().add(const Duration(hours: 4)),
         hideInListView: true,
@@ -136,14 +136,14 @@ void main() {
       expect(trip.shouldShowInListView(past: false), false);
     });
     test('this trip will  show in past ListView when built', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
         startTime: DateTime.now().subtract(const Duration(hours: 4)),
         endTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.shouldShowInListView(past: true), true);
     });
     test('this trip will not show in past ListView when built', () {
-      final Trip trip = MockTripFactory().generateFake(
+      final Trip trip = TripFactory().generateFake(
         startTime: DateTime.now().subtract(const Duration(hours: 4)),
         endTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
@@ -152,7 +152,7 @@ void main() {
   });
   group('Trip.equals', () {
     final DateTime now = DateTime.now();
-    final Trip trip0 = MockTripFactory().generateFake(
+    final Trip trip0 = TripFactory().generateFake(
       id: 1,
       createdAt: now,
       start: 'Berlin',
@@ -165,7 +165,7 @@ void main() {
       createDependencies: false,
     );
     test('same trip', () {
-      final Trip trip1 = MockTripFactory().generateFake(
+      final Trip trip1 = TripFactory().generateFake(
         id: 1,
         createdAt: now,
         start: 'Berlin',
@@ -182,7 +182,7 @@ void main() {
 
     test('different parameter', () {
       for (int i = 0; i < 10; i++) {
-        final Trip trip1 = MockTripFactory().generateFake(
+        final Trip trip1 = TripFactory().generateFake(
           id: i == 0 ? 2 : 1,
           createdAt: i == 1 ? now.add(const Duration(hours: 1)) : now,
           start: i == 2 ? 'Hamburg' : 'Berlin',
