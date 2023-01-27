@@ -6,10 +6,10 @@ import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/welcome/pages/reset_password_page.dart';
 import 'package:progress_state_button/progress_button.dart';
 
-import '../util/mocks/mock_server.dart';
-import '../util/mocks/request_processor.dart';
-import '../util/mocks/request_processor.mocks.dart';
-import '../util/pump_material.dart';
+import '../../util/mocks/mock_server.dart';
+import '../../util/mocks/request_processor.dart';
+import '../../util/mocks/request_processor.mocks.dart';
+import '../../util/pump_material.dart';
 
 class MockFunction extends Mock {
   void call();

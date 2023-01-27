@@ -6,7 +6,7 @@ import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/welcome_page.dart';
 
-import '../util/pump_material.dart';
+import '../../util/pump_material.dart';
 
 void main() {
   setUpAll(() async {
