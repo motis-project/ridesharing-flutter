@@ -232,6 +232,8 @@ void main() {
 
         final FormFieldState passwordConfirmationField = tester.state(passwordConfirmFieldFinder);
         expect(passwordConfirmationField.hasError, isTrue);
+
+        verifyRequestNever(processor, urlMatcher: startsWith('/auth/v1/signup'));
       });
 
       testWidgets('Fails if supabase responds with error', (WidgetTester tester) async {
