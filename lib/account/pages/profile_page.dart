@@ -97,6 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
                       .then((_) => loadProfile());
                 },
+                key: const Key('editUsernameButton'),
               ),
             ),
           ),
@@ -130,6 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditDescriptionPage(_profile!)))
             .then((_) => loadProfile());
       },
+      key: const Key('editDescriptionButton'),
     );
   }
 
@@ -149,6 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditFullNamePage(_profile!)))
             .then((_) => loadProfile());
       },
+      key: const Key('editFullNameButton'),
     );
   }
 
@@ -168,6 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditBirthDatePage(_profile!)))
             .then((_) => loadProfile());
       },
+      key: const Key('editAgeButton'),
     );
   }
 
@@ -176,6 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ? Text(
             _profile!.gender!.getName(context),
             style: Theme.of(context).textTheme.titleMedium,
+            key: const Key('genderText'),
           )
         : buildNoInfoText(S.of(context).pageProfileGenderEmpty);
 
@@ -188,6 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditGenderPage(_profile!)))
             .then((_) => loadProfile());
       },
+      key: const Key('editGenderButton'),
     );
   }
 
@@ -204,6 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditProfileFeaturesPage(_profile!)))
             .then((_) => loadProfile());
       },
+      key: const Key('editFeaturesButton'),
     );
   }
 
@@ -230,8 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Column buildWidgetColumn() {
     final List<Widget> widgets = <Widget>[
       buildAvatar(),
       const SizedBox(height: 8),
@@ -301,10 +307,13 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-
-    final Column content = Column(
+    return Column(
       children: widgets,
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_profile?.username ?? ''),
@@ -314,6 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: signOut,
                   icon: const Icon(Icons.logout),
                   label: Text(S.of(context).pageAccountSignOut),
+                  key: const Key('signOutButton'),
                 ),
               ]
             : null,
@@ -324,7 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onRefresh: loadProfile,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(padding: const EdgeInsets.all(12), child: content),
+                child: Padding(padding: const EdgeInsets.all(12), child: buildWidgetColumn()),
               ),
             ),
     );

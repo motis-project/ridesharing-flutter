@@ -45,11 +45,13 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
                 readOnly: true,
                 onTap: _showDatePicker,
                 controller: _controller,
+                key: const Key('birthDateInput'),
               ),
               const SizedBox(height: 10),
               Button(
                 S.of(context).save,
                 onPressed: onPressed,
+                key: const Key('saveButton'),
               ),
             ],
           ),
@@ -69,6 +71,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
         _controller.clear();
         _date = null;
       },
+      key: const Key('clearButton'),
     );
   }
 
