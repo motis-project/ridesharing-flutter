@@ -67,13 +67,13 @@ class RegisterFormState extends State<RegisterForm> {
         emailRedirectTo: 'io.supabase.flutter://login-callback/',
       );
     } on AuthException {
-      return doFail();
+      return fail();
     }
 
     final User? user = res.user;
 
     if (user == null) {
-      return doFail();
+      return fail();
     }
 
     try {
@@ -83,7 +83,7 @@ class RegisterFormState extends State<RegisterForm> {
         'username': usernameController.text,
       });
     } on PostgrestException {
-      return doFail();
+      return fail();
     }
 
     await Future<void>.delayed(const Duration(milliseconds: 500));
@@ -101,14 +101,9 @@ class RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  void doFail() {
-    fail();
-    if (mounted) {
-      showSnackBar(S.of(context).failureSnackBar);
-    }
-  }
-
   Future<void> fail() async {
+    unawaited(showSnackBar(S.of(context).failureSnackBar));
+
     setState(() {
       buttonState = ButtonState.fail;
     });
