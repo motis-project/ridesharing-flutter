@@ -417,12 +417,11 @@ class SearchRideFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            final bool wholeDaySatisfied =
-                !_wholeDay || date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
-            return ratingSatisfied && featuresSatisfied && wholeDaySatisfied;
+            final bool onSameDaySatisfied = date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
+            return ratingSatisfied && featuresSatisfied && onSameDaySatisfied;
           },
         )
-        .sorted(_sorting.sortFunction(date))
+        .sorted(_sorting.sortFunction(date, wholeDay: wholeDay))
         .toList();
   }
 }
@@ -448,7 +447,7 @@ extension SearchRideSortingExtension on SearchRideSorting {
     }
   }
 
-  int Function(Ride, Ride) sortFunction(DateTime date) {
+  int Function(Ride, Ride) sortFunction(DateTime date, {bool wholeDay = false}) {
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     int timeProximityFunc(Ride ride1, Ride ride2) =>
@@ -456,7 +455,9 @@ extension SearchRideSortingExtension on SearchRideSorting {
     switch (this) {
       case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>
-            travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2) + timeProximityFunc(ride1, ride2);
+            travelDurationFunc(ride1, ride2) +
+            priceFunc(ride1, ride2) +
+            (wholeDay ? 0 : timeProximityFunc(ride1, ride2));
       case SearchRideSorting.travelDuration:
         return travelDurationFunc;
       case SearchRideSorting.price:
