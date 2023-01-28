@@ -9,6 +9,7 @@ import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip.dart';
 import '../models/drive.dart';
@@ -126,19 +127,19 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         final bool hasDrive =
             await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasDrive && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveDrive)),
+          return showSnackBar(
+            context,
+            S.of(context).pageCreateDriveYouAlreadyHaveDrive,
           );
-          return;
         }
 
         final bool hasRide =
             await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
         if (hasRide && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.of(context).pageCreateDriveYouAlreadyHaveRide)),
+          return showSnackBar(
+            context,
+            S.of(context).pageCreateDriveYouAlreadyHaveRide,
           );
-          return;
         }
 
         final Drive drive = Drive(
@@ -170,10 +171,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         );
       } on AuthException {
         //todo: change error message when login is implemented
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(S.of(context).failureSnackBar),
-          ),
+        showSnackBar(
+          context,
+          S.of(context).failureSnackBar,
         );
       }
     }

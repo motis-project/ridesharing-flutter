@@ -6,6 +6,7 @@ import '../../util/buttons/loading_button.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/reviews/custom_rating_bar.dart';
 import '../../util/profiles/reviews/custom_rating_bar_size.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
@@ -187,14 +188,11 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       setState(() {
         _state = ButtonState.fail;
       });
-      const Duration duration = Duration(seconds: 1);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(S.of(context).pageWriteReviewRatingRequired),
-          duration: duration,
-        ),
-      );
-      await Future<void>.delayed(duration);
+
+      const SnackBarDurationType durationType = SnackBarDurationType.short;
+      showSnackBar(context, S.of(context).pageWriteReviewRatingRequired, durationType: durationType);
+      await Future<void>.delayed(durationType.duration);
+
       setState(() {
         _state = ButtonState.idle;
       });

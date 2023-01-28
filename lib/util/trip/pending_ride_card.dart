@@ -6,6 +6,7 @@ import '../../rides/models/ride.dart';
 import '../icon_widget.dart';
 import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
+import '../snackbar.dart';
 import '../supabase.dart';
 import 'trip_card.dart';
 
@@ -124,19 +125,17 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
               if (widget.drive.isRidePossible(_ride)) {
                 approveRide();
                 Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(S.of(context).cardPendingRideApproveDialogSuccessSnackbar),
-                    duration: const Duration(seconds: 2),
-                  ),
+                showSnackBar(
+                  context,
+                  S.of(context).cardPendingRideApproveDialogSuccessSnackbar,
+                  durationType: SnackBarDurationType.medium,
                 );
               } else {
                 Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(S.of(context).cardPendingRideApproveDialogErrorSnackbar),
-                    duration: const Duration(seconds: 2),
-                  ),
+                showSnackBar(
+                  context,
+                  S.of(context).cardPendingRideApproveDialogErrorSnackbar,
+                  durationType: SnackBarDurationType.medium,
                 );
               }
             },
@@ -162,11 +161,10 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
             onPressed: () {
               rejectRide();
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(S.of(context).cardPendingRideRejectDialogSuccessSnackBar),
-                  duration: const Duration(seconds: 2),
-                ),
+              showSnackBar(
+                context,
+                S.of(context).cardPendingRideRejectDialogSuccessSnackBar,
+                durationType: SnackBarDurationType.medium,
               );
             },
           ),

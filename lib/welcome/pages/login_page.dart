@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import 'forgot_password_page.dart';
 import 'register_page.dart';
@@ -79,17 +78,13 @@ class LoginFormState extends State<LoginForm> {
 
       if (!mounted) return;
 
-      final String text = e.statusCode == '400'
+      final String message = e.statusCode == '400'
           ? e.message.contains('credentials')
               ? S.of(context).pageLoginFailureCredentials
               : S.of(context).pageLoginFailureEmailNotConfirmed
           : S.of(context).failureSnackBar;
 
-      unawaited(SemanticsService.announce(text, TextDirection.ltr));
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(text)),
-      );
+      showSnackBar(context, message);
     }
   }
 

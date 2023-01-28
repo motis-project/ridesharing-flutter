@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
+import '../../../util/snackbar.dart';
 import '../../../util/supabase.dart';
 import '../../models/profile.dart';
 import '../../models/profile_feature.dart';
@@ -191,12 +191,12 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           _features.firstWhereOrNull((Feature feature) => feature.isMutuallyExclusive(newFeature));
       if (mutuallyExclusiveFeature != null) {
         final String description = mutuallyExclusiveFeature.getDescription(context);
-        final String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
-        SemanticsService.announce(text, TextDirection.ltr);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(text)),
+        return showSnackBar(
+          context,
+          S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
+          durationType: SnackBarDurationType.medium,
+          replace: true,
         );
-        return;
       }
 
       _otherFeatures.removeAt(indexInOtherFeatures);
