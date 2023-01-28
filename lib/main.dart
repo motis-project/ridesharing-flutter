@@ -99,8 +99,7 @@ class AuthAppState extends State<AuthApp> {
 
           if (event == AuthChangeEvent.signedOut ||
               event == AuthChangeEvent.signedIn ||
-              event == AuthChangeEvent.passwordRecovery ||
-              event == AuthChangeEvent.userDeleted) {
+              event == AuthChangeEvent.passwordRecovery) {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
           }
         });
@@ -125,7 +124,7 @@ class AuthAppState extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     if (_resettingPassword) {
-      return ResetPasswordPage(onPasswordReset: () => _resettingPassword = false);
+      return ResetPasswordPage(onPasswordReset: () => setState(() => _resettingPassword = false));
     } else if (_isLoggedIn) {
       return const MainApp();
     } else {
