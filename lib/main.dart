@@ -34,10 +34,10 @@ class AppWrapper extends StatefulWidget {
   const AppWrapper({super.key});
 
   @override
-  State<AppWrapper> createState() => _AppWrapperState();
+  State<AppWrapper> createState() => AppWrapperState();
 }
 
-class _AppWrapperState extends State<AppWrapper> {
+class AppWrapperState extends State<AppWrapper> {
   @override
   void initState() {
     super.initState();
@@ -69,10 +69,10 @@ class AuthApp extends StatefulWidget {
   const AuthApp({super.key});
 
   @override
-  State<AuthApp> createState() => _AuthAppState();
+  State<AuthApp> createState() => AuthAppState();
 }
 
-class _AuthAppState extends State<AuthApp> {
+class AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
   bool _isLoggedIn = SupabaseManager.supabaseClient.auth.currentSession != null;
   bool _resettingPassword = false;
