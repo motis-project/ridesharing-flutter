@@ -66,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
       size: 64,
       onAction: _isLoadingProfilePicture ? null : _updateProfilePictureDialog,
       isTappable: true,
+      withHero: true,
     );
   }
 

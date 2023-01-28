@@ -204,8 +204,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             child: StartDestinationTimeline(
               startController: _startController,
               destinationController: _destinationController,
-              onStartSelected: (AddressSuggestion suggestion) => _startSuggestion = suggestion,
-              onDestinationSelected: (AddressSuggestion suggestion) => _destinationSuggestion = suggestion,
+              onStartSelected: (AddressSuggestion suggestion) => setState(() => _startSuggestion = suggestion),
+              onDestinationSelected: (AddressSuggestion suggestion) =>
+                  setState(() => _destinationSuggestion = suggestion),
             ),
           ),
           const Divider(),

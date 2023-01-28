@@ -12,6 +12,7 @@ class Avatar extends StatefulWidget {
     this.actionIcon = const Icon(Icons.photo_library),
     this.onAction,
     this.size,
+    this.withHero = false,
   });
 
   final bool isTappable;
@@ -19,26 +20,32 @@ class Avatar extends StatefulWidget {
   final Icon? actionIcon;
   final VoidCallback? onAction;
   final double? size;
+  final bool withHero;
 
   @override
   AvatarState createState() => AvatarState();
 }
 
 class AvatarState extends State<Avatar> {
+  Widget buildAvatar() {
+    final Widget avatar = CircleAvatar(
+      radius: widget.size,
+      backgroundImage: widget.profile.avatarUrl?.isEmpty ?? true ? null : NetworkImage(widget.profile.avatarUrl!),
+      child: widget.profile.avatarUrl?.isEmpty ?? true
+          ? Text(
+              widget.profile.username[0].toUpperCase(),
+              style: TextStyle(fontSize: widget.size),
+            )
+          : null,
+    );
+    return widget.withHero ? Hero(tag: 'Avatar-${widget.profile.id}', child: avatar) : avatar;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        CircleAvatar(
-          radius: widget.size,
-          backgroundImage: widget.profile.avatarUrl?.isEmpty ?? true ? null : NetworkImage(widget.profile.avatarUrl!),
-          child: widget.profile.avatarUrl?.isEmpty ?? true
-              ? Text(
-                  widget.profile.username[0].toUpperCase(),
-                  style: TextStyle(fontSize: widget.size),
-                )
-              : null,
-        ),
+        buildAvatar(),
         if (widget.isTappable)
           Positioned.fill(
             child: Material(

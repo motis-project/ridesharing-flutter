@@ -90,13 +90,13 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           const SizedBox(height: 15),
           Hero(
-            tag: 'SearchButton',
+            tag: 'RideFAB',
             transitionOnUserGestures: true,
             child: Button(
               S.of(context).pageWelcomeAnonymousSearch,
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const SearchRidePage(anonymous: true),
+                  builder: (BuildContext context) => const SearchRidePage(),
                 ),
               ),
             ),

@@ -110,6 +110,7 @@ class _AccountPageState extends State<AccountPage> {
               size: 25,
               actionWidget: const Icon(Icons.chevron_right),
               onPop: (_) => setState(() {}),
+              withHero: true,
             ),
           ),
           ListTile(

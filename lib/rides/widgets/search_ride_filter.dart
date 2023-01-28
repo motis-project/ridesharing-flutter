@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../account/models/profile.dart';
@@ -11,7 +10,7 @@ import '../../util/profiles/reviews/custom_rating_bar.dart';
 import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/ride.dart';
 
-class SearchSuggestionFilter {
+class SearchRideFilter {
   static const List<Feature> _commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
@@ -22,8 +21,7 @@ class SearchSuggestionFilter {
   ];
   static const int _defaultRating = 1;
   static const List<Feature> _defaultFeatures = <Feature>[];
-  static const SearchSuggestionSorting _defaultSorting = SearchSuggestionSorting.relevance;
-  static const String _defaultDeviation = '12';
+  static const SearchRideSorting _defaultSorting = SearchRideSorting.relevance;
 
   bool _isRatingExpanded = false;
   bool _isFeatureListExpanded = false;
@@ -35,8 +33,9 @@ class SearchSuggestionFilter {
   late int _minReliabilityRating;
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
-  late SearchSuggestionSorting _sorting;
-  final TextEditingController _maxDeviationController = TextEditingController();
+  late SearchRideSorting _sorting;
+
+  bool _wholeDay;
 
   void setDefaultFilterValues() {
     _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
@@ -47,12 +46,20 @@ class SearchSuggestionFilter {
     _minReliabilityRating = _defaultRating;
     _minHospitalityRating = _defaultRating;
     _selectedFeatures = <Feature>[..._defaultFeatures];
-    _maxDeviationController.text = _defaultDeviation;
     _sorting = _defaultSorting;
   }
 
-  SearchSuggestionFilter() {
+  SearchRideFilter({required bool wholeDay}) : _wholeDay = wholeDay {
     setDefaultFilterValues();
+  }
+
+  bool get wholeDay => _wholeDay;
+
+  set wholeDay(bool wholeDay) {
+    _wholeDay = wholeDay;
+    if (_wholeDay && _sorting == SearchRideSorting.timeProximity) {
+      _sorting = SearchRideFilter._defaultSorting;
+    }
   }
 
   Widget _filterCategory(BuildContext context, String title, Widget content) {
@@ -71,7 +78,7 @@ class SearchSuggestionFilter {
   Widget _buildRatingFilter(BuildContext context, void Function(void Function()) innerSetState) {
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterMinimumRating,
+      S.of(context).searchRideFilterMinimumRating,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -118,7 +125,12 @@ class SearchSuggestionFilter {
           ],
           TextButton(
             onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
-            child: Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
+            child: Row(
+              children: <Widget>[
+                Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
+                Icon(_isRatingExpanded ? Icons.expand_less : Icons.expand_more)
+              ],
+            ),
           ),
         ],
       ),
@@ -134,14 +146,14 @@ class SearchSuggestionFilter {
     }
     return _filterCategory(
       context,
-      S.of(context).searchSuggestionsFilterFeatures,
+      S.of(context).searchRideFilterFeatures,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
             runSpacing: -10,
             spacing: 2,
-            children: List<FilterChip>.generate(
+            children: List<Widget>.generate(
               shownFeatures.length,
               (int index) {
                 final Feature feature = shownFeatures[index];
@@ -151,8 +163,8 @@ class SearchSuggestionFilter {
                   label: Text(feature.getDescription(context)),
                   selected: _selectedFeatures.contains(feature),
                   tooltip: featureSelected
-                      ? S.of(context).searchSuggestionsFilterFeaturesDeselectTooltip
-                      : S.of(context).searchSuggestionsFilterFeaturesSelectTooltip,
+                      ? S.of(context).searchRideFilterFeaturesDeselectTooltip
+                      : S.of(context).searchRideFilterFeaturesSelectTooltip,
                   onSelected: (bool selected) {
                     if (featureSelected) {
                       innerSetState(() {
@@ -187,51 +199,35 @@ class SearchSuggestionFilter {
                 _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
               }
             }),
-            child: Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeviationFilter(BuildContext context) {
-    return _filterCategory(
-      context,
-      S.of(context).searchSuggestionsFilterDeviation,
-      Row(
-        children: <Widget>[
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: TextField(
-              controller: _maxDeviationController,
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+            child: Row(
+              children: <Widget>[
+                Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
+                Icon(_isFeatureListExpanded ? Icons.expand_less : Icons.expand_more)
+              ],
             ),
           ),
-          Text(S.of(context).searchSuggestionsFilterDeviationHours),
         ],
       ),
     );
   }
 
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    return _filterCategory(
-      context,
-      S.of(context).searchSuggestionsFilterSorting,
-      DropdownButton<SearchSuggestionSorting>(
-        value: _sorting,
-        items: SearchSuggestionSorting.values
-            .map(
-              (SearchSuggestionSorting sorting) => DropdownMenuItem<SearchSuggestionSorting>(
-                value: sorting,
-                child: Text(sorting.getDescription(context)),
-              ),
-            )
-            .toList(),
-        onChanged: (SearchSuggestionSorting? value) => innerSetState(
-          () => _sorting = value!,
-        ),
+    return DropdownButton<SearchRideSorting>(
+      icon: const Icon(Icons.sort),
+      value: _sorting,
+      items: SearchRideSorting.values.map((SearchRideSorting sorting) {
+        final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
+        return DropdownMenuItem<SearchRideSorting>(
+          enabled: enabled,
+          value: sorting,
+          child: Text(
+            sorting.getDescription(context),
+            style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
+          ),
+        );
+      }).toList(),
+      onChanged: (SearchRideSorting? value) => innerSetState(
+        () => _sorting = value!,
       ),
     );
   }
@@ -241,7 +237,7 @@ class SearchSuggestionFilter {
       context: context,
       builder: (BuildContext context) => ScaffoldMessenger(
         child: StatefulBuilder(
-          builder: (BuildContext context, Function(VoidCallback) innerSetState) {
+          builder: (BuildContext context, void Function(void Function()) innerSetState) {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: AlertDialog(
@@ -252,16 +248,12 @@ class SearchSuggestionFilter {
                     children: <Widget>[
                       _buildRatingFilter(context, innerSetState),
                       _buildFeaturesFilter(context, innerSetState),
-                      _buildDeviationFilter(
-                        context,
-                      ),
-                      _buildSortingFilter(context, innerSetState),
                     ],
                   ),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(S.of(context).searchSuggestionsFilterResetToDefault),
+                    child: Text(S.of(context).searchRideFilterResetToDefault),
                     onPressed: () => innerSetState(() => setDefaultFilterValues()),
                   ),
                   TextButton(
@@ -300,7 +292,6 @@ class SearchSuggestionFilter {
         _minReliabilityRating == _defaultRating &&
         _minHospitalityRating == _defaultRating;
     final bool isFeaturesDefault = _selectedFeatures.equals(_defaultFeatures);
-    final bool isDeviationDefault = _maxDeviationController.text == _defaultDeviation;
 
     final List<Widget> widgets = <Widget>[];
     if (!isRatingDefault) {
@@ -370,52 +361,46 @@ class SearchSuggestionFilter {
           Row(children: _selectedFeatures.map((Feature feature) => feature.getIcon(context)).toList());
       widgets.add(featuresRow);
     }
-    if (!isDeviationDefault) {
-      final Widget deviationWidget = Row(
-        children: <Widget>[
-          const Icon(Icons.schedule),
-          const SizedBox(width: 6),
-          Text('± ${_maxDeviationController.text}')
-        ],
-      );
-      widgets.add(deviationWidget);
-    }
-    final Widget sortingWidget = Row(
-      children: <Widget>[const Icon(Icons.sort), Text(_sorting.getDescription(context))],
-    );
-    widgets.add(sortingWidget);
     final int numDividers = widgets.length - 1;
     for (int i = 0; i < numDividers; i++) {
       widgets.insert(i * 2 + 1, const VerticalDivider(thickness: 2));
     }
     return IntrinsicHeight(
-      child: Semantics(
-        button: true,
-        tooltip: S.of(context).pageSearchSuggestionsTooltipFilter,
-        child: InkWell(
-          onTap: () => dialog(context, setState),
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              children: <Widget>[
-                const Icon(Icons.tune),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: widgets,
-                      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Semantics(
+              button: true,
+              tooltip: S.of(context).pageSearchRideTooltipFilter,
+              child: SizedBox(
+                height: double.infinity,
+                child: InkWell(
+                  onTap: () => dialog(context, setState),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      children: <Widget>[
+                        const Icon(Icons.tune),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: widgets,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          const SizedBox(width: 4),
+          _buildSortingFilter(context, setState)
+        ],
       ),
     );
   }
@@ -432,56 +417,59 @@ class SearchSuggestionFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            final bool maxDeviationSatisfied =
-                date.difference(ride.startTime) < Duration(hours: int.parse(_maxDeviationController.text));
-            return ratingSatisfied && featuresSatisfied && maxDeviationSatisfied;
+            final bool onSameDaySatisfied = date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
+            return ratingSatisfied && featuresSatisfied && onSameDaySatisfied;
           },
         )
-        .sorted(_sorting.sortFunction(date))
+        .sorted(_sorting.sortFunction(date, wholeDay: wholeDay))
         .toList();
   }
-
-  void dispose() {
-    _maxDeviationController.dispose();
-  }
 }
 
-enum SearchSuggestionSorting {
+enum SearchRideSorting {
   relevance,
-  timeProximity,
   travelDuration,
   price,
+  timeProximity,
 }
 
-extension SearchSuggestionSortingExtension on SearchSuggestionSorting {
+extension SearchRideSortingExtension on SearchRideSorting {
   String getDescription(BuildContext context) {
     switch (this) {
-      case SearchSuggestionSorting.relevance:
-        return S.of(context).searchSuggestionsSortingRelevance;
-      case SearchSuggestionSorting.timeProximity:
-        return S.of(context).searchSuggestionsSortingTimeProximity;
-      case SearchSuggestionSorting.travelDuration:
-        return S.of(context).searchSuggestionsSortingTravelDuration;
-      case SearchSuggestionSorting.price:
-        return S.of(context).searchSuggestionsSortingPrice;
+      case SearchRideSorting.relevance:
+        return S.of(context).searchRideSortingRelevance;
+      case SearchRideSorting.travelDuration:
+        return S.of(context).searchRideSortingTravelDuration;
+      case SearchRideSorting.price:
+        return S.of(context).searchRideSortingPrice;
+      case SearchRideSorting.timeProximity:
+        return S.of(context).searchRideSortingTimeProximity;
     }
   }
 
-  int Function(Ride, Ride) sortFunction(DateTime date) {
-    int timeProximityFunc(Ride ride1, Ride ride2) =>
-        (date.difference(ride1.startTime) - date.difference(ride2.startTime)).inMinutes;
+  int Function(Ride, Ride) sortFunction(DateTime date, {bool wholeDay = false}) {
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
+    int timeProximityFunc(Ride ride1, Ride ride2) =>
+        (date.difference(ride1.startTime).abs() - date.difference(ride2.startTime).abs()).inMinutes;
     switch (this) {
-      case SearchSuggestionSorting.relevance:
+      case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>
-            timeProximityFunc(ride1, ride2) + travelDurationFunc(ride1, ride2) + priceFunc(ride1, ride2);
-      case SearchSuggestionSorting.timeProximity:
-        return timeProximityFunc;
-      case SearchSuggestionSorting.travelDuration:
+            travelDurationFunc(ride1, ride2) +
+            priceFunc(ride1, ride2) +
+            (wholeDay ? 0 : timeProximityFunc(ride1, ride2));
+      case SearchRideSorting.travelDuration:
         return travelDurationFunc;
-      case SearchSuggestionSorting.price:
+      case SearchRideSorting.price:
         return priceFunc;
+      case SearchRideSorting.timeProximity:
+        return timeProximityFunc;
     }
+  }
+}
+
+extension CustomDateTime on DateTime {
+  bool isSameDayAs(DateTime other) {
+    return day == other.day && month == other.month && year == other.year;
   }
 }
