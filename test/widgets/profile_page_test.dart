@@ -34,7 +34,6 @@ void main() {
   });
 
   setUp(() {
-    profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(processor,
             urlMatcher: equals(
@@ -243,7 +242,9 @@ void main() {
     testWidgets('Edit features button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.edit).last);
+      final Finder editFeaturesButton = find.byIcon(Icons.edit).last;
+      await tester.scrollUntilVisible(editFeaturesButton, 100, scrollable: find.byType(Scrollable).first);
+      await tester.tap(editFeaturesButton);
       await tester.pumpAndSettle();
       expect(find.byType(EditProfileFeaturesPage), findsOneWidget);
     });

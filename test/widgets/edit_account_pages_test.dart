@@ -31,7 +31,7 @@ void main() {
   });
 
 //todo: Savebutton testen
-  group('edit_birth_date_page', () async {
+  group('edit_birth_date_page', () {
     testWidgets('birthDate TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
@@ -78,7 +78,7 @@ void main() {
       expect(find.text(localeManager.formatDate(profile.birthDate!)), findsNothing);
     });
   });
-  group('edit_description_page', () async {
+  group('edit_description_page', () {
     testWidgets('description TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditDescriptionPage(profile));
       await tester.pump();
@@ -102,7 +102,7 @@ void main() {
     });
     testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_full_name_page', () async {
+  group('edit_full_name_page', () {
     testWidgets('surname TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
@@ -147,7 +147,7 @@ void main() {
     });
     testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_gender_page', () async {
+  group('edit_gender_page', () {
     testWidgets('display genderRadioListTile', (WidgetTester tester) async {
       await pumpMaterial(tester, EditGenderPage(profile));
       await tester.pump();
@@ -164,7 +164,7 @@ void main() {
     testWidgets('change gender', (WidgetTester tester) async {});
     testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_profile_features_page', () async {
+  group('edit_profile_features_page', () {
     testWidgets('show added features', (WidgetTester tester) async {});
     testWidgets('show not added features', (WidgetTester tester) async {});
     testWidgets('add features', (WidgetTester tester) async {});
@@ -172,7 +172,7 @@ void main() {
     testWidgets('move features', (WidgetTester tester) async {});
     testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_username_page', () async {
+  group('edit_username_page', () {
     testWidgets('username TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditUsernamePage(profile));
       await tester.pump();
