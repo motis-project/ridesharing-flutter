@@ -24,10 +24,10 @@ import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/factories/review_factory.dart';
 import '../util/factories/ride_factory.dart';
-import '../util/mock_server.dart';
+import '../util/mocks/mock_server.dart';
+import '../util/mocks/request_processor.dart';
+import '../util/mocks/request_processor.mocks.dart';
 import '../util/pump_material.dart';
-import '../util/request_processor.dart';
-import '../util/request_processor.mocks.dart';
 
 void main() {
   late Profile driver;

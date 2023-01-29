@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
-import 'util/mock_server.dart';
-import 'util/request_processor.dart';
-import 'util/request_processor.mocks.dart';
+import 'util/mocks/mock_server.dart';
+import 'util/mocks/request_processor.dart';
+import 'util/mocks/request_processor.mocks.dart';
 
 // Die Klasse UrlProcessor muss zu Beginn jeder Testdatei implementiert werden und die Methode processUrl überschrieben werden
 // Wird die Methode ProcessUrl aufgrufen, wird für den dort definierten Fall (in dem Beispiel client.from('drives').select('driver_id,seats')) die Antwort definiert

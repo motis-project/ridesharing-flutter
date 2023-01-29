@@ -13,10 +13,10 @@ class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key, required this.onPasswordReset});
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  State<ResetPasswordPage> createState() => ResetPasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,40 +41,27 @@ class ResetPasswordForm extends StatefulWidget {
   const ResetPasswordForm({super.key, required this.onPasswordReset});
 
   @override
-  State<ResetPasswordForm> createState() => _ResetPasswordFormState();
+  State<ResetPasswordForm> createState() => ResetPasswordFormState();
 }
 
-class _ResetPasswordFormState extends State<ResetPasswordForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class ResetPasswordFormState extends State<ResetPasswordForm> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordConfirmationController = TextEditingController();
-  ButtonState _state = ButtonState.idle;
+  ButtonState buttonState = ButtonState.idle;
 
   Future<void> onSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _state = ButtonState.loading;
-      });
+    if (!formKey.currentState!.validate()) return;
 
-      final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
-      await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
-
-      widget.onPasswordReset();
-
-      // will be redirected to login screen if successful (onAuthStateChange)
-    } else {
-      await fail();
-    }
-  }
-
-  Future<void> fail() async {
     setState(() {
-      _state = ButtonState.fail;
+      buttonState = ButtonState.loading;
     });
-    await Future<void>.delayed(const Duration(seconds: 2));
-    setState(() {
-      _state = ButtonState.idle;
-    });
+
+    final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
+    await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
+
+    // Will redirect to login screen if successful
+    widget.onPasswordReset();
   }
 
   @override
@@ -87,15 +74,16 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      absorbing: buttonState == ButtonState.loading || buttonState == ButtonState.success,
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: <Widget>[
             PasswordField(
               labelText: S.of(context).formPassword,
               hintText: S.of(context).pageResetPasswordHint,
               controller: passwordController,
+              key: const Key('resetPasswordPasswordField'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageResetPasswordValidateEmpty;
@@ -118,6 +106,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
               labelText: S.of(context).formPasswordConfirm,
               hintText: S.of(context).pageResetPasswordConfirmHint,
               controller: passwordConfirmationController,
+              key: const Key('resetPasswordPasswordConfirmField'),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageResetPasswordConfirmValidateEmpty;
@@ -131,7 +120,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             LoadingButton(
               idleText: S.of(context).pageResetPasswordButtonReset,
               onPressed: onSubmit,
-              state: _state,
+              state: buttonState,
             )
           ],
         ),

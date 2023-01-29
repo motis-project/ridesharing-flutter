@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../account/models/profile.dart';
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
@@ -39,80 +42,74 @@ class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
 
   @override
-  State<RegisterForm> createState() => _RegisterFormState();
+  State<RegisterForm> createState() => RegisterFormState();
 }
 
-class _RegisterFormState extends State<RegisterForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class RegisterFormState extends State<RegisterForm> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordConfirmationController = TextEditingController();
-  ButtonState _state = ButtonState.idle;
+  ButtonState buttonState = ButtonState.idle;
 
   Future<void> onSubmit() async {
-    if (_formKey.currentState!.validate()) {
-      late final AuthResponse res;
-      try {
-        setState(() {
-          _state = ButtonState.loading;
-        });
-        res = await SupabaseManager.supabaseClient.auth.signUp(
-          password: passwordController.text,
-          email: emailController.text,
-          emailRedirectTo: 'io.supabase.flutter://login-callback/',
-        );
-      } on AuthException {
-        await fail();
-        if (mounted) await showSnackBar(S.of(context).failureSnackBar);
-        return;
-      }
-      final User? user = res.user;
+    if (!formKey.currentState!.validate()) return;
 
-      if (user != null) {
-        try {
-          await SupabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
-            'auth_id': user.id,
-            'email': user.email,
-            'username': usernameController.text,
-          });
-        } on PostgrestException {
-          await fail();
-          // TODO: Show error if user exists already?
-          // if (e.message.contains('duplicate key value violates unique constraint "users_email_key"')) {
-          if (mounted) await showSnackBar(S.of(context).failureSnackBar);
-          return;
-        }
-        await Future<void>.delayed(const Duration(seconds: 2));
-        setState(() {
-          _state = ButtonState.success;
-        });
+    late final AuthResponse res;
+    try {
+      setState(() {
+        buttonState = ButtonState.loading;
+      });
+      res = await SupabaseManager.supabaseClient.auth.signUp(
+        password: passwordController.text,
+        email: emailController.text,
+        emailRedirectTo: 'io.supabase.flutter://login-callback/',
+      );
+    } on AuthException {
+      return fail();
+    }
 
-        if (mounted) {
-          await Navigator.of(context)
-              .push(MaterialPageRoute<void>(builder: (BuildContext context) => const AfterRegistrationPage()));
-        }
-      }
-    } else {
-      await fail();
+    final User? user = res.user;
+
+    if (user == null) {
+      return fail();
+    }
+
+    try {
+      await SupabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
+        'auth_id': user.id,
+        'email': user.email,
+        'username': usernameController.text,
+      });
+    } on PostgrestException {
+      return fail();
+    }
+
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    if (mounted) {
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (BuildContext context) => const AfterRegistrationPage()),
+      );
     }
   }
 
   Future<void> showSnackBar(String text) async {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
-      ),
+      SnackBar(content: Text(text)),
     );
   }
 
   Future<void> fail() async {
+    unawaited(showSnackBar(S.of(context).failureSnackBar));
+
     setState(() {
-      _state = ButtonState.fail;
+      buttonState = ButtonState.fail;
     });
     await Future<void>.delayed(const Duration(seconds: 2));
     setState(() {
-      _state = ButtonState.idle;
+      buttonState = ButtonState.idle;
     });
   }
 
@@ -128,19 +125,21 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-      absorbing: _state == ButtonState.loading || _state == ButtonState.success,
+      absorbing: buttonState == ButtonState.loading || buttonState == ButtonState.success,
       child: Form(
-        key: _formKey,
+        key: formKey,
         child: Column(
           children: <Widget>[
             EmailField(controller: emailController),
             const SizedBox(height: 15),
             TextFormField(
+              maxLength: Profile.maxUsernameLength,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 labelText: S.of(context).pageRegisterUsername,
                 hintText: S.of(context).pageRegisterUsernameHint,
               ),
+              key: const Key('registerUsernameField'),
               controller: usernameController,
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
@@ -153,6 +152,7 @@ class _RegisterFormState extends State<RegisterForm> {
             PasswordField(
               labelText: S.of(context).formPassword,
               hintText: S.of(context).formPasswordHint,
+              key: const Key('registerPasswordField'),
               controller: passwordController,
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
@@ -175,6 +175,7 @@ class _RegisterFormState extends State<RegisterForm> {
             PasswordField(
               labelText: S.of(context).formPasswordConfirm,
               hintText: S.of(context).formPasswordConfirmHint,
+              key: const Key('registerPasswordConfirmField'),
               controller: passwordConfirmationController,
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
@@ -193,7 +194,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 idleText: S.of(context).pageRegisterButtonCreate,
                 successText: S.of(context).pageRegisterButtonCreated,
                 onPressed: onSubmit,
-                state: _state,
+                state: buttonState,
               ),
             )
           ],

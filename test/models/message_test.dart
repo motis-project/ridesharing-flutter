@@ -7,9 +7,9 @@ import 'package:motis_mitfahr_app/util/supabase.dart';
 import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
 import '../util/factories/profile_factory.dart';
-import '../util/mock_server.dart';
-import '../util/request_processor.dart';
-import '../util/request_processor.mocks.dart';
+import '../util/mocks/mock_server.dart';
+import '../util/mocks/request_processor.dart';
+import '../util/mocks/request_processor.mocks.dart';
 
 void main() {
   final MockRequestProcessor messageProcessor = MockRequestProcessor();
@@ -23,7 +23,7 @@ void main() {
       final message = MessageFactory().generateFake(
         read: false,
       );
-      whenRequest(messageProcessor).thenReturn('');
+      whenRequest(messageProcessor).thenReturnJson('');
 
       await message.markAsRead();
 
