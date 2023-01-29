@@ -22,6 +22,8 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   late List<Feature> _features;
   late List<Feature> _otherFeatures;
 
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -125,7 +127,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             const SizedBox(height: 10),
             Button(
               S.of(context).save,
-              onPressed: onPressed,
+              onPressed: _isSaving ? null : onPressed,
             ),
           ],
         ),
@@ -208,6 +210,8 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
   }
 
   Future<void> onPressed() async {
+    setState(() => _isSaving = true);
+
     final List<Feature> previousFeatures = _profileFeatures.map((ProfileFeature e) => e.feature).toList();
 
     for (int index = 0; index < _features.length; index++) {
@@ -235,6 +239,8 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           .eq('profile_id', widget.profile.id)
           .eq('feature', feature.index);
     }
+
+    setState(() => _isSaving = false);
 
     if (mounted) Navigator.of(context).pop();
   }
