@@ -262,13 +262,12 @@ void main() {
           ProfileFeatureFactory().generateFake(rank: 4, feature: Feature.noPetsAllowed),
         ]);
 
-        expect(find.byIcon(Icons.accessibility), findsOneWidget);
-        expect(find.byIcon(Icons.smoke_free), findsOneWidget);
-        expect(find.byIcon(Icons.vape_free), findsOneWidget);
-        expect(find.byIcon(Icons.pets), findsNothing);
+        final Finder profileFeatures = find.byKey(const Key('profileFeatures'));
 
-        ///7 Icons are always shown
-        expect(find.byType(Icon), findsNWidgets(10));
+        expect(find.descendant(of: profileFeatures, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
+        expect(find.descendant(of: profileFeatures, matching: find.byIcon(Icons.smoke_free)), findsOneWidget);
+        expect(find.descendant(of: profileFeatures, matching: find.byIcon(Icons.vape_free)), findsOneWidget);
+        expect(find.descendant(of: profileFeatures, matching: find.byType(Icon)), findsNWidgets(3));
       });
 
       testWidgets('can handle less than 3 Features', (WidgetTester tester) async {
@@ -277,18 +276,19 @@ void main() {
           ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.noSmoking),
         ]);
 
-        expect(find.byIcon(Icons.accessibility), findsOneWidget);
-        expect(find.byIcon(Icons.smoke_free), findsOneWidget);
+        final Finder profileFeatures = find.byKey(const Key('profileFeatures'));
 
-        ///7 Icons are always shown
-        expect(find.byType(Icon), findsNWidgets(9));
+        expect(find.descendant(of: profileFeatures, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
+        expect(find.descendant(of: profileFeatures, matching: find.byIcon(Icons.smoke_free)), findsOneWidget);
+        expect(find.descendant(of: profileFeatures, matching: find.byType(Icon)), findsNWidgets(2));
       });
 
       testWidgets('can handle no Features', (WidgetTester tester) async {
         await loadRideCard(tester, []);
 
-        //7 Icons are always shown
-        expect(find.byType(Icon), findsNWidgets(7));
+        final Finder profileFeatures = find.byKey(const Key('profileFeatures'));
+
+        expect(find.descendant(of: profileFeatures, matching: find.byType(Icon)), findsNothing);
       });
     });
 

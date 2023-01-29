@@ -142,6 +142,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
     }
     return Row(
+      key: const Key('profileFeatures'),
       mainAxisAlignment: MainAxisAlignment.end,
       children: featureicons,
     );
