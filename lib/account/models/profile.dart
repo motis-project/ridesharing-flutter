@@ -43,9 +43,13 @@ class Profile extends Model {
   });
 
   String get fullName {
+    print('returning full name: $surname $name');
     if (name != null && surname != null) return '$surname $name';
+    print('returning name: $name');
     if (name != null) return name!;
+    print('returning surname: $surname');
     if (surname != null) return surname!;
+    print('returning empty string');
     return '';
   }
 

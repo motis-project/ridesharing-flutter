@@ -15,6 +15,7 @@ class FeaturesColumn extends StatelessWidget {
         return ListTile(
           leading: feature.getIcon(context),
           title: Text(feature.getDescription(context)),
+          key: Key('feature_${feature.name}'),
         );
       },
       itemCount: features.length,

@@ -250,6 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 8),
     ];
     if (_profile!.isCurrentUser || _profile!.fullName.isNotEmpty) {
+      print(_profile!.fullName);
       widgets.addAll(<Widget>[
         buildFullName(),
         const SizedBox(height: 16),
