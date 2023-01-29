@@ -8,6 +8,7 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
 import 'package:motis_mitfahr_app/util/icon_widget.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
+import 'package:motis_mitfahr_app/util/own_theme_fields.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar_indicator.dart';
 import 'package:motis_mitfahr_app/util/trip/drive_card.dart';
@@ -221,8 +222,15 @@ void main() {
   });
 
   group('RideCard', () {
-    Future<void> loadRideCard(WidgetTester tester, List<ProfileFeature>? features) async {
+    Future<void> loadRideCard(
+      WidgetTester tester, {
+      List<ProfileFeature>? features,
+      RideStatus? status,
+      DateTime? endTime,
+    }) async {
       ride = RideFactory().generateFake(
+        status: status,
+        endTime: endTime,
         drive: NullableParameter(
           DriveFactory().generateFake(
             driver: NullableParameter(
@@ -238,7 +246,7 @@ void main() {
     }
 
     testWidgets('shows the correct information', (WidgetTester tester) async {
-      await loadRideCard(tester, null);
+      await loadRideCard(tester);
 
       //Profile Widget from driver is shown
       final Finder profileWidgetFinder = find.byType(ProfileWidget);
@@ -255,7 +263,7 @@ void main() {
 
     group('Profile Features', () {
       testWidgets('shows only first 3 Features', (WidgetTester tester) async {
-        await loadRideCard(tester, [
+        await loadRideCard(tester, features: [
           ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.accessible),
           ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.noSmoking),
           ProfileFeatureFactory().generateFake(rank: 3, feature: Feature.noVaping),
@@ -271,7 +279,7 @@ void main() {
       });
 
       testWidgets('can handle less than 3 Features', (WidgetTester tester) async {
-        await loadRideCard(tester, [
+        await loadRideCard(tester, features: [
           ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.accessible),
           ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.noSmoking),
         ]);
@@ -284,11 +292,84 @@ void main() {
       });
 
       testWidgets('can handle no Features', (WidgetTester tester) async {
-        await loadRideCard(tester, []);
+        await loadRideCard(tester, features: []);
 
         final Finder profileFeatures = find.byKey(const Key('profileFeatures'));
 
         expect(find.descendant(of: profileFeatures, matching: find.byType(Icon)), findsNothing);
+      });
+    });
+
+    group('shows the right color:', () {
+      testWidgets('warning for pending Ride', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.pending, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().warning);
+      });
+
+      testWidgets('succes for approved Ride', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.approved, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
+      });
+
+      testWidgets('error for rejected Ride', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.rejected, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
+      });
+
+      testWidgets('error for cancelledByDriver', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.cancelledByDriver, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).errorColor);
+      });
+
+      testWidgets('disabled for cancelledByRider', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.cancelledByRider, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
+      });
+
+      testWidgets('disabled for withdrawn', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.cancelledByRider, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
+      });
+
+      testWidgets('primary for preview', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.preview, endTime: DateTime.now().add(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.primary);
+      });
+
+      testWidgets('disabled for past Ride that is not approved', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.pending, endTime: DateTime.now().subtract(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
+      });
+      testWidgets('succes for past Ride that is approved', (WidgetTester tester) async {
+        await loadRideCard(tester,
+            status: RideStatus.approved, endTime: DateTime.now().subtract(const Duration(minutes: 10)));
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
       });
     });
 
@@ -312,24 +393,83 @@ void main() {
   });
 
   group('DriveCard', () {
-    testWidgets('shows seat indicator', (WidgetTester tester) async {
-      drive = DriveFactory().generateFake();
+    Future<void> loadDriveCard(WidgetTester tester, Drive drive) async {
       whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       await pumpMaterial(tester, DriveCard(drive));
-
       //wait for card to load
       await tester.pump();
+    }
+
+    testWidgets('shows seat indicator', (WidgetTester tester) async {
+      drive = DriveFactory().generateFake();
+      await loadDriveCard(tester, drive);
 
       expect(find.byType(SeatIndicator), findsOneWidget);
     });
 
+    group('shows the right color', () {
+      testWidgets('disabledColor for past Drive', (WidgetTester tester) async {
+        //drive in the past
+        drive = DriveFactory().generateFake(
+          endTime: DateTime.now().subtract(const Duration(hours: 1)),
+        );
+        await loadDriveCard(tester, drive);
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
+      });
+      testWidgets('errorColor cancelled Drive', (WidgetTester tester) async {
+        //cancelld drive in the future
+        drive = DriveFactory().generateFake(
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+          cancelled: true,
+        );
+        await loadDriveCard(tester, drive);
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).errorColor);
+      });
+
+      testWidgets('waring color for drive with ride requests', (WidgetTester tester) async {
+        //drive in the future with ride requests
+        drive = DriveFactory().generateFake(
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+          rides: [RideFactory().generateFake(status: RideStatus.pending)],
+        );
+        await loadDriveCard(tester, drive);
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().warning);
+      });
+
+      testWidgets('succesColor for drive with only approved rides', (WidgetTester tester) async {
+        //drive in the future with approved rides
+        drive = DriveFactory().generateFake(
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+          rides: [RideFactory().generateFake(status: RideStatus.approved)],
+        );
+        await loadDriveCard(tester, drive);
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
+      });
+
+      testWidgets('disabledColor for drive with no rides', (WidgetTester tester) async {
+        //drive in the future with no rides
+        drive = DriveFactory().generateFake(
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+          rides: [],
+        );
+        await loadDriveCard(tester, drive);
+
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
+      });
+    });
+
     testWidgets('can Navigate to Drive DetailPage', (WidgetTester tester) async {
       drive = DriveFactory().generateFake();
-      whenRequest(processor).thenReturnJson(drive.toJsonForApi());
-      await pumpMaterial(tester, DriveCard(drive));
-
-      //wait for card to load
-      await tester.pump();
+      await loadDriveCard(tester, drive);
 
       //open DriveDetailPage
       await tester.tap(find.byType(DriveCard));
