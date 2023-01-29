@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/account/pages/avatar_picture_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_birth_date_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_description_page.dart';
@@ -25,7 +26,7 @@ import '../util/request_processor.dart';
 import '../util/request_processor.mocks.dart';
 
 void main() {
-  late Profile profile;
+  Profile profile = ProfileFactory().generateFake(id: 1);
   final MockRequestProcessor processor = MockRequestProcessor();
 
   setUpAll(() async {
@@ -41,7 +42,6 @@ void main() {
         .thenReturnJson(profile.toJsonForApi());
   });
 
-// no random
   group('constructors', () {
     for (int i = 0; i < 2; i++) {
       i == 0
@@ -63,71 +63,63 @@ void main() {
     }
   });
   group('Profile content', () {
-    testWidgets('Show username', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+    for (int i = 0; i < 2; i++) {
+      i == 0
+          ? SupabaseManager.setCurrentProfile(profile)
+          : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      testWidgets('username$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        expect(find.text(profile.username), findsNWidgets(2));
+      });
+      testWidgets('fullName$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
+      });
+      testWidgets('description$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        expect(find.text(profile.description!), findsOneWidget);
+      });
+      testWidgets('age$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        expect(find.text(profile.age.toString()), findsOneWidget);
+      });
+      testWidgets('gender$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        final genderFinder = find.byKey(const Key('genderText'));
+        expect(genderFinder, findsOneWidget);
+      });
+      testWidgets('features$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        final scrollableFinder = find.byType(Scrollable).first;
+        expect(scrollableFinder, findsOneWidget);
+        for (final Feature feature in profile.features!) {
+          final featureFinder = find.text(feature.name);
+          tester.scrollUntilVisible(featureFinder, 100, scrollable: scrollableFinder);
+          expect(featureFinder, findsOneWidget);
+        }
+      });
+      testWidgets('review$i', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        expect(find.byKey(const Key('reviewsPreview')), findsOneWidget);
+      });
+    }
+    testWidgets('currentUser email', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
-      expect(find.text(profile.username), findsNWidgets(2));
+      expect(find.text(profile.email), findsOneWidget);
     });
-    testWidgets('Show email', (WidgetTester tester) async {
-      final Random random = Random();
-      final bool currentProfile = random.nextBool();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+    testWidgets('not currentUser email', (WidgetTester tester) async {
+      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
-      currentProfile
-          ? expect(find.text(profile.email), findsOneWidget)
-          : expect(find.text(profile.email), findsNothing);
-    });
-    testWidgets('Show fullName', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
-    });
-    testWidgets('Show description', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      expect(find.text(profile.description!), findsOneWidget);
-    });
-    testWidgets('Show age', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      expect(find.text(profile.age.toString()), findsOneWidget);
-    });
-    testWidgets('Show gender', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      final genderFinder = find.byKey(const Key('genderText'));
-      expect(genderFinder, findsOneWidget);
-    });
-    testWidgets('Show features', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      final scrollableFinder = find.byType(Scrollable).first;
-      expect(scrollableFinder, findsOneWidget);
-      //for (final Feature feature in profile.features!) {
-      //  final featureFinder = find.text(feature.name);
-      //  tester.scrollUntilVisible(featureFinder, 100, scrollable: scrollableFinder);
-      //  expect(featureFinder, findsOneWidget);
-      //}
-    });
-    testWidgets('Show review', (WidgetTester tester) async {
-      final Random random = Random();
-      if (random.nextBool()) SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      expect(find.byKey(const Key('reviewsPreview')), findsOneWidget);
+      expect(find.text(profile.email), findsNothing);
     });
     // todo: does not show anything if no details
     testWidgets('not currentUser no details', (WidgetTester tester) async {
