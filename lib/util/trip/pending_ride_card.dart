@@ -133,7 +133,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
                   context,
                   S.of(context).cardPendingRideApproveDialogSuccessSnackbar,
                   durationType: SnackBarDurationType.medium,
-                  key: const Key('approveSuccesSnackbar'),
+                  key: const Key('approveSuccessSnackbar'),
                 );
               } else {
                 Navigator.of(dialogContext).pop();

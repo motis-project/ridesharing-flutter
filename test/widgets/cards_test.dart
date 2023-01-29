@@ -42,7 +42,7 @@ void main() {
   testWidgets('TripCard shows the correct information', (WidgetTester tester) async {
     drive = DriveFactory().generateFake();
     whenRequest(processor).thenReturnJson(drive.toJsonForApi());
-    await pumpMaterial(tester, DriveCard(drive, key: const Key('driveCard')));
+    await pumpMaterial(tester, DriveCard(drive));
 
     //wait for card to load
     await tester.pump();
@@ -114,14 +114,14 @@ void main() {
         await openApproveDialog(tester);
 
         //confirm dialog
-        final Finder confimrButton = find.byKey(const Key('approveConfirmButton'));
-        expect(confimrButton, findsOneWidget);
-        await tester.tap(confimrButton);
+        final Finder confirmButton = find.byKey(const Key('approveConfirmButton'));
+        expect(confirmButton, findsOneWidget);
+        await tester.tap(confirmButton);
 
         //load page
         await tester.pumpAndSettle();
 
-        expect(find.byKey(const Key('approveSuccesSnackbar')), findsOneWidget);
+        expect(find.byKey(const Key('approveSuccessSnackbar')), findsOneWidget);
         verifyRequest(
           processor,
           urlMatcher: equals('/rest/v1/rpc/approve_ride'),
@@ -130,11 +130,10 @@ void main() {
         ).called(1);
       });
 
-      testWidgets('can not approve Ride if not possible', (WidgetTester tester) async {
+      testWidgets('can not approve Ride if drive has not enough seats', (WidgetTester tester) async {
         drive = DriveFactory().generateFake(rides: [ride], seats: 1);
         ride = RideFactory().generateFake(
           status: RideStatus.pending,
-          rider: NullableParameter(ProfileFactory().generateFake(id: 1)),
           seats: 3,
         );
         //need scaffold for dialog
@@ -146,9 +145,9 @@ void main() {
         await tester.pumpAndSettle();
 
         //confirm dialog
-        final Finder confimrButton = find.byKey(const Key('approveConfirmButton'));
-        expect(confimrButton, findsOneWidget);
-        await tester.tap(confimrButton);
+        final Finder confirmButton = find.byKey(const Key('approveConfirmButton'));
+        expect(confirmButton, findsOneWidget);
+        await tester.tap(confirmButton);
 
         //load page
         await tester.pumpAndSettle();
@@ -266,6 +265,7 @@ void main() {
         expect(find.byIcon(Icons.accessibility), findsOneWidget);
         expect(find.byIcon(Icons.smoke_free), findsOneWidget);
         expect(find.byIcon(Icons.vape_free), findsOneWidget);
+        expect(find.byIcon(Icons.pets), findsNothing);
 
         ///7 Icons are always shown
         expect(find.byType(Icon), findsNWidgets(10));
