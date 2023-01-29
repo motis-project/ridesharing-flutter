@@ -15,11 +15,10 @@ Future<void> pumpMaterial(WidgetTester tester, Widget widget, {NavigatorObserver
   );
 }
 
+Future<void> pumpScaffold(WidgetTester tester, Widget widget) async {
+  await pumpMaterial(tester, Scaffold(body: widget));
+}
+
 Future<void> pumpForm(WidgetTester tester, Widget widget, {required Key formKey}) async {
-  await pumpMaterial(
-    tester,
-    Scaffold(
-      body: Form(key: formKey, child: widget),
-    ),
-  );
+  await pumpScaffold(tester, Form(key: formKey, child: widget));
 }

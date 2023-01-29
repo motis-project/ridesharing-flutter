@@ -103,7 +103,7 @@ void main() {
     group('approve Ride', () {
       Future<void> openApproveDialog(WidgetTester tester) async {
         //need scaffold for dialog
-        await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        await pumpScaffold(tester, PendingRideCard(ride, reloadPage: () {}, drive: drive));
         //open dialog
         final Finder approveButton = find.byKey(const Key('approveButton'));
         await tester.tap(approveButton);
@@ -138,7 +138,7 @@ void main() {
           seats: 3,
         );
         //need scaffold for dialog
-        await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        await pumpScaffold(tester, PendingRideCard(ride, reloadPage: () {}, drive: drive));
         //open dialog
         final Finder approveButton = find.byKey(const Key('approveButton'));
         await tester.tap(approveButton);
@@ -176,7 +176,7 @@ void main() {
     group('reject Ride', () {
       Future<void> openRejectDialog(WidgetTester tester) async {
         //need scaffold for dialog
-        await pumpMaterial(tester, Scaffold(body: PendingRideCard(ride, reloadPage: () {}, drive: drive)));
+        await pumpScaffold(tester, PendingRideCard(ride, reloadPage: () {}, drive: drive));
         //open dialog
         final Finder rejectButton = find.byKey(const Key('rejectButton'));
         await tester.tap(rejectButton);
