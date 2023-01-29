@@ -97,7 +97,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
                       .then((_) => loadProfile());
                 },
-                key: const Key('editUsernameButton'),
               ),
             ),
           ),
@@ -131,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditDescriptionPage(_profile!)))
             .then((_) => loadProfile());
       },
-      key: const Key('editDescriptionButton'),
+      key: const Key('description'),
     );
   }
 
@@ -151,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditFullNamePage(_profile!)))
             .then((_) => loadProfile());
       },
-      key: const Key('editFullNameButton'),
+      key: const Key('fullName'),
     );
   }
 
@@ -171,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditBirthDatePage(_profile!)))
             .then((_) => loadProfile());
       },
-      key: const Key('editAgeButton'),
+      key: const Key('age'),
     );
   }
 
@@ -180,7 +179,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ? Text(
             _profile!.gender!.getName(context),
             style: Theme.of(context).textTheme.titleMedium,
-            key: const Key('genderText'),
           )
         : buildNoInfoText(S.of(context).pageProfileGenderEmpty);
 
@@ -193,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditGenderPage(_profile!)))
             .then((_) => loadProfile());
       },
-      key: const Key('editGenderButton'),
+      key: const Key('gender'),
     );
   }
 
@@ -206,11 +204,12 @@ class _ProfilePageState extends State<ProfilePage> {
       innerWidget: features,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
+        print('pressed');
         Navigator.of(context)
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditProfileFeaturesPage(_profile!)))
             .then((_) => loadProfile());
       },
-      key: const Key('editFeaturesButton'),
+      key: const Key('features'),
     );
   }
 
@@ -234,6 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
+      key: const Key('noInfoText'),
     );
   }
 

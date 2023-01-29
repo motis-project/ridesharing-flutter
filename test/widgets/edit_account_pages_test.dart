@@ -6,6 +6,7 @@ import 'package:motis_mitfahr_app/account/pages/edit_account/edit_description_pa
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_full_name_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_gender_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_username_page.dart';
+import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
@@ -29,8 +30,9 @@ void main() {
     whenRequest(processor, urlMatcher: equals('/rest/v1/profiles?id=eq.1')).thenReturn('');
   });
 
-  group('edit_birth_date_page', () {
-    testWidgets('show birthDate TextField', (WidgetTester tester) async {
+//todo: Savebutton testen
+  group('edit_birth_date_page', () async {
+    testWidgets('birthDate TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
       expect(find.text(localeManager.formatDate(profile.birthDate!)), findsOneWidget);
@@ -40,16 +42,32 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(DatePickerDialog), findsOneWidget);
     });
-    testWidgets('show save Button', (WidgetTester tester) async {
-      //await pumpMaterial(tester, EditBirthDatePage(profile));
-      //await tester.pump();
-      //final saveButton = find.byKey(const Key('saveButton'));
-      //expect(saveButton, findsOneWidget);
-      //await tester.tap(saveButton);
-      //await tester.pump();
-      //expect(find.byType(ProfilePage).hitTestable(), findsOneWidget);
+    testWidgets('change birthDate', (WidgetTester tester) async {
+      await pumpMaterial(tester, EditBirthDatePage(profile));
+      await tester.pump();
+      final Finder birthDateInput = find.text(localeManager.formatDate(profile.birthDate!));
+      expect(birthDateInput, findsOneWidget);
+      await tester.tap(find.byKey(const Key('birthDateInput')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.edit));
+      await tester.pumpAndSettle();
+      await tester.tap(birthDateInput.last);
+      final String date = localeManager.formatDate(profile.birthDate!.add(const Duration(days: 5)));
+      await tester.enterText(birthDateInput.last, date);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+      expect(find.text(date), findsOneWidget);
     });
-    testWidgets('show clear Button', (WidgetTester tester) async {
+    testWidgets('save Button', (WidgetTester tester) async {
+      await pumpMaterial(tester, EditBirthDatePage(profile));
+      await tester.pump();
+      final saveButton = find.byKey(const Key('saveButton'));
+      expect(saveButton, findsOneWidget);
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+      expect(find.byType(ProfilePage), findsOneWidget);
+    });
+    testWidgets('clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
       expect(find.text(localeManager.formatDate(profile.birthDate!)), findsOneWidget);
@@ -60,8 +78,8 @@ void main() {
       expect(find.text(localeManager.formatDate(profile.birthDate!)), findsNothing);
     });
   });
-  group('edit_description_page', () {
-    testWidgets('show description TextField', (WidgetTester tester) async {
+  group('edit_description_page', () async {
+    testWidgets('description TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditDescriptionPage(profile));
       await tester.pump();
       expect(find.text(profile.description!), findsOneWidget);
@@ -72,7 +90,7 @@ void main() {
       await tester.enterText(descriptionInput, 'newDescription');
       expect(find.text('newDescription'), findsOneWidget);
     });
-    testWidgets('show description clear Button', (WidgetTester tester) async {
+    testWidgets('description clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditDescriptionPage(profile));
       await tester.pump();
       expect(find.text(profile.description!), findsOneWidget);
@@ -82,10 +100,10 @@ void main() {
       await tester.pump();
       expect(find.text(profile.description!), findsNothing);
     });
-    testWidgets('show save Button', (WidgetTester tester) async {});
+    testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_full_name_page', () {
-    testWidgets('show Surname TextField', (WidgetTester tester) async {
+  group('edit_full_name_page', () async {
+    testWidgets('surname TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
       expect(find.text(profile.surname!), findsOneWidget);
@@ -96,7 +114,7 @@ void main() {
       await tester.enterText(surnameInput, 'newSurname');
       expect(find.text('newSurname'), findsOneWidget);
     });
-    testWidgets('show name TextField', (WidgetTester tester) async {
+    testWidgets('name TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
       expect(find.text(profile.name!), findsOneWidget);
@@ -107,7 +125,17 @@ void main() {
       await tester.enterText(nameInput, 'newName');
       expect(find.text('newName'), findsOneWidget);
     });
-    testWidgets('show name clear Button', (WidgetTester tester) async {
+    testWidgets('surname clear Button', (WidgetTester tester) async {
+      await pumpMaterial(tester, EditFullNamePage(profile));
+      await tester.pump();
+      expect(find.text(profile.surname!), findsOneWidget);
+      final Finder clearButton = find.byKey(const Key('clearButton'));
+      expect(clearButton, findsNWidgets(2));
+      await tester.tap(clearButton.first);
+      await tester.pump();
+      expect(find.text(profile.surname!), findsNothing);
+    });
+    testWidgets('name clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
       expect(find.text(profile.name!), findsOneWidget);
@@ -117,10 +145,10 @@ void main() {
       await tester.pump();
       expect(find.text(profile.name!), findsNothing);
     });
-    testWidgets('show save Button', (WidgetTester tester) async {});
+    testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_gender_page', () {
-    testWidgets('show gender genderRadioListTile', (WidgetTester tester) async {
+  group('edit_gender_page', () async {
+    testWidgets('display genderRadioListTile', (WidgetTester tester) async {
       await pumpMaterial(tester, EditGenderPage(profile));
       await tester.pump();
       final maleGenderFinder = find.byKey(const Key('0genderRadioListTile'));
@@ -133,11 +161,19 @@ void main() {
       expect(preferNotToSayGenderFinder, findsOneWidget);
       // don't know to interact with RadioListTiles in tests
     });
-    testWidgets('show save Button', (WidgetTester tester) async {});
+    testWidgets('change gender', (WidgetTester tester) async {});
+    testWidgets('save Button', (WidgetTester tester) async {});
   });
-  group('edit_profile_features_page', () {});
-  group('edit_username_page', () {
-    testWidgets('show username TextField', (WidgetTester tester) async {
+  group('edit_profile_features_page', () async {
+    testWidgets('show added features', (WidgetTester tester) async {});
+    testWidgets('show not added features', (WidgetTester tester) async {});
+    testWidgets('add features', (WidgetTester tester) async {});
+    testWidgets('delete features', (WidgetTester tester) async {});
+    testWidgets('move features', (WidgetTester tester) async {});
+    testWidgets('save Button', (WidgetTester tester) async {});
+  });
+  group('edit_username_page', () async {
+    testWidgets('username TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditUsernamePage(profile));
       await tester.pump();
       expect(find.text(profile.username), findsOneWidget);
@@ -148,7 +184,7 @@ void main() {
       await tester.enterText(usernameInput, 'newUsername');
       expect(find.text('newUsername'), findsOneWidget);
     });
-    testWidgets('show username clear Button', (WidgetTester tester) async {
+    testWidgets('username clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditUsernamePage(profile));
       await tester.pump();
       expect(find.text(profile.username), findsOneWidget);
@@ -158,6 +194,6 @@ void main() {
       await tester.pump();
       expect(find.text(profile.username), findsNothing);
     });
-    testWidgets('show save Button', (WidgetTester tester) async {});
+    testWidgets('save Button', (WidgetTester tester) async {});
   });
 }

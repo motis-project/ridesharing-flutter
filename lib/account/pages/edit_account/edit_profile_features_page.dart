@@ -128,6 +128,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             Button(
               S.of(context).save,
               onPressed: _isSaving ? null : onPressed,
+              key: const Key('saveButton'),
             ),
           ],
         ),
