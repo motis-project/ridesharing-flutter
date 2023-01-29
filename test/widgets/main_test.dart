@@ -38,7 +38,7 @@ void main() {
       expect(materialApp, findsOneWidget);
       final MaterialApp app = materialApp.evaluate().first.widget as MaterialApp;
       expect(app.home.runtimeType, AuthApp);
-      expect(app.theme, themeManager.lightTheme);
+      expect(app.darkTheme, themeManager.darkTheme);
     });
   });
 
