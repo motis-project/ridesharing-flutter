@@ -287,6 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (hasRecentReport)
             Button.disabled(
               S.of(context).pageProfileButtonReported,
+              key: const Key('disabledReportButton'),
             )
           else
             Button.error(
@@ -301,6 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
                 });
               },
+              key: const Key('reportButton'),
             ),
         ]);
       }
