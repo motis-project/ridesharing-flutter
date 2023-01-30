@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:deep_pick/deep_pick.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
 
-import '../extensions/iterable_extensions.dart';
 import '../storage_manager.dart';
 import '../supabase.dart';
 import 'address_suggestion.dart';
