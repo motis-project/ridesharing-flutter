@@ -14,6 +14,7 @@ import '../../util/locale_manager.dart';
 import '../../util/own_theme_fields.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/pending_ride_card.dart';
 import '../../util/trip/trip_overview.dart';
@@ -441,11 +442,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               _cancelDrive();
 
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(S.of(context).pageDriveDetailCancelDialogToast),
-                  duration: const Duration(seconds: 2),
-                ),
+              showSnackBar(
+                context,
+                S.of(context).pageDriveDetailCancelDialogToast,
+                durationType: SnackBarDurationType.medium,
               );
             },
           ),

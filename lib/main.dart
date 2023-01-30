@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_app.dart';
 import 'util/locale_manager.dart';
 import 'util/search/address_suggestion_manager.dart';
+import 'util/snackbar.dart';
 import 'util/supabase.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
@@ -108,11 +109,7 @@ class _AuthAppState extends State<AuthApp> {
         if (error.runtimeType == AuthException) {
           error = error as AuthException;
           if (error.message == 'Email link is invalid or has expired') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(S.of(context).authEmailLinkInvalid),
-              ),
-            );
+            showSnackBar(context, S.of(context).authEmailLinkInvalid);
           }
         }
       },

@@ -12,6 +12,7 @@ import '../../util/buttons/custom_banner.dart';
 import '../../util/chat/pages/chat_page.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import '../../util/trip/trip_overview.dart';
 import '../../welcome/pages/login_page.dart';
@@ -268,11 +269,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
               _cancelRide();
 
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(S.of(context).pageRideDetailCancelDialogToast),
-                  duration: const Duration(seconds: 2),
-                ),
+              showSnackBar(
+                context,
+                S.of(context).pageRideDetailCancelDialogToast,
+                durationType: SnackBarDurationType.medium,
               );
             },
           ),
@@ -376,11 +376,10 @@ class _RideDetailPageState extends State<RideDetailPage> {
               _withdrawRide();
 
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(S.of(context).pageRideDetailWithdrawDialogToast),
-                  duration: const Duration(seconds: 2),
-                ),
+              showSnackBar(
+                context,
+                S.of(context).pageRideDetailWithdrawDialogToast,
+                durationType: SnackBarDurationType.medium,
               );
             },
           ),

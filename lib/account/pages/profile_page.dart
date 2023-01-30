@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/button.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import '../models/profile.dart';
 import '../models/report.dart';
@@ -286,9 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     .then((bool? reportSent) {
                   if (reportSent ?? false) {
                     loadProfile();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(S.of(context).pageProfileButtonMessage)),
-                    );
+                    showSnackBar(context, S.of(context).pageProfileButtonMessage);
                   }
                 });
               },
@@ -402,8 +401,9 @@ class _ProfilePageState extends State<ProfilePage> {
       await loadProfile();
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).widgetAvatarImageCouldNotBeStored)),
+        showSnackBar(
+          context,
+          S.of(context).widgetAvatarImageCouldNotBeStored,
         );
       }
     }

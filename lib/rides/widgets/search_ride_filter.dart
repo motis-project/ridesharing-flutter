@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../account/models/profile.dart';
@@ -8,6 +7,7 @@ import '../../account/models/profile_feature.dart';
 import '../../account/models/review.dart';
 import '../../util/profiles/reviews/custom_rating_bar.dart';
 import '../../util/profiles/reviews/custom_rating_bar_size.dart';
+import '../../util/snackbar.dart';
 import '../models/ride.dart';
 
 class SearchRideFilter {
@@ -176,12 +176,10 @@ class SearchRideFilter {
                           .firstWhereOrNull((Feature selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
                       if (mutuallyExclusiveFeature != null) {
                         final String description = mutuallyExclusiveFeature.getDescription(context);
-                        final String text = S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description);
-                        SemanticsService.announce(text, TextDirection.ltr);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(text)),
+                        return showSnackBar(
+                          context,
+                          S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
                         );
-                        return;
                       }
                       innerSetState(() => _selectedFeatures.add(feature));
                     }

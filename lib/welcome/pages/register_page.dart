@@ -9,6 +9,7 @@ import '../../account/models/profile.dart';
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
+import '../../util/snackbar.dart';
 import '../../util/supabase.dart';
 import 'after_registration_page.dart';
 
@@ -95,14 +96,8 @@ class RegisterFormState extends State<RegisterForm> {
     }
   }
 
-  Future<void> showSnackBar(String text) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)),
-    );
-  }
-
   Future<void> fail() async {
-    unawaited(showSnackBar(S.of(context).failureSnackBar));
+    showSnackBar(context, S.of(context).failureSnackBar);
 
     setState(() {
       buttonState = ButtonState.fail;
