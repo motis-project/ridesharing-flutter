@@ -8,7 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_app.dart';
 import 'util/locale_manager.dart';
 import 'util/search/address_suggestion_manager.dart';
-import 'util/snackbar.dart';
 import 'util/supabase.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
@@ -103,14 +102,6 @@ class AuthAppState extends State<AuthApp> {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
           }
         });
-      },
-      onError: (Object error) {
-        if (error.runtimeType == AuthException) {
-          error = error as AuthException;
-          if (error.message == 'Email link is invalid or has expired') {
-            showSnackBar(context, S.of(context).authEmailLinkInvalid);
-          }
-        }
       },
     );
   }
