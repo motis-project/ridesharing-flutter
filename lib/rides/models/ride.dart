@@ -153,7 +153,8 @@ class Ride extends Trip {
         price == ride.price &&
         rider == ride.rider &&
         price == ride.price &&
-        riderId == ride.riderId;
+        riderId == ride.riderId &&
+        chatId == ride.chatId;
   }
 
   Future<void> cancel() async {

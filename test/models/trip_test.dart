@@ -17,73 +17,83 @@ void main() {
     test('duration of a trip', () {
       final DateTime now = DateTime.now();
       final Trip trip = TripFactory().generateFake(
-          startTime: now,
-          endTime: now.add(
-            const Duration(hours: 2),
-          ));
+        startTime: now,
+        endTime: now.add(const Duration(hours: 2)),
+      );
       expect(trip.duration, const Duration(hours: 2));
     });
   });
   group('Trip.isFinished', () {
     test('trip is finished', () {
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       expect(trip.isFinished, true);
     });
     test('trip is not finished', () {
       final Trip ride = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
       expect(ride.isFinished, false);
     });
   });
   group('Trip.isOngoing', () {
     test('trip is on going', () {
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 1)),
-          endTime: DateTime.now().add(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 1)),
+        endTime: DateTime.now().add(const Duration(hours: 2)),
+      );
       expect(trip.isOngoing, true);
     });
     test('trip is in the past', () {
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 6)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       expect(trip.isOngoing, false);
     });
     test('trip is upcoming', () {
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 6)),
+      );
       expect(trip.isOngoing, false);
     });
   });
   group('Trip.overlapsWith', () {
     test('trip is before other', () {
       final Trip trip1 = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 6)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       final Trip trip2 = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 6)),
+      );
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip is after other', () {
       final Trip trip1 = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 6)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 6)),
+      );
       final Trip trip2 = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 6)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip overlaps the other', () {
       final Trip trip1 = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 6)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 6)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       final Trip trip2 = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 3)),
-          endTime: DateTime.now().add(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 3)),
+        endTime: DateTime.now().add(const Duration(hours: 2)),
+      );
       expect(trip1.overlapsWith(trip2), true);
     });
   });
@@ -94,8 +104,9 @@ void main() {
         end: DateTime.now().subtract(const Duration(hours: 3)),
       );
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
       expect(trip.overlapsWithTimeRange(range), false);
     });
     test('trip is before range', () {
@@ -104,8 +115,9 @@ void main() {
         end: DateTime.now().add(const Duration(hours: 6)),
       );
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)));
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+      );
       expect(trip.overlapsWithTimeRange(range), false);
     });
     test('trip overlaps with range', () {
@@ -114,8 +126,9 @@ void main() {
         end: DateTime.now().add(const Duration(hours: 6)),
       );
       final Trip trip = TripFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)));
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+      );
       expect(trip.overlapsWithTimeRange(range), true);
     });
   });

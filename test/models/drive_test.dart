@@ -64,10 +64,10 @@ void main() {
         'end_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'cancelled': true,
+        'hide_in_list_view': false,
         'driver_id': 7,
         'driver': ProfileFactory().generateFake().toJsonForApi(),
         'rides': RideFactory().generateFakeJsonList(length: 3),
-        'hide_in_list_view': false,
       };
       final Drive drive = Drive.fromJson(json);
       expect(drive.id, json['id']);
@@ -82,7 +82,7 @@ void main() {
       expect(drive.cancelled, json['cancelled']);
       expect(drive.driverId, json['driver_id']);
       expect(drive.hideInListView, json['hide_in_list_view']);
-      expect(drive.driver == null, false);
+      expect(drive.driver, isNotNull);
       expect(drive.rides!.length, 3);
     });
   });
@@ -145,9 +145,9 @@ void main() {
     test('has no approved rides', () async {
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
-                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
-            .where((element) => element.status != RideStatus.approved)
-            .toList(),
+          RideStatus.values.length,
+          (index) => RideFactory().generateFake(status: RideStatus.values[index]),
+        ).where((element) => element.status != RideStatus.approved).toList(),
       );
       expect(drive.approvedRides, []);
     });
@@ -157,9 +157,9 @@ void main() {
 
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
-                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
-            .where((element) => element.status != RideStatus.approved)
-            .toList(),
+          RideStatus.values.length,
+          (index) => RideFactory().generateFake(status: RideStatus.values[index]),
+        ).where((element) => element.status != RideStatus.approved).toList(),
       );
       drive.rides!.addAll([ride1, ride2]);
       expect(drive.approvedRides, [ride1, ride2]);
@@ -175,9 +175,9 @@ void main() {
     test('has no pending rides', () async {
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
-                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
-            .where((element) => element.status != RideStatus.pending)
-            .toList(),
+          RideStatus.values.length,
+          (index) => RideFactory().generateFake(status: RideStatus.values[index]),
+        ).where((element) => element.status != RideStatus.pending).toList(),
       );
       expect(drive.pendingRides, []);
     });
@@ -187,9 +187,9 @@ void main() {
 
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
-                RideStatus.values.length, (index) => RideFactory().generateFake(status: RideStatus.values[index]))
-            .where((element) => element.status != RideStatus.pending)
-            .toList(),
+          RideStatus.values.length,
+          (index) => RideFactory().generateFake(status: RideStatus.values[index]),
+        ).where((element) => element.status != RideStatus.pending).toList(),
       );
       drive.rides!.addAll([ride1, ride2]);
       expect(drive.pendingRides, [ride1, ride2]);
@@ -207,9 +207,12 @@ void main() {
             .toJsonForApi()
       ]);
       expect(
-          await Drive.userHasDriveAtTimeRange(
-              DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))), 2),
-          true);
+        await Drive.userHasDriveAtTimeRange(
+          DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))),
+          2,
+        ),
+        true,
+      );
     });
     test('has no drive at time range', () async {
       whenRequest(driveProcessor).thenReturnJson([
@@ -229,13 +232,15 @@ void main() {
             .toJsonForApi(),
       ]);
       expect(
-          await Drive.userHasDriveAtTimeRange(
-              DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 11)),
-                end: DateTime.now().add(const Duration(hours: 13)),
-              ),
-              2),
-          false);
+        await Drive.userHasDriveAtTimeRange(
+          DateTimeRange(
+            start: DateTime.now().add(const Duration(hours: 11)),
+            end: DateTime.now().add(const Duration(hours: 13)),
+          ),
+          2,
+        ),
+        false,
+      );
     });
     test('drive overlaps with time range', () async {
       whenRequest(driveProcessor).thenReturnJson([
@@ -265,65 +270,75 @@ void main() {
     test('no seats taken', () async {
       final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.pending,
-            seats: 1),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.pending,
+          seats: 1,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.withdrawnByRider,
-            seats: 1),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.withdrawnByRider,
+          seats: 1,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.cancelledByDriver,
-            seats: 2),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.cancelledByDriver,
+          seats: 2,
+        ),
       ]);
       expect(drive.getMaxUsedSeats(), 0);
     });
     test('seats are taken by approved rides', () async {
       final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.approved,
-            seats: 2),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.approved,
+          seats: 2,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.cancelledByRider,
-            seats: 2),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.cancelledByRider,
+          seats: 2,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.rejected,
-            seats: 2),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.rejected,
+          seats: 2,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 15, 10),
-            endTime: DateTime(2022, 2, 2, 15, 20),
-            status: RideStatus.approved,
-            seats: 1),
+          startTime: DateTime(2022, 2, 2, 15, 10),
+          endTime: DateTime(2022, 2, 2, 15, 20),
+          status: RideStatus.approved,
+          seats: 1,
+        ),
       ]);
       expect(drive.getMaxUsedSeats(), 2);
     });
     test('multiple rides take seats at the same time', () async {
       final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 30),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.approved,
-            seats: 1),
+          startTime: DateTime(2022, 2, 2, 14, 30),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.approved,
+          seats: 1,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14),
-            endTime: DateTime(2022, 2, 2, 14, 20),
-            status: RideStatus.approved,
-            seats: 1),
+          startTime: DateTime(2022, 2, 2, 14),
+          endTime: DateTime(2022, 2, 2, 14, 20),
+          status: RideStatus.approved,
+          seats: 1,
+        ),
         RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 20),
-            endTime: DateTime(2022, 2, 2, 15),
-            status: RideStatus.approved,
-            seats: 2),
+          startTime: DateTime(2022, 2, 2, 14, 20),
+          endTime: DateTime(2022, 2, 2, 15),
+          status: RideStatus.approved,
+          seats: 2,
+        ),
       ]);
       expect(drive.getMaxUsedSeats(), 3);
     });
@@ -338,10 +353,11 @@ void main() {
         createDependencies: false,
       );
       final Ride ride = RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 50),
-          endTime: DateTime(2022, 2, 2, 15, 10),
-          status: RideStatus.approved,
-          seats: 1);
+        startTime: DateTime(2022, 2, 2, 14, 50),
+        endTime: DateTime(2022, 2, 2, 15, 10),
+        status: RideStatus.approved,
+        seats: 1,
+      );
       expect(drive.isRidePossible(ride), true);
     });
     test('full ride', () async {
@@ -351,10 +367,11 @@ void main() {
         seats: 1,
         rides: [
           RideFactory().generateFake(
-              startTime: DateTime(2022, 2, 2, 14),
-              endTime: DateTime(2022, 2, 2, 15),
-              status: RideStatus.approved,
-              seats: 1)
+            startTime: DateTime(2022, 2, 2, 14),
+            endTime: DateTime(2022, 2, 2, 15),
+            status: RideStatus.approved,
+            seats: 1,
+          )
         ],
         createDependencies: false,
       );
@@ -372,27 +389,31 @@ void main() {
         seats: 4,
         rides: <Ride>[
           RideFactory().generateFake(
-              startTime: DateTime(2022, 2, 2, 14, 20),
-              endTime: DateTime(2022, 2, 2, 15),
-              status: RideStatus.approved,
-              seats: 2),
+            startTime: DateTime(2022, 2, 2, 14, 20),
+            endTime: DateTime(2022, 2, 2, 15),
+            status: RideStatus.approved,
+            seats: 2,
+          ),
           RideFactory().generateFake(
-              startTime: DateTime(2022, 2, 2, 14, 40),
-              endTime: DateTime(2022, 2, 2, 14, 50),
-              status: RideStatus.approved,
-              seats: 1),
+            startTime: DateTime(2022, 2, 2, 14, 40),
+            endTime: DateTime(2022, 2, 2, 14, 50),
+            status: RideStatus.approved,
+            seats: 1,
+          ),
           RideFactory().generateFake(
-              startTime: DateTime(2022, 2, 2, 15),
-              endTime: DateTime(2022, 2, 2, 15, 30),
-              status: RideStatus.approved,
-              seats: 2),
+            startTime: DateTime(2022, 2, 2, 15),
+            endTime: DateTime(2022, 2, 2, 15, 30),
+            status: RideStatus.approved,
+            seats: 2,
+          ),
         ],
       );
       final Ride ride = RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 50),
-          endTime: DateTime(2022, 2, 2, 15, 10),
-          status: RideStatus.approved,
-          seats: 1);
+        startTime: DateTime(2022, 2, 2, 14, 50),
+        endTime: DateTime(2022, 2, 2, 15, 10),
+        status: RideStatus.approved,
+        seats: 1,
+      );
       expect(drive.isRidePossible(ride), true);
     });
   });

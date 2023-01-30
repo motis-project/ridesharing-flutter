@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/parse_helper.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
+import '../util/factories/chat_factory.dart';
 import '../util/factories/drive_factory.dart';
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
@@ -59,6 +60,7 @@ void main() {
         'status': 3,
         'drive_id': 7,
         'rider_id': 4,
+        'chat_id': 5,
         'hide_in_list_view': false,
       };
       final Ride ride = Ride.fromJson(json);
@@ -75,8 +77,10 @@ void main() {
       expect(ride.status, RideStatus.values[json['status']]);
       expect(ride.riderId, json['rider_id']);
       expect(ride.driveId, json['drive_id']);
-      expect(ride.drive, null);
+      expect(ride.chatId, json['chat_id']);
       expect(ride.rider, null);
+      expect(ride.drive, null);
+      expect(ride.chat, null);
       expect(ride.hideInListView, json['hide_in_list_view']);
     });
     test('associated models', () {
@@ -97,8 +101,10 @@ void main() {
         'status': 3,
         'drive_id': 7,
         'rider_id': 4,
+        'chat_id': 5,
         'drive': DriveFactory().generateFake(id: 7).toJsonForApi(),
         'rider': ProfileFactory().generateFake(id: 4).toJsonForApi(),
+        'chat': ChatFactory().generateFake(id: 5).toJsonForApi(),
         'hide_in_list_view': false,
       };
       final Ride ride = Ride.fromJson(json);
@@ -113,11 +119,13 @@ void main() {
       expect(ride.seats, json['seats']);
       expect(ride.price, parseHelper.parseDouble(json['price']));
       expect(ride.status, RideStatus.values[json['status']]);
+      expect(ride.hideInListView, json['hide_in_list_view']);
       expect(ride.riderId, json['rider_id']);
+      expect(ride.rider!.id, json['rider_id']);
       expect(ride.driveId, json['drive_id']);
       expect(ride.drive!.id, json['drive_id']);
-      expect(ride.rider!.id, json['rider_id']);
-      expect(ride.hideInListView, json['hide_in_list_view']);
+      expect(ride.chatId, json['chat_id']);
+      expect(ride.chat!.id, json['chat_id']);
     });
   });
   group('Ride.fromJsonList', () {
@@ -135,10 +143,11 @@ void main() {
         'end_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
+        'hide_in_list_view': false,
         'status': 3,
         'drive_id': 7,
         'rider_id': 4,
-        'hide_in_list_view': false,
+        'chat_id': 5,
       };
       final List<Map<String, dynamic>> jsonList = [json, json, json];
       final List<Ride> rides = Ride.fromJsonList(jsonList);
@@ -211,9 +220,12 @@ void main() {
             .toJsonForApi()
       ]);
       expect(
-          await Ride.userHasRideAtTimeRange(
-              DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))), 2),
-          true);
+        await Ride.userHasRideAtTimeRange(
+          DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))),
+          2,
+        ),
+        true,
+      );
     });
     test('has no ride at time range', () async {
       whenRequest(rideProcessor).thenReturnJson([
@@ -235,11 +247,12 @@ void main() {
       ]);
       expect(
           await Ride.userHasRideAtTimeRange(
-              DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 4)),
-                end: DateTime.now().add(const Duration(hours: 6)),
-              ),
-              2),
+            DateTimeRange(
+              start: DateTime.now().add(const Duration(hours: 4)),
+              end: DateTime.now().add(const Duration(hours: 6)),
+            ),
+            2,
+          ),
           false);
     });
     test('not approved ride overlaps with time range', () async {
@@ -254,13 +267,14 @@ void main() {
             .toJsonForApi(),
       ]);
       expect(
-          await Ride.userHasRideAtTimeRange(
-              DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 6)),
-                end: DateTime.now().add(const Duration(hours: 8)),
-              ),
-              2),
-          false);
+        await Ride.userHasRideAtTimeRange(
+            DateTimeRange(
+              start: DateTime.now().add(const Duration(hours: 6)),
+              end: DateTime.now().add(const Duration(hours: 8)),
+            ),
+            2),
+        false,
+      );
     });
     test('ride overlaps with time range', () async {
       whenRequest(rideProcessor).thenReturnJson([
@@ -274,35 +288,39 @@ void main() {
             .toJsonForApi(),
       ]);
       expect(
-          await Ride.userHasRideAtTimeRange(
-              DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 6)),
-                end: DateTime.now().add(const Duration(hours: 8)),
-              ),
-              2),
-          true);
+        await Ride.userHasRideAtTimeRange(
+            DateTimeRange(
+              start: DateTime.now().add(const Duration(hours: 6)),
+              end: DateTime.now().add(const Duration(hours: 8)),
+            ),
+            2),
+        true,
+      );
     });
   });
   group('Ride.shouldShowInListView', () {
     test('this ride should show in ListView when built', () {
       final Ride ride = RideFactory().generateFake(
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 4)),
-          status: RideStatus.pending);
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+        endTime: DateTime.now().add(const Duration(hours: 4)),
+        status: RideStatus.pending,
+      );
       expect(ride.shouldShowInListView(past: false), true);
     });
     test('this trip will  show in past ListView when built', () {
       final Ride ride = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)),
-          status: RideStatus.approved);
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+        status: RideStatus.approved,
+      );
       expect(ride.shouldShowInListView(past: true), true);
     });
     test('this trip will not show in past ListView when built', () {
       final Ride ride = RideFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(hours: 4)),
-          endTime: DateTime.now().subtract(const Duration(hours: 2)),
-          status: RideStatus.withdrawnByRider);
+        startTime: DateTime.now().subtract(const Duration(hours: 4)),
+        endTime: DateTime.now().subtract(const Duration(hours: 2)),
+        status: RideStatus.withdrawnByRider,
+      );
       expect(ride.shouldShowInListView(past: true), false);
     });
   });
@@ -320,6 +338,7 @@ void main() {
       createDependencies: false,
       driveId: 2,
       riderId: 3,
+      chatId: 5,
       status: RideStatus.approved,
       price: NullableParameter(6),
     );
@@ -338,6 +357,7 @@ void main() {
         status: RideStatus.approved,
         driveId: 2,
         riderId: 3,
+        chatId: 5,
         createDependencies: false,
       );
       expect(ride0.equals(ride1), true);
@@ -347,7 +367,7 @@ void main() {
       expect(ride0.equals(drive), false);
     });
     test('different parameter', () {
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 5; i++) {
         final Ride ride1 = RideFactory().generateFake(
           id: 1,
           createdAt: DateTime(2022, 10),
@@ -362,6 +382,7 @@ void main() {
           status: i == 1 ? RideStatus.pending : RideStatus.approved,
           driveId: i == 2 ? 5 : 2,
           riderId: i == 3 ? 6 : 3,
+          chatId: i == 4 ? 7 : 5,
           createDependencies: false,
         );
         expect(ride0.equals(ride1), false);
@@ -394,6 +415,7 @@ void main() {
         endTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
         driveId: 7,
         riderId: 5,
+        chatId: 6,
         createDependencies: false,
       );
       expect(
