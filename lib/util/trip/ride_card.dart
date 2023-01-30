@@ -89,7 +89,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(' ${_ride.price}€');
+    return Text(key: const Key('price'), ' ${_ride.price}€');
   }
 
   @override
@@ -142,6 +142,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
     }
     return Row(
+      key: const Key('profileFeatures'),
       mainAxisAlignment: MainAxisAlignment.end,
       children: featureicons,
     );
@@ -162,9 +163,9 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
         case RideStatus.approved:
           return Theme.of(context).own().success;
         case RideStatus.rejected:
-          return Theme.of(context).colorScheme.error;
+          return Theme.of(context).errorColor;
         case RideStatus.cancelledByDriver:
-          return Theme.of(context).colorScheme.error;
+          return Theme.of(context).errorColor;
         case RideStatus.cancelledByRider:
         case RideStatus.withdrawnByRider:
           return Theme.of(context).disabledColor;

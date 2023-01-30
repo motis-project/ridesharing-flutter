@@ -6,6 +6,7 @@ void showSnackBar(
   String message, {
   SnackBarDurationType durationType = SnackBarDurationType.long,
   bool replace = false,
+  Key? key,
 }) {
   SemanticsService.announce(message, TextDirection.ltr);
 
@@ -15,6 +16,7 @@ void showSnackBar(
 
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
+      key: key,
       content: Text(message),
       duration: durationType.duration,
     ),
