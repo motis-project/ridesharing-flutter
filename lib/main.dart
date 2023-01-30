@@ -8,7 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_app.dart';
 import 'util/locale_manager.dart';
 import 'util/search/address_suggestion_manager.dart';
-import 'util/snackbar.dart';
 import 'util/supabase.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
@@ -34,10 +33,10 @@ class AppWrapper extends StatefulWidget {
   const AppWrapper({super.key});
 
   @override
-  State<AppWrapper> createState() => _AppWrapperState();
+  State<AppWrapper> createState() => AppWrapperState();
 }
 
-class _AppWrapperState extends State<AppWrapper> {
+class AppWrapperState extends State<AppWrapper> {
   @override
   void initState() {
     super.initState();
@@ -69,10 +68,10 @@ class AuthApp extends StatefulWidget {
   const AuthApp({super.key});
 
   @override
-  State<AuthApp> createState() => _AuthAppState();
+  State<AuthApp> createState() => AuthAppState();
 }
 
-class _AuthAppState extends State<AuthApp> {
+class AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
   bool _isLoggedIn = SupabaseManager.supabaseClient.auth.currentSession != null;
   bool _resettingPassword = false;
@@ -99,19 +98,10 @@ class _AuthAppState extends State<AuthApp> {
 
           if (event == AuthChangeEvent.signedOut ||
               event == AuthChangeEvent.signedIn ||
-              event == AuthChangeEvent.passwordRecovery ||
-              event == AuthChangeEvent.userDeleted) {
+              event == AuthChangeEvent.passwordRecovery) {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
           }
         });
-      },
-      onError: (Object error) {
-        if (error.runtimeType == AuthException) {
-          error = error as AuthException;
-          if (error.message == 'Email link is invalid or has expired') {
-            showSnackBar(context, S.of(context).authEmailLinkInvalid);
-          }
-        }
       },
     );
   }
@@ -125,7 +115,7 @@ class _AuthAppState extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     if (_resettingPassword) {
-      return ResetPasswordPage(onPasswordReset: () => _resettingPassword = false);
+      return ResetPasswordPage(onPasswordReset: () => setState(() => _resettingPassword = false));
     } else if (_isLoggedIn) {
       return const MainApp();
     } else {
