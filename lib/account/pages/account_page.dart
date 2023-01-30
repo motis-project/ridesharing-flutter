@@ -16,72 +16,6 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  void showDesignDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List<RadioListTile<ThemeMode>>.generate(
-              ThemeMode.values.length,
-              (int index) => RadioListTile<ThemeMode>(
-                title: Text(
-                  ThemeMode.values[index].getName(context),
-                ),
-                value: ThemeMode.values[index],
-                groupValue: themeManager.currentThemeMode,
-                onChanged: (ThemeMode? value) {
-                  innerSetState(() {
-                    themeManager.setTheme(value);
-                  });
-                },
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(S.of(context).okay),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void showLanguageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List<RadioListTile<Locale>>.generate(
-              localeManager.supportedLocales.length,
-              (int index) => RadioListTile<Locale>(
-                title: Text(localeManager.supportedLocales.map((Locale e) => e.languageName).toList()[index]),
-                value: localeManager.supportedLocales[index],
-                groupValue: localeManager.currentLocale,
-                onChanged: (Locale? value) {
-                  innerSetState(() {
-                    localeManager.setCurrentLocale(value);
-                  });
-                },
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(S.of(context).okay),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
     //I don't know why this isn't propagated through, for localeManager we just need to call setState in main...
@@ -118,12 +52,14 @@ class _AccountPageState extends State<AccountPage> {
             title: Text(S.of(context).pageAccountLanguage),
             subtitle: Text(localeManager.currentLocale.languageName),
             onTap: () => showLanguageDialog(context),
+            key: const Key('accountLanguage'),
           ),
           ListTile(
             leading: const Icon(Icons.brightness_medium),
             title: Text(S.of(context).pageAccountDesign),
             subtitle: Text(themeManager.currentThemeMode.getName(context)),
             onTap: () => showDesignDialog(context),
+            key: const Key('accountTheme'),
           ),
           ListTile(
             leading: const Icon(Icons.help),
@@ -143,6 +79,7 @@ class _AccountPageState extends State<AccountPage> {
                 builder: (BuildContext context) => const AboutPage(),
               ),
             ),
+            key: const Key('accountAbout'),
           ),
         ],
       ),
@@ -150,4 +87,72 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void refresh() => setState(() {});
+
+  void showDesignDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => StatefulBuilder(
+        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List<RadioListTile<ThemeMode>>.generate(
+              ThemeMode.values.length,
+              (int index) => RadioListTile<ThemeMode>(
+                title: Text(
+                  ThemeMode.values[index].getName(context),
+                ),
+                value: ThemeMode.values[index],
+                groupValue: themeManager.currentThemeMode,
+                onChanged: (ThemeMode? value) {
+                  innerSetState(() {
+                    themeManager.setTheme(value);
+                  });
+                },
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              key: const Key('okButtonDesign'),
+              child: Text(S.of(context).okay),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => StatefulBuilder(
+        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List<RadioListTile<Locale>>.generate(
+              localeManager.supportedLocales.length,
+              (int index) => RadioListTile<Locale>(
+                title: Text(localeManager.supportedLocales.map((Locale e) => e.languageName).toList()[index]),
+                value: localeManager.supportedLocales[index],
+                groupValue: localeManager.currentLocale,
+                onChanged: (Locale? value) {
+                  innerSetState(() {
+                    localeManager.setCurrentLocale(value);
+                  });
+                },
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              key: const Key('okButtonLanguage'),
+              child: Text(S.of(context).okay),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
