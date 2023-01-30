@@ -50,7 +50,7 @@ dependencies:
 
   flutter_rating_bar: ^4.0.1
 
-  badges: ^2.0.3
+  badges: ^3.0.2
 
   # Internationalization
   intl: ^0.17.0
