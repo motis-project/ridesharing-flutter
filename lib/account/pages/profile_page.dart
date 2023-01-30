@@ -97,6 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
                       .then((_) => loadProfile());
                 },
+                key: const Key('editUsername'),
               ),
             ),
           ),
@@ -204,7 +205,6 @@ class _ProfilePageState extends State<ProfilePage> {
       innerWidget: features,
       isEditable: _profile!.isCurrentUser,
       onPressed: () {
-        print('pressed');
         Navigator.of(context)
             .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditProfileFeaturesPage(_profile!)))
             .then((_) => loadProfile());
@@ -250,7 +250,6 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 8),
     ];
     if (_profile!.isCurrentUser || _profile!.fullName.isNotEmpty) {
-      print(_profile!.fullName);
       widgets.addAll(<Widget>[
         buildFullName(),
         const SizedBox(height: 16),
@@ -281,8 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
       widgets.add(buildReviews());
       if (!_profile!.isCurrentUser) {
         final bool hasRecentReport = _profile!.reportsReceived!
-            .any((Report report) => report.isRecent && report.reporterId == supabaseManager.currentProfile!.id);
-
+            .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
           if (hasRecentReport)
@@ -366,6 +364,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context, ProfilePictureUpdateMethod.delete);
               },
+              key: const Key('DeleteButton'),
               child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
             ),
           ],
@@ -394,7 +393,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (imageFile == null) {
       return;
     }
-
     try {
       final Uint8List bytes = await imageFile.readAsBytes();
       final String fileExt = imageFile.path.split('.').last;

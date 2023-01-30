@@ -26,9 +26,6 @@ class ProfileFactory extends ModelFactory<Profile> {
     List<Report>? reportsReceived,
     bool createDependencies = true,
   }) {
-    print(id);
-    print(getNullableParameterOr(name, faker.person.firstName()));
-    print(getNullableParameterOr(surname, faker.person.firstName()));
     return Profile(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
