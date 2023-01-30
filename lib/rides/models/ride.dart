@@ -153,25 +153,8 @@ class Ride extends Trip {
         price == ride.price &&
         rider == ride.rider &&
         price == ride.price &&
-        riderId == ride.riderId;
-  }
-
-  Future<Drive> getDrive() async {
-    drive ??= Drive.fromJson(await SupabaseManager.supabaseClient.from('drives').select().eq('id', driveId).single());
-    return drive!;
-  }
-
-  Future<Profile> getDriver() async {
-    final Drive drive = await getDrive();
-    return Profile.fromJson(
-      await SupabaseManager.supabaseClient.from('profiles').select().eq('id', drive.driverId).single(),
-    );
-  }
-
-  Future<Profile> getRider() async {
-    rider ??=
-        Profile.fromJson(await SupabaseManager.supabaseClient.from('profiles').select().eq('id', riderId).single());
-    return rider!;
+        riderId == ride.riderId &&
+        chatId == ride.chatId;
   }
 
   Future<void> cancel() async {
