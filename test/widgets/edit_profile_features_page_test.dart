@@ -33,7 +33,6 @@ void main() {
         expect(featureFinder, findsOneWidget);
       }
     });
-    // ReorderableListView is not scrollable in tests
     testWidgets('show not added features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
@@ -42,7 +41,7 @@ void main() {
       expect(notAddedFeatures.length + profile.features!.length, Feature.values.length);
       for (int i = 0; i < notAddedFeatures.length; i++) {
         final featureFinder = find.byKey(Key('${notAddedFeatures[i].toString()} Tile'));
-        await tester.scrollUntilVisible(featureFinder, 100, scrollable: find.byType(ReorderableListView));
+        await tester.scrollUntilVisible(featureFinder, 100, scrollable: find.byType(Scrollable));
         expect(featureFinder, findsOneWidget);
       }
     });
@@ -68,7 +67,6 @@ void main() {
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
-    // same as above
     testWidgets('delete features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
@@ -83,7 +81,7 @@ void main() {
       final Finder deletedFeatureFinder = find.descendant(
           of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
-      //await tester.scrollUntilVisible(deletedFeatureFinder, 100, scrollable: find.byType(ReorderableListView));
+      await tester.scrollUntilVisible(deletedFeatureFinder, 100, scrollable: find.byType(Scrollable));
       expect(deletedFeatureFinder, findsOneWidget);
     });
     testWidgets('move features', (WidgetTester tester) async {
@@ -118,7 +116,8 @@ void main() {
       await tester.pump();
       expect(find.byKey(const Key('removeButton')), findsNothing);
       expect(find.byKey(const Key('emptyList')), findsOneWidget);
-    }); // same problem as with edit_username_page_test
+    });
+    // same problem as with edit_username_page_test
     testWidgets('save Button', (WidgetTester tester) async {});
   });
 }

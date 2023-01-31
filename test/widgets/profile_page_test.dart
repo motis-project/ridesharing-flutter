@@ -12,6 +12,7 @@ import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
@@ -43,6 +44,7 @@ void main() {
             urlMatcher: equals(
                 '/rest/v1/rides?select=%2A%2Cdrive%3Adrives%21inner%28%2A%29&rider_id=eq.1&drive.driver_id=eq.1'))
         .thenReturnJson([]);
+    whenRequest(processor, urlMatcher: equals('/auth/v1/token?grant_type=refresh_token')).thenReturnJson(AuthResponse);
   });
 
   group('constructors', () {
@@ -125,7 +127,6 @@ void main() {
       await tester.pump();
       expect(find.text(profile.email), findsNothing);
     });
-    // todo: does not show anything if no details
     testWidgets('not currentUser no details', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
       profile = ProfileFactory().generateFake(
@@ -149,7 +150,6 @@ void main() {
       expect(find.byKey(const Key('gender')), findsNothing);
       expect(find.byKey(const Key('features')), findsNothing);
     });
-    //todo: find no info text 5 times
     testWidgets('currentUser no details', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(
           id: 1,
@@ -200,6 +200,7 @@ void main() {
       //expect(find.byType(WelcomePage), findsOneWidget);
       expect(SupabaseManager.getCurrentProfile(), null);
     });
+
     for (int i = 0; i < 2; i++) {
       i == 0
           ? SupabaseManager.setCurrentProfile(profile)
