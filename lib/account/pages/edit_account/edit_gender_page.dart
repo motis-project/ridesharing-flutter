@@ -44,7 +44,6 @@ class _EditGenderPageState extends State<EditGenderPage> {
                       value: gender,
                       groupValue: _gender,
                       onChanged: (Gender? value) {
-                        print('pressed');
                         setState(() {
                           _gender = value;
                         });
