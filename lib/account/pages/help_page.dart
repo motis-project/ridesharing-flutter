@@ -14,6 +14,8 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
+  // This method is long because it contains a lot of FAQ cards. It's not logical to split it up.
+  // ignore:long-method
   List<Widget> getFaqCards() => <Widget>[
         FAQCard(
           question: S.of(context).pageHelpQuestion1,

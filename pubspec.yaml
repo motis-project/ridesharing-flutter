@@ -91,6 +91,7 @@ dev_dependencies:
   mockito: ^5.0.15
   build_runner: ^2.3.3
   http: ^0.13.5
+  dart_code_metrics: ^5.5.1
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
