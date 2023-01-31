@@ -42,14 +42,15 @@ class _ReviewsPageState extends State<ReviewsPage> {
   }
 
   Future<void> load() async {
-    final Map<String, dynamic> profileData = await supabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> profileData =
+        await supabaseManager.supabaseClient.from('profiles').select<Map<String, dynamic>>('''
       *,
       reviews_received: reviews!reviews_receiver_id_fkey(
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
     final List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('rides').select('''
+      await supabaseManager.supabaseClient.from('rides').select<Map<String, dynamic>>('''
           *,
           drive: drives!inner(*)
         ''').eq('rider_id', supabaseManager.currentProfile!.id).eq('drive.driver_id', _profileId),

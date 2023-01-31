@@ -11,7 +11,7 @@ import '../supabase_manager.dart';
 import 'trip_card.dart';
 
 class PendingRideCard extends TripCard<Ride> {
-  final Function() reloadPage;
+  final VoidCallback reloadPage;
   final Drive drive;
   const PendingRideCard(super.trip, {super.key, required this.reloadPage, required this.drive});
 
@@ -109,7 +109,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   void showApproveDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).cardPendingRideApproveDialogTitle),
@@ -151,7 +151,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   void showRejectDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).cardPendingRideRejectDialogTitle),

@@ -11,8 +11,8 @@ class ProfileWidget extends StatelessWidget {
   final bool showDescription;
   final Widget? actionWidget;
   final bool isTappable;
-  final Function()? onTap;
-  final Function(dynamic)? onPop;
+  final VoidCallback? onTap;
+  final void Function(dynamic)? onPop;
   final bool withHero;
 
   const ProfileWidget(

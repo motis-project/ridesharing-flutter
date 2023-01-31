@@ -1,5 +1,11 @@
 include: ../analysis_options.yaml
 
+analyzer:
+  language:
+    strict-casts: false
+    strict-inference: false
+    strict-raw-types: false
+
 linter:
   rules:
     always_specify_types: false

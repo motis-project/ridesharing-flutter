@@ -25,13 +25,13 @@ class AddressSuggestion {
   });
 
   factory AddressSuggestion.fromMotisAddressResponse(Map<String, dynamic> json) {
-    final String name = json['name'];
+    final String name = json['name'] as String;
     const AddressSuggestionType type = AddressSuggestionType.place;
 
-    final Map<String, dynamic> posJson = json['pos'];
+    final Map<String, dynamic> posJson = json['pos'] as Map<String, dynamic>;
     final Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
-    final List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions']);
+    final List<Map<String, dynamic>> regions = List<Map<String, dynamic>>.from(json['regions'] as List<dynamic>);
     final String postalCode = _extractFromRegions(regions, <int>[13]);
     final String city = _extractFromRegions(regions, <int>[8, 7, 6, 5, 4]);
     final String country = _extractFromRegions(regions, <int>[2]);
@@ -48,10 +48,10 @@ class AddressSuggestion {
   }
 
   factory AddressSuggestion.fromMotisStationResponse(Map<String, dynamic> json) {
-    final String name = json['name'];
+    final String name = json['name'] as String;
     const AddressSuggestionType type = AddressSuggestionType.station;
 
-    final Map<String, dynamic> posJson = json['pos'];
+    final Map<String, dynamic> posJson = json['pos'] as Map<String, dynamic>;
     final Position pos = Position.fromDynamicValues(posJson['lat'], posJson['lng']);
 
     return AddressSuggestion(
@@ -73,7 +73,9 @@ class AddressSuggestion {
   static String _extractFromRegions(List<Map<String, dynamic>> regions, List<int> adminLevels) {
     for (final int adminLevel in adminLevels) {
       try {
-        return regions.firstWhere((Map<String, dynamic> region) => region['admin_level'] == adminLevel)['name'];
+        final Map<String, dynamic> matchedRegion =
+            regions.firstWhere((Map<String, dynamic> region) => region['admin_level'] == adminLevel);
+        return matchedRegion['name'] as String;
       } catch (e) {
         continue;
       }
@@ -83,14 +85,14 @@ class AddressSuggestion {
 
   factory AddressSuggestion.fromJson(Map<String, dynamic> json, {bool fromHistory = false}) {
     return AddressSuggestion(
-      name: json['name'],
-      position: Position.fromJson(json['position']),
+      name: json['name'] as String,
+      position: Position.fromJson(json['position'] as Map<String, dynamic>),
       type: AddressSuggestionType.values.firstWhere((AddressSuggestionType e) => e.name == json['type']),
-      postalCode: json['postal_code'],
-      city: json['city'],
-      country: json['country'],
+      postalCode: json['postal_code'] as String,
+      city: json['city'] as String,
+      country: json['country'] as String,
       fromHistory: fromHistory,
-      lastUsed: json['last_used'] != null ? DateTime.parse(json['last_used']) : DateTime.now(),
+      lastUsed: json['last_used'] != null ? DateTime.parse(json['last_used'] as String) : DateTime.now(),
     );
   }
 

@@ -77,14 +77,20 @@ class _RideDetailPageState extends State<RideDetailPage> {
     if (_ride?.status == RideStatus.preview) {
       ride = _ride!;
 
-      final Map<String, dynamic> data =
-          await supabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
+      final Map<String, dynamic> data = await supabaseManager.supabaseClient
+          .from('drives')
+          .select<Map<String, dynamic>>(_driveQuery)
+          .eq('id', ride.driveId)
+          .single();
 
       ride.drive = Drive.fromJson(data);
     } else {
       final int id = _ride?.id ?? widget.id!;
-      final Map<String, dynamic> data =
-          await supabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
+      final Map<String, dynamic> data = await supabaseManager.supabaseClient
+          .from('rides')
+          .select<Map<String, dynamic>>(_rideQuery)
+          .eq('id', id)
+          .single();
       ride = Ride.fromJson(data);
     }
 
@@ -251,7 +257,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void _showCancelDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageRideDetailCancelDialogTitle),
@@ -287,7 +293,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void _showRequestDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailRequestDialogTitle),
@@ -318,7 +324,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void _showHideDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailButtonHide),
@@ -347,15 +353,18 @@ class _RideDetailPageState extends State<RideDetailPage> {
     ride.status = RideStatus.pending;
 
     // chat gets created by trigger, somehow it does not get returned immediately by the insert
-    final Map<String, dynamic> idHash =
-        await supabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
+    final Map<String, dynamic> idHash = await supabaseManager.supabaseClient
+        .from('rides')
+        .insert(ride.toJson())
+        .select<Map<String, dynamic>>()
+        .single();
 
     ride = ride.copyWith(id: idHash['id'] as int);
     await loadRide();
   }
 
   void _showWithdrawDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageRideDetailWithdrawDialogTitle),
@@ -391,7 +400,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   void _showLoginDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageRideDetailLoginDialogTitle),

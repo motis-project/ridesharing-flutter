@@ -28,14 +28,14 @@ class Message extends Model {
   @override
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      chatId: json['chat_id'],
-      senderId: json['sender_id'],
-      content: json['content'],
-      read: json['read'],
-      chat: json.containsKey('chat') ? Chat.fromJson(json['chat']) : null,
-      sender: json.containsKey('sender') ? Profile.fromJson(json['sender']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      chatId: json['chat_id'] as int,
+      senderId: json['sender_id'] as int,
+      content: json['content'] as String,
+      read: json['read'] as bool,
+      chat: json.containsKey('chat') ? Chat.fromJson(json['chat'] as Map<String, dynamic>) : null,
+      sender: json.containsKey('sender') ? Profile.fromJson(json['sender'] as Map<String, dynamic>) : null,
     );
   }
 

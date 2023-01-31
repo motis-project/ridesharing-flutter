@@ -35,19 +35,19 @@ class Drive extends Trip {
   @override
   factory Drive.fromJson(Map<String, dynamic> json) {
     return Drive(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      start: json['start'],
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: DateTime.parse(json['start_time']),
-      end: json['end'],
+      startTime: DateTime.parse(json['start_time'] as String),
+      end: json['end'] as String,
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endTime: DateTime.parse(json['end_time']),
-      seats: json['seats'],
-      cancelled: json['cancelled'],
-      hideInListView: json['hide_in_list_view'],
-      driverId: json['driver_id'],
-      driver: json.containsKey('driver') ? Profile.fromJson(json['driver']) : null,
+      endTime: DateTime.parse(json['end_time'] as String),
+      seats: json['seats'] as int,
+      cancelled: json['cancelled'] as bool,
+      hideInListView: json['hide_in_list_view'] as bool,
+      driverId: json['driver_id'] as int,
+      driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(parseHelper.parseListOfMaps(json['rides'])) : null,
     );
   }
@@ -79,9 +79,10 @@ class Drive extends Trip {
   List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.activeChat()).toList();
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
-    final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId),
-    );
+    final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient
+        .from('drives')
+        .select<List<Map<String, dynamic>>>()
+        .eq('driver_id', userId);
     List<Drive> drives = Drive.fromJsonList(data);
     drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
 

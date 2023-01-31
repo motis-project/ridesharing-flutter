@@ -8,7 +8,7 @@ import 'trip_stream_builder.dart';
 
 class TripPageBuilder<T extends Trip> extends StatelessWidget {
   final Stream<List<T>> trips;
-  final Function() onFabPressed;
+  final VoidCallback onFabPressed;
 
   const TripPageBuilder(this.trips, {super.key, required this.onFabPressed});
 

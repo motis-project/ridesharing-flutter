@@ -35,18 +35,18 @@ class Review extends Model implements Comparable<Review> {
   @override
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      rating: json['rating'],
-      comfortRating: json['comfort_rating'],
-      safetyRating: json['safety_rating'],
-      reliabilityRating: json['reliability_rating'],
-      hospitalityRating: json['hospitality_rating'],
-      text: json['text'],
-      writerId: json['writer_id'],
-      writer: json.containsKey('writer') ? Profile.fromJson(json['writer']) : null,
-      receiverId: json['receiver_id'],
-      receiver: json.containsKey('receiver') ? Profile.fromJson(json['receiver']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      rating: json['rating'] as int,
+      comfortRating: json['comfort_rating'] as int?,
+      safetyRating: json['safety_rating'] as int?,
+      reliabilityRating: json['reliability_rating'] as int?,
+      hospitalityRating: json['hospitality_rating'] as int?,
+      text: json['text'] as String?,
+      writerId: json['writer_id'] as int,
+      writer: json.containsKey('writer') ? Profile.fromJson(json['writer'] as Map<String, dynamic>) : null,
+      receiverId: json['receiver_id'] as int,
+      receiver: json.containsKey('receiver') ? Profile.fromJson(json['receiver'] as Map<String, dynamic>) : null,
     );
   }
 

@@ -232,7 +232,7 @@ class SearchRideFilter {
   }
 
   void dialog(BuildContext context, void Function(void Function()) setState) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => ScaffoldMessenger(
         child: StatefulBuilder(

@@ -57,16 +57,16 @@ class Profile extends Model {
   @override
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      username: json['username'],
-      email: json['email'],
-      description: json['description'],
-      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date']) : null,
-      surname: json['surname'],
-      name: json['name'],
-      gender: json['gender'] != null ? Gender.values[json['gender']] : null,
-      avatarUrl: json['avatar_url'],
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      username: json['username'] as String,
+      email: json['email'] as String,
+      description: json['description'] as String?,
+      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date'] as String) : null,
+      surname: json['surname'] as String?,
+      name: json['name'] as String?,
+      gender: json['gender'] != null ? Gender.values[json['gender'] as int] : null,
+      avatarUrl: json['avatar_url'] as String?,
       reviewsReceived: json.containsKey('reviews_received')
           ? Review.fromJsonList(parseHelper.parseListOfMaps(json['reviews_received']))
           : null,

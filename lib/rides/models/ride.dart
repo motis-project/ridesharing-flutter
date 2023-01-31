@@ -74,24 +74,24 @@ class Ride extends Trip {
   @override
   factory Ride.fromJson(Map<String, dynamic> json) {
     return Ride(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      start: json['start'],
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: DateTime.parse(json['start_time']),
-      end: json['end'],
+      startTime: DateTime.parse(json['start_time'] as String),
+      end: json['end'] as String,
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endTime: DateTime.parse(json['end_time']),
-      seats: json['seats'],
+      endTime: DateTime.parse(json['end_time'] as String),
+      seats: json['seats'] as int,
       price: parseHelper.parseDouble(json['price']),
-      status: RideStatus.values[json['status']],
-      hideInListView: json['hide_in_list_view'],
-      riderId: json['rider_id'],
-      rider: json.containsKey('rider') ? Profile.fromJson(json['rider']) : null,
-      driveId: json['drive_id'],
-      drive: json.containsKey('drive') ? Drive.fromJson(json['drive']) : null,
-      chatId: json['chat_id'],
-      chat: json.containsKey('chat') ? Chat.fromJson(json['chat']) : null,
+      status: RideStatus.values[json['status'] as int],
+      hideInListView: json['hide_in_list_view'] as bool,
+      riderId: json['rider_id'] as int,
+      rider: json.containsKey('rider') ? Profile.fromJson(json['rider'] as Map<String, dynamic>) : null,
+      driveId: json['drive_id'] as int,
+      drive: json.containsKey('drive') ? Drive.fromJson(json['drive'] as Map<String, dynamic>) : null,
+      chatId: json['chat_id'] as int?,
+      chat: json.containsKey('chat') ? Chat.fromJson(json['chat'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -122,9 +122,8 @@ class Ride extends Trip {
   }
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
-    final List<Map<String, dynamic>> jsonList = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId),
-    );
+    final List<Map<String, dynamic>> jsonList =
+        await supabaseManager.supabaseClient.from('rides').select<List<Map<String, dynamic>>>().eq('rider_id', userId);
     final List<Ride> rides =
         Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
 

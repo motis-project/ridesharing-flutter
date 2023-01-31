@@ -24,12 +24,12 @@ class ProfileFeature extends Model {
   @override
   factory ProfileFeature.fromJson(Map<String, dynamic> json) {
     return ProfileFeature(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      profileId: json['profile_id'],
-      profile: json['profile'] != null ? Profile.fromJson(json['profile']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      profileId: json['profile_id'] as int,
+      profile: json['profile'] != null ? Profile.fromJson(json['profile'] as Map<String, dynamic>) : null,
       feature: Feature.values.elementAt(json['feature'] as int),
-      rank: json['rank'],
+      rank: json['rank'] as int,
     );
   }
 

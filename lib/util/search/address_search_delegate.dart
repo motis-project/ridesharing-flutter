@@ -52,7 +52,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return StatefulBuilder(
-      builder: (BuildContext context, Function(VoidCallback) setState) {
+      builder: (BuildContext context, void Function(VoidCallback) setState) {
         return FutureBuilder<List<AddressSuggestion>>(
           future: addressSuggestionManager.getSuggestions(query),
           builder: (BuildContext context, AsyncSnapshot<List<AddressSuggestion>> snapshot) {

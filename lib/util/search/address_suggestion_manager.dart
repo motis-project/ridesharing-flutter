@@ -48,7 +48,8 @@ class AddressSuggestionManager {
   Future<void> loadHistorySuggestions() async {
     final List<String> data = await storageManager.readData<List<String>>(getStorageKey()) ?? <String>[];
 
-    final Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
+    final Iterable<Map<String, dynamic>> suggestions =
+        data.map((String suggestion) => jsonDecode(suggestion) as Map<String, dynamic>);
     _historySuggestions = suggestions
         .map((Map<String, dynamic> suggestion) => AddressSuggestion.fromJson(suggestion, fromHistory: true))
         .toList();
@@ -131,7 +132,7 @@ class AddressSuggestionManager {
     final String response =
         await request.close().then((HttpClientResponse value) => value.transform(utf8.decoder).join());
 
-    final Map<String, dynamic> responseMap = json.decode(response);
+    final Map<String, dynamic> responseMap = json.decode(response) as Map<String, dynamic>;
 
     final List<Map<String, dynamic>> guesses =
         pick(responseMap, 'content', 'guesses').asListOrEmpty((RequiredPick p0) => p0.value as Map<String, dynamic>);

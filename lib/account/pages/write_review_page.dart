@@ -41,7 +41,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   Future<void> loadReview() async {
     final Map<String, dynamic>? data = await supabaseManager.supabaseClient
         .from('reviews')
-        .select('*')
+        .select<Map<String, dynamic>?>()
         .eq('receiver_id', widget.profile.id)
         .eq('writer_id', supabaseManager.currentProfile!.id)
         .limit(1)
@@ -136,7 +136,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     );
   }
 
-  Widget _buildCategoryReviewRow(String category, int? rating, Function(double) onRatingUpdate) {
+  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

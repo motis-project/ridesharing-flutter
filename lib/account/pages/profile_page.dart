@@ -46,7 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> loadProfile() async {
-    final Map<String, dynamic> data = await supabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> data =
+        await supabaseManager.supabaseClient.from('profiles').select<Map<String, dynamic>>('''
       *,
       profile_features (*),
       reviews_received: reviews!reviews_receiver_id_fkey(

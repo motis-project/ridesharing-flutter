@@ -7,7 +7,7 @@ class Button extends StatelessWidget {
   final DisplayColorKind displayColorKind;
   final Color? backgroundColor;
   final Color? textColor;
-  final Function()? onPressed;
+  final VoidCallback? onPressed;
   final ButtonKind kind;
 
   const Button(
@@ -20,7 +20,7 @@ class Button extends StatelessWidget {
     this.kind = ButtonKind.big,
   });
 
-  factory Button.error(String text, {Function()? onPressed, Key? key}) {
+  factory Button.error(String text, {VoidCallback? onPressed, Key? key}) {
     return Button(
       text,
       onPressed: onPressed,
@@ -37,7 +37,7 @@ class Button extends StatelessWidget {
     );
   }
 
-  factory Button.submit(String text, {Function()? onPressed}) {
+  factory Button.submit(String text, {VoidCallback? onPressed}) {
     return Button(
       text,
       onPressed: onPressed,
