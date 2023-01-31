@@ -80,41 +80,13 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
         child: Column(
           children: <Widget>[
             PasswordField(
-              labelText: S.of(context).formPassword,
-              hintText: S.of(context).pageResetPasswordHint,
               controller: passwordController,
-              key: const Key('resetPasswordPasswordField'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).pageResetPasswordValidateEmpty;
-                } else if (value.length < 8) {
-                  return S.of(context).formPasswordValidateMinLength;
-                } else if (RegExp('[0-9]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateMinLength;
-                } else if (RegExp('[A-Z]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateUppercase;
-                } else if (RegExp('[a-z]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateLowercase;
-                } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateSpecial;
-                }
-                return null;
-              },
+              validateStrictly: true,
             ),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: S.of(context).formPasswordConfirm,
-              hintText: S.of(context).pageResetPasswordConfirmHint,
               controller: passwordConfirmationController,
-              key: const Key('resetPasswordPasswordConfirmField'),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).pageResetPasswordConfirmValidateEmpty;
-                } else if (value != passwordController.text) {
-                  return S.of(context).formPasswordConfirmValidateMatch;
-                }
-                return null;
-              },
+              originalPasswordController: passwordController,
             ),
             const SizedBox(height: 15),
             LoadingButton(

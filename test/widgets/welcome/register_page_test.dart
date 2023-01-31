@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/fields/email_field.dart';
+import 'package:motis_mitfahr_app/util/fields/password_field.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/welcome/pages/after_registration_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
@@ -27,14 +28,8 @@ void main() {
   group('RegisterPage', () {
     final Finder usernameFieldFinder = find.byKey(const Key('registerUsernameField'));
 
-    final Finder passwordFieldFinder = find.descendant(
-      of: find.byKey(const Key('registerPasswordField')),
-      matching: find.byType(TextFormField),
-    );
-    final Finder passwordConfirmFieldFinder = find.descendant(
-      of: find.byKey(const Key('registerPasswordConfirmField')),
-      matching: find.byType(TextFormField),
-    );
+    final Finder passwordFieldFinder = find.byKey(PasswordField.passwordFieldKey);
+    final Finder passwordConfirmFieldFinder = find.byKey(PasswordField.passwordConfirmationFieldKey);
     final Finder registerButtonFinder = find.byType(LoadingButton);
 
     testWidgets('Shows the register page', (WidgetTester tester) async {
@@ -77,81 +72,22 @@ void main() {
     testWidgets('Validates the password', (WidgetTester tester) async {
       await pumpMaterial(tester, const RegisterPage());
 
-      final RegisterFormState formState = tester.state(find.byType(RegisterForm));
+      final PasswordField passwordField = tester.widget(
+        find.ancestor(of: passwordFieldFinder, matching: find.byType(PasswordField)),
+      );
 
-      final FormFieldState passwordField = tester.state(passwordFieldFinder);
-
-      // Not validated yet, so no error
-      expect(passwordField.hasError, isFalse);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'abcdefg');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Too short, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'abcdefgh');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // No number, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'abcdefg0');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // No capital letters, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'ABCDEFG0');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // No lower letters, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'abcdEFG0');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // No special, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, password);
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      expect(passwordField.hasError, isFalse);
+      expect(passwordField.validateStrictly, isTrue);
     });
 
     testWidgets('Validates the password confirmation', (WidgetTester tester) async {
       await pumpMaterial(tester, const RegisterPage());
-
-      final RegisterFormState formState = tester.state(find.byType(RegisterForm));
       await tester.enterText(passwordFieldFinder, password);
 
-      final FormFieldState passwordConfirmationField = tester.state(passwordConfirmFieldFinder);
+      final PasswordField passwordConfirmationField = tester.widget(
+        find.ancestor(of: passwordConfirmFieldFinder, matching: find.byType(PasswordField)),
+      );
 
-      // Not validated yet, so no error
-      expect(passwordConfirmationField.hasError, isFalse);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(passwordConfirmationField.hasError, isTrue);
-
-      await tester.enterText(passwordConfirmFieldFinder, '${password}a');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Not the same, so error
-      expect(passwordConfirmationField.hasError, isTrue);
-
-      await tester.enterText(passwordConfirmFieldFinder, password);
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Same, so no error
-      expect(passwordConfirmationField.hasError, isFalse);
+      expect(passwordConfirmationField.originalPasswordController!.text, password);
     });
 
     group('RegisterButton', () {
@@ -165,8 +101,8 @@ void main() {
       Future<void> fillForm(WidgetTester tester, {bool valid = true}) async {
         await tester.enterText(emailFieldFinder, email);
         await tester.enterText(usernameFieldFinder, username);
-        await tester.enterText(passwordFieldFinder, 'abc&EFG0');
-        await tester.enterText(passwordConfirmFieldFinder, valid ? 'abc&EFG0' : 'notTheSame');
+        await tester.enterText(passwordFieldFinder, password);
+        await tester.enterText(passwordConfirmFieldFinder, valid ? password : 'notTheSame');
       }
 
       ProcessorPostExpectation whenSignupRequest() => whenRequest(

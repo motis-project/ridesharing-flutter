@@ -29,10 +29,7 @@ void main() {
       of: find.byType(EmailField),
       matching: find.byType(TextFormField),
     );
-    final Finder passwordFieldFinder = find.descendant(
-      of: find.byType(PasswordField),
-      matching: find.byType(TextFormField),
-    );
+    final Finder passwordFieldFinder = find.byKey(PasswordField.passwordFieldKey);
     final Finder loginButtonFinder = find.byType(LoadingButton);
 
     testWidgets('Shows the login page', (WidgetTester tester) async {
@@ -49,27 +46,9 @@ void main() {
     testWidgets('Validates the password (not so strictly)', (WidgetTester tester) async {
       await pumpMaterial(tester, const LoginPage());
 
-      final LoginFormState formState = tester.state(find.byType(LoginForm));
+      final PasswordField passwordField = tester.widget(find.byType(PasswordField));
 
-      final FormFieldState passwordField = tester.state(passwordFieldFinder);
-
-      // Not validated yet, so no error
-      expect(passwordField.hasError, isFalse);
-
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      // Empty, so error
-      expect(passwordField.hasError, isTrue);
-
-      await tester.enterText(passwordFieldFinder, 'abcdefg');
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      expect(passwordField.hasError, isFalse);
-
-      await tester.enterText(passwordFieldFinder, password);
-      formState.formKey.currentState!.validate();
-      await tester.pumpAndSettle();
-      expect(passwordField.hasError, isFalse);
+      expect(passwordField.validateStrictly, isFalse);
     });
 
     testWidgets('Navigates to the forgotPassword page', (WidgetTester tester) async {

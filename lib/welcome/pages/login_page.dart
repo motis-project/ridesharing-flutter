@@ -117,17 +117,7 @@ class LoginFormState extends State<LoginForm> {
             Expanded(child: Container()),
             EmailField(controller: emailController),
             const SizedBox(height: 15),
-            PasswordField(
-              labelText: S.of(context).formPassword,
-              hintText: S.of(context).formPasswordHint,
-              controller: passwordController,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).formPasswordValidateEmpty;
-                }
-                return null;
-              },
-            ),
+            PasswordField(controller: passwordController),
             TextButton(
               key: const Key('loginForgotPasswordButton'),
               onPressed: () {

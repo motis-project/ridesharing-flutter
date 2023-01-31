@@ -59,6 +59,7 @@
   "formEmailValidateInvalid": "Please enter a valid email address",
   "formPassword": "Password",
   "formPasswordHint": "Enter your password",
+  "formPasswordHelper": "Password must be at least 8 characters long and contain at least one number, one uppercase letter, one lowercase letter and one special character.",
   "formPasswordValidateEmpty": "Please enter your password",
   "formPasswordValidateMinLength": "Password must be at least 8 characters",
   "formPasswordValidateNumber": "Password must contain at least one number",
