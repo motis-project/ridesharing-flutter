@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'position.dart';
 
 class AddressSuggestion {
-  final Position position;
   final String name;
-  final String postalCode;
+  final Position position;
+  final AddressSuggestionType type;
   final String city;
   final String country;
-  final AddressSuggestionType type;
+  final String postalCode;
 
   bool fromHistory;
   DateTime lastUsed;

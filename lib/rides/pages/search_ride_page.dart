@@ -23,15 +23,15 @@ class SearchRidePage extends StatefulWidget {
 
 class SearchRidePageState extends State<SearchRidePage> {
   final TextEditingController startController = TextEditingController();
-  AddressSuggestion? _startSuggestion;
+  AddressSuggestion? startSuggestion;
   final TextEditingController destinationController = TextEditingController();
-  AddressSuggestion? _destinationSuggestion;
+  AddressSuggestion? destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   bool _wholeDay = true;
-  int _seats = 1;
+  int seats = 1;
 
   late final SearchRideFilter _filter;
 
@@ -60,14 +60,14 @@ class SearchRidePageState extends State<SearchRidePage> {
 
     showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: selectedDate,
       firstDate: firstDate,
       lastDate: firstDate.add(const Duration(days: 30)),
     ).then((DateTime? value) {
       if (value != null) {
         setState(() {
-          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = localeManager.formatDate(_selectedDate);
+          selectedDate = DateTime(value.year, value.month, value.day, selectedDate.hour, selectedDate.minute);
+          _dateController.text = localeManager.formatDate(selectedDate);
         });
         if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
@@ -77,16 +77,15 @@ class SearchRidePageState extends State<SearchRidePage> {
   void _showTimePicker() {
     showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
+      initialTime: TimeOfDay(hour: selectedDate.hour, minute: selectedDate.minute),
       builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
     ).then((TimeOfDay? value) {
       if (value != null) {
         setState(() {
-          _selectedDate =
-              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = localeManager.formatTime(_selectedDate);
+          selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, value.hour, value.minute);
+          _timeController.text = localeManager.formatTime(selectedDate);
         });
         if (_dateTimeValidator(_timeController.text) == null) loadRides();
       }
@@ -97,14 +96,14 @@ class SearchRidePageState extends State<SearchRidePage> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
+    if (selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
   }
 
   Future<void> loadRides() async {
-    if (_startSuggestion == null || _destinationSuggestion == null) return;
+    if (startSuggestion == null || destinationSuggestion == null) return;
     setState(() => _loading = true);
     final List<Map<String, dynamic>> data =
         await supabaseManager.supabaseClient.from('drives').select<List<Map<String, dynamic>>>('''
@@ -120,13 +119,13 @@ class SearchRidePageState extends State<SearchRidePage> {
         .map(
           (Drive drive) => Ride.previewFromDrive(
             drive,
-            _startSuggestion!.name,
-            _startSuggestion!.position,
+            startSuggestion!.name,
+            startSuggestion!.position,
             drive.startTime,
-            _destinationSuggestion!.name,
-            _destinationSuggestion!.position,
+            destinationSuggestion!.name,
+            destinationSuggestion!.position,
             drive.endTime,
-            _seats,
+            seats,
             supabaseManager.currentProfile?.id ?? -1,
             10.25,
           ),
@@ -148,11 +147,11 @@ class SearchRidePageState extends State<SearchRidePage> {
               startController: startController,
               destinationController: destinationController,
               onStartSelected: (AddressSuggestion suggestion) => setState(() {
-                _startSuggestion = suggestion;
+                startSuggestion = suggestion;
                 loadRides();
               }),
               onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
-                _destinationSuggestion = suggestion;
+                destinationSuggestion = suggestion;
                 loadRides();
               }),
             ),
@@ -163,9 +162,9 @@ class SearchRidePageState extends State<SearchRidePage> {
               final String oldStartText = startController.text;
               startController.text = destinationController.text;
               destinationController.text = oldStartText;
-              final AddressSuggestion? oldStartSuggestion = _startSuggestion;
-              _startSuggestion = _destinationSuggestion;
-              _destinationSuggestion = oldStartSuggestion;
+              final AddressSuggestion? oldStartSuggestion = startSuggestion;
+              startSuggestion = destinationSuggestion;
+              destinationSuggestion = oldStartSuggestion;
               loadRides();
             }),
             icon: const Icon(Icons.swap_vert),
@@ -176,7 +175,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildDatePicker() {
-    _dateController.text = localeManager.formatDate(_selectedDate);
+    _dateController.text = localeManager.formatDate(selectedDate);
 
     return Semantics(
       button: true,
@@ -194,7 +193,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildTimePicker() {
-    _timeController.text = localeManager.formatTime(_selectedDate);
+    _timeController.text = localeManager.formatTime(selectedDate);
 
     return Semantics(
       button: true,
@@ -203,8 +202,9 @@ class SearchRidePageState extends State<SearchRidePage> {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: S.of(context).formTime,
-          errorText: _dateTimeValidator(_timeController.text),
         ),
+        validator: _dateTimeValidator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         readOnly: true,
         onTap: _showTimePicker,
         controller: _timeController,
@@ -220,16 +220,18 @@ class SearchRidePageState extends State<SearchRidePage> {
         children: <Widget>[
           if (_wholeDay) ...<Widget>[
             IconButton(
+              key: const Key('searchRideBeforeButton'),
               tooltip: S.of(context).before,
-              onPressed: _selectedDate.isSameDayAs(DateTime.now())
+              onPressed: selectedDate.isSameDayAs(DateTime.now())
                   ? null
-                  : () => setState(() => _selectedDate = _selectedDate.subtract(const Duration(days: 1))),
+                  : () => setState(() => selectedDate = selectedDate.subtract(const Duration(days: 1))),
               icon: const Icon(Icons.chevron_left),
             ),
             Expanded(child: buildDatePicker()),
             IconButton(
+              key: const Key('searchRideAfterButton'),
               tooltip: S.of(context).after,
-              onPressed: () => setState(() => _selectedDate = _selectedDate.add(const Duration(days: 1))),
+              onPressed: () => setState(() => selectedDate = selectedDate.add(const Duration(days: 1))),
               icon: const Icon(Icons.chevron_right),
             ),
           ],
@@ -240,6 +242,7 @@ class SearchRidePageState extends State<SearchRidePage> {
             const SizedBox(width: 10),
           ],
           LabeledCheckbox(
+            key: const Key('searchRideWholeDayCheckbox'),
             label: S.of(context).pageSearchRideWholeDay,
             value: _wholeDay,
             onChanged: (bool? value) => setState(() {
@@ -265,7 +268,7 @@ class SearchRidePageState extends State<SearchRidePage> {
           ),
           onChanged: (int? value) {
             setState(() {
-              _seats = value!;
+              seats = value!;
               loadRides();
             });
           },
@@ -276,7 +279,7 @@ class SearchRidePageState extends State<SearchRidePage> {
 
   Widget buildMainContentSliver() {
     if (_rideSuggestions == null || _loading) {
-      if (_startSuggestion == null || _destinationSuggestion == null) {
+      if (startSuggestion == null || destinationSuggestion == null) {
         return SliverToBoxAdapter(
           child: Column(
             children: <Widget>[
@@ -300,7 +303,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         ),
       );
     }
-    final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
+    final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, selectedDate);
     if (filteredSuggestions.isEmpty) {
       return SliverToBoxAdapter(
         child: SingleChildScrollView(
