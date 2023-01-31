@@ -227,6 +227,7 @@ class SearchRideFilter {
       onChanged: (SearchRideSorting? value) => innerSetState(
         () => _sorting = value!,
       ),
+      underline: const SizedBox(),
     );
   }
 
