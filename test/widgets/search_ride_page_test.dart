@@ -39,7 +39,6 @@ void main() {
     await tester.tap(find.byKey(const Key('searchRideDatePicker')));
     await tester.pump();
     await tester.tap(find.byIcon(Icons.edit));
-    debugDumpApp();
     await tester.pump();
     await tester.enterText(find.byType(InputDatePickerFormField), '${dateTime.month}/${dateTime.day}/${dateTime.year}');
     await tester.tap(find.text('OK'));
@@ -337,16 +336,12 @@ void main() {
 
         final List<Map<String, dynamic>> drives = [
           DriveFactory().generateFake(start: start, startTime: startTime, seats: seats).toJsonForApi(),
-          DriveFactory().generateFake(startTime: startTime, seats: seats).toJsonForApi(), // Different start
           DriveFactory()
               .generateFake(start: start, startTime: startTime.add(const Duration(hours: 1)), seats: seats + 1)
               .toJsonForApi(),
           DriveFactory()
               .generateFake(start: start, startTime: startTime.add(const Duration(days: 1)), seats: seats)
               .toJsonForApi(),
-          DriveFactory()
-              .generateFake(start: start, startTime: startTime, seats: seats - 1)
-              .toJsonForApi(), // Too few seats
         ];
         whenRequest(processor).thenReturnJson(drives);
         whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
@@ -358,17 +353,24 @@ void main() {
         await enterDateAndTime(tester, startTime);
         await enterSeats(tester, seats);
 
-        expect(find.byType(RideCard), findsNWidgets(2));
+        verifyRequest(
+          processor,
+          urlMatcher: matches(RegExp('/rest/v1/drives.*start=eq\\.${RegExp.escape(Uri.encodeQueryComponent(start))}')),
+        );
+
+        expect(find.byType(RideCard, skipOffstage: false), findsNWidgets(2));
+
+        await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
+        await tester.pump();
+        await tester.tap(find.byKey(const Key('searchRideAfterButton')));
+        await tester.pump();
+
+        expect(find.byType(RideCard, skipOffstage: false), findsOneWidget);
 
         await tester.tap(find.byKey(const Key('searchRideAfterButton')));
         await tester.pump();
 
-        expect(find.byType(RideCard), findsOneWidget);
-
-        await tester.tap(find.byKey(const Key('searchRideAfterButton')));
-        await tester.pump();
-
-        expect(find.byType(RideCard), findsNothing);
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
       });
     });
   });
