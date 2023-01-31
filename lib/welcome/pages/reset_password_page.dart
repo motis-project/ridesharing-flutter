@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/password_field.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final Function() onPasswordReset;
@@ -58,7 +58,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
     });
 
     final UserAttributes newAttributes = UserAttributes(password: passwordController.text);
-    await SupabaseManager.supabaseClient.auth.updateUser(newAttributes);
+    await supabaseManager.supabaseClient.auth.updateUser(newAttributes);
 
     // Will redirect to login screen if successful
     widget.onPasswordReset();

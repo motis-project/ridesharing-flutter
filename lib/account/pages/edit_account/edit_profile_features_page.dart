@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
 import '../../../util/snackbar.dart';
-import '../../../util/supabase.dart';
+import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 import '../../models/profile_feature.dart';
 
@@ -218,13 +218,13 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       final Feature feature = _features[index];
 
       if (!previousFeatures.contains(feature)) {
-        await SupabaseManager.supabaseClient.from('profile_features').insert(<String, dynamic>{
+        await supabaseManager.supabaseClient.from('profile_features').insert(<String, dynamic>{
           'profile_id': widget.profile.id,
           'feature': feature.index,
           'rank': index,
         });
       } else {
-        await SupabaseManager.supabaseClient
+        await supabaseManager.supabaseClient
             .from('profile_features')
             .update(<String, dynamic>{'rank': index})
             .eq('profile_id', widget.profile.id)
@@ -233,7 +233,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     }
     final List<Feature> removedFeatures = previousFeatures.where((Feature e) => !_features.contains(e)).toList();
     for (final Feature feature in removedFeatures) {
-      await SupabaseManager.supabaseClient
+      await supabaseManager.supabaseClient
           .from('profile_features')
           .delete()
           .eq('profile_id', widget.profile.id)

@@ -9,7 +9,7 @@ import '../../util/locale_manager.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/ride_card.dart';
 import '../../util/trip/trip.dart';
 import '../models/ride.dart';
@@ -109,7 +109,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     if (_startSuggestion == null || _destinationSuggestion == null) return;
     setState(() => _loading = true);
     final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('drives').select('''
+      await supabaseManager.supabaseClient.from('drives').select('''
           *,
           driver:driver_id (
             *,
@@ -130,7 +130,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
             _destinationSuggestion!.position,
             drive.endTime,
             _seats,
-            SupabaseManager.getCurrentProfile()?.id ?? -1,
+            supabaseManager.currentProfile?.id ?? -1,
             10.25,
           ),
         )

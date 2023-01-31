@@ -7,7 +7,7 @@ import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:fuzzywuzzy/model/extracted_result.dart';
 
 import '../storage_manager.dart';
-import '../supabase.dart';
+import '../supabase_manager.dart';
 import 'address_suggestion.dart';
 
 final AddressSuggestionManager addressSuggestionManager = AddressSuggestionManager();
@@ -46,7 +46,7 @@ class AddressSuggestionManager {
   }
 
   Future<void> loadHistorySuggestions() async {
-    final List<String> data = await StorageManager.readStringList(getStorageKey());
+    final List<String> data = await storageManager.readStringList(getStorageKey());
 
     final Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
     _historySuggestions = suggestions
@@ -83,7 +83,7 @@ class AddressSuggestionManager {
     final List<String> data =
         _historySuggestions.map((AddressSuggestion suggestion) => jsonEncode(suggestion.toJson())).toList();
 
-    StorageManager.saveData(getStorageKey(), data);
+    storageManager.saveData(getStorageKey(), data);
   }
 
   void sortHistorySuggestions() {
@@ -194,6 +194,6 @@ class AddressSuggestionManager {
   }
 
   String getStorageKey() {
-    return '$_storageKey.${SupabaseManager.getCurrentProfile()?.id}';
+    return '$_storageKey.${supabaseManager.currentProfile?.id}';
   }
 }

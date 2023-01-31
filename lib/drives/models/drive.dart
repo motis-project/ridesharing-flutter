@@ -4,7 +4,7 @@ import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 
 class Drive extends Trip {
@@ -80,7 +80,7 @@ class Drive extends Trip {
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId),
+      await supabaseManager.supabaseClient.from('drives').select().eq('driver_id', userId),
     );
     List<Drive> drives = Drive.fromJsonList(data);
     drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
@@ -146,7 +146,7 @@ class Drive extends Trip {
 
   Future<void> cancel() async {
     cancelled = true;
-    await SupabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'cancelled': true}).eq('id', id);
+    await supabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'cancelled': true}).eq('id', id);
     //the rides get updated automatically by a supabase function.
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/main.dart';
 import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 import 'package:motis_mitfahr_app/welcome/pages/reset_password_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/welcome_page.dart';
@@ -81,13 +81,13 @@ void main() {
         bodyMatcher: equals({'refresh_token': 'my_refresh_token'}),
         methodMatcher: equals('POST'),
       ).thenReturnJson(responseHash);
-      await SupabaseManager.supabaseClient.auth.setSession('my_refresh_token');
-      await SupabaseManager.reloadCurrentProfile();
+      await supabaseManager.supabaseClient.auth.setSession('my_refresh_token');
+      await supabaseManager.reloadCurrentProfile();
     }
 
     setUp(() {
-      SupabaseManager.setCurrentProfile(null);
-      SupabaseManager.supabaseClient.auth.signOut();
+      supabaseManager.currentProfile = null;
+      supabaseManager.supabaseClient.auth.signOut();
     });
 
     testWidgets('It shows Welcome when not logged in', (WidgetTester tester) async {
@@ -117,7 +117,7 @@ void main() {
       ).thenReturnJson(responseHash);
 
       // Sending AuthChangeEvent.signedIn
-      await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      await supabaseManager.supabaseClient.auth.signInWithPassword(
         email: 'motismitfahrapp@gmail.com',
         password: '?Pass123word',
       );
@@ -135,7 +135,7 @@ void main() {
       expect(find.byType(MainApp), findsOneWidget);
 
       // Sending AuthChangeEvent.signedOut
-      await SupabaseManager.supabaseClient.auth.signOut();
+      await supabaseManager.supabaseClient.auth.signOut();
 
       await tester.pump();
 
@@ -151,7 +151,7 @@ void main() {
         methodMatcher: equals('GET'),
       ).thenReturnJson(userHash);
 
-      await SupabaseManager.supabaseClient.auth.getSessionFromUrl(
+      await supabaseManager.supabaseClient.auth.getSessionFromUrl(
         Uri(host: 'localhost', port: 3000, queryParameters: {
           'access_token': 'access_token',
           'expires_in': '3600',

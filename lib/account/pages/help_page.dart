@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../config.dart';
 import '../../util/buttons/button.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
@@ -98,7 +98,7 @@ class _HelpPageState extends State<HelpPage> {
                   S.of(context).pageHelpContactUs,
                   onPressed: () => launchUrlString(
                     'mailto:${Config.emailAddress}?'
-                    'subject=${S.of(context).pageHelpEmailSubject(SupabaseManager.getCurrentProfile()!.id!)}',
+                    'subject=${S.of(context).pageHelpEmailSubject(supabaseManager.currentProfile!.id!)}',
                   ),
                 ),
               ],

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
 import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
@@ -47,14 +47,14 @@ void main() {
       final currentProfile = ProfileFactory().generateFake(
         id: profile.id,
       );
-      SupabaseManager.setCurrentProfile(currentProfile);
+      supabaseManager.currentProfile = currentProfile;
       expect(profile.isCurrentUser, true);
     });
 
     test('returns false if id is not equal to current profile id', () async {
       final profile = ProfileFactory().generateFake();
       final currentProfile = ProfileFactory().generateFake(id: profile.id! + 1);
-      SupabaseManager.setCurrentProfile(currentProfile);
+      supabaseManager.currentProfile = currentProfile;
       expect(profile.isCurrentUser, false);
     });
   });

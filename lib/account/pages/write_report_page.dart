@@ -4,7 +4,7 @@ import 'package:progress_state_button/progress_button.dart';
 
 import '../../util/buttons/loading_button.dart';
 import '../../util/profiles/profile_widget.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../models/profile.dart';
 import '../models/report.dart';
 
@@ -118,12 +118,12 @@ class _WriteReportPageState extends State<WriteReportPage> {
 
     final Report report = Report(
       offenderId: widget.profile.id!,
-      reporterId: SupabaseManager.getCurrentProfile()!.id!,
+      reporterId: supabaseManager.currentProfile!.id!,
       category: _category!,
       text: _textController.text,
     );
 
-    await SupabaseManager.supabaseClient.from('reports').insert(report.toJson());
+    await supabaseManager.supabaseClient.from('reports').insert(report.toJson());
 
     setState(() {
       _state = ButtonState.success;

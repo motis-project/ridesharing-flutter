@@ -1,7 +1,7 @@
 import '../../../rides/models/ride.dart';
 import '../../model.dart';
 import '../../parse_helper.dart';
-import '../../supabase.dart';
+import '../../supabase_manager.dart';
 import 'message.dart';
 
 class Chat extends Model {
@@ -33,7 +33,7 @@ class Chat extends Model {
 
   int getUnreadMessagesCount() {
     return messages!
-        .where((Message message) => message.senderId != SupabaseManager.getCurrentProfile()!.id && !message.read)
+        .where((Message message) => message.senderId != supabaseManager.currentProfile!.id && !message.read)
         .length;
   }
 

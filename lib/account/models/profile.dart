@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/model.dart';
 import '../../util/parse_helper.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import 'profile_feature.dart';
 import 'report.dart';
 import 'review.dart';
@@ -49,7 +49,7 @@ class Profile extends Model {
     return '';
   }
 
-  bool get isCurrentUser => id == SupabaseManager.getCurrentProfile()?.id;
+  bool get isCurrentUser => id == supabaseManager.currentProfile?.id;
 
   List<Feature>? get features =>
       profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.feature).toList();

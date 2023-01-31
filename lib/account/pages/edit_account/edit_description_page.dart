@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
-import '../../../util/supabase.dart';
+import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 
 class EditDescriptionPage extends StatefulWidget {
@@ -68,10 +68,10 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
 
   Future<void> onPressed() async {
     final String? text = _controller.text == '' ? null : _controller.text;
-    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
+    await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'description': text,
     }).eq('id', widget.profile.id);
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

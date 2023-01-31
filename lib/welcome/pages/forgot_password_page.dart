@@ -5,7 +5,7 @@ import 'package:progress_state_button/progress_button.dart';
 
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;
@@ -62,7 +62,7 @@ class ForgotPasswordFormState extends State<ForgotPasswordForm> {
       buttonState = ButtonState.loading;
     });
 
-    await SupabaseManager.supabaseClient.auth.resetPasswordForEmail(
+    await supabaseManager.supabaseClient.auth.resetPasswordForEmail(
       emailController.text,
       redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
     );

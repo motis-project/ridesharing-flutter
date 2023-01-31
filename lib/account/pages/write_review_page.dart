@@ -7,7 +7,7 @@ import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/reviews/custom_rating_bar.dart';
 import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
 
@@ -39,11 +39,11 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   Future<void> loadReview() async {
-    final Map<String, dynamic>? data = await SupabaseManager.supabaseClient
+    final Map<String, dynamic>? data = await supabaseManager.supabaseClient
         .from('reviews')
         .select('*')
         .eq('receiver_id', widget.profile.id)
-        .eq('writer_id', SupabaseManager.getCurrentProfile()!.id)
+        .eq('writer_id', supabaseManager.currentProfile!.id)
         .limit(1)
         .maybeSingle();
     setState(() {
@@ -51,7 +51,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           ? Review.fromJson(data)
           : Review(
               rating: 0,
-              writerId: SupabaseManager.getCurrentProfile()!.id!,
+              writerId: supabaseManager.currentProfile!.id!,
               receiverId: widget.profile.id!,
             );
       if (_review!.text != null) _textController.text = _review!.text!;
@@ -203,9 +203,9 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       _state = ButtonState.loading;
     });
     if (_review!.id == null) {
-      await SupabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
+      await supabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
     } else {
-      await SupabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
+      await supabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
     }
     setState(() {
       _state = ButtonState.success;

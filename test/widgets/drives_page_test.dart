@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drives_page.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../util/factories/profile_factory.dart';
@@ -21,12 +21,12 @@ void main() {
   });
   setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
     whenRequest(processor).thenReturnJson([]);
   });
   testWidgets('has stream subscription', (WidgetTester tester) async {
     await pumpMaterial(tester, const DrivesPage());
-    final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
+    final List<RealtimeChannel> subscription = supabaseManager.supabaseClient.getChannels();
     expect(subscription.length, 1);
     expect(subscription[0].topic, 'realtime:public:drives:1');
     verifyRequest(

@@ -15,7 +15,7 @@ import '../../util/own_theme_fields.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/pending_ride_card.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
@@ -48,7 +48,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data = await supabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,
@@ -144,7 +144,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       }
 
       final Widget timeline = FixedTimeline.tileBuilder(
-        theme: CustomTimelineThemeForBuilder.of(context),
+        theme: CustomTimelineTheme.of(context, forBuilder: true),
         builder: TimelineTileBuilder.connected(
           connectionDirection: ConnectionDirection.before,
           indicatorBuilder: (BuildContext context, int index) => const CustomOutlinedDotIndicator(),
@@ -395,7 +395,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> hideDrive() async {
-    await SupabaseManager.supabaseClient
+    await supabaseManager.supabaseClient
         .from('drives')
         .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.drive!.id);
   }

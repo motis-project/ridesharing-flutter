@@ -6,7 +6,7 @@ import '../../rides/models/ride.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../models/drive.dart';
 
 class DriveChatPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
 
     final List<int> ids = _ridesWithChat.map((Ride ride) => ride.chatId!).toList();
     _messagesStream =
-        SupabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(
+        supabaseManager.supabaseClient.from('messages').stream(primaryKey: <String>['id']).order('created_at').map(
               (List<Map<String, dynamic>> messages) => Message.fromJsonList(
                 messages.where((Map<String, dynamic> element) => ids.contains(element['chat_id'])).toList(),
               ),

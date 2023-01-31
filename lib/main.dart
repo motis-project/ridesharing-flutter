@@ -7,8 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'main_app.dart';
 import 'util/locale_manager.dart';
-import 'util/search/address_suggestion_manager.dart';
-import 'util/supabase.dart';
+import 'util/supabase_manager.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
 import 'welcome/pages/welcome_page.dart';
@@ -17,14 +16,9 @@ void main() async {
   await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: dotenv.get('SUPABASE_BASE_URL'),
-    anonKey: dotenv.get('SUPABASE_BASE_KEY'),
-  );
-  await SupabaseManager.reloadCurrentProfile();
+  await supabaseManager.initialize();
   await themeManager.loadTheme();
   await localeManager.loadCurrentLocale();
-  await addressSuggestionManager.loadHistorySuggestions();
 
   runApp(const AppWrapper());
 }
@@ -73,7 +67,7 @@ class AuthApp extends StatefulWidget {
 
 class AuthAppState extends State<AuthApp> {
   late final StreamSubscription<AuthState> _authStateSubscription;
-  bool _isLoggedIn = SupabaseManager.supabaseClient.auth.currentSession != null;
+  bool _isLoggedIn = supabaseManager.supabaseClient.auth.currentSession != null;
   bool _resettingPassword = false;
 
   @override
@@ -84,11 +78,11 @@ class AuthAppState extends State<AuthApp> {
   }
 
   void _setupAuthStateSubscription() {
-    _authStateSubscription = SupabaseManager.supabaseClient.auth.onAuthStateChange.listen(
+    _authStateSubscription = supabaseManager.supabaseClient.auth.onAuthStateChange.listen(
       (AuthState data) async {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
-        await SupabaseManager.reloadCurrentProfile();
+        await supabaseManager.reloadCurrentProfile();
 
         setState(() {
           _isLoggedIn = session != null;

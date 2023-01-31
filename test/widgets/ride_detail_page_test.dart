@@ -13,7 +13,7 @@ import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
@@ -420,7 +420,7 @@ void main() {
       group('Login Dialog', () {
         setUp(() {
           ride.chat = null;
-          SupabaseManager.setCurrentProfile(null);
+          supabaseManager.currentProfile = null;
         });
 
         testWidgets('Can cancel', (WidgetTester tester) async {

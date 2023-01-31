@@ -1,26 +1,27 @@
 import 'dart:async';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/models/profile.dart';
 import 'search/address_suggestion_manager.dart';
 
+SupabaseManager supabaseManager = SupabaseManager();
+
 class SupabaseManager {
-  static Profile? _currentProfile;
+  Profile? currentProfile;
+  late SupabaseClient supabaseClient;
 
-  static Profile? getCurrentProfile() => _currentProfile;
-
-  static void setCurrentProfile(Profile? profile) {
-    _currentProfile = profile;
+  Future<void> initialize() async {
+    await Supabase.initialize(
+      url: dotenv.get('SUPABASE_BASE_URL'),
+      anonKey: dotenv.get('SUPABASE_BASE_KEY'),
+    );
+    supabaseClient = Supabase.instance.client;
+    await reloadCurrentProfile();
   }
 
-  static SupabaseClient supabaseClient = Supabase.instance.client;
-
-  static void setClient(SupabaseClient client) {
-    supabaseClient = client;
-  }
-
-  static Future<void> reloadCurrentProfile() async {
+  Future<void> reloadCurrentProfile() async {
     try {
       final Map<String, dynamic>? response = await supabaseClient
           .from('profiles')
@@ -29,12 +30,12 @@ class SupabaseManager {
           .maybeSingle();
 
       if (response == null) {
-        setCurrentProfile(null);
+        currentProfile = null;
       } else {
-        setCurrentProfile(Profile.fromJson(response));
+        currentProfile = Profile.fromJson(response);
       }
     } catch (e) {
-      setCurrentProfile(null);
+      currentProfile = null;
     }
 
     // Reload the history suggestions to show the new profile's history.

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../account/models/profile.dart';
 import '../../profiles/profile_widget.dart';
-import '../../supabase.dart';
+import '../../supabase_manager.dart';
 import '../chat_bubble.dart';
 import '../message_bar.dart';
 import '../models/message.dart';
@@ -30,7 +30,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     if (widget.active) {
-      _messagesStream = SupabaseManager.supabaseClient
+      _messagesStream = supabaseManager.supabaseClient
           .from('messages')
           .stream(primaryKey: <String>['id'])
           .eq('chat_id', widget.chatId)
@@ -119,7 +119,7 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatBubble> _buildChatBubbles(List<Message> messages) {
     final List<ChatBubble> chatBubbles = <ChatBubble>[];
     for (int i = 0; i < messages.length; i++) {
-      if (!messages[i].read && messages[i].senderId != SupabaseManager.getCurrentProfile()!.id) {
+      if (!messages[i].read && messages[i].senderId != supabaseManager.currentProfile!.id) {
         messages[i].markAsRead();
       }
       chatBubbles.add(

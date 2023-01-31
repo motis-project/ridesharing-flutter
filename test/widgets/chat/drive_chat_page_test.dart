@@ -7,7 +7,7 @@ import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/chat_factory.dart';
@@ -50,7 +50,7 @@ void main() {
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
       ).called(1);
-      final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
+      final List<RealtimeChannel> subscription = supabaseManager.supabaseClient.getChannels();
       expect(subscription.length, 1);
       expect(subscription[0].topic, 'realtime:public:messages:1');
     });
@@ -67,7 +67,7 @@ void main() {
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
       );
-      final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
+      final List<RealtimeChannel> subscription = supabaseManager.supabaseClient.getChannels();
       expect(subscription.length, 0);
     });
 
@@ -87,7 +87,7 @@ void main() {
         processor,
         urlMatcher: equals('/rest/v1/messages?select=%2A&order=created_at.desc.nullslast'),
       );
-      final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
+      final List<RealtimeChannel> subscription = supabaseManager.supabaseClient.getChannels();
       expect(subscription.length, 0);
     });
   });
@@ -208,7 +208,7 @@ void main() {
     });
     group('Icon.done_all', () {
       setUp(() {
-        SupabaseManager.setCurrentProfile(profile);
+        supabaseManager.currentProfile = profile;
       });
       testWidgets('is shown when last Message is from current user', (WidgetTester tester) async {
         final Message message = MessageFactory().generateFake(
@@ -263,7 +263,7 @@ void main() {
     });
     group('shows unreadMessage count', () {
       setUp(() {
-        SupabaseManager.setCurrentProfile(profile);
+        supabaseManager.currentProfile = profile;
       });
 
       testWidgets('when there are unread Messages', (WidgetTester tester) async {

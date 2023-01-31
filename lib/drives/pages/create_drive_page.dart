@@ -10,7 +10,7 @@ import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 import '../models/drive.dart';
 import '../pages/drive_detail_page.dart';
@@ -122,7 +122,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           _selectedDate.hour + 2,
           _selectedDate.minute,
         );
-        final Profile driver = SupabaseManager.getCurrentProfile()!;
+        final Profile driver = supabaseManager.currentProfile!;
 
         final bool hasDrive =
             await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
@@ -153,7 +153,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           endTime: endTime,
         );
 
-        await SupabaseManager.supabaseClient
+        await supabaseManager.supabaseClient
             .from('drives')
             .insert(drive.toJson())
             .select<Map<String, dynamic>>()

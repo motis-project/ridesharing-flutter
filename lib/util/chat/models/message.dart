@@ -1,6 +1,6 @@
 import '../../../account/models/profile.dart';
 import '../../model.dart';
-import '../../supabase.dart';
+import '../../supabase_manager.dart';
 import 'chat.dart';
 
 class Message extends Model {
@@ -53,12 +53,12 @@ class Message extends Model {
     };
   }
 
-  bool get isFromCurrentUser => senderId == SupabaseManager.getCurrentProfile()?.id;
+  bool get isFromCurrentUser => senderId == supabaseManager.currentProfile?.id;
 
   Future<void> markAsRead() async {
     read = true;
     //custom rpc call to mark message as read, so the user does not need the write permission on the messages table
-    await SupabaseManager.supabaseClient.rpc('mark_message_as_read', params: <String, dynamic>{'message_id': id});
+    await supabaseManager.supabaseClient.rpc('mark_message_as_read', params: <String, dynamic>{'message_id': id});
   }
 
   @override

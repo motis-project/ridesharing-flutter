@@ -18,7 +18,7 @@ class ThemeManager with ChangeNotifier {
   late ThemeMode currentThemeMode;
 
   Future<void> loadTheme() async {
-    await StorageManager.readData('themeMode').then((dynamic value) {
+    await storageManager.readData('themeMode').then((dynamic value) {
       switch (value) {
         case 'system':
           currentThemeMode = ThemeMode.system;
@@ -40,7 +40,7 @@ class ThemeManager with ChangeNotifier {
     if (value == null) return;
 
     currentThemeMode = value;
-    StorageManager.saveData('themeMode', value.name);
+    storageManager.saveData('themeMode', value.name);
     notifyListeners();
   }
 }

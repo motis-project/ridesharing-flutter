@@ -4,7 +4,7 @@ import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import '../../rides/models/ride.dart';
 import '../own_theme_fields.dart';
-import '../supabase.dart';
+import '../supabase_manager.dart';
 import 'seat_indicator.dart';
 import 'trip_card.dart';
 
@@ -39,7 +39,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data = await supabaseManager.supabaseClient.from('drives').select('''
       *,
       rides(
         *,

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
 import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
@@ -42,23 +42,23 @@ void main() {
   group('Message.isFromCurrentUser', () {
     setUp(() {
       final profile = ProfileFactory().generateFake();
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
     });
     test('returns true if message is from current user', () async {
       final message = MessageFactory().generateFake(
-        senderId: SupabaseManager.getCurrentProfile()?.id,
+        senderId: supabaseManager.currentProfile!.id,
       );
       expect(message.isFromCurrentUser, true);
     });
     test('returns false if message is not from current user', () async {
       final message = MessageFactory().generateFake(
-        senderId: SupabaseManager.getCurrentProfile()!.id! + 1,
+        senderId: supabaseManager.currentProfile!.id! + 1,
       );
       expect(message.isFromCurrentUser, false);
     });
 
     test('returns false if current user is null', () async {
-      SupabaseManager.setCurrentProfile(null);
+      supabaseManager.currentProfile = null;
       final message = MessageFactory().generateFake();
       expect(message.isFromCurrentUser, false);
     });

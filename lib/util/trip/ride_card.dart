@@ -12,7 +12,7 @@ import '../own_theme_fields.dart';
 import '../profiles/profile_widget.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
 import '../profiles/reviews/custom_rating_bar_size.dart';
-import '../supabase.dart';
+import '../supabase_manager.dart';
 import 'trip_card.dart';
 
 class RideCard extends TripCard<Ride> {
@@ -66,7 +66,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   Future<void> loadRide() async {
     Ride trip = widget.trip;
     final Map<String, dynamic> data =
-        await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
+        await supabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', trip.driveId).single();
     trip.drive = Drive.fromJson(data);
     if (mounted) {
       setState(() {
