@@ -6,7 +6,6 @@ import 'package:motis_mitfahr_app/drives/pages/drive_chat_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
-import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/trip/pending_ride_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
 
@@ -114,20 +113,45 @@ void main() {
     });
 
     testWidgets('Can handle other types of rides', (WidgetTester tester) async {
-      drive.rides!.add(RideFactory().generateFake(
-        start: 'Waypoint',
+      final DateTime now = DateTime.now();
+      final Ride approvedRide = RideFactory().generateFake(
+        start: 'WaypointStart',
+        startTime: now.add(const Duration(hours: 1)),
+        end: 'WaypointConnecting',
+        endTime: now.add(const Duration(hours: 2)),
         status: RideStatus.approved,
-      ));
+      );
 
-      drive.rides!.add(RideFactory().generateFake(
-        start: 'Waypoint2',
+      final Ride anotherApprovedRide = RideFactory().generateFake(
+        start: 'WaypointConnecting',
+        startTime: now.add(const Duration(hours: 2)),
+        end: 'WaypointEnd',
+        endTime: now.add(const Duration(hours: 3)),
+        status: RideStatus.approved,
+      );
+
+      final Ride cancelledByRiderRide = RideFactory().generateFake(
         status: RideStatus.cancelledByRider,
-      ));
+        start: 'UnusedWaypointStart',
+      );
 
-      drive.rides!.add(RideFactory().generateFake(
-        start: 'Waypoint3',
+      final Ride cancelledByDriverRide = RideFactory().generateFake(
         status: RideStatus.cancelledByDriver,
-      ));
+        end: 'UnusedWaypointEnd',
+      );
+
+      drive = DriveFactory().generateFake(
+        start: 'DriveStart',
+        startTime: now,
+        end: 'DriveEnd',
+        endTime: now.add(const Duration(hours: 3)),
+        rides: [
+          approvedRide,
+          anotherApprovedRide,
+          cancelledByRiderRide,
+          cancelledByDriverRide,
+        ],
+      );
 
       whenRequest(processor).thenReturnJson(drive.toJsonForApi());
 
@@ -135,13 +159,27 @@ void main() {
 
       await tester.pump();
 
+      // Once in the TripOverview, once in the visual details
       expect(find.text(drive.start), findsNWidgets(2));
-      expect(find.text('Waypoint'), findsOneWidget);
-      expect(find.text('Waypoint2'), findsNothing);
-      expect(find.text('Waypoint3'), findsNothing);
 
-      final Finder profileWidget = find.byType(ProfileWidget);
-      tester.tap(profileWidget.first);
+      final Finder waypointCardFinder = find.byKey(const Key('waypointCard'));
+
+      expect(waypointCardFinder, findsNWidgets(5));
+
+      final List<String> expectedPlaces = [
+        'DriveStart',
+        'WaypointStart',
+        'WaypointConnecting',
+        'WaypointEnd',
+        'DriveEnd',
+      ];
+
+      for (int i = 0; i < 5; i++) {
+        expect(find.descendant(of: waypointCardFinder.at(i), matching: find.text(expectedPlaces[i])), findsOneWidget);
+      }
+
+      expect(find.text('UnusedWaypointStart'), findsNothing);
+      expect(find.text('UnusedWaypointEnd'), findsNothing);
     });
 
     testWidgets('can Navigate to chatPage on Waypoint', (WidgetTester tester) async {

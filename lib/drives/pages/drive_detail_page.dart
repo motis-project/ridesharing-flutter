@@ -164,6 +164,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     padding: const EdgeInsets.all(8.0),
                     width: double.infinity,
                     child: Column(
+                      key: const Key('waypointCard'),
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: buildCard(stop),
@@ -294,7 +295,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  List<Widget> buildCard(Waypoint stop) {
+  List<Widget> buildCard(Waypoint waypoint) {
     final List<Widget> list = <Widget>[];
     list.add(
       MergeSemantics(
@@ -304,13 +305,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                localeManager.formatTime(stop.time),
+                localeManager.formatTime(waypoint.time),
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(width: 4.0),
-              Text(stop.place),
-              if (stop.place == _drive!.start) Semantics(label: S.of(context).pageDriveDetailLabelStartDrive),
-              if (stop.place == _drive!.end) Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
+              Text(waypoint.place),
+              if (waypoint.place == _drive!.start) Semantics(label: S.of(context).pageDriveDetailLabelStartDrive),
+              if (waypoint.place == _drive!.end) Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
             ],
           ),
         ),
@@ -319,9 +320,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     final Icon startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
     final Icon endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
-    final int actionsLength = stop.actions.length;
+    final int actionsLength = waypoint.actions.length;
     for (int index = 0; index < actionsLength; index++) {
-      final WaypointAction action = stop.actions[index];
+      final WaypointAction action = waypoint.actions[index];
       final Icon icon = action.isStart ? startIcon : endIcon;
       final Profile profile = action.ride.rider!;
       final Widget container = Semantics(
