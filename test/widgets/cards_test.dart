@@ -32,6 +32,8 @@ void main() {
   late Drive drive;
 
   setUpAll(() {
+    ride = RideFactory().generateFake();
+    drive = DriveFactory().generateFake(rides: [ride]);
     MockServer.setProcessor(processor);
   });
 
@@ -41,7 +43,6 @@ void main() {
 
   //since the code is the same for RideCard DriveCard and PendingRideCard, we only test DriveCard
   testWidgets('TripCard shows the correct information', (WidgetTester tester) async {
-    drive = DriveFactory().generateFake();
     whenRequest(processor).thenReturnJson(drive.toJsonForApi());
     await pumpMaterial(tester, DriveCard(drive));
 
@@ -62,12 +63,14 @@ void main() {
   });
 
   group('PendingRideCard', () {
-    ride = RideFactory().generateFake(
-      status: RideStatus.pending,
-      rider: NullableParameter(ProfileFactory().generateFake(id: 1)),
-      seats: 1,
-    );
-    drive = DriveFactory().generateFake(rides: [ride], seats: 2);
+    setUpAll(() {
+      ride = RideFactory().generateFake(
+        status: RideStatus.pending,
+        rider: NullableParameter(ProfileFactory().generateFake(id: 1)),
+        seats: 1,
+      );
+      drive = DriveFactory().generateFake(rides: [ride], seats: 2);
+    });
 
     setUp(() {
       whenRequest(processor).thenReturnJson([]);
@@ -374,7 +377,6 @@ void main() {
     });
 
     testWidgets('can Navigate to RideDetailPage', (WidgetTester tester) async {
-      ride = RideFactory().generateFake();
       whenRequest(processor).thenReturnJson(ride.drive!.toJsonForApi());
       whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/rides.*'))).thenReturnJson(ride.toJsonForApi());
       await pumpMaterial(tester, RideCard(ride));
