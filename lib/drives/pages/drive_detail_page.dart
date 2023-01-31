@@ -131,7 +131,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         }
       }
 
-      stops.sort((Waypoint a, Waypoint b) => a.time.compareTo(b.time));
+      stops.sort((Waypoint a, Waypoint b) {
+        final int timeDiff = a.time.compareTo(b.time);
+        if (timeDiff != 0) return timeDiff;
+        if (a.place == drive.start || b.place == drive.end) return -1;
+        if (a.place == drive.end || b.place == drive.start) return 1;
+
+        return 0;
+      });
       for (final Waypoint stop in stops) {
         stop.actions.sort((WaypointAction a, WaypointAction b) => a.isStart ? 1 : -1);
       }
