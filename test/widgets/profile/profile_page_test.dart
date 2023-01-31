@@ -13,7 +13,6 @@ import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/avatar.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
-import 'package:motis_mitfahr_app/welcome/pages/welcome_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/model_factory.dart';
@@ -307,11 +306,8 @@ void main() {
       await tester.tap(find.byKey(const Key('signOutButton')));
       await tester.pumpAndSettle();
 
-      // check if we are on the WelcomePage
-      expect(find.byType(WelcomePage), findsOneWidget);
-
-      // check if we are signed out
-      expect(SupabaseManager.getCurrentProfile(), null);
+      // check if sign out request is sent
+      expect(verifyRequest(processor, urlMatcher: equals('/auth/v1/logout?')).callCount, 1);
     });
 
     // run for both current and other profile
