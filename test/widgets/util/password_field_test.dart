@@ -135,9 +135,13 @@ void main() {
 
       await tester.tap(find.byType(IconButton));
       await tester.pumpAndSettle();
-
       innerTextField = tester.widget(innerTextFieldFinder);
       expect(innerTextField.obscureText, isFalse);
+
+      await tester.tap(find.byType(IconButton));
+      await tester.pumpAndSettle();
+      innerTextField = tester.widget(innerTextFieldFinder);
+      expect(innerTextField.obscureText, isTrue);
     });
 
     testWidgets('It is impossible to have confirmation AND strict validation', (WidgetTester tester) async {
