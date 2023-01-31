@@ -172,8 +172,5 @@ void main() {
 
       expect(find.byType(MainApp), findsOneWidget);
     });
-
-    // TODO: Write test case that checks the snackbar when email is invalid/expired
-    // (only possible after merging the welcome tests because I need to return error from API)
   });
 }
