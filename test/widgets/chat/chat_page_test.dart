@@ -47,44 +47,65 @@ void main() {
   });
 
   group('MessageBar', () {
+    final Finder messageBarFinder = find.byType(MessageBar);
+
     setUp(() => whenRequest(processor).thenReturnJson([]));
 
     testWidgets('is shown when Active', (WidgetTester tester) async {
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
 
-      expect(find.byType(MessageBar), findsOneWidget);
+      expect(messageBarFinder, findsOneWidget);
     });
 
     testWidgets('is not shown when not Active', (WidgetTester tester) async {
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId, active: false));
       await tester.pump();
 
-      expect(find.byType(MessageBar), findsNothing);
+      expect(messageBarFinder, findsNothing);
     });
 
-    testWidgets('can send Message', (WidgetTester tester) async {
-      final Profile profile = ProfileFactory().generateFake();
-      SupabaseManager.setCurrentProfile(profile);
-      await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
-      await tester.pump();
+    group('sending messages', () {
+      final Profile profile = ProfileFactory().generateFake(id: 1);
+      const String message = 'Hello World';
 
-      final Finder messageBar = find.byType(MessageBar);
-      expect(messageBar, findsOneWidget);
-      final textField = find.descendant(of: messageBar, matching: find.byType(TextFormField));
-      expect(textField, findsOneWidget);
-      await tester.enterText(textField, 'Hello World');
-      await tester.tap(find.byType(IconButton));
-      verifyRequest(
-        processor,
-        urlMatcher: equals('/rest/v1/messages'),
-        methodMatcher: equals('POST'),
-        bodyMatcher: equals({
-          'chat_id': chatId,
-          'content': 'Hello World',
-          'sender_id': profile.id,
-        }),
-      ).called(1);
+      Future<void> setUpMessageBar(WidgetTester tester) async {
+        SupabaseManager.setCurrentProfile(profile);
+        await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
+        await tester.pump();
+
+        final textField = find.descendant(of: messageBarFinder, matching: find.byType(TextFormField));
+        await tester.enterText(textField, message);
+      }
+
+      void verifyRequestSent() {
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/messages'),
+          methodMatcher: equals('POST'),
+          bodyMatcher: equals({
+            'chat_id': chatId,
+            'content': message,
+            'sender_id': profile.id,
+          }),
+        ).called(1);
+      }
+
+      testWidgets('can send message by clicking the Send Icon', (WidgetTester tester) async {
+        await setUpMessageBar(tester);
+
+        await tester.tap(find.byType(IconButton));
+
+        verifyRequestSent();
+      });
+
+      testWidgets('can send message by closing the keyboard', (WidgetTester tester) async {
+        await setUpMessageBar(tester);
+
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+
+        verifyRequestSent();
+      });
     });
   });
 

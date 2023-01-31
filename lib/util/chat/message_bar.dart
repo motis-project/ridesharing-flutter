@@ -28,6 +28,7 @@ class _MessageBarState extends State<MessageBar> {
                 Expanded(
                   child: TextFormField(
                     keyboardType: TextInputType.text,
+                    onFieldSubmitted: (_) => _submitMessage(),
                     maxLines: null,
                     autofocus: true,
                     controller: _textController,
@@ -40,7 +41,7 @@ class _MessageBarState extends State<MessageBar> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => _submitMessage(),
+                  onPressed: _submitMessage,
                   icon: const Icon(Icons.send),
                 ),
               ],
