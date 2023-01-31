@@ -6,8 +6,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 const String githubLink = 'https://github.com/MOTIS-Mitfahr-App/flutter-app';
 const String websiteLink = 'https://motis-project.de/';
-// TODO Terms of service
-const String termsOfServiceLink = 'https://motis-project.de/';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -98,10 +96,6 @@ class _AboutPageState extends State<AboutPage> {
                             TextButton(
                               onPressed: () async => launchUrlString(websiteLink),
                               child: Text(S.of(context).pageAboutWebsite),
-                            ),
-                            TextButton(
-                              onPressed: () async => launchUrlString(termsOfServiceLink),
-                              child: Text(S.of(context).pageAboutTermsOfService),
                             ),
                           ],
                         ),

@@ -105,7 +105,6 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
       'reject_ride',
       params: <String, dynamic>{'ride_id': _ride.id},
     );
-    //todo: notify rider
     widget.reloadPage();
   }
 

@@ -47,8 +47,7 @@ class _HelpPageState extends State<HelpPage> {
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion7,
-          //TODO Withdraw button text here if PR is merged
-          answer: S.of(context).pageHelpAnswer7(S.of(context).cancel),
+          answer: S.of(context).pageHelpAnswer7(S.of(context).pageRideDetailButtonWithdraw),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion8,

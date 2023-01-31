@@ -1,5 +1,5 @@
 abstract class Model {
-  int? id;
+  final int? id;
   final DateTime? createdAt;
 
   Model({

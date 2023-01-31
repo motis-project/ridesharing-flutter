@@ -375,8 +375,7 @@ void main() {
         testWidgets('Can request ride', (WidgetTester tester) async {
           await openDialog(tester);
 
-          // TODO: Add copyWith constructor to Ride
-          final Ride returnedRide = RideFactory().generateFake(status: RideStatus.pending);
+          final Ride returnedRide = ride.copyWith(status: RideStatus.pending);
           whenRequest(processor).thenReturnJson(returnedRide.toJsonForApi());
 
           final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));
@@ -581,10 +580,10 @@ void main() {
         chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
       );
       whenRequest(processor).thenReturnJson(ride.toJsonForApi());
-      whenRequest(processor,
-              urlMatcher:
-                  equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'))
-          .thenReturnJson([]);
+      whenRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'),
+      ).thenReturnJson([]);
     });
     testWidgets('with the right profile and chatId', (WidgetTester tester) async {
       await pumpMaterial(tester, RideDetailPage.fromRide(ride));
@@ -623,10 +622,10 @@ void main() {
         chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
       );
       whenRequest(processor).thenReturnJson(ride.toJsonForApi());
-      whenRequest(processor,
-              urlMatcher:
-                  equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'))
-          .thenReturnJson([]);
+      whenRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/messages?select=%2A&chat_id=eq.${ride.chatId}&order=created_at.desc.nullslast'),
+      ).thenReturnJson([]);
       await pumpMaterial(tester, RideDetailPage.fromRide(ride));
       await tester.pump();
       await tester.tap(find.byKey(const Key('chatButton')));
