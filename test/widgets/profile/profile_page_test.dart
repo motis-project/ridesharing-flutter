@@ -13,6 +13,7 @@ import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/avatar.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/welcome/pages/welcome_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/model_factory.dart';
@@ -291,21 +292,26 @@ void main() {
       expect(find.byKey(const Key('reportButton')), findsNothing);
       expect(find.byKey(const Key('disabledReportButton')), findsNothing);
     });
-    // dont know how to do it yet
     testWidgets('Sign out button', (WidgetTester tester) async {
+      // sign in
       await SupabaseManager.supabaseClient.auth.signInWithPassword(
         email: email,
         password: authId,
       );
-      print(SupabaseManager.supabaseClient.auth.currentUser);
+
+      //load page
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
+
+      // tap sign out button
       await tester.tap(find.byKey(const Key('signOutButton')));
       await tester.pumpAndSettle();
-      // how does admin.signOut work? Where do we do CurrentProfile = null?
-      //expect(find.byType(WelcomePage), findsOneWidget);
-      print(SupabaseManager.supabaseClient.auth.currentUser);
-      //expect(SupabaseManager.getCurrentProfile(), null);
+
+      // check if we are on the WelcomePage
+      expect(find.byType(WelcomePage), findsOneWidget);
+
+      // check if we are signed out
+      expect(SupabaseManager.getCurrentProfile(), null);
     });
 
     // run for both current and other profile
