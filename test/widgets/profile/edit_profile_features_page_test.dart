@@ -5,11 +5,11 @@ import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_profile_features_page.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 
-import '../util/factories/profile_factory.dart';
-import '../util/mock_server.dart';
-import '../util/pump_material.dart';
-import '../util/request_processor.dart';
-import '../util/request_processor.mocks.dart';
+import '../../util/factories/profile_factory.dart';
+import '../../util/mocks/mock_server.dart';
+import '../../util/mocks/request_processor.dart';
+import '../../util/mocks/request_processor.mocks.dart';
+import '../../util/pump_material.dart';
 
 void main() {
   late Profile profile;
@@ -22,7 +22,7 @@ void main() {
   setUp(() {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
-    whenRequest(processor, urlMatcher: equals('/rest/v1/profiles?id=eq.1')).thenReturn('');
+    whenRequest(processor, urlMatcher: equals('/rest/v1/profiles?id=eq.1')).thenReturnJson('');
   });
   group('edit_profile_features_page', () {
     testWidgets('show added features', (WidgetTester tester) async {
