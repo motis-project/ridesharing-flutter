@@ -4,6 +4,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_profile_features_page.dart';
 import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
+import 'package:motis_mitfahr_app/util/snackbar.dart';
 import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -85,24 +86,39 @@ void main() {
       final List<Feature> notAddedFeatures =
           Feature.values.where((Feature e) => !profile.features!.contains(e)).toList();
 
-      //find feature to add
-      final Finder addFinder = find.descendant(
-          of: find.ancestor(
-              of: find.byKey(Key('${notAddedFeatures.first.toString()} Tile')), matching: find.byType(ListTile)),
-          matching: find.byKey(const Key('addButton')));
-      expect(addFinder, findsOneWidget);
+      Feature feature = notAddedFeatures.first;
+      late Finder addFinder;
 
-      //add feature
-      await tester.tap(addFinder);
-      await tester.pumpAndSettle();
+      //try adding features until found one that is not mutually exclusive
+      for (final Feature notAddedFeature in notAddedFeatures) {
+        //check if feature is not added and exists
+        addFinder = find.descendant(
+            of: find.ancestor(
+                of: find.byKey(Key('${notAddedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+            matching: find.byKey(const Key('addButton')));
+        expect(addFinder, findsOneWidget);
+
+        //tap add button
+        await tester.tap(addFinder);
+        await tester.pumpAndSettle();
+
+        try {
+          //check if snackbar is shown => feature is mutually exclusive
+          expect(find.byType(SnackBar), findsNothing);
+          feature = notAddedFeature;
+          break;
+        } catch (e) {
+          //wait until snackbar is gone
+          await tester.pump(SnackBarDurationType.medium.duration);
+        }
+      }
 
       //check if feature is removed from not added features
       expect(addFinder, findsNothing);
 
       //check if feature is added to added features
       final Finder addedFeatureFinder = find.descendant(
-          of: find.ancestor(
-              of: find.byKey(Key('${notAddedFeatures.first.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
