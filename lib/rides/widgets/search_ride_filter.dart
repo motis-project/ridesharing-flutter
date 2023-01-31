@@ -83,6 +83,7 @@ class SearchRideFilter {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CustomRatingBar(
+            key: const Key('searchRideRatingBar'),
             size: CustomRatingBarSize.large,
             rating: _minRating,
             onRatingUpdate: (double newRating) => innerSetState(
@@ -92,6 +93,7 @@ class SearchRideFilter {
           if (_isRatingExpanded) ...<Widget>[
             Text(S.of(context).reviewCategoryComfort),
             CustomRatingBar(
+              key: const Key('searchRideComfortRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minComfortRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -100,6 +102,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategorySafety),
             CustomRatingBar(
+              key: const Key('searchRideSafetyRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minSafetyRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -108,6 +111,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategoryReliability),
             CustomRatingBar(
+              key: const Key('searchRideReliabilityRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minReliabilityRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -116,6 +120,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategoryHospitality),
             CustomRatingBar(
+              key: const Key('searchRideHospitalityRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minHospitalityRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -124,6 +129,7 @@ class SearchRideFilter {
             ),
           ],
           TextButton(
+            key: const Key('searchRideRatingExpandButton'),
             onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
             child: Row(
               children: <Widget>[
@@ -159,6 +165,7 @@ class SearchRideFilter {
                 final Feature feature = shownFeatures[index];
                 final bool featureSelected = _selectedFeatures.contains(feature);
                 return FilterChip(
+                  key: Key('searchRideFeatureChip${feature.name}'),
                   avatar: feature.getIcon(context),
                   label: Text(feature.getDescription(context)),
                   selected: _selectedFeatures.contains(feature),
@@ -189,6 +196,7 @@ class SearchRideFilter {
             ),
           ),
           TextButton(
+            key: const Key('searchRideFeaturesExpandButton'),
             onPressed: () => innerSetState(() {
               _isFeatureListExpanded = !_isFeatureListExpanded;
               if (_selectedFeatures.isNotEmpty) {
@@ -211,11 +219,13 @@ class SearchRideFilter {
 
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
     return DropdownButton<SearchRideSorting>(
+      key: const Key('searchRideSortingDropdownButton'),
       icon: const Icon(Icons.sort),
       value: _sorting,
       items: SearchRideSorting.values.map((SearchRideSorting sorting) {
         final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
         return DropdownMenuItem<SearchRideSorting>(
+          key: Key('searchRideSortingDropdownItem${sorting.name}'),
           enabled: enabled,
           value: sorting,
           child: Text(
@@ -252,10 +262,12 @@ class SearchRideFilter {
                 ),
                 actions: <Widget>[
                   TextButton(
+                    key: const Key('searchRideFilterResetToDefaultButton'),
                     child: Text(S.of(context).searchRideFilterResetToDefault),
                     onPressed: () => innerSetState(() => setDefaultFilterValues()),
                   ),
                   TextButton(
+                    key: const Key('searchRideFilterOkayButton'),
                     child: Text(S.of(context).okay),
                     onPressed: () {
                       setState(() {});
@@ -374,6 +386,7 @@ class SearchRideFilter {
               child: SizedBox(
                 height: double.infinity,
                 child: InkWell(
+                  key: const Key('searchRideFilterButton'),
                   onTap: () => dialog(context, setState),
                   child: Padding(
                     padding: const EdgeInsets.all(6),

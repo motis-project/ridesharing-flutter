@@ -18,13 +18,13 @@ class SearchRidePage extends StatefulWidget {
   const SearchRidePage({super.key});
 
   @override
-  State<SearchRidePage> createState() => _SearchRidePageState();
+  State<SearchRidePage> createState() => SearchRidePageState();
 }
 
-class _SearchRidePageState extends State<SearchRidePage> {
-  final TextEditingController _startController = TextEditingController();
+class SearchRidePageState extends State<SearchRidePage> {
+  final TextEditingController startController = TextEditingController();
   AddressSuggestion? _startSuggestion;
-  final TextEditingController _destinationController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
   AddressSuggestion? _destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
@@ -50,8 +50,8 @@ class _SearchRidePageState extends State<SearchRidePage> {
   void dispose() {
     _dateController.dispose();
     _timeController.dispose();
-    _startController.dispose();
-    _destinationController.dispose();
+    startController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -114,7 +114,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', _startController.text).eq('cancelled', false);
+        ''').eq('start', startController.text).eq('cancelled', false);
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         .map(
@@ -145,8 +145,8 @@ class _SearchRidePageState extends State<SearchRidePage> {
         children: <Widget>[
           Expanded(
             child: StartDestinationTimeline(
-              startController: _startController,
-              destinationController: _destinationController,
+              startController: startController,
+              destinationController: destinationController,
               onStartSelected: (AddressSuggestion suggestion) => setState(() {
                 _startSuggestion = suggestion;
                 loadRides();
@@ -158,10 +158,11 @@ class _SearchRidePageState extends State<SearchRidePage> {
             ),
           ),
           IconButton(
+            key: const Key('searchRideSwapButton'),
             onPressed: () => setState(() {
-              final String oldStartText = _startController.text;
-              _startController.text = _destinationController.text;
-              _destinationController.text = oldStartText;
+              final String oldStartText = startController.text;
+              startController.text = destinationController.text;
+              destinationController.text = oldStartText;
               final AddressSuggestion? oldStartSuggestion = _startSuggestion;
               _startSuggestion = _destinationSuggestion;
               _destinationSuggestion = oldStartSuggestion;
@@ -180,6 +181,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return Semantics(
       button: true,
       child: TextFormField(
+        key: const Key('searchRideDatePicker'),
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: S.of(context).formDate,
@@ -197,6 +199,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return Semantics(
       button: true,
       child: TextFormField(
+        key: const Key('searchRideTimePicker'),
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: S.of(context).formTime,
