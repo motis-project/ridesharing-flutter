@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _items.removeWhere(
               (Model element) =>
-                  element is Message && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
+                  element is RideEvent && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
             );
           });
         }
