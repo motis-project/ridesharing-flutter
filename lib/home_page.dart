@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     load();
     final int profileId = SupabaseManager.getCurrentProfile()!.id!;
+
     SupabaseManager.supabaseClient.channel('public:messages').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
@@ -56,6 +57,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
     ).subscribe();
+
     SupabaseManager.supabaseClient.channel('public:ride_events').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
@@ -122,7 +124,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${S.of(context).hello} ${SupabaseManager.getCurrentProfile()!.username} :)'),
-        //title: Text(S.of(context).pageHomeTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
@@ -242,7 +243,7 @@ class _HomePageState extends State<HomePage> {
         child: ListTile(
           leading: Avatar(message.sender!),
           title: Text(message.sender!.username),
-          subtitle: Text(message.content),
+          subtitle: Text(message.content, maxLines: 1),
           trailing: Text(
             DateFormat('HH:mm').format(message.createdAt!),
             style: Theme.of(context).textTheme.caption,
