@@ -14,7 +14,7 @@ class LocaleManager with ChangeNotifier {
   late Locale currentLocale;
 
   Future<void> loadCurrentLocale() async {
-    await storageManager.readData('locale').then((dynamic value) {
+    await storageManager.readData<String>('locale').then((String? value) {
       value ??= Platform.localeName.split('_').first;
 
       final Locale locale =

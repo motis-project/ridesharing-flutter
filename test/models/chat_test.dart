@@ -33,7 +33,10 @@ void main() {
       senderId: profileId + 1,
       createDependencies: false,
     );
-    supabaseManager.currentProfile = profile;
+
+    setUp(() {
+      supabaseManager.currentProfile = profile;
+    });
 
     test('zero when Messages are empty', () async {
       final chat = ChatFactory().generateFake(

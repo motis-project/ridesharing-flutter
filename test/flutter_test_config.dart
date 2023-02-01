@@ -7,7 +7,7 @@ import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../util/factories/profile_factory.dart';
+import 'util/factories/profile_factory.dart';
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   setUp(() {
