@@ -48,7 +48,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                           _gender = value;
                         });
                       },
-                      key: Key('${index}genderRadioListTile'),
+                      key: Key('genderRadioListTile$index'),
                     );
                   }
                   return RadioListTile<Gender?>(

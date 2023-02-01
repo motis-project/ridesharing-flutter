@@ -114,7 +114,7 @@ void main() {
         await tester.pump();
 
         // check if avatar is shown
-        expect(find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('AvatarTappable'))),
+        expect(find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('avatarTappable'))),
             findsOneWidget);
       });
       testWidgets('username$i', (WidgetTester tester) async {
@@ -275,7 +275,7 @@ void main() {
       // check if edit buttons are not shown
       expect(find.byKey(const Key('editButton')), findsNothing);
       expect(find.byKey(const Key('editUsername')), findsNothing);
-      expect(find.byKey(const Key('AvatarUpload')), findsNothing);
+      expect(find.byKey(const Key('avatarUpload')), findsNothing);
       expect(find.byKey(const Key('signOutButton')), findsNothing);
     });
     testWidgets('currentUser buttons', (WidgetTester tester) async {
@@ -286,7 +286,7 @@ void main() {
       // check if edit buttons are shown
       expect(find.byKey(const Key('editButton')), findsNWidgets(5));
       expect(find.byKey(const Key('editUsername')), findsOneWidget);
-      expect(find.byKey(const Key('AvatarUpload')), findsOneWidget);
+      expect(find.byKey(const Key('avatarUpload')), findsOneWidget);
       expect(find.byKey(const Key('signOutButton')), findsOneWidget);
       expect(find.byKey(const Key('reportButton')), findsNothing);
       expect(find.byKey(const Key('disabledReportButton')), findsNothing);
@@ -321,7 +321,7 @@ void main() {
         await tester.pump();
 
         //check if avatar is displayed
-        final Finder avatar = find.byKey(const Key('AvatarTappable'));
+        final Finder avatar = find.byKey(const Key('avatarTappable'));
         expect(avatar, findsOneWidget);
 
         //tap avatar

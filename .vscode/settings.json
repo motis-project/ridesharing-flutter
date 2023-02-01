@@ -21,8 +21,5 @@
   "files.watcherExclude": {
     "**/.fvm": true
   },
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "cSpell.words": [
-    "disabledreport"
-  ]
+  "java.configuration.updateBuildConfiguration": "automatic"
 }

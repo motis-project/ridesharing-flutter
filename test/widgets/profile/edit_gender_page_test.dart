@@ -49,15 +49,15 @@ void main() {
       await pumpMaterial(tester, EditGenderPage(profile));
       await tester.pump();
       //check if male is displayed
-      final maleGenderFinder = find.byKey(const Key('0genderRadioListTile'));
+      final maleGenderFinder = find.byKey(const Key('genderRadioListTile0'));
       expect(maleGenderFinder, findsOneWidget);
 
       //check if female is displayed
-      final femaleGenderFinder = find.byKey(const Key('1genderRadioListTile'));
+      final femaleGenderFinder = find.byKey(const Key('genderRadioListTile1'));
       expect(femaleGenderFinder, findsOneWidget);
 
       //check if diverse is displayed
-      final diverseGenderFinder = find.byKey(const Key('2genderRadioListTile'));
+      final diverseGenderFinder = find.byKey(const Key('genderRadioListTile2'));
       expect(diverseGenderFinder, findsOneWidget);
 
       //check if preferNotToSay is displayed
@@ -71,14 +71,14 @@ void main() {
       await tester.pump();
 
       //tap male
-      final maleGenderFinder = find.byKey(const Key('0genderRadioListTile'));
+      final maleGenderFinder = find.byKey(const Key('genderRadioListTile0'));
       await tester.tap(maleGenderFinder);
       await tester.pump();
 
       //check if male is selected
 
       //tap female
-      final femaleGenderFinder = find.byKey(const Key('1genderRadioListTile'));
+      final femaleGenderFinder = find.byKey(const Key('genderRadioListTile1'));
       await tester.tap(femaleGenderFinder);
       await tester.pump();
 
