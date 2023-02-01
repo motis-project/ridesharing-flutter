@@ -72,6 +72,18 @@ void main() {
         urlMatcher: startsWith('/auth/v1/logout'),
         methodMatcher: equals('POST'),
       ).thenReturnJson('');
+
+      //Mocking message request from Homepage
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/messages'),
+      ).thenReturnJson([]);
+
+      //Mocking ride_event request from Homepage
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/ride_events'),
+      ).thenReturnJson([]);
     });
 
     Future<void> setSession() async {

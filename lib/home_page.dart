@@ -1,3 +1,4 @@
+import 'package:deep_pick/deep_pick.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import 'rides/pages/ride_detail_page.dart';
 import 'rides/pages/search_ride_page.dart';
 import 'util/chat/models/message.dart';
 import 'util/chat/pages/chat_page.dart';
+import 'util/locale_manager.dart';
 import 'util/model.dart';
 import 'util/parse_helper.dart';
 import 'util/ride_event.dart';
@@ -35,51 +37,41 @@ class _HomePageState extends State<HomePage> {
     SupabaseManager.supabaseClient.channel('public:messages').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
-      // ignore: always_specify_types
-      (payload, [ref]) {
-        // ignore: avoid_dynamic_calls
-        if (payload['new']['sender_id'] != profileId) {
-          // ignore: avoid_dynamic_calls
-          _loadNewMessage(payload['new']['id']);
+      (dynamic payload, [dynamic ref]) {
+        if (pick(pick(payload, 'new').asMapOrEmpty(), 'sender_id').asIntOrThrow() != profileId) {
+          _loadNewMessage(pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow());
         }
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
-
-      // ignore: always_specify_types
-      (payload, [ref]) {
-        // ignore: avoid_dynamic_calls
-        if (payload['new']['read'] == true) {
+      (dynamic payload, [dynamic ref]) {
+        if (pick(pick(payload, 'new').asMapOrEmpty(), 'read').asBoolOrThrow() == true) {
           setState(() {
-            _items =
-                // ignore: avoid_dynamic_calls
-                _items.where((Model element) => element is RideEvent || element.id != payload['new']['id']).toList();
+            _items.removeWhere(
+              (Model element) =>
+                  element is Message && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
+            );
           });
         }
       },
     ).subscribe();
     SupabaseManager.supabaseClient.channel('public:ride_events').on(
       RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'), //, filter: 'sender_id=neq.$profileId'
-      // ignore: always_specify_types
-      (payload, [ref]) {
-        // ignore: avoid_dynamic_calls
-        if (payload['new']['sender_id'] != profileId) {
-          // ignore: avoid_dynamic_calls
-          _loadNewRideEvent(payload['new']['id']);
-        }
+      ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
+      (dynamic payload, [dynamic ref]) {
+        _loadNewRideEvent(pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow());
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'), //, filter: 'sender_id=neq.$profileId'
-      // ignore: always_specify_types
-      (payload, [ref]) {
-        // ignore: avoid_dynamic_calls
-        if (payload['new']['read'] == true) {
+      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'),
+      (dynamic payload, [dynamic ref]) {
+        if (pick(pick(payload, 'new').asMapOrEmpty(), 'read').asBoolOrThrow()) {
           setState(() {
-            // ignore: avoid_dynamic_calls
-            _items = _items.where((Model element) => element is Message || element.id != payload['new']['id']).toList();
+            _items.removeWhere(
+              (Model element) =>
+                  element is Message && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
+            );
           });
         }
       },
@@ -129,7 +121,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).pageHomeTitle),
+        title: Text('${S.of(context).hello} ${SupabaseManager.getCurrentProfile()!.username} :)'),
+        //title: Text(S.of(context).pageHomeTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
@@ -152,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                       ? ListView.separated(
                           itemCount: _items.length,
                           separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(height: 12);
+                            return const SizedBox(height: 2);
                           },
                           itemBuilder: (BuildContext context, int index) {
                             return _buildWidget(_items[index], context);
@@ -183,14 +176,10 @@ class _HomePageState extends State<HomePage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Hero(
-                  tag: 'SearchButton',
-                  transitionOnUserGestures: true,
-                  child: Button(
-                    S.of(context).pageHomeSearchButton,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
-                    ),
+                Button(
+                  S.of(context).pageHomeSearchButton,
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -240,7 +229,7 @@ class _HomePageState extends State<HomePage> {
       )
     ''').eq('id', messageId).single();
     final Message message = Message.fromJson(data);
-    if (message.read == false) {
+    if (!message.read) {
       setState(() {
         _items.insert(0, message);
       });
@@ -274,15 +263,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRideEventWidget(RideEvent rideEvent, BuildContext context) {
-    final bool isforDrive = rideEvent.ride!.riderId != SupabaseManager.getCurrentProfile()!.id!;
+    final bool isForRide = rideEvent.ride!.rider!.isCurrentUser;
     return Card(
       child: InkWell(
         child: ListTile(
-          leading: isforDrive ? const Icon(Icons.drive_eta) : const Icon(Icons.chair),
+          leading: isForRide ? const Icon(Icons.drive_eta) : const Icon(Icons.chair),
           title: Text(rideEvent.getTitle(context)),
           subtitle: Text(rideEvent.getMessage(context)),
           trailing: Text(
-            DateFormat('HH:mm').format(rideEvent.createdAt!),
+            localeManager.formatDate(rideEvent.createdAt!),
             style: Theme.of(context).textTheme.caption,
           ),
           onTap: () {
@@ -290,7 +279,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (BuildContext context) =>
-                    isforDrive ? DriveDetailPage(id: rideEvent.ride!.driveId) : RideDetailPage(id: rideEvent.rideId),
+                    isForRide ? RideDetailPage(id: rideEvent.rideId) : DriveDetailPage(id: rideEvent.ride!.driveId),
               ),
             );
           },
@@ -302,10 +291,9 @@ class _HomePageState extends State<HomePage> {
   Widget _buildWidget(Model model, BuildContext context) {
     if (model is Message) {
       return _buildMessageWidget(model, context);
-    } else if (model is RideEvent) {
-      return _buildRideEventWidget(model, context);
     } else {
-      throw Exception('Unknown model type');
+      //model can only be a Message or RideEvent
+      return _buildRideEventWidget(model as RideEvent, context);
     }
   }
 }

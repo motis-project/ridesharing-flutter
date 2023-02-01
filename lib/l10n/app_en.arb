@@ -357,8 +357,8 @@
 
   "rideEventPendingTitle": "Ride requested!",
   "rideEventApprovedTitle": "Ride approved!",
-  "rideEventRejectedTitle": "Ride rejected!",
-  "rideEventWithdrawnTitle": "Ride withdrawn!",
+  "rideEventRejectedTitle": "Request rejected!",
+  "rideEventWithdrawnTitle": "Request withdrawn!",
   "rideEventCancelledByDriverTitle": "Drive cancelled!",
   "rideEventCancelledByRiderTitle": "Ride cancelled!",
   "rideEventPendingMessage": "{username} has requested a ride",
@@ -399,6 +399,8 @@
   },
 
   "pageHomePageEmpty": "No new messages",
+
+  "hello": "Hello",
 
   "appName": "Motis Ride-Sharing App"
 }

@@ -9,23 +9,34 @@ import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/factories/ride_event_factory.dart';
 import '../util/factories/ride_factory.dart';
-import '../util/mock_server.dart';
+import '../util/mocks/mock_server.dart';
+import '../util/mocks/request_processor.dart';
+import '../util/mocks/request_processor.mocks.dart';
 
 void main() {
-  final UrlProcessor rideEventProcessor = UrlProcessor();
+  final MockRequestProcessor rideEventProcessor = MockRequestProcessor();
 
   setUp(() async {
     MockServer.setProcessor(rideEventProcessor);
   });
 
-  group('markAsRead', () {
-    test('marks rideEventas read', () async {
-      final RideEvent rideEvent = RideEventFactory().generateFake(
-        read: false,
-      );
-      await rideEvent.markAsRead();
-      expect(rideEvent.read, true);
-    });
+  test('mark as read', () async {
+    final RideEvent rideEvent = RideEventFactory().generateFake(
+      read: false,
+    );
+    whenRequest(rideEventProcessor).thenReturnJson('');
+
+    await rideEvent.markAsRead();
+
+    verifyRequest(
+      rideEventProcessor,
+      urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read'),
+      bodyMatcher: equals({
+        'ride_event_id': rideEvent.id,
+      }),
+    );
+
+    expect(rideEvent.read, true);
   });
 
   group('RideEvent.isForCurrentUser', () {
@@ -37,9 +48,11 @@ void main() {
       id: 1,
       driverId: user.id! + 1,
     );
+
     setUp(() {
       SupabaseManager.setCurrentProfile(user);
     });
+
     test('returns true if rideEvent is for current user', () async {
       final RideEvent rideEventApproved = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
@@ -54,30 +67,35 @@ void main() {
         )),
         category: RideEventCategory.rejected,
       );
+
       final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
         )),
         category: RideEventCategory.cancelledByDriver,
       );
+
       final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
         category: RideEventCategory.cancelledByRider,
       );
+
       final RideEvent rideEventPending = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
         category: RideEventCategory.pending,
       );
+
       final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
         category: RideEventCategory.withdrawn,
       );
+
       expect(rideEventApproved.isForCurrentUser(), true);
       expect(rideEventRejected.isForCurrentUser(), true);
       expect(rideEventCancelledByDriver.isForCurrentUser(), true);
@@ -100,12 +118,14 @@ void main() {
         )),
         category: RideEventCategory.rejected,
       );
+
       final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
         category: RideEventCategory.cancelledByDriver,
       );
+
       final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
@@ -113,6 +133,7 @@ void main() {
         )),
         category: RideEventCategory.cancelledByRider,
       );
+
       final RideEvent rideEventPending = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
@@ -120,6 +141,7 @@ void main() {
         )),
         category: RideEventCategory.pending,
       );
+
       final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
@@ -135,6 +157,7 @@ void main() {
       expect(rideEventWithdrawn.isForCurrentUser(), false);
     });
   });
+
   group('RideEvent.fromJson', () {
     test('parses a message from json', () {
       final Map<String, dynamic> json = {
@@ -151,6 +174,7 @@ void main() {
       expect(rideEvent.category, RideEventCategory.approved);
       expect(rideEvent.read, false);
     });
+
     test('can handle ride', () {
       final Map<String, dynamic> json = {
         'id': 1,

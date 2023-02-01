@@ -17,7 +17,7 @@ void main() {
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    whenRequest(processor).thenReturnJson('');
+    whenRequest(processor).thenReturnJson([]);
   });
 
   setUp(() {});

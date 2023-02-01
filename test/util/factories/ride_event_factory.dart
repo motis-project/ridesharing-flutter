@@ -27,7 +27,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
       createdAt: createdAt ?? DateTime.now(),
       category: category ?? RideEventCategory.values[random.nextInt(RideEventCategory.values.length)],
       read: read ?? Random().nextBool(),
-      rideId: generatedRide?.id ?? randomId,
+      rideId: generatedRide?.id ?? rideId ?? randomId,
       ride: generatedRide,
     );
   }

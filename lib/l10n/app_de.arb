@@ -344,48 +344,21 @@
 
   "rideEventPendingTitle": "Mitfahrt angefragt!",
   "rideEventApprovedTitle": "Mitfahrt bestätigt!",
-  "rideEventRejectedTitle": "Mitfahrt abgelehnt!",
-  "rideEventWithdrawnTitle": "Mitfahrt verworfen!",
+  "rideEventRejectedTitle": "Anfrage abgelehnt!",
+  "rideEventWithdrawnTitle": "Anfrage zurückgenommen!",
   "rideEventCancelledByDriverTitle": "Fahrt abgesagt!",
   "rideEventCancelledByRiderTitle": "Mitfahrt abgesagt!",
+
   "rideEventPendingMessage": "{username} hat eine Mitfahrt angefragt",
-  "@rideEventPendingMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventApprovedMessage": "{username} hat deine Mitfahrt bestätigt",
-  "@rideEventApprovedMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventRejectedMessage": "{username} hat deine Mitfahrt abgelehnt",
-  "@rideEventRejectedMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventWithdrawnMessage": "{username} hat deine Mitfahrt verworfen",
-  "@rideEventWithdrawnMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventCancelledByDriverMessage": "{username} hat die Fahrt abgesagt",
-  "@rideEventCancelledByDriverMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
  "rideEventCancelledByRiderMessage": "{username} hat die Mitfahrt abgesagt",
-  "@rideEventCancelledByRiderMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
 
   "pageHomePageEmpty": "Keine neuen Nachrichten",
+
+  "hello": "Hallo",
 
 
   "appName": "Motis Mitfahr-App"

@@ -44,6 +44,14 @@ class RideEvent extends Model {
     };
   }
 
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll(<String, dynamic>{
+        ...ride == null ? <String, dynamic>{} : <String, dynamic>{'ride': ride?.toJsonForApi()},
+      });
+  }
+
   Future<void> markAsRead() async {
     read = true;
     //custom rpc call to mark rideEvent as read, so the user does not need the write permission on the ride_events table
@@ -51,13 +59,12 @@ class RideEvent extends Model {
   }
 
   bool isForCurrentUser() {
-    final int profileId = SupabaseManager.getCurrentProfile()!.id!;
     if (category == RideEventCategory.approved ||
         category == RideEventCategory.cancelledByDriver ||
         category == RideEventCategory.rejected) {
-      return ride!.rider!.id == profileId;
+      return ride!.rider!.isCurrentUser;
     } else {
-      return ride!.drive!.driver!.id == profileId;
+      return ride!.drive!.driver!.isCurrentUser;
     }
   }
 
