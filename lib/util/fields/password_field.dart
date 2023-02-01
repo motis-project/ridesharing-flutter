@@ -101,7 +101,7 @@ class _PasswordFieldState extends State<PasswordField> {
     } else if (value.length < 8) {
       return S.of(context).formPasswordValidateMinLength;
     } else if (RegExp('[0-9]').hasMatch(value) == false) {
-      return S.of(context).formPasswordValidateMinLength;
+      return S.of(context).formPasswordValidateNumber;
     } else if (RegExp('[A-Z]').hasMatch(value) == false) {
       return S.of(context).formPasswordValidateUppercase;
     } else if (RegExp('[a-z]').hasMatch(value) == false) {
