@@ -33,16 +33,16 @@ class SearchRidePageState extends State<SearchRidePage> {
   bool _wholeDay = true;
   int seats = 1;
 
-  late final SearchRideFilter _filter;
+  late final SearchRideFilter filter;
 
-  List<Ride>? _rideSuggestions;
+  List<Ride>? rideSuggestions;
 
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _filter = SearchRideFilter(wholeDay: _wholeDay);
+    filter = SearchRideFilter(wholeDay: _wholeDay);
     loadRides();
   }
 
@@ -127,12 +127,12 @@ class SearchRidePageState extends State<SearchRidePage> {
             drive.endTime,
             seats,
             supabaseManager.currentProfile?.id ?? -1,
-            10.25,
+            double.parse(drive.startPosition.distanceTo(drive.endPosition).toStringAsFixed(2)),
           ),
         )
         .toList();
     setState(() {
-      _rideSuggestions = rides;
+      rideSuggestions = rides;
       _loading = false;
     });
   }
@@ -234,7 +234,7 @@ class SearchRidePageState extends State<SearchRidePage> {
             value: _wholeDay,
             onChanged: (bool? value) => setState(() {
               _wholeDay = value!;
-              _filter.wholeDay = _wholeDay;
+              filter.wholeDay = _wholeDay;
             }),
           ),
         ],
@@ -284,7 +284,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildMainContentSliver() {
-    if (_rideSuggestions == null || _loading) {
+    if (rideSuggestions == null || _loading) {
       if (_startSuggestion == null || _destinationSuggestion == null) {
         return buildEmptyRideSuggestions(
           key: const Key('searchRideNoInput'),
@@ -301,7 +301,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         ),
       );
     }
-    final List<Ride> filterApplied = _filter.apply(_rideSuggestions!, selectedDate);
+    final List<Ride> filterApplied = filter.apply(rideSuggestions!, selectedDate);
     final List<Ride> filteredSuggestions = applyTimeConstraints(filterApplied);
     if (filteredSuggestions.isEmpty) {
       return buildEmptyRideSuggestions(
@@ -329,13 +329,13 @@ class SearchRidePageState extends State<SearchRidePage> {
                   ),
                 ),
               )
-            : _rideSuggestions!.isNotEmpty
+            : rideSuggestions!.isNotEmpty
                 ? Semantics(
                     button: true,
                     tooltip: S.of(context).pageSearchRideTooltipFilter,
                     child: InkWell(
                       key: const Key('searchRideRelaxRestrictions'),
-                      onTap: () => _filter.dialog(context, setState),
+                      onTap: () => filter.dialog(context, setState),
                       child: Text(
                         S.of(context).pageSearchRideRelaxRestrictions,
                         style: Theme.of(context).textTheme.titleMedium,
@@ -391,7 +391,7 @@ class SearchRidePageState extends State<SearchRidePage> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: _filter.buildIndicatorRow(context, setState),
+                  child: filter.buildIndicatorRow(context, setState),
                 ),
               ),
               SliverPinnedHeader(

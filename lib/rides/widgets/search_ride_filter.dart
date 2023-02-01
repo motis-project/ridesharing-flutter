@@ -33,7 +33,7 @@ class SearchRideFilter {
   late int _minReliabilityRating;
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
-  late SearchRideSorting _sorting;
+  late SearchRideSorting sorting;
 
   bool _wholeDay;
 
@@ -46,7 +46,7 @@ class SearchRideFilter {
     _minReliabilityRating = _defaultRating;
     _minHospitalityRating = _defaultRating;
     _selectedFeatures = <Feature>[..._defaultFeatures];
-    _sorting = _defaultSorting;
+    sorting = _defaultSorting;
   }
 
   SearchRideFilter({required bool wholeDay}) : _wholeDay = wholeDay {
@@ -57,8 +57,8 @@ class SearchRideFilter {
 
   set wholeDay(bool wholeDay) {
     _wholeDay = wholeDay;
-    if (_wholeDay && _sorting == SearchRideSorting.timeProximity) {
-      _sorting = SearchRideFilter._defaultSorting;
+    if (_wholeDay && sorting == SearchRideSorting.timeProximity) {
+      sorting = SearchRideFilter._defaultSorting;
     }
   }
 
@@ -217,25 +217,27 @@ class SearchRideFilter {
     );
   }
 
-  Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
+  Widget _buildSortingFilter(BuildContext context, void Function(void Function()) setState) {
+    print('Build sorting filter');
+    String yay;
     return DropdownButton<SearchRideSorting>(
       key: const Key('searchRideSortingDropdownButton'),
       icon: const Icon(Icons.sort),
-      value: _sorting,
-      items: SearchRideSorting.values.map((SearchRideSorting sorting) {
+      value: sorting,
+      items: SearchRideSorting.values.map((SearchRideSorting rideSorting) {
         final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
         return DropdownMenuItem<SearchRideSorting>(
-          key: Key('searchRideSortingDropdownItem${sorting.name}'),
+          key: Key('searchRideSortingDropdownItem${rideSorting.name}'),
           enabled: enabled,
-          value: sorting,
+          value: rideSorting,
           child: Text(
-            sorting.getDescription(context),
+            rideSorting.getDescription(context),
             style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
           ),
         );
       }).toList(),
-      onChanged: (SearchRideSorting? value) => innerSetState(
-        () => _sorting = value!,
+      onChanged: (SearchRideSorting? value) => setState(
+        () => sorting = value!,
       ),
       underline: const SizedBox(),
     );
@@ -432,7 +434,7 @@ class SearchRideFilter {
             return ratingSatisfied && featuresSatisfied;
           },
         )
-        .sorted(_sorting.sortFunction(date, wholeDay: wholeDay))
+        .sorted(sorting.sortFunction(date, wholeDay: wholeDay))
         .toList();
   }
 }
