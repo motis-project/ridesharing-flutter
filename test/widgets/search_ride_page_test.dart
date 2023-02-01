@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
 import 'package:motis_mitfahr_app/rides/widgets/search_ride_filter.dart';
@@ -11,6 +12,8 @@ import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
 import '../util/factories/address_suggestion_factory.dart';
 import '../util/factories/drive_factory.dart';
+import '../util/factories/model_factory.dart';
+import '../util/factories/profile_factory.dart';
 import '../util/mocks/mock_server.dart';
 import '../util/mocks/request_processor.dart';
 import '../util/mocks/request_processor.mocks.dart';
@@ -88,7 +91,7 @@ void main() {
       int? hospitalityRating}) async {
     await tester.tap(find.byKey(const Key('searchRideFilterButton')));
     await tester.pump();
-    await tester.tap(find.byKey(const Key('searchRideRatingExtendButton')));
+    await tester.tap(find.byKey(const Key('searchRideRatingExpandButton')));
     await tester.pump();
     if (rating != null) {
       await tester.tap(find
@@ -118,8 +121,13 @@ void main() {
     if (features != null) {
       await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
       await tester.pump();
+      final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
       for (final Feature feature in features) {
-        await tester.scrollUntilVisible(find.byKey(Key('searchRideFeatureChip${feature.name}')), 100);
+        await tester.scrollUntilVisible(
+          find.byKey(Key('searchRideFeatureChip${feature.name}')),
+          100,
+          scrollable: scrollable,
+        );
         await tester.tap(find.byKey(Key('searchRideFeatureChip${feature.name}')));
       }
     }
@@ -407,13 +415,18 @@ void main() {
         expect(find.byKey(const Key('searchRideNoResults')), findsOneWidget);
       });
 
-      testWidgets('No results', (WidgetTester tester) async {
+      testWidgets('Too restrictive filters', (WidgetTester tester) async {
         final String start = faker.address.city();
         final String destination = faker.address.city();
         final DateTime startTime = DateTime.now();
         final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats - 1) + 1;
 
-        final List<Map<String, dynamic>> drives = [];
+        final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
+        final List<Map<String, dynamic>> drives = [
+          DriveFactory()
+              .generateFake(driver: NullableParameter(driver), start: start, startTime: startTime, seats: seats)
+              .toJsonForApi(),
+        ];
         whenRequest(processor).thenReturnJson(drives);
 
         await pumpMaterial(tester, const SearchRidePage());
@@ -421,9 +434,14 @@ void main() {
         await enterStartAndDestination(tester, start, destination);
         await enterDateAndTime(tester, startTime);
         await enterSeats(tester, seats);
+        await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
 
         expect(find.byType(RideCard, skipOffstage: false), findsNothing);
-        expect(find.byKey(const Key('searchRideNoResults')), findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('searchRideRelaxRestrictions')));
+        await tester.pump();
+
+        expect(find.byType(Dialog), findsOneWidget);
       });
 
       testWidgets('Results at wrong times', (WidgetTester tester) async {
@@ -459,5 +477,7 @@ void main() {
         expect(find.byType(RideCard, skipOffstage: false), findsOneWidget);
       });
     });
+
+    group('Filter', () {});
   });
 }
