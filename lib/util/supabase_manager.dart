@@ -28,6 +28,7 @@ class SupabaseManager {
           .select<Map<String, dynamic>?>()
           .eq('auth_id', supabaseClient.auth.currentUser!.id)
           .maybeSingle();
+
       if (response == null) {
         currentProfile = null;
       } else {

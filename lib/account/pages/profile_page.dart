@@ -364,7 +364,6 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context, ProfilePictureUpdateMethod.delete);
               },
-              key: const Key('DeleteButton'),
               child: Text(S.of(context).pageProfileUpdateProfilePictureDelete),
             ),
           ],
