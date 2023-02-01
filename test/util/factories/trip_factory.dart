@@ -16,11 +16,9 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
     DateTime? endTime,
     int? seats,
     bool hideInListView = false,
-    // Convenience parameter to set the duration of the trip
-    Duration? duration,
     bool createDependencies = true,
   }) {
-    final TripTimes times = generateTimes(startTime, endTime, duration);
+    final TripTimes times = generateTimes(startTime, endTime);
 
     return Trip(
       id: id ?? randomId,
@@ -36,13 +34,12 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
     ) as T;
   }
 
-  TripTimes generateTimes(DateTime? startTime, DateTime? endTime, Duration? duration) {
-    assert(startTime == null || endTime == null || duration == null);
+  TripTimes generateTimes(DateTime? startTime, DateTime? endTime) {
+    // Only applied if startTime or endTime are null
+    final Duration randomDuration = Duration(hours: random.nextInt(5) + 1);
 
-    duration ??= Duration(hours: random.nextInt(5) + 1);
-
-    startTime ??= endTime == null ? DateTime.now() : endTime.subtract(duration);
-    endTime ??= startTime.add(duration);
+    startTime ??= endTime == null ? DateTime.now() : endTime.subtract(randomDuration);
+    endTime ??= startTime.add(randomDuration);
 
     assert(startTime.isBefore(endTime));
 
