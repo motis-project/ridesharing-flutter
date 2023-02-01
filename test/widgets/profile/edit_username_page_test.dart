@@ -22,7 +22,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
 
@@ -44,68 +44,54 @@ void main() {
       'email': email,
     });
 
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_username_page', () {
     testWidgets('username TextField', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditUsernamePage(profile));
       await tester.pump();
 
-      // check if username is displayed
       expect(find.text(profile.username), findsOneWidget);
 
-      // check if username TextField is displayed
       final Finder usernameInput = find.byKey(const Key('usernameTextField'));
       expect(usernameInput, findsOneWidget);
 
-      // check if username TextField is editable
       await tester.tap(usernameInput);
       await tester.pumpAndSettle();
       await tester.enterText(usernameInput, 'newUsername');
       expect(find.text('newUsername'), findsOneWidget);
     });
     testWidgets('username clear Button', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditUsernamePage(profile));
       await tester.pump();
 
-      // check if username is displayed
       expect(find.text(profile.username), findsOneWidget);
 
-      // check if clearButton is displayed
       final Finder clearButton = find.byKey(const Key('clearButton'));
       expect(clearButton, findsOneWidget);
 
-      //check if username is cleared
       await tester.tap(clearButton);
       await tester.pump();
       expect(find.text(profile.username), findsNothing);
     });
     testWidgets('save Button', (WidgetTester tester) async {
-      //sign in
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      //load ProfilePage
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      //check if EditUsernamePage is displayed
       await tester.tap(find.byKey(const Key('editUsername')));
       await tester.pumpAndSettle();
       expect(find.byType(EditUsernamePage), findsOneWidget);
 
-      //check if saveButton is displayed
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
-      //tap saveButton
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
-      //check if ProfilePage is displayed
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });

@@ -24,7 +24,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(
@@ -44,33 +44,33 @@ void main() {
           email: email),
       'email': email,
     });
+
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_profile_features_page', () {
     testWidgets('show added features', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      // check if added features are shown
       for (int i = 0; i < profile.features!.length; i++) {
         final featureFinder = find.byKey(Key('${profile.features![i].toString()} Tile'));
         expect(featureFinder, findsOneWidget);
       }
     });
     testWidgets('show not added features', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      // find out what features are not added
       final List<Feature> notAddedFeatures =
           Feature.values.where((Feature e) => !profile.features!.contains(e)).toList();
 
-      //check if any features are missing
       expect(notAddedFeatures.length + profile.features!.length, Feature.values.length);
 
-      // check if not added features are shown
       for (int i = 0; i < notAddedFeatures.length; i++) {
         final featureFinder = find.byKey(Key('${notAddedFeatures[i].toString()} Tile'));
         await tester.scrollUntilVisible(featureFinder, 100, scrollable: find.byType(Scrollable));
@@ -78,11 +78,9 @@ void main() {
       }
     });
     testWidgets('add features', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      // find out what features are not added
       final List<Feature> notAddedFeatures =
           Feature.values.where((Feature e) => !profile.features!.contains(e)).toList();
 
@@ -91,14 +89,12 @@ void main() {
 
       //try adding features until found one that is not mutually exclusive
       for (final Feature notAddedFeature in notAddedFeatures) {
-        //check if feature is not added and exists
         addFinder = find.descendant(
             of: find.ancestor(
                 of: find.byKey(Key('${notAddedFeature.toString()} Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('addButton')));
         expect(addFinder, findsOneWidget);
 
-        //tap add button
         await tester.tap(addFinder);
         await tester.pumpAndSettle();
 
@@ -113,17 +109,14 @@ void main() {
         }
       }
 
-      //check if feature is removed from not added features
       expect(addFinder, findsNothing);
 
-      //check if feature is added to added features
       final Finder addedFeatureFinder = find.descendant(
           of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
     testWidgets('snackbar changes on different mutually exclusive', (WidgetTester tester) async {
-      // set profile with smoking and vaping
       profile = ProfileFactory().generateFake(
         id: 1,
         profileFeatures: [
@@ -133,11 +126,9 @@ void main() {
       );
       SupabaseManager.setCurrentProfile(profile);
 
-      // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      // find mutually exclusive features add buttons
       final Finder notSmokingFinder = find.descendant(
           of: find.ancestor(
               of: find.byKey(Key('${Feature.noSmoking.toString()} Tile')), matching: find.byType(ListTile)),
@@ -147,41 +138,33 @@ void main() {
               of: find.byKey(Key('${Feature.noVaping.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
 
-      //check if Smoking Snackbar is shown
       await tester.tap(notSmokingFinder);
       await tester.pumpAndSettle();
       expect(find.byKey(Key('${Feature.noSmoking} mutuallyExclusiveSnackBar')), findsOneWidget);
 
-      //check if old Snackbar is replaced
       await tester.tap(notVapingFinder);
       await tester.pumpAndSettle();
       expect(find.byKey(Key('${Feature.noSmoking} mutuallyExclusiveSnackBar')), findsNothing);
       expect(find.byKey(Key('${Feature.noVaping} mutuallyExclusiveSnackBar')), findsOneWidget);
 
-      //check if feature were not added
       expect(notSmokingFinder, findsOneWidget);
       expect(notVapingFinder, findsOneWidget);
     });
     testWidgets('delete features', (WidgetTester tester) async {
-      // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      //find feature to delete
       final Feature feature = profile.features!.first;
       final Finder deleteFinder = find.descendant(
           of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton')));
       expect(deleteFinder, findsOneWidget);
 
-      //delete feature
       await tester.tap(deleteFinder);
       await tester.pump();
 
-      //check if feature is removed from added features
       expect(deleteFinder, findsNothing);
 
-      //check if feature is added to not added features
       final Finder deletedFeatureFinder = find.descendant(
           of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
@@ -191,22 +174,18 @@ void main() {
 
     group('move features', () {
       testWidgets('move added feature', (WidgetTester tester) async {
-        // load page
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
         await tester.pump();
 
-        //find drag handle
         final Feature feature = profile.features!.first;
         final Finder dragFinder = find.descendant(
             of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
-        //move feature
         await tester.drag(dragFinder, const Offset(0, 50));
         await tester.pump();
 
-        //check if feature is not at old position
         expect(
             find.descendant(
                 of: find.byKey(const ValueKey<int>(0)), matching: find.byKey(Key('${feature.toString()} Tile'))),
@@ -222,22 +201,18 @@ void main() {
             findsOneWidget);
       });
       testWidgets('move not added feature', (WidgetTester tester) async {
-        //load page
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
         await tester.pump();
 
-        //find drag handle
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
             of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
-        //move feature
         await tester.drag(dragFinder, const Offset(0, 50));
         await tester.pump();
 
-        //check if feature is not at old position
         expect(
             find.descendant(
                 of: find.byKey(ValueKey<int>(profile.profileFeatures!.length + 1)),
@@ -252,18 +227,15 @@ void main() {
             findsOneWidget);
       });
       testWidgets('use move to add feature', (WidgetTester tester) async {
-        // load page
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
         await tester.pump();
 
-        //find drag handle
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
             of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
-        //move feature
         await tester.drag(dragFinder, const Offset(0, -50));
         await tester.pump();
 
@@ -279,18 +251,15 @@ void main() {
         }
       });
       testWidgets('use move to remove feature', (WidgetTester tester) async {
-        // load page
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
         await tester.pump();
 
-        //find drag handle
         final Feature feature = profile.features!.last;
         final Finder dragFinder = find.descendant(
             of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
-        //move feature
         await tester.drag(dragFinder, const Offset(0, 50));
         await tester.pump();
 
@@ -303,30 +272,19 @@ void main() {
       });
     });
     testWidgets('no features', (WidgetTester tester) async {
-      //setup profile with no features
       profile = ProfileFactory().generateFake(id: 1, createDependencies: false);
       SupabaseManager.setCurrentProfile(profile);
 
-      //load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       await tester.pump();
 
-      //check if no features are added
       expect(find.byKey(const Key('removeButton')), findsNothing);
       expect(find.byKey(const Key('emptyList')), findsOneWidget);
     });
     testWidgets('save Button', (WidgetTester tester) async {
-      // sign in
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      // load ProfilePage
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      //load EditProfileFeaturesPage
       await tester.scrollUntilVisible(find.byKey(const Key('features')), 100,
           scrollable: find.byType(Scrollable).first);
       await tester
@@ -334,14 +292,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(EditProfileFeaturesPage), findsOneWidget);
 
-      // check if save button is displayed
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
-      // tap save button
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
-      // check if ProfilePage is loaded
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });

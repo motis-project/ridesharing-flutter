@@ -21,7 +21,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(
@@ -41,76 +41,44 @@ void main() {
           email: email),
       'email': email,
     });
+
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_gender_page', () {
     testWidgets('display genderRadioListTile', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditGenderPage(profile));
       await tester.pump();
-      //check if male is displayed
+
       final maleGenderFinder = find.byKey(const Key('genderRadioListTile0'));
       expect(maleGenderFinder, findsOneWidget);
 
-      //check if female is displayed
       final femaleGenderFinder = find.byKey(const Key('genderRadioListTile1'));
       expect(femaleGenderFinder, findsOneWidget);
 
-      //check if diverse is displayed
       final diverseGenderFinder = find.byKey(const Key('genderRadioListTile2'));
       expect(diverseGenderFinder, findsOneWidget);
 
-      //check if preferNotToSay is displayed
       final preferNotToSayGenderFinder = find.byKey(const Key('preferNotToSayGenderRadioListTile'));
       expect(preferNotToSayGenderFinder, findsOneWidget);
     });
-    // don't know to test what I have selected
-    testWidgets('change gender', (WidgetTester tester) async {
-      // load page
-      await pumpMaterial(tester, EditGenderPage(profile));
-      await tester.pump();
-
-      //tap male
-      final maleGenderFinder = find.byKey(const Key('genderRadioListTile0'));
-      await tester.tap(maleGenderFinder);
-      await tester.pump();
-
-      //check if male is selected
-
-      //tap female
-      final femaleGenderFinder = find.byKey(const Key('genderRadioListTile1'));
-      await tester.tap(femaleGenderFinder);
-      await tester.pump();
-
-      //check if female is selected
-
-      //expect(selected, Gender.female)
-    });
     testWidgets('save Button', (WidgetTester tester) async {
-      //sign in
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      //load page
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
-
-      //load EditGenderPage
       await tester
           .tap(find.descendant(of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditGenderPage), findsOneWidget);
 
-      //check if save button is displayed
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
-      //tap save button
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
-      //check if ProfilePage is displayed
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });

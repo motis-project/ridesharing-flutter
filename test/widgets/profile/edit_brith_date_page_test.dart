@@ -23,9 +23,10 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
+
     whenRequest(
       processor,
       urlMatcher: startsWith('/auth/v1/token'),
@@ -43,98 +44,85 @@ void main() {
           email: email),
       'email': email,
     });
+
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_birth_date_page', () {
     testWidgets('birthDate TextField', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
 
-      //check if birthDate is displayed
-      expect(find.text(localeManager.formatDate(profile.birthDate!)), findsOneWidget);
+      final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
+      final Finder birthDateInputFinder = find.byKey(const Key('birthDateInput'));
 
-      //check if birthDate TextField is displayed
-      final Finder birthDateInput = find.byKey(const Key('birthDateInput'));
-      expect(birthDateInput, findsOneWidget);
-
-      //check if birthDate TextField is editable
-      await tester.tap(birthDateInput);
-      await tester.pumpAndSettle();
-      expect(find.byType(DatePickerDialog), findsOneWidget);
+      expect(birthDateFinder, findsOneWidget);
+      expect(birthDateInputFinder, findsOneWidget);
     });
     testWidgets('change birthDate', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
 
-      //check if birthDate is displayed
-      final Finder birthDateInput = find.text(localeManager.formatDate(profile.birthDate!));
-      expect(birthDateInput, findsOneWidget);
+      final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
+      final Finder birthDateInputFinder = find.byKey(const Key('birthDateInput'));
 
-      //tap birthDate TextField
-      await tester.tap(find.byKey(const Key('birthDateInput')));
+      await tester.tap(birthDateInputFinder);
       await tester.pumpAndSettle();
+      expect(find.byType(DatePickerDialog), findsOneWidget);
 
-      //tap in DatePickerDialog to custom input
       await tester.tap(find.byIcon(Icons.edit));
       await tester.pumpAndSettle();
 
-      //enter new birthDate
-      await tester.tap(birthDateInput.last);
+      await tester.tap(birthDateFinder.last);
       final String date = localeManager.formatDate(profile.birthDate!.add(const Duration(days: 5)));
 
-      //leave DatePickerDialog
-      await tester.enterText(birthDateInput.last, date);
+      await tester.enterText(birthDateFinder.last, date);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
-
-      //check if new birthDate is displayed
       expect(find.text(date), findsOneWidget);
     });
     testWidgets('clear Button', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditBirthDatePage(profile));
       await tester.pump();
 
-      //check if birthDate is displayed
-      expect(find.text(localeManager.formatDate(profile.birthDate!)), findsOneWidget);
+      final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
 
-      //check if clear Button is displayed
+      expect(birthDateFinder, findsOneWidget);
+
       final Finder clearButton = find.byKey(const Key('clearButton'));
       expect(clearButton, findsOneWidget);
 
-      //check if birthDate is cleared
       await tester.tap(clearButton);
       await tester.pump();
-      expect(find.text(localeManager.formatDate(profile.birthDate!)), findsNothing);
+      expect(birthDateFinder, findsNothing);
     });
     testWidgets('save Button', (WidgetTester tester) async {
-      //sign in
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      //load page
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
+      expect(find.text(profile.age.toString()), findsOneWidget);
 
-      //check if EditBirthDatePage is displayed
       await tester
           .tap(find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('editButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditBirthDatePage), findsOneWidget);
 
-      //check if save Button is displayed
-      expect(find.byKey(const Key('saveButton')), findsOneWidget);
+      final Finder clearButton = find.byKey(const Key('clearButton'));
+      await tester.tap(clearButton);
+      await tester.pump();
 
-      //tap save Button
-      await tester.tap(find.byKey(const Key('saveButton')));
+      final Finder saveButtonFinder = find.byKey(const Key('saveButton'));
+      expect(saveButtonFinder, findsOneWidget);
+      await tester.tap(saveButtonFinder);
       await tester.pumpAndSettle();
 
-      //check if ProfilePage is displayed
       expect(find.byType(ProfilePage), findsOneWidget);
+      /*expect(find.text(profile.age.toString()), findsNothing);
+      expect(find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('noInfoText'))),
+          findsOneWidget);*/
     });
   });
 }

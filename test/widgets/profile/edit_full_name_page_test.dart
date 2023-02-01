@@ -21,7 +21,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
 
@@ -43,107 +43,83 @@ void main() {
       'email': email,
     });
 
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_full_name_page', () {
     testWidgets('surname TextField', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
 
-      //check if surname is displayed
       expect(find.text(profile.surname!), findsOneWidget);
 
-      //check if surname text field is displayed
       final Finder surnameInput = find.byKey(const Key('surname'));
       expect(surnameInput, findsOneWidget);
 
-      //check if surname TextField is editable
       await tester.tap(surnameInput);
       await tester.pump();
       await tester.enterText(surnameInput, 'newSurname');
       expect(find.text('newSurname'), findsOneWidget);
     });
     testWidgets('name TextField', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
 
-      //check if name is displayed
       expect(find.text(profile.name!), findsOneWidget);
 
-      //check if name text field is displayed
       final Finder nameInput = find.byKey(const Key('name'));
       expect(nameInput, findsOneWidget);
 
-      //check if name TextField is editable
       await tester.tap(nameInput);
       await tester.pump();
       await tester.enterText(nameInput, 'newName');
       expect(find.text('newName'), findsOneWidget);
     });
     testWidgets('surname clear Button', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
 
-      //check if surname is displayed
       expect(find.text(profile.surname!), findsOneWidget);
 
-      //check if surname clear button is displayed
       final Finder clearButton = find.byKey(const Key('clearButton')).first;
       expect(clearButton, findsOneWidget);
 
-      //check surname is being cleared
       await tester.tap(clearButton);
       await tester.pump();
       expect(find.text(profile.surname!), findsNothing);
     });
     testWidgets('name clear Button', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditFullNamePage(profile));
       await tester.pump();
 
-      //check if name is displayed
       expect(find.text(profile.name!), findsOneWidget);
-      final Finder clearButton = find.byKey(const Key('clearButton')).last;
 
-      //check if name clear button is displayed
+      final Finder clearButton = find.byKey(const Key('clearButton')).last;
       expect(clearButton, findsOneWidget);
 
-      //check surname is being cleared
       await tester.tap(clearButton);
       await tester.pump();
       expect(find.text(profile.name!), findsNothing);
     });
-    //same problem as in edit_username_page_test.dart
     testWidgets('save Button', (WidgetTester tester) async {
-      //login
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      //load ProfilePage
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      //tap edit button for fullName
+      expect(find.text(profile.fullName), findsOneWidget);
+
       await tester
           .tap(find.descendant(of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editButton'))));
       await tester.pumpAndSettle();
-
-      //check if EditFullNamePage is displayed
       expect(find.byType(EditFullNamePage), findsOneWidget);
 
-      //check if saveButton is displayed
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
-
-      //tap saveButton
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
-      //check if ProfilePage is displayed
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });

@@ -35,7 +35,9 @@ class ProfileFactory extends ModelFactory<Profile> {
       birthDate: getNullableParameterOr(
           birthDate,
           faker.date.dateTime(
-              minYear: DateTime(1900).year, maxYear: DateTime.now().subtract(const Duration(days: 365 * 12)).year)),
+            minYear: Profile.minAge,
+            maxYear: DateTime.now().subtract(const Duration(days: 365 * 12)).year,
+          )),
       surname: getNullableParameterOr(surname, faker.person.firstName()),
       name: getNullableParameterOr(name, faker.person.lastName()),
       gender: getNullableParameterOr(gender, Gender.values[random.nextInt(Gender.values.length)]),

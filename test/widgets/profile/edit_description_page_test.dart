@@ -17,11 +17,12 @@ void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
   const String email = 'motismitfahrapp@gmail.com';
   const String authId = '123';
+
   setUpAll(() async {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(
@@ -41,69 +42,58 @@ void main() {
           email: email),
       'email': email,
     });
+
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_description_page', () {
     testWidgets('description TextField', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditDescriptionPage(profile));
       await tester.pump();
 
-      //check if description is displayed
       expect(find.text(profile.description!), findsOneWidget);
 
-      //check if description TextField is displayed
       final Finder descriptionInput = find.byKey(const Key('description'));
       expect(descriptionInput, findsOneWidget);
 
-      //check if description TextField is editable
       await tester.tap(descriptionInput);
       await tester.pumpAndSettle();
       await tester.enterText(descriptionInput, 'newDescription');
       expect(find.text('newDescription'), findsOneWidget);
     });
     testWidgets('description clear Button', (WidgetTester tester) async {
-      //load page
       await pumpMaterial(tester, EditDescriptionPage(profile));
       await tester.pump();
 
-      //check if description is displayed
       expect(find.text(profile.description!), findsOneWidget);
 
-      //check if clear Button is displayed
       final Finder clearButton = find.byKey(const Key('clearButton'));
       expect(clearButton, findsOneWidget);
 
-      //check if description is cleared
       await tester.tap(clearButton);
       await tester.pump();
       expect(find.text(profile.description!), findsNothing);
     });
     testWidgets('save Button', (WidgetTester tester) async {
-      //sign in
-      SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      // load ProfilePage
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      // load EditDescriptionPage
+      expect(find.text(profile.description!), findsOneWidget);
+
       await tester.tap(
           find.descendant(of: find.byKey(const Key('description')), matching: find.byKey(const Key('editButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditDescriptionPage), findsOneWidget);
 
-      // check if save Button is displayed
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
-      //tap save Button
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
-      //check if ProfilePage is displayed
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });

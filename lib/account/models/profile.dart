@@ -51,6 +51,8 @@ class Profile extends Model {
 
   bool get isCurrentUser => id == supabaseManager.currentProfile?.id;
 
+  static int get minAge => DateTime(1900).year;
+
   List<Feature>? get features =>
       profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.feature).toList();
 
