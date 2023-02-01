@@ -442,7 +442,7 @@ void main() {
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().warning);
       });
 
-      testWidgets('succesColor for drive with only approved rides', (WidgetTester tester) async {
+      testWidgets('successColor for drive with only approved rides', (WidgetTester tester) async {
         //drive in the future with approved rides
         drive = DriveFactory().generateFake(
           endTime: DateTime.now().add(const Duration(hours: 1)),

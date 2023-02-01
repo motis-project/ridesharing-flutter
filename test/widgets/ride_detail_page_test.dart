@@ -238,25 +238,27 @@ void main() {
 
     group('Riders view', () {
       testWidgets('it shows only visible riders that overlap', (WidgetTester tester) async {
+        final DateTime now = DateTime.now();
+
         final List<Ride> rideWithStatuses = RideStatus.values
             .where((status) => !status.isRealRider())
             .map(
               (status) => RideFactory().generateFake(
                 status: status,
-                endTime: DateTime.now().add(const Duration(hours: 1)),
+                endTime: now.add(const Duration(hours: 1)),
               ),
             )
             .toList();
 
         final Ride approvedRide = RideFactory().generateFake(
           status: RideStatus.approved,
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endTime: now.add(const Duration(hours: 1)),
         );
 
         final Ride approvedRideWithoutOverlap = RideFactory().generateFake(
           status: RideStatus.approved,
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 3)),
+          startTime: now.add(const Duration(hours: 2)),
+          endTime: now.add(const Duration(hours: 3)),
         );
 
         final Ride cancelledByDriverRide = RideFactory().generateFake(
@@ -266,8 +268,8 @@ void main() {
 
         final Ride cancelledByDriverRideWithoutOverlap = RideFactory().generateFake(
           status: RideStatus.cancelledByDriver,
-          startTime: DateTime.now().add(const Duration(hours: 2)),
-          endTime: DateTime.now().add(const Duration(hours: 3)),
+          startTime: now.add(const Duration(hours: 2)),
+          endTime: now.add(const Duration(hours: 3)),
         );
 
         // The drive has "the" ride, but we redefine that ride later to avoid StackOverflow
@@ -285,7 +287,7 @@ void main() {
           rider: NullableParameter(ride.rider),
           status: RideStatus.approved,
           drive: NullableParameter(drive),
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endTime: now.add(const Duration(hours: 1)),
         );
 
         whenRequest(processor).thenReturnJson(ride.toJsonForApi());

@@ -268,107 +268,98 @@ void main() {
       expect(drive.getMaxUsedSeats(), null);
     });
     test('no seats taken', () async {
-      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.pending,
-          seats: 1,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.withdrawnByRider,
-          seats: 1,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.cancelledByDriver,
-          seats: 2,
-        ),
-      ]);
+      final Drive drive = DriveFactory().generateFake(
+        seats: 3,
+        rides: [
+          RideFactory().generateFake(status: RideStatus.pending),
+          RideFactory().generateFake(status: RideStatus.withdrawnByRider),
+          RideFactory().generateFake(status: RideStatus.cancelledByDriver),
+        ],
+      );
       expect(drive.getMaxUsedSeats(), 0);
     });
     test('seats are taken by approved rides', () async {
-      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.approved,
-          seats: 2,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.cancelledByRider,
-          seats: 2,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.rejected,
-          seats: 2,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 15, 10),
-          endTime: DateTime(2022, 2, 2, 15, 20),
-          status: RideStatus.approved,
-          seats: 1,
-        ),
-      ]);
+      final DateTime now = DateTime.now();
+      final Drive drive = DriveFactory().generateFake(
+        seats: 3,
+        rides: <Ride>[
+          RideFactory().generateFake(
+            startTime: now,
+            endTime: now.add(const Duration(minutes: 30)),
+            status: RideStatus.approved,
+            seats: 2,
+          ),
+          RideFactory().generateFake(
+            startTime: now,
+            status: RideStatus.cancelledByRider,
+            seats: 2,
+          ),
+          RideFactory().generateFake(
+            startTime: now,
+            status: RideStatus.rejected,
+            seats: 2,
+          ),
+          RideFactory().generateFake(
+            startTime: now.add(const Duration(hours: 1)),
+            status: RideStatus.approved,
+            seats: 1,
+          ),
+        ],
+      );
       expect(drive.getMaxUsedSeats(), 2);
     });
     test('multiple rides take seats at the same time', () async {
-      final Drive drive = DriveFactory().generateFake(seats: 3, rides: <Ride>[
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 30),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.approved,
-          seats: 1,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14),
-          endTime: DateTime(2022, 2, 2, 14, 20),
-          status: RideStatus.approved,
-          seats: 1,
-        ),
-        RideFactory().generateFake(
-          startTime: DateTime(2022, 2, 2, 14, 20),
-          endTime: DateTime(2022, 2, 2, 15),
-          status: RideStatus.approved,
-          seats: 2,
-        ),
-      ]);
+      final DateTime now = DateTime.now();
+      final Drive drive = DriveFactory().generateFake(
+        seats: 3,
+        rides: [
+          RideFactory().generateFake(
+            startTime: now.add(const Duration(minutes: 30)),
+            endTime: now.add(const Duration(hours: 1)),
+            status: RideStatus.approved,
+            seats: 1,
+          ),
+          RideFactory().generateFake(
+            startTime: now,
+            endTime: now.add(const Duration(minutes: 20)),
+            status: RideStatus.approved,
+            seats: 1,
+          ),
+          RideFactory().generateFake(
+            startTime: now.add(const Duration(minutes: 20)),
+            endTime: now.add(const Duration(hours: 1)),
+            status: RideStatus.approved,
+            seats: 2,
+          ),
+        ],
+      );
       expect(drive.getMaxUsedSeats(), 3);
     });
   });
   group('Drive.isRidePossible', () {
     test('empty drive', () async {
       final Drive drive = DriveFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14),
-        endTime: DateTime(2022, 2, 2, 16),
         seats: 4,
         rides: [],
         createDependencies: false,
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14, 50),
-        endTime: DateTime(2022, 2, 2, 15, 10),
-        status: RideStatus.approved,
-        seats: 1,
+        startTime: drive.startTime,
+        endTime: drive.endTime,
+        seats: 2,
       );
       expect(drive.isRidePossible(ride), true);
     });
     test('full ride', () async {
+      final DateTime now = DateTime.now();
       final Drive drive = DriveFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14),
-        endTime: DateTime(2022, 2, 2, 15),
+        startTime: now,
+        endTime: now.add(const Duration(hours: 1)),
         seats: 1,
         rides: [
           RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14),
-            endTime: DateTime(2022, 2, 2, 15),
+            startTime: now,
+            endTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 1,
           )
@@ -376,42 +367,41 @@ void main() {
         createDependencies: false,
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14, 50),
-        endTime: DateTime(2022, 2, 2, 15),
-        seats: 1,
+        startTime: now.add(const Duration(minutes: 30)),
+        endTime: now.add(const Duration(hours: 1)),
       );
       expect(drive.isRidePossible(ride), false);
     });
     test('share ride with other rides', () async {
+      final DateTime now = DateTime.now();
       final Drive drive = DriveFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14),
-        endTime: DateTime(2022, 2, 2, 16),
+        startTime: now,
+        endTime: now.add(const Duration(hours: 2)),
         seats: 4,
         rides: <Ride>[
           RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 20),
-            endTime: DateTime(2022, 2, 2, 15),
+            startTime: now.add(const Duration(minutes: 20)),
+            endTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 2,
           ),
           RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 14, 40),
-            endTime: DateTime(2022, 2, 2, 14, 50),
+            startTime: now.add(const Duration(minutes: 40)),
+            endTime: now.add(const Duration(minutes: 50)),
             status: RideStatus.approved,
             seats: 1,
           ),
           RideFactory().generateFake(
-            startTime: DateTime(2022, 2, 2, 15),
-            endTime: DateTime(2022, 2, 2, 15, 30),
+            startTime: now.add(const Duration(hours: 1)),
+            endTime: now.add(const Duration(hours: 1, minutes: 30)),
             status: RideStatus.approved,
             seats: 2,
           ),
         ],
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: DateTime(2022, 2, 2, 14, 50),
-        endTime: DateTime(2022, 2, 2, 15, 10),
-        status: RideStatus.approved,
+        startTime: now.add(const Duration(minutes: 50)),
+        endTime: now.add(const Duration(hours: 1, minutes: 10)),
         seats: 1,
       );
       expect(drive.isRidePossible(ride), true);

@@ -209,113 +209,118 @@ void main() {
   });
   group('Ride.userHasRideAtTimeRange', () {
     test('has ride in time range', () async {
+      final DateTime now = DateTime.now();
       whenRequest(rideProcessor).thenReturnJson([
         RideFactory()
             .generateFake(
               riderId: 2,
               status: RideStatus.approved,
-              startTime: DateTime.now().add(const Duration(hours: 2)),
-              endTime: DateTime.now().add(const Duration(hours: 4)),
+              startTime: now.add(const Duration(hours: 2)),
+              endTime: now.add(const Duration(hours: 4)),
             )
             .toJsonForApi()
       ]);
       expect(
         await Ride.userHasRideAtTimeRange(
-          DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))),
+          DateTimeRange(start: now, end: now.add(const Duration(hours: 10))),
           2,
         ),
         true,
       );
     });
     test('has no ride at time range', () async {
+      final DateTime now = DateTime.now();
       whenRequest(rideProcessor).thenReturnJson([
         RideFactory()
             .generateFake(
               riderId: 2,
               status: RideStatus.approved,
-              startTime: DateTime.now().add(const Duration(hours: 8)),
-              endTime: DateTime.now().add(const Duration(hours: 10)),
+              startTime: now.add(const Duration(hours: 8)),
+              endTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
         RideFactory()
             .generateFake(
               riderId: 2,
-              startTime: DateTime.now().add(const Duration(hours: 2)),
-              endTime: DateTime.now().add(const Duration(hours: 4)),
+              startTime: now.add(const Duration(hours: 2)),
+              endTime: now.add(const Duration(hours: 4)),
             )
             .toJsonForApi(),
       ]);
       expect(
-          await Ride.userHasRideAtTimeRange(
-            DateTimeRange(
-              start: DateTime.now().add(const Duration(hours: 4)),
-              end: DateTime.now().add(const Duration(hours: 6)),
-            ),
-            2,
+        await Ride.userHasRideAtTimeRange(
+          DateTimeRange(
+            start: now.add(const Duration(hours: 4)),
+            end: now.add(const Duration(hours: 6)),
           ),
-          false);
+          2,
+        ),
+        false,
+      );
     });
     test('not approved ride overlaps with time range', () async {
+      final DateTime now = DateTime.now();
       whenRequest(rideProcessor).thenReturnJson([
         RideFactory()
             .generateFake(
               riderId: 2,
               status: RideStatus.pending,
-              startTime: DateTime.now().add(const Duration(hours: 7)),
-              endTime: DateTime.now().add(const Duration(hours: 10)),
+              startTime: now.add(const Duration(hours: 7)),
+              endTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
       ]);
       expect(
         await Ride.userHasRideAtTimeRange(
-            DateTimeRange(
-              start: DateTime.now().add(const Duration(hours: 6)),
-              end: DateTime.now().add(const Duration(hours: 8)),
-            ),
-            2),
+          DateTimeRange(
+            start: now.add(const Duration(hours: 6)),
+            end: now.add(const Duration(hours: 8)),
+          ),
+          2,
+        ),
         false,
       );
     });
     test('ride overlaps with time range', () async {
+      final DateTime now = DateTime.now();
       whenRequest(rideProcessor).thenReturnJson([
         RideFactory()
             .generateFake(
               riderId: 2,
               status: RideStatus.approved,
-              startTime: DateTime.now().add(const Duration(hours: 7)),
-              endTime: DateTime.now().add(const Duration(hours: 10)),
+              startTime: now.add(const Duration(hours: 7)),
+              endTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
       ]);
       expect(
         await Ride.userHasRideAtTimeRange(
-            DateTimeRange(
-              start: DateTime.now().add(const Duration(hours: 6)),
-              end: DateTime.now().add(const Duration(hours: 8)),
-            ),
-            2),
+          DateTimeRange(
+            start: now.add(const Duration(hours: 6)),
+            end: now.add(const Duration(hours: 8)),
+          ),
+          2,
+        ),
         true,
       );
     });
   });
   group('Ride.shouldShowInListView', () {
-    test('this ride should show in ListView when built', () {
+    test('rides are shown in ListView', () {
       final Ride ride = RideFactory().generateFake(
-        startTime: DateTime.now().add(const Duration(hours: 2)),
-        endTime: DateTime.now().add(const Duration(hours: 4)),
+        endTime: DateTime.now().add(const Duration(hours: 2)),
         status: RideStatus.pending,
       );
       expect(ride.shouldShowInListView(past: false), true);
     });
-    test('this trip will  show in past ListView when built', () {
+    test('rides are shown in past ListView', () {
       final Ride ride = RideFactory().generateFake(
-        startTime: DateTime.now().subtract(const Duration(hours: 4)),
         endTime: DateTime.now().subtract(const Duration(hours: 2)),
         status: RideStatus.approved,
       );
       expect(ride.shouldShowInListView(past: true), true);
     });
-    test('this trip will not show in past ListView when built', () {
+    test('withdrawn rides are not shown in past ListView', () {
       final Ride ride = RideFactory().generateFake(
         startTime: DateTime.now().subtract(const Duration(hours: 4)),
         endTime: DateTime.now().subtract(const Duration(hours: 2)),
