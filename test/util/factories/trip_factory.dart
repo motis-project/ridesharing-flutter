@@ -31,4 +31,22 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
       hideInListView: hideInListView,
     ) as T;
   }
+
+  TripTimes generateTimes(DateTime? startTime, DateTime? endTime, Duration? duration) {
+    duration ??= Duration(hours: random.nextInt(5) + 1);
+
+    startTime ??= endTime == null ? DateTime.now() : endTime.subtract(duration);
+    endTime ??= startTime.add(duration);
+
+    assert(startTime.isBefore(endTime));
+
+    return TripTimes(startTime, endTime);
+  }
+}
+
+class TripTimes {
+  final DateTime start;
+  final DateTime end;
+
+  TripTimes(this.start, this.end);
 }

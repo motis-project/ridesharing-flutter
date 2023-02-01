@@ -31,6 +31,8 @@ class RideFactory extends TripFactory<Ride> {
     NullableParameter<Profile>? rider,
     int? chatId,
     NullableParameter<Chat>? chat,
+    // Convenience parameter to set the duration of the trip
+    Duration? duration,
     bool createDependencies = true,
   }) {
     assert(driveId == null || drive?.value == null || drive!.value?.id == driveId);
@@ -46,15 +48,17 @@ class RideFactory extends TripFactory<Ride> {
 
     final int generatedId = id ?? randomId;
 
+    final TripTimes tripTimes = generateTimes(startTime, endTime, duration);
+
     return Ride(
       id: generatedId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: startTime ?? DateTime.now(),
+      startTime: tripTimes.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: endTime ?? DateTime.now(),
+      endTime: tripTimes.end,
       seats: seats ?? random.nextInt(5) + 1,
       price: getNullableParameterOr(price, double.parse((random.nextDouble() * 10).toStringAsFixed(2))),
       status: status ?? RideStatus.values[random.nextInt(RideStatus.values.length)],

@@ -27,6 +27,8 @@ class DriveFactory extends TripFactory<Drive> {
     NullableParameter<Profile>? driver,
     List<Ride>? rides,
     List<Chat>? chats,
+    // Convenience parameter to set the duration of the trip
+    Duration? duration,
     bool createDependencies = true,
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
@@ -45,15 +47,17 @@ class DriveFactory extends TripFactory<Drive> {
               )
             : null);
 
+    final TripTimes tripTimes = generateTimes(startTime, endTime, duration);
+
     return Drive(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: startTime ?? DateTime.now(),
+      startTime: tripTimes.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: endTime ?? DateTime.now(),
+      endTime: tripTimes.end,
       seats: seats ?? random.nextInt(5) + 1,
       cancelled: cancelled ?? false,
       hideInListView: hideInListView ?? false,
