@@ -429,8 +429,7 @@ class SearchRideFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            final bool onSameDaySatisfied = date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
-            return ratingSatisfied && featuresSatisfied && onSameDaySatisfied;
+            return ratingSatisfied && featuresSatisfied;
           },
         )
         .sorted(_sorting.sortFunction(date, wholeDay: wholeDay))
@@ -477,11 +476,5 @@ extension SearchRideSortingExtension on SearchRideSorting {
       case SearchRideSorting.timeProximity:
         return timeProximityFunc;
     }
-  }
-}
-
-extension CustomDateTime on DateTime {
-  bool isSameDayAs(DateTime other) {
-    return day == other.day && month == other.month && year == other.year;
   }
 }

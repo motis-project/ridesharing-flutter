@@ -288,6 +288,7 @@
   "pageSearchRideTitle": "Search Ride",
   "pageSearchRideNoInput": "Enter your start and destination",
   "pageSearchRideEmpty": "Nothing to see here",
+  "pageSearchRideWrongTime": "Try a different time",
   "pageSearchRideRelaxRestrictions": "Relax your search restrictions.",
   "pageSearchRideNoResults": "We're sorry, we couldn't find a ride for this route.",
   "pageSearchRideTooltipFilter": "Filter",

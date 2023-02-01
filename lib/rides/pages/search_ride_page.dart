@@ -23,9 +23,9 @@ class SearchRidePage extends StatefulWidget {
 
 class SearchRidePageState extends State<SearchRidePage> {
   final TextEditingController startController = TextEditingController();
-  AddressSuggestion? startSuggestion;
+  AddressSuggestion? _startSuggestion;
   final TextEditingController destinationController = TextEditingController();
-  AddressSuggestion? destinationSuggestion;
+  AddressSuggestion? _destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
@@ -103,7 +103,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   Future<void> loadRides() async {
-    if (startSuggestion == null || destinationSuggestion == null) return;
+    if (_startSuggestion == null || _destinationSuggestion == null) return;
     setState(() => _loading = true);
     final List<Map<String, dynamic>> data =
         await supabaseManager.supabaseClient.from('drives').select<List<Map<String, dynamic>>>('''
@@ -119,11 +119,11 @@ class SearchRidePageState extends State<SearchRidePage> {
         .map(
           (Drive drive) => Ride.previewFromDrive(
             drive,
-            startSuggestion!.name,
-            startSuggestion!.position,
+            _startSuggestion!.name,
+            _startSuggestion!.position,
             drive.startTime,
-            destinationSuggestion!.name,
-            destinationSuggestion!.position,
+            _destinationSuggestion!.name,
+            _destinationSuggestion!.position,
             drive.endTime,
             seats,
             supabaseManager.currentProfile?.id ?? -1,
@@ -140,36 +140,23 @@ class SearchRidePageState extends State<SearchRidePage> {
   Widget buildSearchFieldViewer() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: StartDestinationTimeline(
-              startController: startController,
-              destinationController: destinationController,
-              onStartSelected: (AddressSuggestion suggestion) => setState(() {
-                startSuggestion = suggestion;
-                loadRides();
-              }),
-              onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
-                destinationSuggestion = suggestion;
-                loadRides();
-              }),
-            ),
-          ),
-          IconButton(
-            key: const Key('searchRideSwapButton'),
-            onPressed: () => setState(() {
-              final String oldStartText = startController.text;
-              startController.text = destinationController.text;
-              destinationController.text = oldStartText;
-              final AddressSuggestion? oldStartSuggestion = startSuggestion;
-              startSuggestion = destinationSuggestion;
-              destinationSuggestion = oldStartSuggestion;
-              loadRides();
-            }),
-            icon: const Icon(Icons.swap_vert),
-          ),
-        ],
+      child: StartDestinationTimeline(
+        startController: startController,
+        destinationController: destinationController,
+        onStartSelected: (AddressSuggestion suggestion) => setState(() {
+          _startSuggestion = suggestion;
+          loadRides();
+        }),
+        onDestinationSelected: (AddressSuggestion suggestion) => setState(() {
+          _destinationSuggestion = suggestion;
+          loadRides();
+        }),
+        onSwap: () => setState(() {
+          final AddressSuggestion? oldStartSuggestion = _startSuggestion;
+          _startSuggestion = _destinationSuggestion;
+          _destinationSuggestion = oldStartSuggestion;
+          loadRides();
+        }),
       ),
     );
   }
@@ -277,21 +264,32 @@ class SearchRidePageState extends State<SearchRidePage> {
     );
   }
 
+  Widget buildEmptyRideSuggestions(String asset, String title, {Widget? subtitle, Key? key}) {
+    return SliverToBoxAdapter(
+      child: Column(
+        key: key,
+        children: <Widget>[
+          const SizedBox(height: 10),
+          Image.asset(asset),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headlineMedium,
+            textAlign: TextAlign.center,
+          ),
+          if (subtitle != null) subtitle,
+        ],
+      ),
+    );
+  }
+
   Widget buildMainContentSliver() {
     if (_rideSuggestions == null || _loading) {
-      if (startSuggestion == null || destinationSuggestion == null) {
-        return SliverToBoxAdapter(
-          child: Column(
-            children: <Widget>[
-              Image.asset('assets/pointing_up.png'),
-              const SizedBox(height: 10),
-              Text(
-                S.of(context).pageSearchRideNoInput,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      if (_startSuggestion == null || _destinationSuggestion == null) {
+        return buildEmptyRideSuggestions(
+          key: const Key('searchRideNoInput'),
+          'assets/pointing_up.png',
+          S.of(context).pageSearchRideNoInput,
         );
       }
       return const SliverToBoxAdapter(
@@ -303,42 +301,54 @@ class SearchRidePageState extends State<SearchRidePage> {
         ),
       );
     }
-    final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, selectedDate);
+    final List<Ride> filterApplied = _filter.apply(_rideSuggestions!, selectedDate);
+    final List<Ride> filteredSuggestions = applyTimeConstraints(filterApplied);
     if (filteredSuggestions.isEmpty) {
-      return SliverToBoxAdapter(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: <Widget>[
-              Image.asset('assets/shrug.png'),
-              const SizedBox(height: 10),
-              Text(
-                S.of(context).pageSearchRideEmpty,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              if (_rideSuggestions!.isNotEmpty)
-                Semantics(
-                  button: true,
-                  tooltip: S.of(context).pageSearchRideTooltipFilter,
-                  child: InkWell(
-                    onTap: () => _filter.dialog(context, setState),
-                    child: Text(
-                      S.of(context).pageSearchRideRelaxRestrictions,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
+      return buildEmptyRideSuggestions(
+        'assets/shrug.png',
+        S.of(context).pageSearchRideEmpty,
+        subtitle: filterApplied.isNotEmpty
+            ? Semantics(
+                button: true,
+                child: InkWell(
+                  key: const Key('searchRideWrongTime'),
+                  onTap: () => setState(
+                    () {
+                      //TODO This is currently broken because it will often choose past drives, but that shouldn't happen because of the algorithm
+                      selectedDate = filterApplied[0].startTime;
+                      _dateController.text = localeManager.formatDate(selectedDate);
+                      if (!_wholeDay) {
+                        _timeController.text = localeManager.formatTime(selectedDate);
+                      }
+                    },
                   ),
-                )
-              else
-                Text(
-                  S.of(context).pageSearchRideNoResults,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
+                  child: Text(
+                    S.of(context).pageSearchRideWrongTime,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-            ],
-          ),
-        ),
+              )
+            : _rideSuggestions!.isNotEmpty
+                ? Semantics(
+                    button: true,
+                    tooltip: S.of(context).pageSearchRideTooltipFilter,
+                    child: InkWell(
+                      key: const Key('searchRideRelaxRestrictions'),
+                      onTap: () => _filter.dialog(context, setState),
+                      child: Text(
+                        S.of(context).pageSearchRideRelaxRestrictions,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : Text(
+                    key: const Key('searchRideNoResults'),
+                    S.of(context).pageSearchRideNoResults,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
       );
     } else {
       return SliverList(
@@ -396,5 +406,23 @@ class SearchRidePageState extends State<SearchRidePage> {
         ),
       ),
     );
+  }
+
+  List<Ride> applyTimeConstraints(List<Ride> rides) {
+    if (_wholeDay) {
+      return rides.where((Ride ride) {
+        return selectedDate.isSameDayAs(ride.startTime) || selectedDate.isSameDayAs(ride.endTime);
+      }).toList();
+    }
+    return rides.where((Ride ride) {
+      return selectedDate.difference(ride.startTime).inDays.abs() < 1 ||
+          selectedDate.difference(ride.endTime).inDays.abs() < 1;
+    }).toList();
+  }
+}
+
+extension CustomDateTime on DateTime {
+  bool isSameDayAs(DateTime other) {
+    return day == other.day && month == other.month && year == other.year;
   }
 }

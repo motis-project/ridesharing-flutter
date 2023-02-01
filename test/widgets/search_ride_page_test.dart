@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
 import 'package:motis_mitfahr_app/rides/widgets/search_ride_filter.dart';
+import 'package:motis_mitfahr_app/util/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/util/trip/ride_card.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
@@ -26,12 +27,19 @@ void main() {
     reset(processor);
   });
 
-  Future<void> enterStartAndDestination(WidgetTester tester, String start, String destination) async {
+  Future<void> enterStartAndDestination(WidgetTester tester, String? start, String? destination) async {
     final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
-    pageState.startController.text = start;
-    pageState.startSuggestion = AddressSuggestionFactory().generateFake(name: start);
-    pageState.destinationController.text = destination;
-    pageState.destinationSuggestion = AddressSuggestionFactory().generateFake(name: destination);
+    final StartDestinationTimeline timeline =
+        find.byType(StartDestinationTimeline).evaluate().first.widget as StartDestinationTimeline;
+
+    if (start != null) {
+      pageState.startController.text = start;
+      timeline.onStartSelected(AddressSuggestionFactory().generateFake(name: start));
+    }
+    if (destination != null) {
+      pageState.destinationController.text = destination;
+      timeline.onDestinationSelected(AddressSuggestionFactory().generateFake(name: destination));
+    }
     await tester.pump();
   }
 
@@ -132,6 +140,8 @@ void main() {
         final String start = faker.address.city();
         final String destination = faker.address.city();
 
+        whenRequest(processor).thenReturnJson([]);
+
         await pumpMaterial(tester, const SearchRidePage());
         await tester.pump();
 
@@ -141,6 +151,69 @@ void main() {
 
         expect(pageState.startController.text, start);
         expect(pageState.destinationController.text, destination);
+      });
+
+      group('Swap start and destination', () {
+        testWidgets('Start and destination empty', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+          await tester.pump();
+
+          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+
+          await tester.tap(find.byKey(const Key('swapButton')));
+          await tester.pump();
+
+          expect(pageState.startController.text, '');
+          expect(pageState.destinationController.text, '');
+        });
+
+        testWidgets('Start present', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+          await tester.pump();
+
+          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+
+          final String formerStart = faker.address.city();
+          await enterStartAndDestination(tester, formerStart, null);
+          await tester.tap(find.byKey(const Key('swapButton')));
+          await tester.pump();
+
+          expect(pageState.startController.text, '');
+          expect(pageState.destinationController.text, formerStart);
+        });
+
+        testWidgets('Destination present', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+          await tester.pump();
+
+          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+
+          final String formerDestination = faker.address.city();
+          await enterStartAndDestination(tester, null, formerDestination);
+          await tester.tap(find.byKey(const Key('swapButton')));
+          await tester.pump();
+
+          expect(pageState.startController.text, formerDestination);
+          expect(pageState.destinationController.text, '');
+        });
+
+        testWidgets('Start and destination present', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+          await tester.pump();
+
+          whenRequest(processor).thenReturnJson([]);
+
+          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+
+          final String formerStart = faker.address.city();
+          final String formerDestination = faker.address.city();
+          await enterStartAndDestination(tester, formerStart, formerDestination);
+          await tester.tap(find.byKey(const Key('swapButton')));
+          await tester.pump();
+
+          expect(pageState.startController.text, formerDestination);
+          expect(pageState.destinationController.text, formerStart);
+        });
       });
 
       group('Enter date', () {
@@ -238,95 +311,37 @@ void main() {
       });
     });
 
-    group('Swap start and destination', () {
-      testWidgets('Start and destination empty', (WidgetTester tester) async {
-        await pumpMaterial(tester, const SearchRidePage());
-        await tester.pump();
-
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
-
-        await tester.tap(find.byKey(const Key('searchRideSwapButton')));
-        await tester.pump();
-
-        expect(pageState.startController.text, '');
-        expect(pageState.destinationController.text, '');
-      });
-
-      testWidgets('Start present', (WidgetTester tester) async {
-        await pumpMaterial(tester, const SearchRidePage());
-        await tester.pump();
-
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
-
-        final String formerStart = faker.address.city();
-        await enterStartAndDestination(tester, formerStart, '');
-        await tester.tap(find.byKey(const Key('swapButton')));
-        await tester.pump();
-
-        expect(pageState.startController.text, '');
-        expect(pageState.destinationController.text, formerStart);
-      });
-
-      testWidgets('Destination present', (WidgetTester tester) async {
-        await pumpMaterial(tester, const SearchRidePage());
-        await tester.pump();
-
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
-
-        final String formerDestination = faker.address.city();
-        await enterStartAndDestination(tester, '', formerDestination);
-        await tester.tap(find.byKey(const Key('swapButton')));
-        await tester.pump();
-
-        expect(pageState.startController.text, formerDestination);
-        expect(pageState.destinationController.text, '');
-      });
-
-      testWidgets('Start and destination present', (WidgetTester tester) async {
-        await pumpMaterial(tester, const SearchRidePage());
-        await tester.pump();
-
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
-
-        final String formerStart = faker.address.city();
-        final String formerDestination = faker.address.city();
-        await enterStartAndDestination(tester, formerStart, formerDestination);
-        await tester.tap(find.byKey(const Key('swapButton')));
-        await tester.pump();
-
-        expect(pageState.startController.text, formerDestination);
-        expect(pageState.destinationController.text, formerStart);
-      });
-    });
-
     group('Search', () {
       testWidgets('Start and destination empty', (WidgetTester tester) async {
         await pumpMaterial(tester, const SearchRidePage());
 
         await tester.pump();
 
-        expect(find.byType(RideCard), findsNothing);
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byKey(const Key('searchRideNoInput')), findsOneWidget);
       });
 
       testWidgets('Start empty', (WidgetTester tester) async {
         await pumpMaterial(tester, const SearchRidePage());
 
         final String destination = faker.address.city();
-        await enterStartAndDestination(tester, '', destination);
+        await enterStartAndDestination(tester, null, destination);
 
-        expect(find.byType(RideCard), findsNothing);
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byKey(const Key('searchRideNoInput')), findsOneWidget);
       });
 
       testWidgets('Destination empty', (WidgetTester tester) async {
         await pumpMaterial(tester, const SearchRidePage());
 
         final String start = faker.address.city();
-        await enterStartAndDestination(tester, start, '');
+        await enterStartAndDestination(tester, start, null);
 
-        expect(find.byType(RideCard), findsNothing);
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byKey(const Key('searchRideNoInput')), findsOneWidget);
       });
 
-      testWidgets('Start and destination present', (WidgetTester tester) async {
+      testWidgets('Normal input', (WidgetTester tester) async {
         final String start = faker.address.city();
         final String destination = faker.address.city();
         final DateTime now = DateTime.now();
@@ -371,6 +386,77 @@ void main() {
         await tester.pump();
 
         expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+      });
+
+      testWidgets('No results', (WidgetTester tester) async {
+        final String start = faker.address.city();
+        final String destination = faker.address.city();
+        final DateTime startTime = DateTime.now();
+        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats - 1) + 1;
+
+        final List<Map<String, dynamic>> drives = [];
+        whenRequest(processor).thenReturnJson(drives);
+
+        await pumpMaterial(tester, const SearchRidePage());
+
+        await enterStartAndDestination(tester, start, destination);
+        await enterDateAndTime(tester, startTime);
+        await enterSeats(tester, seats);
+
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byKey(const Key('searchRideNoResults')), findsOneWidget);
+      });
+
+      testWidgets('No results', (WidgetTester tester) async {
+        final String start = faker.address.city();
+        final String destination = faker.address.city();
+        final DateTime startTime = DateTime.now();
+        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats - 1) + 1;
+
+        final List<Map<String, dynamic>> drives = [];
+        whenRequest(processor).thenReturnJson(drives);
+
+        await pumpMaterial(tester, const SearchRidePage());
+
+        await enterStartAndDestination(tester, start, destination);
+        await enterDateAndTime(tester, startTime);
+        await enterSeats(tester, seats);
+
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byKey(const Key('searchRideNoResults')), findsOneWidget);
+      });
+
+      testWidgets('Results at wrong times', (WidgetTester tester) async {
+        final String start = faker.address.city();
+        final String destination = faker.address.city();
+        final DateTime searchTime = DateTime.now();
+        final DateTime rightTime = searchTime.add(const Duration(days: 2));
+        final DateTime farAwayTime = searchTime.add(const Duration(days: 4));
+        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats - 1) + 1;
+
+        final List<Map<String, dynamic>> drives = [
+          DriveFactory().generateFake(start: start, startTime: farAwayTime, seats: seats).toJsonForApi(),
+          DriveFactory().generateFake(start: start, startTime: rightTime, seats: seats).toJsonForApi(),
+        ];
+        whenRequest(processor).thenReturnJson(drives);
+        whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
+            .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
+
+        await pumpMaterial(tester, const SearchRidePage());
+
+        await enterStartAndDestination(tester, start, destination);
+        await enterDateAndTime(tester, searchTime);
+        await enterSeats(tester, seats);
+
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+
+        await tester.tap(find.byKey(const Key('searchRideWrongTime')));
+        await tester.pump();
+
+        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+
+        expect(pageState.selectedDate, rightTime);
+        expect(find.byType(RideCard, skipOffstage: false), findsOneWidget);
       });
     });
   });
