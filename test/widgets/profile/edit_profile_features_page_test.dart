@@ -122,8 +122,7 @@ void main() {
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
-
-    testWidgets('snackbar changes on different mutually exclusive add', (WidgetTester tester) async {
+    testWidgets('snackbar changes on different mutually exclusive', (WidgetTester tester) async {
       // set profile with smoking and vaping
       profile = ProfileFactory().generateFake(
         id: 1,
@@ -189,43 +188,119 @@ void main() {
       await tester.scrollUntilVisible(deletedFeatureFinder, 100, scrollable: find.byType(Scrollable));
       expect(deletedFeatureFinder, findsOneWidget);
     });
-    testWidgets('move features', (WidgetTester tester) async {
-      // load page
-      await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
-      //find feature to move
-      final Feature feature = profile.features!.first;
-      expect(
-          find.descendant(
-              of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
-              matching: find.byKey(const Key('dragHandle'))),
-          findsOneWidget);
+    group('move features', () {
+      testWidgets('move added feature', (WidgetTester tester) async {
+        // load page
+        await pumpMaterial(tester, EditProfileFeaturesPage(profile));
+        await tester.pump();
 
-      //find drag handle
-      final Finder dragFinder = find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
-          matching: find.byKey(const Key('dragHandle')));
-      expect(dragFinder, findsOneWidget);
+        //find drag handle
+        final Feature feature = profile.features!.first;
+        final Finder dragFinder = find.descendant(
+            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            matching: find.byKey(const Key('dragHandle')));
+        expect(dragFinder, findsOneWidget);
 
-      //move feature
-      await tester.drag(dragFinder, const Offset(0, 50));
-      await tester.pump();
+        //move feature
+        await tester.drag(dragFinder, const Offset(0, 50));
+        await tester.pump();
 
-      //check if feature is not at old position
-      expect(
-          find.descendant(
-              of: find.byKey(const ValueKey<int>(0)), matching: find.byKey(Key('${feature.toString()} Tile'))),
-          findsNothing);
+        //check if feature is not at old position
+        expect(
+            find.descendant(
+                of: find.byKey(const ValueKey<int>(0)), matching: find.byKey(Key('${feature.toString()} Tile'))),
+            findsNothing);
 
-      //check if feature is at new position
-      //1 if there were more than one added features (still in added features)
-      //2 if there was only one added feature (now in not added features)
-      final int newIndex = profile.features!.length == 1 ? 2 : 1;
-      expect(
-          find.descendant(
-              of: find.byKey(ValueKey<int>(newIndex)), matching: find.byKey(Key('${feature.toString()} Tile'))),
-          findsOneWidget);
+        //check if feature is at new position
+        //1 if there were more than one added features (still in added features)
+        //2 if there was only one added feature (now in not added features)
+        final int newIndex = profile.features!.length == 1 ? 2 : 1;
+        expect(
+            find.descendant(
+                of: find.byKey(ValueKey<int>(newIndex)), matching: find.byKey(Key('${feature.toString()} Tile'))),
+            findsOneWidget);
+      });
+      testWidgets('move not added feature', (WidgetTester tester) async {
+        //load page
+        await pumpMaterial(tester, EditProfileFeaturesPage(profile));
+        await tester.pump();
+
+        //find drag handle
+        final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
+        final Finder dragFinder = find.descendant(
+            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            matching: find.byKey(const Key('dragHandle')));
+        expect(dragFinder, findsOneWidget);
+
+        //move feature
+        await tester.drag(dragFinder, const Offset(0, 50));
+        await tester.pump();
+
+        //check if feature is not at old position
+        expect(
+            find.descendant(
+                of: find.byKey(ValueKey<int>(profile.profileFeatures!.length + 1)),
+                matching: find.byKey(Key('${feature.toString()} Tile'))),
+            findsNothing);
+
+        //check if feature now at the second position in the removed features
+        expect(
+            find.descendant(
+                of: find.byKey(ValueKey<int>(profile.profileFeatures!.length + 2)),
+                matching: find.byKey(Key('${feature.toString()} Tile'))),
+            findsOneWidget);
+      });
+      testWidgets('use move to add feature', (WidgetTester tester) async {
+        // load page
+        await pumpMaterial(tester, EditProfileFeaturesPage(profile));
+        await tester.pump();
+
+        //find drag handle
+        final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
+        final Finder dragFinder = find.descendant(
+            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            matching: find.byKey(const Key('dragHandle')));
+        expect(dragFinder, findsOneWidget);
+
+        //move feature
+        await tester.drag(dragFinder, const Offset(0, -50));
+        await tester.pump();
+
+        //check if tried adding feature
+        try {
+          expect(
+              find.descendant(
+                  of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+                  matching: find.byKey(const Key('removeButton'))),
+              findsOneWidget);
+        } catch (e) {
+          expect(find.byType(SnackBar), findsOneWidget);
+        }
+      });
+      testWidgets('use move to remove feature', (WidgetTester tester) async {
+        // load page
+        await pumpMaterial(tester, EditProfileFeaturesPage(profile));
+        await tester.pump();
+
+        //find drag handle
+        final Feature feature = profile.features!.last;
+        final Finder dragFinder = find.descendant(
+            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            matching: find.byKey(const Key('dragHandle')));
+        expect(dragFinder, findsOneWidget);
+
+        //move feature
+        await tester.drag(dragFinder, const Offset(0, 50));
+        await tester.pump();
+
+        //feature is not added anymore
+        expect(
+            find.descendant(
+                of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+                matching: find.byKey(const Key('addButton'))),
+            findsOneWidget);
+      });
     });
     testWidgets('no features', (WidgetTester tester) async {
       //setup profile with no features
