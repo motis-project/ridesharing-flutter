@@ -48,7 +48,7 @@ void main() {
 
       final PasswordField passwordField = tester.widget(find.byType(PasswordField));
 
-      expect(passwordField.validateStrictly, isFalse);
+      expect(passwordField.validateSecurity, isFalse);
     });
 
     testWidgets('Navigates to the forgotPassword page', (WidgetTester tester) async {

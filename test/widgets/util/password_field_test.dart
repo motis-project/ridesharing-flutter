@@ -42,7 +42,7 @@ void main() {
     });
 
     testWidgets('Validates the password strictly if wanted', (WidgetTester tester) async {
-      await pumpForm(tester, PasswordField(controller: controller, validateStrictly: true), formKey: formKey);
+      await pumpForm(tester, PasswordField(controller: controller, validateSecurity: true), formKey: formKey);
 
       final FormFieldState passwordField = tester.state(passwordFieldFinder);
 
@@ -151,7 +151,7 @@ void main() {
           PasswordField(
             controller: controller,
             originalPasswordController: TextEditingController(),
-            validateStrictly: true,
+            validateSecurity: true,
           ),
           formKey: formKey,
         );

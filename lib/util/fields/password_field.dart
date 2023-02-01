@@ -7,14 +7,14 @@ class PasswordField extends StatefulWidget {
 
   final TextEditingController controller;
   final TextEditingController? originalPasswordController;
-  final bool validateStrictly;
+  final bool validateSecurity;
 
   const PasswordField({
     super.key,
     required this.controller,
     this.originalPasswordController,
-    this.validateStrictly = false,
-  }) : assert(validateStrictly == false || originalPasswordController == null);
+    this.validateSecurity = false,
+  }) : assert(validateSecurity == false || originalPasswordController == null);
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -57,7 +57,7 @@ class _PasswordFieldState extends State<PasswordField> {
   String get labelText => isConfirmation ? S.of(context).formPasswordConfirm : S.of(context).formPassword;
   String get hintText => isConfirmation
       ? S.of(context).formPasswordConfirmHint
-      : widget.validateStrictly
+      : widget.validateSecurity
           ? S.of(context).formPasswordChooseHint
           : S.of(context).formPasswordHint;
 
@@ -66,17 +66,17 @@ class _PasswordFieldState extends State<PasswordField> {
 
   String? Function(String?) get validator => isConfirmation
       ? _validateConfirmation
-      : widget.validateStrictly
-          ? _validateStrictly
+      : widget.validateSecurity
+          ? _validateSecurity
           : _validateOnlyEmpty;
 
   String? get helperText {
-    if (!widget.validateStrictly) return null;
+    if (!widget.validateSecurity) return null;
 
     final String text = widget.controller.text;
     if (text.isEmpty) return null;
 
-    return _validateStrictly(text);
+    return _validateSecurity(text);
   }
 
   String? _validateConfirmation(String? value) {
@@ -95,7 +95,7 @@ class _PasswordFieldState extends State<PasswordField> {
     return null;
   }
 
-  String? _validateStrictly(String? value) {
+  String? _validateSecurity(String? value) {
     if (value == null || value.isEmpty) {
       return S.of(context).formPasswordValidateEmpty;
     } else if (value.length < 8) {

@@ -146,7 +146,7 @@ class RegisterFormState extends State<RegisterForm> {
             const SizedBox(height: 15),
             PasswordField(
               controller: passwordController,
-              validateStrictly: true,
+              validateSecurity: true,
             ),
             const SizedBox(height: 15),
             PasswordField(

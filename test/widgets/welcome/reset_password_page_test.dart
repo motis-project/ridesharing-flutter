@@ -75,7 +75,7 @@ void main() {
         find.ancestor(of: passwordFieldFinder, matching: find.byType(PasswordField)),
       );
 
-      expect(passwordField.validateStrictly, isTrue);
+      expect(passwordField.validateSecurity, isTrue);
     });
 
     testWidgets('Validates the password confirmation', (WidgetTester tester) async {
