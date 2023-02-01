@@ -33,6 +33,8 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
   }
 
   TripTimes generateTimes(DateTime? startTime, DateTime? endTime, Duration? duration) {
+    assert(startTime == null || endTime == null || duration == null);
+
     duration ??= Duration(hours: random.nextInt(5) + 1);
 
     startTime ??= endTime == null ? DateTime.now() : endTime.subtract(duration);
