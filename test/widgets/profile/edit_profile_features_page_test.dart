@@ -122,6 +122,47 @@ void main() {
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
+
+    testWidgets('snackbar changes on different mutually exclusive add', (WidgetTester tester) async {
+      // set profile with smoking and vaping
+      profile = ProfileFactory().generateFake(
+        id: 1,
+        profileFeatures: [
+          ProfileFeature(profileId: 1, feature: Feature.smoking, rank: 1),
+          ProfileFeature(profileId: 1, feature: Feature.vaping, rank: 2),
+        ],
+      );
+      SupabaseManager.setCurrentProfile(profile);
+
+      // load page
+      await pumpMaterial(tester, EditProfileFeaturesPage(profile));
+      await tester.pump();
+
+      // find mutually exclusive features add buttons
+      final Finder notSmokingFinder = find.descendant(
+          of: find.ancestor(
+              of: find.byKey(Key('${Feature.noSmoking.toString()} Tile')), matching: find.byType(ListTile)),
+          matching: find.byKey(const Key('addButton')));
+      final Finder notVapingFinder = find.descendant(
+          of: find.ancestor(
+              of: find.byKey(Key('${Feature.noVaping.toString()} Tile')), matching: find.byType(ListTile)),
+          matching: find.byKey(const Key('addButton')));
+
+      //check if Smoking Snackbar is shown
+      await tester.tap(notSmokingFinder);
+      await tester.pumpAndSettle();
+      expect(find.byKey(Key('${Feature.noSmoking} mutuallyExclusiveSnackBar')), findsOneWidget);
+
+      //check if old Snackbar is replaced
+      await tester.tap(notVapingFinder);
+      await tester.pumpAndSettle();
+      expect(find.byKey(Key('${Feature.noSmoking} mutuallyExclusiveSnackBar')), findsNothing);
+      expect(find.byKey(Key('${Feature.noVaping} mutuallyExclusiveSnackBar')), findsOneWidget);
+
+      //check if feature were not added
+      expect(notSmokingFinder, findsOneWidget);
+      expect(notVapingFinder, findsOneWidget);
+    });
     testWidgets('delete features', (WidgetTester tester) async {
       // load page
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));

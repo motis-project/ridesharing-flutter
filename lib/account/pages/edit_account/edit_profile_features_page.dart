@@ -204,6 +204,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
           durationType: SnackBarDurationType.medium,
           replace: true,
+          key: Key('$newFeature mutuallyExclusiveSnackBar'),
         );
       }
 
