@@ -184,6 +184,7 @@ class SearchRideFilter {
                       if (mutuallyExclusiveFeature != null) {
                         final String description = mutuallyExclusiveFeature.getDescription(context);
                         return showSnackBar(
+                          key: const Key('searchRideFeatureMutuallyExclusiveSnackBar'),
                           context,
                           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
                         );

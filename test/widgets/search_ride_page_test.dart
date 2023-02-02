@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -477,13 +478,133 @@ void main() {
     });
 
     group('Filter', () {
+      testWidgets('IndicatorRow', (WidgetTester tester) async {
+        await pumpMaterial(tester, const SearchRidePage());
+
+        final Finder indicatorRow = find.byKey(const Key('searchRideFilterButton'));
+
+        expect(indicatorRow, findsOneWidget);
+
+        await enterFilter(tester, rating: 3);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsOneWidget);
+
+        await enterFilter(tester, rating: 3, comfortRating: 3, hospitalityRating: 3);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsNWidgets(3));
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.chair)), findsOneWidget);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.favorite)), findsOneWidget);
+        for (int i = 0; i < 2; i++) {
+          expect(find.descendant(of: indicatorRow, matching: find.byKey(Key('ratingSizedBox$i'))), findsOneWidget);
+        }
+        expect(find.descendant(of: indicatorRow, matching: find.byKey(const Key('ratingSizedBox2'))), findsNothing);
+
+        await enterFilter(tester, features: [Feature.accessible, Feature.childrenAllowed]);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.child_care)), findsOneWidget);
+
+        await enterFilter(tester, hospitalityRating: 3, features: [Feature.accessible]);
+        expect(find.descendant(of: indicatorRow, matching: find.byType(VerticalDivider)), findsOneWidget);
+      });
+
+      group('Features selection', () {
+        void expectFeaturesVisible(WidgetTester tester, List<Feature> features) {
+          expect(find.byType(FilterChip), findsNWidgets(features.length));
+          for (final Feature feature in features) {
+            expect(find.byKey(Key('searchRideFeatureChip${feature.name}')), findsOneWidget);
+          }
+        }
+
+        testWidgets('Not expanded', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${SearchRideFilter.commonFeatures[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
+        });
+
+        testWidgets('Expanded', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, Feature.values);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, Feature.values);
+        });
+
+        testWidgets('Expand, select a feature, retract, and deselect it', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, [Feature.values[0]]);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, [Feature.values[0]]);
+        });
+
+        testWidgets('Mutually exclusive', (WidgetTester tester) async {
+          final List<Feature> shuffledFeatures = [...Feature.values]..shuffle();
+          final Feature mutuallyExclusive1 = shuffledFeatures.firstWhere((Feature feature) =>
+              Feature.values.firstWhereOrNull((Feature other) => feature.isMutuallyExclusive(other)) != null);
+          final Feature mutuallyExclusive2 =
+              shuffledFeatures.firstWhere((Feature feature) => feature.isMutuallyExclusive(mutuallyExclusive1));
+
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${mutuallyExclusive1.name}')));
+          await tester.pump();
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${mutuallyExclusive2.name}')));
+          await tester.pump();
+
+          expect(find.byKey(const Key('searchRideFeatureMutuallyExclusiveSnackBar')), findsOneWidget);
+        });
+      });
+
       testWidgets('Filter rating and features', (WidgetTester tester) async {
         final DateTime startTime = DateTime.now();
 
         const int minRating = 3;
-        final List<Feature> requiredFeatures = [...Feature.values]
-          ..shuffle()
-          ..sublist(random.integer(Feature.values.length - 1));
+        final List<Feature> shuffledFeatures = [...Feature.values]..shuffle();
+        final List<Feature> mutuallyExclusiveFiltered = [];
+        for (final Feature feature in shuffledFeatures) {
+          if (mutuallyExclusiveFiltered.firstWhereOrNull((Feature other) => feature.isMutuallyExclusive(other)) ==
+              null) {
+            mutuallyExclusiveFiltered.add(feature);
+          }
+        }
+        final List<Feature> requiredFeatures =
+            mutuallyExclusiveFiltered.sublist(random.integer(mutuallyExclusiveFiltered.length - 1));
 
         final List<Profile> drivers = [
           //Satisfies everything
@@ -829,96 +950,6 @@ void main() {
               .first
               .widget as DropdownMenuItem;
           expect(timeProximityItem.enabled, isFalse);
-        });
-      });
-
-      testWidgets('IndicatorRow', (WidgetTester tester) async {
-        await pumpMaterial(tester, const SearchRidePage());
-
-        final Finder indicatorRow = find.byKey(const Key('searchRideFilterButton'));
-
-        expect(indicatorRow, findsOneWidget);
-
-        await enterFilter(tester, rating: 3);
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsOneWidget);
-
-        await enterFilter(tester, rating: 3, comfortRating: 3, hospitalityRating: 3);
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsNWidgets(3));
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.chair)), findsOneWidget);
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.favorite)), findsOneWidget);
-        for (int i = 0; i < 2; i++) {
-          expect(find.descendant(of: indicatorRow, matching: find.byKey(Key('ratingSizedBox$i'))), findsOneWidget);
-        }
-        expect(find.descendant(of: indicatorRow, matching: find.byKey(const Key('ratingSizedBox2'))), findsNothing);
-
-        await enterFilter(tester, features: [Feature.accessible, Feature.childrenAllowed]);
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
-        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.child_care)), findsOneWidget);
-
-        await enterFilter(tester, hospitalityRating: 3, features: [Feature.accessible]);
-        expect(find.descendant(of: indicatorRow, matching: find.byType(VerticalDivider)), findsOneWidget);
-      });
-
-      group('Features visible', () {
-        void expectFeaturesVisible(WidgetTester tester, List<Feature> features) {
-          expect(find.byType(FilterChip), findsNWidgets(features.length));
-          for (final Feature feature in features) {
-            expect(find.byKey(Key('searchRideFeatureChip${feature.name}')), findsOneWidget);
-          }
-        }
-
-        testWidgets('Not expanded', (WidgetTester tester) async {
-          await pumpMaterial(tester, const SearchRidePage());
-
-          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
-
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${SearchRideFilter.commonFeatures[0].name}')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
-        });
-
-        testWidgets('Expanded', (WidgetTester tester) async {
-          await pumpMaterial(tester, const SearchRidePage());
-
-          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
-          await tester.pump();
-
-          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, Feature.values);
-
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, Feature.values);
-        });
-
-        testWidgets('Expand, select a feature, retract, and deselect it', (WidgetTester tester) async {
-          await pumpMaterial(tester, const SearchRidePage());
-
-          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
-          await tester.pump();
-
-          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
-          await tester.pump();
-
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
-          await tester.pump();
-
-          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, [Feature.values[0]]);
-
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
-          await tester.pump();
-
-          expectFeaturesVisible(tester, [Feature.values[0]]);
         });
       });
     });
