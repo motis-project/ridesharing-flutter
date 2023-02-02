@@ -21,6 +21,7 @@ class WriteReviewPage extends StatefulWidget {
 }
 
 class _WriteReviewPageState extends State<WriteReviewPage> {
+  bool reviewChanged = false;
   Review? _review;
   late TextEditingController _textController;
   ButtonState _state = ButtonState.idle;
@@ -148,32 +149,49 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   void onRatingUpdate(double rating) {
+    reviewChanged = true;
     setState(() {
       _review!.rating = rating.toInt();
     });
   }
 
+  void _updateOverallReview() {
+    if (!reviewChanged) {
+      _review!.rating = ((_review!.comfortRating ?? 0) +
+              (_review!.safetyRating ?? 0) +
+              (_review!.hospitalityRating ?? 0) +
+              (_review!.reliabilityRating ?? 0)) ~/
+          <int?>[_review!.comfortRating, _review!.safetyRating, _review!.hospitalityRating, _review!.reliabilityRating]
+              .where((int? element) => element != null)
+              .length;
+    }
+  }
+
   void onComfortRatingUpdate(double rating) {
     setState(() {
       _review!.comfortRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onSafetyRatingUpdate(double rating) {
     setState(() {
       _review!.safetyRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onReliabilityRatingUpdate(double rating) {
     setState(() {
       _review!.reliabilityRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onHospitalityRatingUpdate(double rating) {
     setState(() {
       _review!.hospitalityRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
