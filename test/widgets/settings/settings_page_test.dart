@@ -11,22 +11,14 @@ import 'package:motis_mitfahr_app/util/supabase.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 
 import '../../util/factories/profile_factory.dart';
-import '../../util/mocks/mock_server.dart';
 import '../../util/mocks/navigator_observer.mocks.dart';
-import '../../util/mocks/request_processor.mocks.dart';
 import '../../util/pump_material.dart';
 
 void main() {
-  final MockRequestProcessor processor = MockRequestProcessor();
   final MockNavigatorObserver navigatorObserver = MockNavigatorObserver();
   final Profile user = ProfileFactory().generateFake();
 
-  setUpAll(() async {
-    MockServer.setProcessor(processor);
-  });
-
   setUp(() async {
-    reset(processor);
     SupabaseManager.setCurrentProfile(user);
   });
 
