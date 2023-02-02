@@ -373,6 +373,7 @@ void main() {
           DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 1))).toJsonForApi(),
           DriveFactory().generateFake(startTime: startTime.add(const Duration(days: 1))).toJsonForApi(),
         ];
+
         whenRequest(processor).thenReturnJson(drives);
         whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
             .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
@@ -405,6 +406,7 @@ void main() {
 
       testWidgets('No results', (WidgetTester tester) async {
         final List<Map<String, dynamic>> drives = [];
+
         whenRequest(processor).thenReturnJson(drives);
 
         await pumpMaterial(tester, const SearchRidePage());
@@ -423,6 +425,7 @@ void main() {
           final List<Map<String, dynamic>> drives = [
             DriveFactory().generateFake(driver: NullableParameter(driver), startTime: startTime).toJsonForApi(),
           ];
+
           whenRequest(processor).thenReturnJson(drives);
           whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
               .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
@@ -454,6 +457,7 @@ void main() {
               .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startTime: rightTime)
               .toJsonForApi(),
         ];
+
         whenRequest(processor).thenReturnJson(drives);
         whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
             .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
@@ -809,6 +813,7 @@ void main() {
                 endPosition: Position(latDiffForKm(10), 0)),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
           whenRequest(processor).thenReturnJson(driveJsons);
           for (final Drive drive in drives) {
             whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
@@ -839,6 +844,7 @@ void main() {
             DriveFactory().generateFake(startTime: startTime, endTime: startTime.add(const Duration(hours: 1))),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
           whenRequest(processor).thenReturnJson(driveJsons);
           for (final Drive drive in drives) {
             whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
@@ -867,6 +873,7 @@ void main() {
             DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(8), 0)),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
           whenRequest(processor).thenReturnJson(driveJsons);
           for (final Drive drive in drives) {
             whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
@@ -897,6 +904,7 @@ void main() {
             DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 1))),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
           whenRequest(processor).thenReturnJson(driveJsons);
           for (final Drive drive in drives) {
             whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
