@@ -125,6 +125,8 @@ void main() {
           .descendant(of: find.byKey(const Key('searchRideHospitalityRatingBar')), matching: find.byIcon(Icons.star))
           .at(hospitalityRating - 1));
     }
+    await tester.tap(find.byKey(const Key('searchRideRatingExpandButton')));
+    await tester.pump();
     if (features != null) {
       await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
       await tester.pump();
@@ -137,6 +139,8 @@ void main() {
         );
         await tester.tap(find.byKey(Key('searchRideFeatureChip${feature.name}')));
       }
+      await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+      await tester.pump();
     }
     await tester.tap(find.byKey(const Key('searchRideFilterOkayButton')));
     await tester.pump();
@@ -488,7 +492,7 @@ void main() {
     });
 
     group('Filter', () {
-      testWidgets('Rating and Features', (WidgetTester tester) async {
+      testWidgets('Filter rating and features', (WidgetTester tester) async {
         final String start = faker.address.city();
         final String destination = faker.address.city();
         final DateTime startTime = DateTime.now();
@@ -856,6 +860,101 @@ void main() {
               .first
               .widget as DropdownMenuItem;
           expect(timeProximityItem.enabled, isFalse);
+        });
+      });
+
+      testWidgets('IndicatorRow', (WidgetTester tester) async {
+        await pumpMaterial(tester, const SearchRidePage());
+
+        final Finder indicatorRow = find.byKey(const Key('searchRideFilterButton'));
+
+        expect(indicatorRow, findsOneWidget);
+
+        await enterFilter(tester, rating: 3);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsOneWidget);
+
+        print('1');
+
+        await enterFilter(tester, rating: 3, comfortRating: 3, hospitalityRating: 3);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsNWidgets(3));
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.chair)), findsOneWidget);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.favorite)), findsOneWidget);
+        for (int i = 0; i < 2; i++) {
+          expect(find.descendant(of: indicatorRow, matching: find.byKey(Key('ratingSizedBox$i'))), findsOneWidget);
+        }
+        expect(find.descendant(of: indicatorRow, matching: find.byKey(const Key('ratingSizedBox2'))), findsNothing);
+        print('2');
+
+        await enterFilter(tester, features: [Feature.accessible, Feature.childrenAllowed]);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
+        expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.child_care)), findsOneWidget);
+
+        print('3');
+
+        await enterFilter(tester, hospitalityRating: 3, features: [Feature.accessible]);
+        expect(find.descendant(of: indicatorRow, matching: find.byType(VerticalDivider)), findsOneWidget);
+      });
+
+      group('Features visible', () {
+        void expectFeaturesVisible(WidgetTester tester, List<Feature> features) {
+          expect(find.byType(FilterChip), findsNWidgets(features.length));
+          for (final Feature feature in features) {
+            expect(find.byKey(Key('searchRideFeatureChip${feature.name}')), findsOneWidget);
+          }
+        }
+
+        testWidgets('Not expanded', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${SearchRideFilter.commonFeatures[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, SearchRideFilter.commonFeatures);
+        });
+
+        testWidgets('Expanded', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, Feature.values);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, Feature.values);
+        });
+
+        testWidgets('Expand, select a feature, retract, and deselect it', (WidgetTester tester) async {
+          await pumpMaterial(tester, const SearchRidePage());
+
+          await tester.tap(find.byKey(const Key('searchRideFilterButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, [Feature.values[0]]);
+
+          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.pump();
+
+          expectFeaturesVisible(tester, [Feature.values[0]]);
         });
       });
     });

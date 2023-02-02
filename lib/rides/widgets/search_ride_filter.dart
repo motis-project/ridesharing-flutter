@@ -11,7 +11,7 @@ import '../../util/snackbar.dart';
 import '../models/ride.dart';
 
 class SearchRideFilter {
-  static const List<Feature> _commonFeatures = <Feature>[
+  static const List<Feature> commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
     Feature.petsAllowed,
@@ -38,7 +38,7 @@ class SearchRideFilter {
   bool _wholeDay;
 
   void setDefaultFilterValues() {
-    _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
+    _retractedAdditionalFeatures = <Feature>[...commonFeatures];
 
     _minRating = _defaultRating;
     _minComfortRating = _defaultRating;
@@ -202,7 +202,7 @@ class SearchRideFilter {
               if (_selectedFeatures.isNotEmpty) {
                 _retractedAdditionalFeatures = <Feature>[];
               } else {
-                _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
+                _retractedAdditionalFeatures = <Feature>[...commonFeatures];
               }
             }),
             child: Row(
@@ -313,9 +313,7 @@ class SearchRideFilter {
         if (_minComfortRating != _defaultRating ||
             _minSafetyRating != _defaultRating ||
             _minReliabilityRating != _defaultRating ||
-            _minHospitalityRating != _defaultRating) {
-          ratingWidgets.add(const SizedBox(width: 4));
-        }
+            _minHospitalityRating != _defaultRating) {}
       }
       if (_minComfortRating != _defaultRating) {
         ratingWidgets.add(
@@ -363,7 +361,10 @@ class SearchRideFilter {
       }
       final int numDividers = ratingWidgets.length - 1;
       for (int i = 0; i < numDividers; i++) {
-        ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 10));
+        ratingWidgets.insert(i * 2 + 1, SizedBox(key: Key('ratingSizedBox$i'), width: 10));
+      }
+      if (_minRating != _defaultRating && numDividers > 0) {
+        ratingWidgets.insert(1, const SizedBox(width: 4));
       }
       final Widget ratingsRow = Row(children: ratingWidgets);
       widgets.add(ratingsRow);
