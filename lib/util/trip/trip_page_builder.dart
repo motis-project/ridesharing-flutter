@@ -65,43 +65,17 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
       };
 
   Widget getFloatingActionButton(BuildContext context, {required bool isRide}) {
-    final String heroTag = isRide ? 'RideFAB' : 'DriveFAB';
     final String tooltip = isRide ? S.of(context).pageRidesTooltipSearchRide : S.of(context).pageDrivesTooltipOfferRide;
     final Icon icon = isRide ? const Icon(Icons.search) : const Icon(Icons.add);
     final Key key = isRide ? const Key('ridesFAB') : const Key('drivesFAB');
 
-    return Hero(
-      tag: heroTag,
-      transitionOnUserGestures: true,
-      flightShuttleBuilder: (
-        BuildContext flightContext,
-        Animation<double> animation,
-        HeroFlightDirection flightDirection,
-        BuildContext fromHeroContext,
-        BuildContext toHeroContext,
-      ) {
-        return Stack(
-          children: <Widget>[
-            Positioned.fill(child: fromHeroContext.widget),
-            Positioned.fill(child: toHeroContext.widget),
-          ],
-        );
-      },
-      child: FadeTransition(
-        opacity: ModalRoute.of(context)?.animation ?? const AlwaysStoppedAnimation<double>(1),
-        child: FadeTransition(
-          opacity:
-              ReverseAnimation(ModalRoute.of(context)?.secondaryAnimation ?? const AlwaysStoppedAnimation<double>(1)),
-          child: FloatingActionButton(
-            heroTag: null,
-            tooltip: tooltip,
-            onPressed: onFabPressed,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            key: key,
-            child: icon,
-          ),
-        ),
-      ),
+    return FloatingActionButton(
+      heroTag: null,
+      tooltip: tooltip,
+      onPressed: onFabPressed,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      key: key,
+      child: icon,
     );
   }
 }

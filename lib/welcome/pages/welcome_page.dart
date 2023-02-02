@@ -92,16 +92,12 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           const SizedBox(height: 15),
-          Hero(
-            tag: 'RideFAB',
-            transitionOnUserGestures: true,
-            child: Button(
-              S.of(context).pageWelcomeAnonymousSearch,
-              key: const Key('AnonymousSearchButton'),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const SearchRidePage(),
-                ),
+          Button(
+            S.of(context).pageWelcomeAnonymousSearch,
+            key: const Key('AnonymousSearchButton'),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const SearchRidePage(),
               ),
             ),
           ),

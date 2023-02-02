@@ -352,48 +352,45 @@ class _SearchRidePageState extends State<SearchRidePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: 'RideFAB',
-      child: Scaffold(
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: loadRides,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverAppBar(
-                  floating: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: ColoredBox(color: Theme.of(context).colorScheme.surface),
-                    title: Text(
-                      S.of(context).pageSearchRideTitle,
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                    ),
+    return Scaffold(
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: loadRides,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                floating: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: ColoredBox(color: Theme.of(context).colorScheme.surface),
+                  title: Text(
+                    S.of(context).pageSearchRideTitle,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
-                SliverPinnedHeader(
-                  child: ColoredBox(
-                    color: Theme.of(context).canvasColor,
-                    child: buildSearchFieldViewer(),
-                  ),
+              ),
+              SliverPinnedHeader(
+                child: ColoredBox(
+                  color: Theme.of(context).canvasColor,
+                  child: buildSearchFieldViewer(),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                SliverToBoxAdapter(child: buildDateRow()),
-                SliverToBoxAdapter(child: buildSeats()),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: _filter.buildIndicatorRow(context, setState),
-                  ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 10)),
+              SliverToBoxAdapter(child: buildDateRow()),
+              SliverToBoxAdapter(child: buildSeats()),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _filter.buildIndicatorRow(context, setState),
                 ),
-                SliverPinnedHeader(
-                  child: ColoredBox(
-                    color: Theme.of(context).canvasColor,
-                    child: const Divider(thickness: 1),
-                  ),
+              ),
+              SliverPinnedHeader(
+                child: ColoredBox(
+                  color: Theme.of(context).canvasColor,
+                  child: const Divider(thickness: 1),
                 ),
-                buildMainContentSliver(),
-              ],
-            ),
+              ),
+              buildMainContentSliver(),
+            ],
           ),
         ),
       ),
