@@ -164,9 +164,9 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
         case RideStatus.approved:
           return Theme.of(context).own().success;
         case RideStatus.rejected:
-          return Theme.of(context).errorColor;
+          return Theme.of(context).colorScheme.error;
         case RideStatus.cancelledByDriver:
-          return Theme.of(context).errorColor;
+          return Theme.of(context).colorScheme.error;
         case RideStatus.cancelledByRider:
         case RideStatus.withdrawnByRider:
           return Theme.of(context).disabledColor;

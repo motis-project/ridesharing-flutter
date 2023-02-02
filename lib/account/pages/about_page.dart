@@ -33,7 +33,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     final TextStyle packageInfoStyle = Theme.of(context)
         .textTheme
-        .subtitle2!
+        .titleSmall!
         .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
     return Scaffold(
       appBar: AppBar(

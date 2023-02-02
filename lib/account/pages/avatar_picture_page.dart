@@ -27,7 +27,7 @@ class AvatarPicturePage extends StatelessWidget {
                     child: Center(
                       child: Text(
                         profile.username[0].toUpperCase(),
-                        style: Theme.of(context).primaryTextTheme.subtitle1!.copyWith(fontSize: width / 2),
+                        style: Theme.of(context).primaryTextTheme.titleMedium!.copyWith(fontSize: width / 2),
                       ),
                     ),
                   )
@@ -40,7 +40,7 @@ class AvatarPicturePage extends StatelessWidget {
 
   Color getBackgroundColor(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    switch (ThemeData.estimateBrightnessForColor(theme.primaryTextTheme.subtitle1!.color!)) {
+    switch (ThemeData.estimateBrightnessForColor(theme.primaryTextTheme.titleMedium!.color!)) {
       case Brightness.dark:
         return theme.primaryColorLight;
       case Brightness.light:

@@ -77,7 +77,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 const SizedBox(height: 16),
                 Text(
                   S.of(context).pageChatEmptyTitle,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
                 Padding(
