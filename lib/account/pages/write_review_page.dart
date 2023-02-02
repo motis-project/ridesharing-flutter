@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -157,15 +158,13 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
 
   void _updateOverallReview() {
     if (!ratingChangedManually) {
-      final Iterable<int?> givenCategoryRatings = <int?>[
+      final List<int> givenCategoryRatings = <int?>[
         _review!.comfortRating,
         _review!.safetyRating,
         _review!.hospitalityRating,
         _review!.reliabilityRating
-      ].where((int? element) => element != null);
-      _review!.rating =
-          (givenCategoryRatings.reduce((int? value, int? element) => value! + element!)! / givenCategoryRatings.length)
-              .round();
+      ].whereType<int>().toList();
+      _review!.rating = givenCategoryRatings.average.round();
     }
   }
 
