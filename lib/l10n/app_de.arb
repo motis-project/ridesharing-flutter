@@ -348,13 +348,18 @@
   "rideEventWithdrawnTitle": "Anfrage zurückgenommen!",
   "rideEventCancelledByDriverTitle": "Fahrt abgesagt!",
   "rideEventCancelledByRiderTitle": "Mitfahrt abgesagt!",
+  "pageHomeUpcomingDriveToday": "Anstehende Fahrt heute!",
+  "pageHomeUpcomingDriveTomorrow": "Anstehende Fahrt morgen!",
+  "pageHomeUpcomingRideToday": "Anstehende Mitfahrt heute!",
+  "pageHomeUpcomingRideTomorrow": "Anstehende Mitfahrt morgen!",
 
   "rideEventPendingMessage": "{username} hat eine Mitfahrt angefragt",
   "rideEventApprovedMessage": "{username} hat deine Mitfahrt bestätigt",
   "rideEventRejectedMessage": "{username} hat deine Mitfahrt abgelehnt",
   "rideEventWithdrawnMessage": "{username} hat deine Mitfahrt verworfen",
   "rideEventCancelledByDriverMessage": "{username} hat die Fahrt abgesagt",
- "rideEventCancelledByRiderMessage": "{username} hat die Mitfahrt abgesagt",
+  "rideEventCancelledByRiderMessage": "{username} hat die Mitfahrt abgesagt",
+  "pageHomeUpcomingTripMessage": "von {start} nach {end} um {startTime}",
 
   "pageHomePageEmpty": "Keine neuen Nachrichten",
 
