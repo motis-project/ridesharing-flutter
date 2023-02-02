@@ -556,18 +556,20 @@ void main() {
           await tester.tap(find.byKey(const Key('searchRideFilterButton')));
           await tester.pump();
 
-          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          final Finder featuresExpandButton = find.byKey(const Key('searchRideFeaturesExpandButton'));
+          await tester.tap(featuresExpandButton);
           await tester.pump();
 
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          final Finder featureChip = find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}'));
+          await tester.tap(featureChip);
           await tester.pump();
 
-          await tester.tap(find.byKey(const Key('searchRideFeaturesExpandButton')));
+          await tester.tap(featuresExpandButton);
           await tester.pump();
 
           expectFeaturesVisible(tester, [Feature.values[0]]);
 
-          await tester.tap(find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}')));
+          await tester.tap(featureChip);
           await tester.pump();
 
           expectFeaturesVisible(tester, [Feature.values[0]]);
@@ -677,11 +679,10 @@ void main() {
         ];
 
         //I am setting the duration and positions here because default Dart sort isn't stable and I want indices to work
-        //TODO use duration instead of endTime
         final List<Drive> drives = drivers
             .map((Profile driver) => DriveFactory().generateFake(
                 startTime: startTime,
-                endTime: startTime.add(Duration(minutes: drivers.indexOf(driver))),
+                endTime: startTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
                 startPosition: Position(0, 0),
                 endPosition: Position(0, 0),
                 driver: NullableParameter(driver)))
@@ -749,7 +750,6 @@ void main() {
         testWidgets('Relevance (not whole day)', (WidgetTester tester) async {
           final DateTime startTime = DateTime.now();
 
-          //TODO use duration here instead of endTime
           final List<Drive> drives = [
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
@@ -799,7 +799,6 @@ void main() {
         testWidgets('Relevance (whole day)', (WidgetTester tester) async {
           final DateTime startTime = DateTime.now();
 
-          //TODO use duration here instead of endTime
           final List<Drive> drives = [
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
@@ -935,14 +934,15 @@ void main() {
           final SearchRidePageState pageState = tester.state(pageFinder);
 
           //wholeDay is on by default, so I'm turning it off here
-          await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
+          final Finder wholeDayCheckbox = find.byKey(const Key('searchRideWholeDayCheckbox'));
+          await tester.tap(wholeDayCheckbox);
           await tester.pump();
 
           await enterSorting(tester, SearchRideSorting.timeProximity);
 
           expect(pageState.filter.sorting, SearchRideSorting.timeProximity);
 
-          await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
+          await tester.tap(wholeDayCheckbox);
           await tester.pump();
 
           expect(pageState.filter.sorting, SearchRideSorting.relevance);
