@@ -218,14 +218,12 @@ class SearchRideFilter {
   }
 
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) setState) {
-    print('Build sorting filter');
-    String yay;
     return DropdownButton<SearchRideSorting>(
       key: const Key('searchRideSortingDropdownButton'),
       icon: const Icon(Icons.sort),
       value: sorting,
       items: SearchRideSorting.values.map((SearchRideSorting rideSorting) {
-        final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
+        final bool enabled = !(_wholeDay && rideSorting == SearchRideSorting.timeProximity);
         return DropdownMenuItem<SearchRideSorting>(
           key: Key('searchRideSortingDropdownItem${rideSorting.name}'),
           enabled: enabled,
@@ -252,6 +250,7 @@ class SearchRideFilter {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: AlertDialog(
+                key: const Key('searchRideFilterDialog'),
                 content: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

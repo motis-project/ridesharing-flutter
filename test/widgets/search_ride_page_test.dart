@@ -83,8 +83,8 @@ void main() {
   Future<void> enterSeats(WidgetTester tester, int seats) async {
     for (int i = 1; i < seats; i++) {
       await tester.tap(find.byKey(const Key('increment')));
+      await tester.pump();
     }
-    await tester.pump();
   }
 
   Future<void> enterFilter(WidgetTester tester,
@@ -420,30 +420,33 @@ void main() {
       });
 
       testWidgets('Too restrictive filters', (WidgetTester tester) async {
-        final String start = faker.address.city();
-        final String destination = faker.address.city();
-        final DateTime startTime = DateTime.now();
+        await tester.runAsync(() async {
+          final String start = faker.address.city();
+          final String destination = faker.address.city();
+          final DateTime startTime = DateTime.now();
 
-        final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
-        final List<Map<String, dynamic>> drives = [
-          DriveFactory()
-              .generateFake(driver: NullableParameter(driver), start: start, startTime: startTime)
-              .toJsonForApi(),
-        ];
-        whenRequest(processor).thenReturnJson(drives);
+          final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
+          final List<Map<String, dynamic>> drives = [
+            DriveFactory()
+                .generateFake(driver: NullableParameter(driver), start: start, startTime: startTime)
+                .toJsonForApi(),
+          ];
+          whenRequest(processor).thenReturnJson(drives);
+          whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
+              .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
 
-        await pumpMaterial(tester, const SearchRidePage());
+          await pumpMaterial(tester, const SearchRidePage());
 
-        await enterStartAndDestination(tester, start, destination);
-        await enterDateAndTime(tester, startTime);
-        await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
+          await enterStartAndDestination(tester, start, destination);
+          await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
 
-        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+          expect(find.byType(RideCard, skipOffstage: false), findsNothing);
 
-        await tester.tap(find.byKey(const Key('searchRideRelaxRestrictions')));
-        await tester.pump();
+          await tester.tap(find.byKey(const Key('searchRideRelaxRestrictions')));
+          await tester.pump();
 
-        expect(find.byType(Dialog), findsOneWidget);
+          expect(find.byKey(const Key('searchRideFilterDialog')), findsOneWidget);
+        });
       });
 
       testWidgets('Results at wrong times', (WidgetTester tester) async {
@@ -454,8 +457,12 @@ void main() {
         final DateTime farAwayTime = searchTime.add(const Duration(days: 4));
 
         final List<Map<String, dynamic>> drives = [
-          DriveFactory().generateFake(start: start, startTime: farAwayTime).toJsonForApi(),
-          DriveFactory().generateFake(start: start, startTime: rightTime).toJsonForApi(),
+          DriveFactory()
+              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startTime: farAwayTime)
+              .toJsonForApi(),
+          DriveFactory()
+              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startTime: rightTime)
+              .toJsonForApi(),
         ];
         whenRequest(processor).thenReturnJson(drives);
         whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
@@ -467,6 +474,8 @@ void main() {
         await enterDateAndTime(tester, searchTime);
 
         expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+
+        expect(find.byKey(const Key('searchRideWrongTime')), findsOneWidget);
 
         await tester.tap(find.byKey(const Key('searchRideWrongTime')));
         await tester.pump();
@@ -552,13 +561,15 @@ void main() {
                 .sublist(1),
           ),
         ];
-        //I am setting the duration here because default Dart sort isn't stable and I want indices to work
+        //I am setting the duration and positions here because default Dart sort isn't stable and I want indices to work
         //TODO use duration instead of endTime
         final List<Drive> drives = drivers
             .map((Profile driver) => DriveFactory().generateFake(
                 start: start,
                 startTime: startTime,
                 endTime: startTime.add(Duration(minutes: drivers.indexOf(driver))),
+                startPosition: Position(0, 0),
+                endPosition: Position(0, 0),
                 driver: NullableParameter(driver)))
             .toList();
         final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
@@ -586,6 +597,9 @@ void main() {
 
         List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(3));
+        for (final Ride ride in filteredRides) {
+          print(drives.indexWhere((Drive drive) => drive.id == ride.driveId));
+        }
         expect(filteredRides[0].driveId, drives[0].id);
         expect(filteredRides[1].driveId, drives[3].id);
         expect(filteredRides[2].driveId, drives[4].id);
@@ -595,6 +609,9 @@ void main() {
 
         filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(4));
+        for (final Ride ride in filteredRides) {
+          print(drives.indexWhere((Drive drive) => drive.id == ride.driveId));
+        }
         expect(filteredRides[0].driveId, drives[0].id);
         expect(filteredRides[1].driveId, drives[1].id);
         expect(filteredRides[2].driveId, drives[2].id);
@@ -815,12 +832,14 @@ void main() {
 
           //wholeDay is on by default, so I'm turning it off here
           await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
+          await tester.pump();
 
           await enterSorting(tester, SearchRideSorting.timeProximity);
 
           expect(pageState.filter.sorting, SearchRideSorting.timeProximity);
 
           await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
+          await tester.pump();
 
           expect(pageState.filter.sorting, SearchRideSorting.relevance);
         });

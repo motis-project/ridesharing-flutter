@@ -314,6 +314,7 @@ class SearchRidePageState extends State<SearchRidePage> {
                   key: const Key('searchRideWrongTime'),
                   onTap: () => setState(
                     () {
+                      print('AJAJAJAJ');
                       //TODO This is currently broken because it will often choose past drives, but that shouldn't happen because of the algorithm
                       selectedDate = filterApplied[0].startTime;
                       _dateController.text = localeManager.formatDate(selectedDate);

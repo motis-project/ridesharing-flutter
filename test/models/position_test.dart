@@ -5,6 +5,7 @@ void main() {
   group('Named constructors', () {
     test('Position.fromJson', () {
       final Map<String, dynamic> json = {
+        //TODO Is is possible for this to be an int?
         'lat': 50.0,
         'lng': 8.2714,
       };
@@ -45,6 +46,13 @@ void main() {
       final Position position1 = Position(50, 8.2714);
       final Position position2 = Position(50, 8.2715);
       expect(position1 == position2, isFalse);
+    });
+  });
+
+  group('Position.hashCode', () {
+    test('Mainz', () {
+      final Position position = Position(50, 8.2714);
+      expect(position.hashCode, 9159982800490006);
     });
   });
 
