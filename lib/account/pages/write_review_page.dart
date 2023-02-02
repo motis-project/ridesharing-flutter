@@ -164,7 +164,8 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         _review!.reliabilityRating
       ].where((int? element) => element != null);
       _review!.rating =
-          givenCategoryRatings.reduce((int? value, int? element) => value! + element!)! ~/ givenCategoryRatings.length;
+          (givenCategoryRatings.reduce((int? value, int? element) => value! + element!)! / givenCategoryRatings.length)
+              .round();
     }
   }
 
