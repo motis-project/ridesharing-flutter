@@ -145,41 +145,13 @@ class RegisterFormState extends State<RegisterForm> {
             ),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: S.of(context).formPassword,
-              hintText: S.of(context).formPasswordHint,
-              key: const Key('registerPasswordField'),
               controller: passwordController,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).formPasswordValidateEmpty;
-                } else if (value.length < 8) {
-                  return S.of(context).formPasswordValidateMinLength;
-                } else if (RegExp('[0-9]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateMinLength;
-                } else if (RegExp('[A-Z]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateUppercase;
-                } else if (RegExp('[a-z]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateLowercase;
-                } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
-                  return S.of(context).formPasswordValidateSpecial;
-                }
-                return null;
-              },
+              validateSecurity: true,
             ),
             const SizedBox(height: 15),
             PasswordField(
-              labelText: S.of(context).formPasswordConfirm,
-              hintText: S.of(context).formPasswordConfirmHint,
-              key: const Key('registerPasswordConfirmField'),
               controller: passwordConfirmationController,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).formPasswordConfirmValidateEmpty;
-                } else if (value != passwordController.text) {
-                  return S.of(context).formPasswordConfirmValidateMatch;
-                }
-                return null;
-              },
+              originalPasswordController: passwordController,
             ),
             const SizedBox(height: 15),
             Hero(
