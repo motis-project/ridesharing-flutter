@@ -8,11 +8,14 @@ import '../../account/widgets/avatar.dart';
 class ProfileChip extends StatelessWidget {
   final Profile profile;
   final bool showChatButton;
+  final bool withHero;
 
-  const ProfileChip(this.profile, {super.key, this.showChatButton = false});
+  const ProfileChip(this.profile, {super.key, this.showChatButton = false, this.withHero = false});
 
   @override
   Widget build(BuildContext context) {
+    Widget usernameText = Text(profile.username);
+    if (withHero) usernameText = Hero(tag: 'Username-${profile.id}', child: usernameText);
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Semantics(
@@ -21,8 +24,8 @@ class ProfileChip extends StatelessWidget {
         button: true,
         tooltip: S.of(context).seeProfile,
         child: ActionChip(
-          avatar: Avatar(profile),
-          label: Text(profile.username),
+          avatar: Avatar(profile, withHero: withHero),
+          label: usernameText,
           labelPadding: const EdgeInsets.all(5),
           padding: const EdgeInsets.all(5),
           onPressed: () {

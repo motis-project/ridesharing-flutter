@@ -65,13 +65,12 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
       };
 
   Widget getFloatingActionButton(BuildContext context, {required bool isRide}) {
-    final String heroTag = isRide ? 'RideFAB' : 'DriveFAB';
     final String tooltip = isRide ? S.of(context).pageRidesTooltipSearchRide : S.of(context).pageDrivesTooltipOfferRide;
     final Icon icon = isRide ? const Icon(Icons.search) : const Icon(Icons.add);
     final Key key = isRide ? const Key('ridesFAB') : const Key('drivesFAB');
 
     return FloatingActionButton(
-      heroTag: heroTag,
+      heroTag: null,
       tooltip: tooltip,
       onPressed: onFabPressed,
       backgroundColor: Theme.of(context).colorScheme.primary,

@@ -106,6 +106,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
             child: ProfileWidget(
               _driver,
               size: 16,
+              isTappable: false,
             ),
           );
   }

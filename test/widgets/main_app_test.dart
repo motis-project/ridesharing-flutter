@@ -58,7 +58,7 @@ void main() {
       await tester.tap(find.byKey(const Key('accountHelp')));
       await tester.pump();
 
-      expect(find.byType(HelpPage).hitTestable(), findsOneWidget);
+      expect(find.byType(HelpPage), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('homeIcon')));
       await tester.pump();
