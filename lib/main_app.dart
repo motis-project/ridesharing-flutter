@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -91,7 +93,9 @@ class _MainAppState extends State<MainApp> {
   Widget buildNavigatorForTab(TabItem tabItem) {
     return Navigator(
       key: _navigatorKeys[tabItem],
-      observers: <NavigatorObserver>[HeroController()],
+      observers: Platform.environment.containsKey('FLUTTER_TEST')
+          ? <NavigatorObserver>[]
+          : <NavigatorObserver>[HeroController()],
       onGenerateRoute: (RouteSettings routeSettings) => MaterialPageRoute<void>(
         builder: (BuildContext context) => _pages[tabItem]!,
       ),
