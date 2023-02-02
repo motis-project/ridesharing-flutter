@@ -33,8 +33,6 @@ void main() {
   Future<void> loadPageAndTapKey(WidgetTester tester, Key key) async {
     await pumpMaterial(tester, const AccountPage(), navigatorObserver: navigatorObserver);
 
-    await tester.pump();
-
     await tester.tap(find.byKey(key));
     await tester.pumpAndSettle();
   }
@@ -48,6 +46,7 @@ void main() {
     final ProfileWidget profileWidget = tester.widget(profileWidgetFinder);
     expect(profileWidget.profile, user);
     expect(profileWidget.withHero, true);
+    expect(profileWidget.isTappable, true); //tappable to open profile page
   });
 
   testWidgets('change Language', (WidgetTester tester) async {
@@ -75,10 +74,9 @@ void main() {
     verify(navigatorObserver.didPop(any, any)).called(1);
   });
   testWidgets('change Theme', (WidgetTester tester) async {
-    await loadPageAndTapKey(tester, const Key('accountTheme'));
+    themeManager.setTheme(ThemeMode.values.first);
 
-    //check that system ThemeMode is default
-    // expect(themeManager.currentThemeMode, ThemeMode.system);
+    await loadPageAndTapKey(tester, const Key('accountTheme'));
 
     //shows all themes
     final Finder themes = find.byType(RadioListTile<ThemeMode>);
@@ -99,13 +97,13 @@ void main() {
     verify(navigatorObserver.didPop(any, any)).called(1);
   });
 
-  testWidgets('can Navigate to help Page', (WidgetTester tester) async {
+  testWidgets('can navigate to help Page', (WidgetTester tester) async {
     await loadPageAndTapKey(tester, const Key('accountHelp'));
 
     expect(find.byType(HelpPage), findsOneWidget);
   });
 
-  testWidgets('can navigat to about Page', (WidgetTester tester) async {
+  testWidgets('can navigate to about Page', (WidgetTester tester) async {
     await loadPageAndTapKey(tester, const Key('accountAbout'));
 
     expect(find.byType(AboutPage), findsOneWidget);
