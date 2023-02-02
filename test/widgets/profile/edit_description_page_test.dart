@@ -89,12 +89,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(EditDescriptionPage), findsOneWidget);
 
+      await tester.tap(find.byKey(const Key('clearButton')));
+      await tester.pump();
+
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
       expect(find.byType(ProfilePage), findsOneWidget);
+
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({'description': null}),
+      ).called(1);
+
+      verifyRequest(processor,
+              urlMatcher: equals(
+                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
+          .called(2);
     });
   });
 }

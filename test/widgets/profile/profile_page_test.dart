@@ -33,7 +33,7 @@ void main() {
     MockServer.setProcessor(processor);
   });
 
-  setUp(() {
+  setUp(() async {
     SupabaseManager.setCurrentProfile(profile);
     whenRequest(
       processor,
@@ -52,6 +52,12 @@ void main() {
           email: email),
       'email': email,
     });
+
+    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: authId,
+    );
+
     whenRequest(processor,
             urlMatcher: equals(
                 '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
@@ -244,22 +250,13 @@ void main() {
       expect(find.byKey(const Key('disabledReportButton')), findsNothing);
     });
     testWidgets('Sign out button', (WidgetTester tester) async {
-      // sign in
-      await SupabaseManager.supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: authId,
-      );
-
-      //load page
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      // tap sign out button
       await tester.tap(find.byKey(const Key('signOutButton')));
       await tester.pumpAndSettle();
 
-      // check if sign out request is sent
-      expect(verifyRequest(processor, urlMatcher: equals('/auth/v1/logout?')).callCount, 1);
+      verifyRequest(processor, urlMatcher: equals('/auth/v1/logout?')).called(1);
     });
 
     // run for both current and other profile

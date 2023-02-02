@@ -120,8 +120,8 @@ void main() {
       profile = ProfileFactory().generateFake(
         id: 1,
         profileFeatures: [
-          ProfileFeature(profileId: 1, feature: Feature.smoking, rank: 1),
-          ProfileFeature(profileId: 1, feature: Feature.vaping, rank: 2),
+          ProfileFeature(profileId: 1, feature: Feature.smoking, rank: 0),
+          ProfileFeature(profileId: 1, feature: Feature.vaping, rank: 1),
         ],
       );
       SupabaseManager.setCurrentProfile(profile);
@@ -263,7 +263,6 @@ void main() {
         await tester.drag(dragFinder, const Offset(0, 50));
         await tester.pump();
 
-        //feature is not added anymore
         expect(
             find.descendant(
                 of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
@@ -282,6 +281,18 @@ void main() {
       expect(find.byKey(const Key('emptyList')), findsOneWidget);
     });
     testWidgets('save Button', (WidgetTester tester) async {
+      profile = ProfileFactory().generateFake(
+        id: 1,
+        profileFeatures: [
+          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.smoking, rank: 0),
+          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.petsAllowed, rank: 1),
+          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.quiet, rank: 2),
+        ],
+      );
+      whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
+
+      SupabaseManager.setCurrentProfile(profile);
+
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
@@ -292,12 +303,59 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(EditProfileFeaturesPage), findsOneWidget);
 
+      final deletedFeature = profile.features!.first;
+      await tester.tap(find.descendant(
+          of: find.ancestor(of: find.byKey(Key('${deletedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+          matching: find.byKey(const Key('removeButton'))));
+      await tester.pump();
+
+      const addedFeature = Feature.noSmoking;
+      await tester.tap(find.descendant(
+          of: find.ancestor(of: find.byKey(Key('${addedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+          matching: find.byKey(const Key('addButton'))));
+      await tester.pump();
+
       expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('saveButton')));
       await tester.pumpAndSettle();
 
       expect(find.byType(ProfilePage), findsOneWidget);
+
+      //inserted feature
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profile_features'),
+        methodMatcher: equals('POST'),
+        bodyMatcher: equals({'profile_id': 1, 'feature': addedFeature.index, 'rank': 2}),
+      ).called(1);
+
+      //moved feature
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profile_features?profile_id=eq.1&feature=eq.${Feature.petsAllowed.index}'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({'rank': 0}),
+      ).called(1);
+
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profile_features?profile_id=eq.1&feature=eq.${Feature.quiet.index}'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({'rank': 1}),
+      ).called(1);
+
+      //deleted feature
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profile_features?profile_id=eq.1&feature=eq.${deletedFeature.index}'),
+        methodMatcher: equals('DELETE'),
+      ).called(1);
+
+      verifyRequest(processor,
+              urlMatcher: equals(
+                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
+          .called(2);
     });
   });
 }

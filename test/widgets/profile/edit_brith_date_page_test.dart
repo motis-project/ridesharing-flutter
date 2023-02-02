@@ -49,8 +49,7 @@ void main() {
       email: email,
       password: authId,
     );
-
-    whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
+    whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_birth_date_page', () {
     testWidgets('birthDate TextField', (WidgetTester tester) async {
@@ -120,9 +119,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ProfilePage), findsOneWidget);
-      /*expect(find.text(profile.age.toString()), findsNothing);
-      expect(find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('noInfoText'))),
-          findsOneWidget);*/
+
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({'birth_date': null}),
+      ).called(1);
+
+      verifyRequest(processor,
+              urlMatcher: equals(
+                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
+          .called(2);
     });
   });
 }

@@ -87,12 +87,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(EditUsernamePage), findsOneWidget);
 
-      expect(find.byKey(const Key('saveButton')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('clearButton')));
+      await tester.pump();
 
-      await tester.tap(find.byKey(const Key('saveButton')));
+      final Finder saveButton = find.byKey(const Key('saveButton'));
+      expect(saveButton, findsOneWidget);
+
+      await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
+      // stays in editUsernamePage since username is empty
+      expect(find.byType(EditUsernamePage), findsOneWidget);
+
+      await tester.enterText(find.byKey(const Key('usernameTextField')), 'newUsername');
+
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      // leaves ProfilePage since now username is not empty
       expect(find.byType(ProfilePage), findsOneWidget);
+
+      verifyRequest(
+        processor,
+        urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({'username': 'newUsername'}),
+      ).called(1);
+
+      verifyRequest(processor,
+              urlMatcher: equals(
+                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
+          .called(2);
     });
   });
 }
