@@ -45,15 +45,17 @@ class DriveFactory extends TripFactory<Drive> {
               )
             : null);
 
+    final TripTimes tripTimes = generateTimes(startTime, endTime);
+
     return Drive(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: startTime ?? DateTime.now(),
+      startTime: tripTimes.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: endTime ?? DateTime.now(),
+      endTime: tripTimes.end,
       seats: seats ?? random.nextInt(5) + 1,
       cancelled: cancelled ?? false,
       hideInListView: hideInListView ?? false,

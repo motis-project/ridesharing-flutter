@@ -18,17 +18,38 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
     bool hideInListView = false,
     bool createDependencies = true,
   }) {
+    final TripTimes times = generateTimes(startTime, endTime);
+
     return Trip(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: startTime ?? DateTime.now(),
+      startTime: times.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: endTime ?? DateTime.now(),
+      endTime: times.end,
       seats: seats ?? random.nextInt(5) + 1,
       hideInListView: hideInListView,
     ) as T;
   }
+
+  TripTimes generateTimes(DateTime? startTime, DateTime? endTime) {
+    // Only applied if startTime or endTime are null
+    final Duration randomDuration = Duration(hours: random.nextInt(5) + 1);
+
+    startTime ??= endTime == null ? DateTime.now() : endTime.subtract(randomDuration);
+    endTime ??= startTime.add(randomDuration);
+
+    assert(startTime.isBefore(endTime));
+
+    return TripTimes(startTime, endTime);
+  }
+}
+
+class TripTimes {
+  final DateTime start;
+  final DateTime end;
+
+  TripTimes(this.start, this.end);
 }
