@@ -116,7 +116,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', _startController.text),
+        ''').eq('start', _startController.text).eq('cancelled', false),
     );
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
