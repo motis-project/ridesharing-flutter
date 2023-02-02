@@ -418,30 +418,30 @@ void main() {
       });
 
       testWidgets('Too restrictive filters', (WidgetTester tester) async {
-        await tester.runAsync(() async {
-          final DateTime startTime = DateTime.now();
+        final DateTime startTime = DateTime.now();
 
-          final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
-          final List<Map<String, dynamic>> drives = [
-            DriveFactory().generateFake(driver: NullableParameter(driver), startTime: startTime).toJsonForApi(),
-          ];
+        final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
+        final List<Map<String, dynamic>> drives = [
+          DriveFactory().generateFake(driver: NullableParameter(driver), startTime: startTime).toJsonForApi(),
+        ];
 
-          whenRequest(processor).thenReturnJson(drives);
-          whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
-              .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
+        whenRequest(processor).thenReturnJson(drives);
+        whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
+            .thenReturnJson(DriveFactory().generateFake().toJsonForApi());
 
-          await pumpMaterial(tester, const SearchRidePage());
+        await pumpMaterial(tester, const SearchRidePage());
 
-          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
-          await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
+        await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
+        await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
 
-          expect(find.byType(RideCard, skipOffstage: false), findsNothing);
+        expect(find.byType(RideCard, skipOffstage: false), findsNothing);
 
-          await tester.tap(find.byKey(const Key('searchRideRelaxRestrictions')));
-          await tester.pump();
+        final Finder relaxRestrictionsButton = find.byKey(const Key('searchRideRelaxRestrictions')).hitTestable();
+        await tester.scrollUntilVisible(relaxRestrictionsButton, 100, scrollable: find.byType(Scrollable).first);
+        await tester.tap(relaxRestrictionsButton);
+        await tester.pump();
 
-          expect(find.byKey(const Key('searchRideFilterDialog')), findsOneWidget);
-        });
+        expect(find.byKey(const Key('searchRideFilterDialog')), findsOneWidget);
       });
 
       testWidgets('Results at wrong times', (WidgetTester tester) async {
@@ -471,7 +471,9 @@ void main() {
 
         expect(find.byKey(const Key('searchRideWrongTime')), findsOneWidget);
 
-        await tester.tap(find.byKey(const Key('searchRideWrongTime')));
+        final Finder wrongTimeButton = find.byKey(const Key('searchRideWrongTime')).hitTestable();
+        await tester.scrollUntilVisible(wrongTimeButton, 100, scrollable: find.byType(Scrollable).first);
+        await tester.tap(wrongTimeButton);
         await tester.pump();
 
         final SearchRidePageState pageState = tester.state(pageFinder);
