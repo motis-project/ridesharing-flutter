@@ -11,7 +11,6 @@ import 'package:motis_mitfahr_app/rides/widgets/search_ride_filter.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:motis_mitfahr_app/util/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/util/trip/ride_card.dart';
-import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
 import '../util/factories/address_suggestion_factory.dart';
 import '../util/factories/drive_factory.dart';
@@ -27,6 +26,8 @@ import '../util/pump_material.dart';
 void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
 
+  final Finder pageFinder = find.byType(SearchRidePage);
+
   setUpAll(() {
     MockServer.setProcessor(processor);
   });
@@ -36,7 +37,7 @@ void main() {
   });
 
   Future<void> enterStartAndDestination(WidgetTester tester, String? start, String? destination) async {
-    final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+    final SearchRidePageState pageState = tester.state(pageFinder);
     final StartDestinationTimeline timeline =
         find.byType(StartDestinationTimeline).evaluate().first.widget as StartDestinationTimeline;
 
@@ -100,29 +101,29 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(const Key('searchRideRatingExpandButton')));
     await tester.pump();
+    final Finder starFinder = find.byIcon(Icons.star);
     if (rating != null) {
-      await tester.tap(find
-          .descendant(of: find.byKey(const Key('searchRideRatingBar')), matching: find.byIcon(Icons.star))
-          .at(rating - 1));
+      await tester
+          .tap(find.descendant(of: find.byKey(const Key('searchRideRatingBar')), matching: starFinder).at(rating - 1));
     }
     if (comfortRating != null) {
       await tester.tap(find
-          .descendant(of: find.byKey(const Key('searchRideComfortRatingBar')), matching: find.byIcon(Icons.star))
+          .descendant(of: find.byKey(const Key('searchRideComfortRatingBar')), matching: starFinder)
           .at(comfortRating - 1));
     }
     if (safetyRating != null) {
       await tester.tap(find
-          .descendant(of: find.byKey(const Key('searchRideSafetyRatingBar')), matching: find.byIcon(Icons.star))
+          .descendant(of: find.byKey(const Key('searchRideSafetyRatingBar')), matching: starFinder)
           .at(safetyRating - 1));
     }
     if (reliabilityRating != null) {
       await tester.tap(find
-          .descendant(of: find.byKey(const Key('searchRideReliabilityRatingBar')), matching: find.byIcon(Icons.star))
+          .descendant(of: find.byKey(const Key('searchRideReliabilityRatingBar')), matching: starFinder)
           .at(reliabilityRating - 1));
     }
     if (hospitalityRating != null) {
       await tester.tap(find
-          .descendant(of: find.byKey(const Key('searchRideHospitalityRatingBar')), matching: find.byIcon(Icons.star))
+          .descendant(of: find.byKey(const Key('searchRideHospitalityRatingBar')), matching: starFinder)
           .at(hospitalityRating - 1));
     }
     await tester.tap(find.byKey(const Key('searchRideRatingExpandButton')));
@@ -165,7 +166,7 @@ void main() {
         await pumpMaterial(tester, const SearchRidePage());
         await tester.pump();
 
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+        final SearchRidePageState pageState = tester.state(pageFinder);
 
         await enterStartAndDestination(tester, start, destination);
 
@@ -178,7 +179,7 @@ void main() {
           await pumpMaterial(tester, const SearchRidePage());
           await tester.pump();
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
           await tester.tap(find.byKey(const Key('swapButton')));
           await tester.pump();
@@ -191,7 +192,7 @@ void main() {
           await pumpMaterial(tester, const SearchRidePage());
           await tester.pump();
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
           final String formerStart = faker.address.city();
           await enterStartAndDestination(tester, formerStart, null);
@@ -206,7 +207,7 @@ void main() {
           await pumpMaterial(tester, const SearchRidePage());
           await tester.pump();
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
           final String formerDestination = faker.address.city();
           await enterStartAndDestination(tester, null, formerDestination);
@@ -223,7 +224,7 @@ void main() {
 
           whenRequest(processor).thenReturnJson([]);
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
           final String formerStart = faker.address.city();
           final String formerDestination = faker.address.city();
@@ -245,7 +246,7 @@ void main() {
             await pumpMaterial(tester, const SearchRidePage());
             await tester.pump();
 
-            final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+            final SearchRidePageState pageState = tester.state(pageFinder);
 
             for (int i = 0; i < dayDifference + 1; i++) {
               await tester.tap(find.byKey(const Key('searchRideAfterButton')));
@@ -266,7 +267,7 @@ void main() {
             await pumpMaterial(tester, const SearchRidePage());
             await tester.pump();
 
-            final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+            final SearchRidePageState pageState = tester.state(pageFinder);
 
             await enterDate(tester, dateTime);
 
@@ -275,6 +276,7 @@ void main() {
             expect(pageState.selectedDate.day, dateTime.day);
           });
         });
+
         group('Not whole day', () {
           testWidgets('Possible time', (WidgetTester tester) async {
             final DateTime dateTime = DateTime.now().add(Duration(
@@ -286,7 +288,7 @@ void main() {
             await pumpMaterial(tester, const SearchRidePage());
             await tester.pump();
 
-            final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+            final SearchRidePageState pageState = tester.state(pageFinder);
 
             await enterDateAndTime(tester, dateTime);
 
@@ -323,7 +325,7 @@ void main() {
         await pumpMaterial(tester, const SearchRidePage());
         await tester.pump();
 
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+        final SearchRidePageState pageState = tester.state(pageFinder);
 
         await enterSeats(tester, seats);
 
@@ -362,21 +364,13 @@ void main() {
       });
 
       testWidgets('Normal input', (WidgetTester tester) async {
-        final String start = faker.address.city();
-        final String destination = faker.address.city();
         final DateTime now = DateTime.now();
         final DateTime startTime = DateTime(now.year, now.month, now.day + 1);
 
-        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats - 1) + 1;
-
         final List<Map<String, dynamic>> drives = [
-          DriveFactory().generateFake(start: start, startTime: startTime, seats: seats).toJsonForApi(),
-          DriveFactory()
-              .generateFake(start: start, startTime: startTime.add(const Duration(hours: 1)), seats: seats + 1)
-              .toJsonForApi(),
-          DriveFactory()
-              .generateFake(start: start, startTime: startTime.add(const Duration(days: 1)), seats: seats)
-              .toJsonForApi(),
+          DriveFactory().generateFake(startTime: startTime).toJsonForApi(),
+          DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 1))).toJsonForApi(),
+          DriveFactory().generateFake(startTime: startTime.add(const Duration(days: 1))).toJsonForApi(),
         ];
         whenRequest(processor).thenReturnJson(drives);
         whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
@@ -384,9 +378,9 @@ void main() {
 
         await pumpMaterial(tester, const SearchRidePage());
 
-        await enterStartAndDestination(tester, start, destination);
+        final String start = faker.address.city();
+        await enterStartAndDestination(tester, start, faker.address.city());
         await enterDateAndTime(tester, startTime);
-        await enterSeats(tester, seats);
 
         verifyRequest(
           processor,
@@ -409,15 +403,12 @@ void main() {
       });
 
       testWidgets('No results', (WidgetTester tester) async {
-        final String start = faker.address.city();
-        final String destination = faker.address.city();
-
         final List<Map<String, dynamic>> drives = [];
         whenRequest(processor).thenReturnJson(drives);
 
         await pumpMaterial(tester, const SearchRidePage());
 
-        await enterStartAndDestination(tester, start, destination);
+        await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
 
         expect(find.byType(RideCard, skipOffstage: false), findsNothing);
         expect(find.byKey(const Key('searchRideNoResults')), findsOneWidget);
@@ -425,15 +416,11 @@ void main() {
 
       testWidgets('Too restrictive filters', (WidgetTester tester) async {
         await tester.runAsync(() async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
           final DateTime startTime = DateTime.now();
 
           final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
           final List<Map<String, dynamic>> drives = [
-            DriveFactory()
-                .generateFake(driver: NullableParameter(driver), start: start, startTime: startTime)
-                .toJsonForApi(),
+            DriveFactory().generateFake(driver: NullableParameter(driver), startTime: startTime).toJsonForApi(),
           ];
           whenRequest(processor).thenReturnJson(drives);
           whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.')))
@@ -441,7 +428,7 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
           await enterFilter(tester, features: [Feature.values[random.integer(Feature.values.length)]]);
 
           expect(find.byType(RideCard, skipOffstage: false), findsNothing);
@@ -454,8 +441,6 @@ void main() {
       });
 
       testWidgets('Results at wrong times', (WidgetTester tester) async {
-        final String start = faker.address.city();
-        final String destination = faker.address.city();
         final DateTime searchTime = DateTime.now();
         final DateTime rightTime = searchTime.add(const Duration(days: 2));
         final DateTime farAwayTime = searchTime.add(const Duration(days: 4));
@@ -474,7 +459,7 @@ void main() {
 
         await pumpMaterial(tester, const SearchRidePage());
 
-        await enterStartAndDestination(tester, start, destination);
+        await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
         await enterDateAndTime(tester, searchTime);
 
         expect(find.byType(RideCard, skipOffstage: false), findsNothing);
@@ -484,7 +469,7 @@ void main() {
         await tester.tap(find.byKey(const Key('searchRideWrongTime')));
         await tester.pump();
 
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+        final SearchRidePageState pageState = tester.state(pageFinder);
 
         expect(pageState.selectedDate, rightTime);
         expect(find.byType(RideCard, skipOffstage: false), findsOneWidget);
@@ -493,8 +478,6 @@ void main() {
 
     group('Filter', () {
       testWidgets('Filter rating and features', (WidgetTester tester) async {
-        final String start = faker.address.city();
-        final String destination = faker.address.city();
         final DateTime startTime = DateTime.now();
 
         const int minRating = 3;
@@ -565,11 +548,11 @@ void main() {
                 .sublist(1),
           ),
         ];
+
         //I am setting the duration and positions here because default Dart sort isn't stable and I want indices to work
         //TODO use duration instead of endTime
         final List<Drive> drives = drivers
             .map((Profile driver) => DriveFactory().generateFake(
-                start: start,
                 startTime: startTime,
                 endTime: startTime.add(Duration(minutes: drivers.indexOf(driver))),
                 startPosition: Position(0, 0),
@@ -577,6 +560,7 @@ void main() {
                 driver: NullableParameter(driver)))
             .toList();
         final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
         whenRequest(processor).thenReturnJson(driveJsons);
         for (final Drive drive in drives) {
           whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
@@ -585,9 +569,9 @@ void main() {
 
         await pumpMaterial(tester, const SearchRidePage());
 
-        final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+        final SearchRidePageState pageState = tester.state(pageFinder);
 
-        await enterStartAndDestination(tester, start, destination);
+        await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
 
         //Only ratings, shows 3 drives: Satisfies everything, no ratings, not enough features
         await enterFilter(
@@ -601,9 +585,6 @@ void main() {
 
         List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(3));
-        for (final Ride ride in filteredRides) {
-          print(drives.indexWhere((Drive drive) => drive.id == ride.driveId));
-        }
         expect(filteredRides[0].driveId, drives[0].id);
         expect(filteredRides[1].driveId, drives[3].id);
         expect(filteredRides[2].driveId, drives[4].id);
@@ -613,9 +594,6 @@ void main() {
 
         filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(4));
-        for (final Ride ride in filteredRides) {
-          print(drives.indexWhere((Drive drive) => drive.id == ride.driveId));
-        }
         expect(filteredRides[0].driveId, drives[0].id);
         expect(filteredRides[1].driveId, drives[1].id);
         expect(filteredRides[2].driveId, drives[2].id);
@@ -639,12 +617,10 @@ void main() {
       });
 
       group('Sort', () {
-        testWidgets('Relevance (not whole day)', (WidgetTester tester) async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
-          final DateTime startTime = DateTime.now();
+        double latDiffForKm(double km) => km / 110.574;
 
-          double latDiffForKm(double km) => km / 110.574;
+        testWidgets('Relevance (not whole day)', (WidgetTester tester) async {
+          final DateTime startTime = DateTime.now();
 
           //TODO use duration here instead of endTime
           final List<Drive> drives = [
@@ -668,7 +644,9 @@ void main() {
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(9.95), 0)),
           ];
+
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+
           whenRequest(processor).thenReturnJson(driveJsons);
           for (final Drive drive in drives) {
             whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
@@ -677,9 +655,9 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
           await enterDateAndTime(tester, startTime);
 
           await enterSorting(tester, SearchRideSorting.relevance);
@@ -692,11 +670,7 @@ void main() {
         });
 
         testWidgets('Relevance (whole day)', (WidgetTester tester) async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
           final DateTime startTime = DateTime.now();
-
-          double latDiffForKm(double km) => km / 110.574;
 
           //TODO use duration here instead of endTime
           final List<Drive> drives = [
@@ -722,9 +696,9 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
           await enterDate(tester, startTime);
 
           await enterSorting(tester, SearchRideSorting.relevance);
@@ -736,8 +710,6 @@ void main() {
         });
 
         testWidgets('Travel Duration', (WidgetTester tester) async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
           final DateTime startTime = DateTime.now();
 
           final List<Drive> drives = [
@@ -754,9 +726,9 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
 
           await enterSorting(tester, SearchRideSorting.travelDuration);
 
@@ -766,14 +738,12 @@ void main() {
           expect(filteredRides[1].driveId, drives[0].id);
           expect(filteredRides[2].driveId, drives[1].id);
         });
-        testWidgets('Price', (WidgetTester tester) async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
 
+        testWidgets('Price', (WidgetTester tester) async {
           final List<Drive> drives = [
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(10, 10)),
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(5, 5)),
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(8, 8)),
+            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(10), 0)),
+            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(5), 0)),
+            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(8), 0)),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
           whenRequest(processor).thenReturnJson(driveJsons);
@@ -784,9 +754,9 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
 
           await enterSorting(tester, SearchRideSorting.price);
 
@@ -796,9 +766,8 @@ void main() {
           expect(filteredRides[1].driveId, drives[2].id);
           expect(filteredRides[2].driveId, drives[0].id);
         });
+
         testWidgets('Time proximity', (WidgetTester tester) async {
-          final String start = faker.address.city();
-          final String destination = faker.address.city();
           final DateTime startTime = DateTime.now();
 
           final List<Drive> drives = [
@@ -815,9 +784,9 @@ void main() {
 
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage)) as SearchRidePageState;
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
-          await enterStartAndDestination(tester, start, destination);
+          await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
           await enterDateAndTime(tester, startTime);
 
           await enterSorting(tester, SearchRideSorting.timeProximity);
@@ -832,7 +801,7 @@ void main() {
         testWidgets('Turning on wholeDay switches time proximity sorting off', (WidgetTester tester) async {
           await pumpMaterial(tester, const SearchRidePage());
 
-          final SearchRidePageState pageState = tester.state(find.byType(SearchRidePage));
+          final SearchRidePageState pageState = tester.state(pageFinder);
 
           //wholeDay is on by default, so I'm turning it off here
           await tester.tap(find.byKey(const Key('searchRideWholeDayCheckbox')));
@@ -873,8 +842,6 @@ void main() {
         await enterFilter(tester, rating: 3);
         expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsOneWidget);
 
-        print('1');
-
         await enterFilter(tester, rating: 3, comfortRating: 3, hospitalityRating: 3);
         expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.star)), findsNWidgets(3));
         expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.chair)), findsOneWidget);
@@ -883,13 +850,10 @@ void main() {
           expect(find.descendant(of: indicatorRow, matching: find.byKey(Key('ratingSizedBox$i'))), findsOneWidget);
         }
         expect(find.descendant(of: indicatorRow, matching: find.byKey(const Key('ratingSizedBox2'))), findsNothing);
-        print('2');
 
         await enterFilter(tester, features: [Feature.accessible, Feature.childrenAllowed]);
         expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.accessibility)), findsOneWidget);
         expect(find.descendant(of: indicatorRow, matching: find.byIcon(Icons.child_care)), findsOneWidget);
-
-        print('3');
 
         await enterFilter(tester, hospitalityRating: 3, features: [Feature.accessible]);
         expect(find.descendant(of: indicatorRow, matching: find.byType(VerticalDivider)), findsOneWidget);
