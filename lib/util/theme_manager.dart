@@ -10,6 +10,9 @@ class ThemeManager with ChangeNotifier {
   final ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
     colorScheme: const ColorScheme.light(),
+    dividerTheme: ThemeData.light().dividerTheme.copyWith(
+          color: Colors.grey.withOpacity(0.5),
+        ),
   )..addOwn(const OwnThemeFields());
   final ThemeData darkTheme = ThemeData.dark().copyWith(
     useMaterial3: true,
@@ -19,6 +22,9 @@ class ThemeManager with ChangeNotifier {
         ),
     appBarTheme: ThemeData.dark().appBarTheme.copyWith(
           backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+        ),
+    dividerTheme: ThemeData.dark().dividerTheme.copyWith(
+          color: Colors.grey.withOpacity(0.5),
         ),
   )..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
