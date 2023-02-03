@@ -69,7 +69,8 @@ class AvatarState extends State<Avatar> {
             bottom: 0,
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).cardColor,
+              foregroundColor: Theme.of(context).colorScheme.primary,
               child: IconButton(
                 tooltip: S.of(context).widgetAvatarUploadTooltip,
                 iconSize: 20,
