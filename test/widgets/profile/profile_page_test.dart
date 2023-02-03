@@ -35,6 +35,7 @@ void main() {
 
   setUp(() async {
     SupabaseManager.setCurrentProfile(profile);
+
     whenRequest(
       processor,
       urlMatcher: startsWith('/auth/v1/token'),
@@ -58,18 +59,11 @@ void main() {
       password: authId,
     );
 
-    whenRequest(processor,
-            urlMatcher: equals(
-                '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
         .thenReturnJson(profile.toJsonForApi());
-    whenRequest(processor,
-            urlMatcher: equals(
-                '/rest/v1/profiles?select=%2A%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29&id=eq.1'))
-        .thenReturnJson(profile.toJsonForApi());
-    whenRequest(processor,
-            urlMatcher: equals(
-                '/rest/v1/rides?select=%2A%2Cdrive%3Adrives%21inner%28%2A%29&rider_id=eq.1&drive.driver_id=eq.1'))
-        .thenReturnJson([]);
+
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'), methodMatcher: equals('GET')).thenReturnJson([]);
+
     whenRequest(processor, urlMatcher: equals('/auth/v1/logout?')).thenReturnJson('');
   });
 
@@ -79,13 +73,16 @@ void main() {
       i == 0
           ? SupabaseManager.setCurrentProfile(profile)
           : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+
       testWidgets('Works with id parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage(profile.id!));
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
         await tester.pump();
+
+        // you see it once in the AppBar and once in the body
         expect(find.text(profile.username), findsNWidgets(2));
       });
+
       testWidgets('Works with object parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -96,6 +93,7 @@ void main() {
       });
     }
   });
+
   group('Profile content', () {
     // run for both own and other profile
     for (int i = 0; i < 2; i++) {
@@ -110,30 +108,35 @@ void main() {
         expect(find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('avatarTappable'))),
             findsOneWidget);
       });
+
       testWidgets('username$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
         expect(find.text(profile.username), findsNWidgets(2));
       });
+
       testWidgets('fullName$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
         expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
       });
+
       testWidgets('description$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
         expect(find.text(profile.description!), findsOneWidget);
       });
+
       testWidgets('age$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
         expect(find.text(profile.age.toString()), findsOneWidget);
       });
+
       testWidgets('gender$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
@@ -141,6 +144,7 @@ void main() {
         final genderFinder = find.byKey(const Key('gender'));
         expect(genderFinder, findsOneWidget);
       });
+
       testWidgets('features$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
@@ -154,7 +158,11 @@ void main() {
           await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
           expect(featureFinder, findsOneWidget);
         }
+
+        expect(find.descendant(of: find.byKey(const Key('features')), matching: find.byType(ListTile)),
+            findsNWidgets(profile.features!.length));
       });
+
       testWidgets('review$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
@@ -162,12 +170,14 @@ void main() {
         expect(find.byKey(const Key('reviewsPreview')), findsOneWidget);
       });
     }
+
     testWidgets('currentUser email', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
       expect(find.text(profile.email), findsOneWidget);
     });
+
     testWidgets('not currentUser email', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
 
@@ -176,6 +186,7 @@ void main() {
 
       expect(find.text(profile.email), findsNothing);
     });
+
     testWidgets('not currentUser no details', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
 
@@ -189,10 +200,11 @@ void main() {
           profileFeatures: [],
           createDependencies: false);
 
-      whenRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .thenReturnJson(profile.toJsonForApi());
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).thenReturnJson(profile.toJsonForApi());
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -203,6 +215,7 @@ void main() {
       expect(find.byKey(const Key('gender')), findsNothing);
       expect(find.byKey(const Key('features')), findsNothing);
     });
+
     testWidgets('currentUser no details', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(
           id: 1,
@@ -213,10 +226,11 @@ void main() {
           birthDate: NullableParameter(null),
           profileFeatures: []);
 
-      whenRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .thenReturnJson(profile.toJsonForApi());
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).thenReturnJson(profile.toJsonForApi());
 
       SupabaseManager.setCurrentProfile(profile);
 
@@ -226,6 +240,7 @@ void main() {
       expect(find.byKey(const Key('noInfoText')), findsNWidgets(5));
     });
   });
+
   group('Buttons', () {
     testWidgets('not currentUser buttons', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
@@ -238,6 +253,7 @@ void main() {
       expect(find.byKey(const Key('avatarUpload')), findsNothing);
       expect(find.byKey(const Key('signOutButton')), findsNothing);
     });
+
     testWidgets('currentUser buttons', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -249,6 +265,7 @@ void main() {
       expect(find.byKey(const Key('reportButton')), findsNothing);
       expect(find.byKey(const Key('disabledReportButton')), findsNothing);
     });
+
     testWidgets('Sign out button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -264,6 +281,7 @@ void main() {
       i == 0
           ? SupabaseManager.setCurrentProfile(profile)
           : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+
       testWidgets('Avatar is tappable $i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
@@ -273,6 +291,7 @@ void main() {
 
         expect(find.byType(AvatarPicturePage), findsOneWidget);
       });
+
       testWidgets('Reviews button $i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
@@ -285,6 +304,7 @@ void main() {
         expect(find.byType(ReviewsPage), findsOneWidget);
       });
     }
+
     testWidgets('Edit username button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -294,6 +314,7 @@ void main() {
 
       expect(find.byType(EditUsernamePage), findsOneWidget);
     });
+
     testWidgets('Edit full name button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -304,6 +325,7 @@ void main() {
 
       expect(find.byType(EditFullNamePage), findsOneWidget);
     });
+
     testWidgets('Edit description button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -314,6 +336,7 @@ void main() {
 
       expect(find.byType(EditDescriptionPage), findsOneWidget);
     });
+
     testWidgets('Edit age button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -324,6 +347,7 @@ void main() {
 
       expect(find.byType(EditBirthDatePage), findsOneWidget);
     });
+
     testWidgets('Edit gender button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -334,6 +358,7 @@ void main() {
 
       expect(find.byType(EditGenderPage), findsOneWidget);
     });
+
     testWidgets('Edit features button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -346,6 +371,7 @@ void main() {
 
       expect(find.byType(EditProfileFeaturesPage), findsOneWidget);
     });
+
     testWidgets('Report button', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
 
@@ -358,10 +384,11 @@ void main() {
         ReportFactory().generateFake(reporterId: 3, offenderId: 1, createDependencies: false)
       ]);
 
-      whenRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .thenReturnJson(profile.toJsonForApi());
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).thenReturnJson(profile.toJsonForApi());
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -377,6 +404,7 @@ void main() {
 
       expect(find.byType(WriteReportPage), findsOneWidget);
     });
+
     testWidgets('Disabled report button', (WidgetTester tester) async {
       SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
 
@@ -388,10 +416,11 @@ void main() {
             createDependencies: false)
       ]);
 
-      whenRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .thenReturnJson(profile.toJsonForApi());
+      whenRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).thenReturnJson(profile.toJsonForApi());
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();

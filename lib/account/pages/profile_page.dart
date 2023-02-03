@@ -281,6 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (!_profile!.isCurrentUser) {
         final bool hasRecentReport = _profile!.reportsReceived!
             .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
+
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
           if (hasRecentReport)

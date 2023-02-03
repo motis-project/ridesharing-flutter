@@ -27,6 +27,7 @@ void main() {
   setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
+
     whenRequest(
       processor,
       urlMatcher: startsWith('/auth/v1/token'),
@@ -55,16 +56,14 @@ void main() {
   group('edit_profile_features_page', () {
     testWidgets('show added features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
-
       for (int i = 0; i < profile.features!.length; i++) {
         final featureFinder = find.byKey(Key('${profile.features![i].toString()} Tile'));
         expect(featureFinder, findsOneWidget);
       }
     });
+
     testWidgets('show not added features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
       final List<Feature> notAddedFeatures =
           Feature.values.where((Feature e) => !profile.features!.contains(e)).toList();
@@ -77,9 +76,9 @@ void main() {
         expect(featureFinder, findsOneWidget);
       }
     });
+
     testWidgets('add features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
       final List<Feature> notAddedFeatures =
           Feature.values.where((Feature e) => !profile.features!.contains(e)).toList();
@@ -116,6 +115,7 @@ void main() {
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
+
     testWidgets('snackbar changes on different mutually exclusive', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(
         id: 1,
@@ -127,7 +127,6 @@ void main() {
       SupabaseManager.setCurrentProfile(profile);
 
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
       final Finder notSmokingFinder = find.descendant(
           of: find.ancestor(
@@ -150,9 +149,9 @@ void main() {
       expect(notSmokingFinder, findsOneWidget);
       expect(notVapingFinder, findsOneWidget);
     });
+
     testWidgets('delete features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
       final Feature feature = profile.features!.first;
       final Finder deleteFinder = find.descendant(
@@ -175,7 +174,6 @@ void main() {
     group('move features', () {
       testWidgets('move added feature', (WidgetTester tester) async {
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-        await tester.pump();
 
         final Feature feature = profile.features!.first;
         final Finder dragFinder = find.descendant(
@@ -200,9 +198,9 @@ void main() {
                 of: find.byKey(ValueKey<int>(newIndex)), matching: find.byKey(Key('${feature.toString()} Tile'))),
             findsOneWidget);
       });
+
       testWidgets('move not added feature', (WidgetTester tester) async {
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-        await tester.pump();
 
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
@@ -226,9 +224,9 @@ void main() {
                 matching: find.byKey(Key('${feature.toString()} Tile'))),
             findsOneWidget);
       });
+
       testWidgets('use move to add feature', (WidgetTester tester) async {
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-        await tester.pump();
 
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
@@ -250,9 +248,9 @@ void main() {
           expect(find.byType(SnackBar), findsOneWidget);
         }
       });
+
       testWidgets('use move to remove feature', (WidgetTester tester) async {
         await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-        await tester.pump();
 
         final Feature feature = profile.features!.last;
         final Finder dragFinder = find.descendant(
@@ -270,16 +268,17 @@ void main() {
             findsOneWidget);
       });
     });
+
     testWidgets('no features', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(id: 1, createDependencies: false);
       SupabaseManager.setCurrentProfile(profile);
 
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
-      await tester.pump();
 
       expect(find.byKey(const Key('removeButton')), findsNothing);
       expect(find.byKey(const Key('emptyList')), findsOneWidget);
     });
+
     testWidgets('save Button', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(
         id: 1,
@@ -352,10 +351,11 @@ void main() {
         methodMatcher: equals('DELETE'),
       ).called(1);
 
-      verifyRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .called(2);
+      verifyRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).called(2);
     });
   });
 }

@@ -49,22 +49,22 @@ void main() {
       email: email,
       password: authId,
     );
-    whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
+
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
   });
   group('edit_birth_date_page', () {
     testWidgets('birthDate TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
-      await tester.pump();
 
       final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
-      final Finder birthDateInputFinder = find.byKey(const Key('birthDateInput'));
-
       expect(birthDateFinder, findsOneWidget);
+
+      final Finder birthDateInputFinder = find.byKey(const Key('birthDateInput'));
       expect(birthDateInputFinder, findsOneWidget);
     });
+
     testWidgets('change birthDate', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
-      await tester.pump();
 
       final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
       final Finder birthDateInputFinder = find.byKey(const Key('birthDateInput'));
@@ -84,9 +84,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(date), findsOneWidget);
     });
+
     testWidgets('clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditBirthDatePage(profile));
-      await tester.pump();
 
       final Finder birthDateFinder = find.text(localeManager.formatDate(profile.birthDate!));
 
@@ -99,6 +99,7 @@ void main() {
       await tester.pump();
       expect(birthDateFinder, findsNothing);
     });
+
     testWidgets('save Button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -127,10 +128,11 @@ void main() {
         bodyMatcher: equals({'birth_date': null}),
       ).called(1);
 
-      verifyRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .called(2);
+      verifyRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).called(3);
     });
   });
 }

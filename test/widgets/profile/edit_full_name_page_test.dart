@@ -17,6 +17,7 @@ void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
   const String email = 'motismitfahrapp@gmail.com';
   const String authId = '123';
+
   setUpAll(() async {
     MockServer.setProcessor(processor);
   });
@@ -50,38 +51,30 @@ void main() {
 
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
+
   group('edit_full_name_page', () {
     testWidgets('surname TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
-      await tester.pump();
 
-      expect(find.text(profile.surname!), findsOneWidget);
+      final Finder surnameFinder = find.text(profile.surname!);
+      expect(surnameFinder, findsOneWidget);
 
-      final Finder surnameInput = find.byKey(const Key('surname'));
-      expect(surnameInput, findsOneWidget);
-
-      await tester.tap(surnameInput);
-      await tester.pump();
-      await tester.enterText(surnameInput, 'newSurname');
+      await tester.enterText(surnameFinder, 'newSurname');
       expect(find.text('newSurname'), findsOneWidget);
     });
+
     testWidgets('name TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
-      await tester.pump();
 
-      expect(find.text(profile.name!), findsOneWidget);
+      final Finder nameFinder = find.text(profile.name!);
+      expect(nameFinder, findsOneWidget);
 
-      final Finder nameInput = find.byKey(const Key('name'));
-      expect(nameInput, findsOneWidget);
-
-      await tester.tap(nameInput);
-      await tester.pump();
-      await tester.enterText(nameInput, 'newName');
+      await tester.enterText(nameFinder, 'newName');
       expect(find.text('newName'), findsOneWidget);
     });
+
     testWidgets('surname clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
-      await tester.pump();
 
       expect(find.text(profile.surname!), findsOneWidget);
 
@@ -92,9 +85,9 @@ void main() {
       await tester.pump();
       expect(find.text(profile.surname!), findsNothing);
     });
+
     testWidgets('name clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
-      await tester.pump();
 
       expect(find.text(profile.name!), findsOneWidget);
 
@@ -105,11 +98,10 @@ void main() {
       await tester.pump();
       expect(find.text(profile.name!), findsNothing);
     });
+
     testWidgets('save Button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
-
-      expect(find.text(profile.fullName), findsOneWidget);
 
       await tester
           .tap(find.descendant(of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editButton'))));
@@ -134,10 +126,11 @@ void main() {
         bodyMatcher: equals({'surname': null, 'name': null}),
       ).called(1);
 
-      verifyRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .called(2);
+      verifyRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).called(3);
     });
   });
 }

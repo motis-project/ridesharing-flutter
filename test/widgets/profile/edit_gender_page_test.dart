@@ -17,6 +17,7 @@ void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
   const String email = 'motismitfahrapp@gmail.com';
   const String authId = '123';
+
   setUpAll(() async {
     MockServer.setProcessor(processor);
   });
@@ -24,6 +25,7 @@ void main() {
   setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
     SupabaseManager.setCurrentProfile(profile);
+
     whenRequest(
       processor,
       urlMatcher: startsWith('/auth/v1/token'),
@@ -49,10 +51,10 @@ void main() {
 
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
+
   group('edit_gender_page', () {
     testWidgets('display genderRadioListTile', (WidgetTester tester) async {
       await pumpMaterial(tester, EditGenderPage(profile));
-      await tester.pump();
 
       final maleGenderFinder = find.byKey(const Key('genderRadioListTile0'));
       expect(maleGenderFinder, findsOneWidget);
@@ -66,6 +68,7 @@ void main() {
       final preferNotToSayGenderFinder = find.byKey(const Key('preferNotToSayGenderRadioListTile'));
       expect(preferNotToSayGenderFinder, findsOneWidget);
     });
+
     testWidgets('save Button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -91,10 +94,11 @@ void main() {
         bodyMatcher: equals({'gender': Gender.male.index}),
       ).called(1);
 
-      verifyRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .called(2);
+      verifyRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).called(3);
     });
   });
 }

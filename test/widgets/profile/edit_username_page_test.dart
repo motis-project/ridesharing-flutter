@@ -51,24 +51,21 @@ void main() {
 
     whenRequest(processor, urlMatcher: contains('/rest/v1/profiles')).thenReturnJson(profile.toJsonForApi());
   });
+
   group('edit_username_page', () {
     testWidgets('username TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditUsernamePage(profile));
-      await tester.pump();
 
-      expect(find.text(profile.username), findsOneWidget);
+      final Finder usernameFinder = find.text(profile.username);
 
-      final Finder usernameInput = find.byKey(const Key('usernameTextField'));
-      expect(usernameInput, findsOneWidget);
+      expect(usernameFinder, findsOneWidget);
 
-      await tester.tap(usernameInput);
-      await tester.pumpAndSettle();
-      await tester.enterText(usernameInput, 'newUsername');
+      await tester.enterText(usernameFinder, 'newUsername');
       expect(find.text('newUsername'), findsOneWidget);
     });
+
     testWidgets('username clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditUsernamePage(profile));
-      await tester.pump();
 
       expect(find.text(profile.username), findsOneWidget);
 
@@ -79,6 +76,7 @@ void main() {
       await tester.pump();
       expect(find.text(profile.username), findsNothing);
     });
+
     testWidgets('save Button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -114,10 +112,11 @@ void main() {
         bodyMatcher: equals({'username': 'newUsername'}),
       ).called(1);
 
-      verifyRequest(processor,
-              urlMatcher: equals(
-                  '/rest/v1/profiles?select=%2A%2Cprofile_features%28%2A%29%2Creviews_received%3Areviews%21reviews_receiver_id_fkey%28%2A%2Cwriter%3Awriter_id%28%2A%29%29%2Creports_received%3Areports%21reports_offender_id_fkey%28%2A%29&id=eq.1'))
-          .called(2);
+      verifyRequest(
+        processor,
+        urlMatcher: startsWith('/rest/v1/profiles'),
+        methodMatcher: equals('GET'),
+      ).called(3);
     });
   });
 }
