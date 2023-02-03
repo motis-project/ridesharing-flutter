@@ -7,7 +7,7 @@ import 'package:motis_mitfahr_app/account/pages/account_page.dart';
 import 'package:motis_mitfahr_app/account/pages/help_page.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 
 import '../../util/factories/profile_factory.dart';
@@ -19,7 +19,7 @@ void main() {
   final Profile user = ProfileFactory().generateFake();
 
   setUp(() async {
-    SupabaseManager.setCurrentProfile(user);
+    supabaseManager.currentProfile = user;
   });
 
   Future<void> loadPageAndTapKey(WidgetTester tester, Key key) async {
