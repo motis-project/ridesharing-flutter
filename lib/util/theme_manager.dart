@@ -7,9 +7,13 @@ import 'storage_manager.dart';
 ThemeManager themeManager = ThemeManager();
 
 class ThemeManager with ChangeNotifier {
-  final ThemeData lightTheme = ThemeData.light().copyWith(useMaterial3: true)..addOwn(const OwnThemeFields());
+  final ThemeData lightTheme = ThemeData.light().copyWith(
+    useMaterial3: true,
+    colorScheme: const ColorScheme.light(),
+  )..addOwn(const OwnThemeFields());
   final ThemeData darkTheme = ThemeData.dark().copyWith(
     useMaterial3: true,
+    colorScheme: const ColorScheme.dark(),
     chipTheme: ThemeData.dark().chipTheme.copyWith(
           selectedColor: ThemeData.dark().highlightColor,
         ),
