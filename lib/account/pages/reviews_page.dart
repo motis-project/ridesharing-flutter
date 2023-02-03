@@ -75,7 +75,6 @@ class _ReviewsPageState extends State<ReviewsPage> {
       mainAxisSize: MainAxisSize.min,
       children: List<ReviewDetail>.generate(
         reviews.length,
-        //TODO forbid own reviews, change this line
         (int index) => ReviewDetail(review: reviews[index], withHero: reviews[index].writerId != _profileId),
       ),
     );
