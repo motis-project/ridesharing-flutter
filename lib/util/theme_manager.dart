@@ -17,6 +17,9 @@ class ThemeManager with ChangeNotifier {
     chipTheme: ThemeData.dark().chipTheme.copyWith(
           selectedColor: ThemeData.dark().highlightColor,
         ),
+    appBarTheme: ThemeData.dark().appBarTheme.copyWith(
+          backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+        ),
   )..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
   late ThemeMode currentThemeMode;
