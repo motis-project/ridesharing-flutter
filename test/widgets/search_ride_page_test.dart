@@ -150,9 +150,12 @@ void main() {
 
   Future<void> enterSorting(WidgetTester tester, SearchRideSorting sorting) async {
     await tester.tap(find.byKey(const Key('searchRideSortingDropdownButton')));
-    await tester.pump();
+    await tester.pumpAndSettle();
     //Last because of https://stackoverflow.com/a/71305769/13763039
-    await tester.tap(find.byKey(Key('searchRideSortingDropdownItem${sorting.name}')).last);
+    final Finder dropdownItemFinder =
+        find.byKey(Key('searchRideSortingDropdownItem${sorting.name}'), skipOffstage: false).last;
+    await tester.scrollUntilVisible(dropdownItemFinder, 100, scrollable: find.byType(Scrollable).first);
+    await tester.tap(dropdownItemFinder);
     await tester.pump();
   }
 
@@ -560,19 +563,20 @@ void main() {
           await tester.tap(featuresExpandButton);
           await tester.pump();
 
-          final Finder featureChip = find.byKey(Key('searchRideFeatureChip${Feature.values[0].name}'));
-          await tester.tap(featureChip);
+          final Feature selectedFeature = Feature.values[0];
+          final Finder selectedFeatureChip = find.byKey(Key('searchRideFeatureChip${selectedFeature.name}'));
+          await tester.tap(selectedFeatureChip);
           await tester.pump();
 
           await tester.tap(featuresExpandButton);
           await tester.pump();
 
-          expectFeaturesVisible(tester, [Feature.values[0]]);
+          expectFeaturesVisible(tester, [selectedFeature]);
 
-          await tester.tap(featureChip);
+          await tester.tap(selectedFeatureChip);
           await tester.pump();
 
-          expectFeaturesVisible(tester, [Feature.values[0]]);
+          expectFeaturesVisible(tester, [selectedFeature]);
         });
 
         testWidgets('Mutually exclusive', (WidgetTester tester) async {
@@ -614,68 +618,69 @@ void main() {
         final List<Feature> requiredFeatures =
             mutuallyExclusiveFiltered.sublist(random.integer(mutuallyExclusiveFiltered.length - 1));
 
+        final Profile satisfiesEverything = ProfileFactory().generateFake(
+          reviewsReceived: [
+            ReviewFactory().generateFake(
+              rating: minRating,
+              comfortRating: NullableParameter(minRating + 1),
+              safetyRating: NullableParameter(minRating),
+              reliabilityRating: NullableParameter(minRating),
+              hospitalityRating: NullableParameter(minRating),
+            ),
+          ],
+          profileFeatures: requiredFeatures
+              .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
+              .toList(),
+        );
+        final Profile notEnoughCategoryRating = ProfileFactory().generateFake(
+          reviewsReceived: [
+            ReviewFactory().generateFake(
+              rating: minRating,
+              comfortRating: NullableParameter(minRating - 1),
+            ),
+          ],
+          profileFeatures: requiredFeatures
+              .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
+              .toList(),
+        );
+        final Profile notEnoughOverallRating = ProfileFactory().generateFake(
+          reviewsReceived: [
+            ReviewFactory().generateFake(
+              rating: minRating - 1,
+            ),
+          ],
+          profileFeatures: requiredFeatures
+              .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
+              .toList(),
+        );
+        final Profile noRatings = ProfileFactory().generateFake(
+          reviewsReceived: [],
+          profileFeatures: requiredFeatures
+              .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
+              .toList(),
+        );
+        final Profile notEnoughFeatures = ProfileFactory().generateFake(
+          reviewsReceived: [
+            ReviewFactory().generateFake(
+              rating: minRating,
+              comfortRating: NullableParameter(minRating),
+              safetyRating: NullableParameter(minRating),
+              reliabilityRating: NullableParameter(minRating),
+              hospitalityRating: NullableParameter(minRating),
+            ),
+          ],
+          profileFeatures: requiredFeatures
+              .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
+              .toList()
+              .sublist(1),
+        );
+
         final List<Profile> drivers = [
-          //Satisfies everything
-          ProfileFactory().generateFake(
-            reviewsReceived: [
-              ReviewFactory().generateFake(
-                rating: minRating,
-                comfortRating: NullableParameter(minRating + 1),
-                safetyRating: NullableParameter(minRating),
-                reliabilityRating: NullableParameter(minRating),
-                hospitalityRating: NullableParameter(minRating),
-              ),
-            ],
-            profileFeatures: requiredFeatures
-                .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
-                .toList(),
-          ),
-          //Not enough category rating
-          ProfileFactory().generateFake(
-            reviewsReceived: [
-              ReviewFactory().generateFake(
-                rating: minRating,
-                comfortRating: NullableParameter(minRating - 1),
-              ),
-            ],
-            profileFeatures: requiredFeatures
-                .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
-                .toList(),
-          ),
-          //Not enough overall rating
-          ProfileFactory().generateFake(
-            reviewsReceived: [
-              ReviewFactory().generateFake(
-                rating: minRating - 1,
-              ),
-            ],
-            profileFeatures: requiredFeatures
-                .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
-                .toList(),
-          ),
-          //No ratings
-          ProfileFactory().generateFake(
-            reviewsReceived: [],
-            profileFeatures: requiredFeatures
-                .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
-                .toList(),
-          ),
-          //Not enough features
-          ProfileFactory().generateFake(
-            reviewsReceived: [
-              ReviewFactory().generateFake(
-                rating: minRating,
-                comfortRating: NullableParameter(minRating),
-                safetyRating: NullableParameter(minRating),
-                reliabilityRating: NullableParameter(minRating),
-                hospitalityRating: NullableParameter(minRating),
-              ),
-            ],
-            profileFeatures: requiredFeatures
-                .map((Feature feature) => ProfileFeatureFactory().generateFake(feature: feature))
-                .toList()
-                .sublist(1),
-          ),
+          satisfiesEverything,
+          notEnoughCategoryRating,
+          notEnoughOverallRating,
+          noRatings,
+          notEnoughFeatures,
         ];
 
         //I am setting the duration and positions here because default Dart sort isn't stable and I want indices to work

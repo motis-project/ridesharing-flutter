@@ -311,10 +311,6 @@ class SearchRideFilter {
       final List<Widget> ratingWidgets = <Widget>[];
       if (_minRating != _defaultRating) {
         ratingWidgets.add(_buildSmallRatingIndicator(_minRating));
-        if (_minComfortRating != _defaultRating ||
-            _minSafetyRating != _defaultRating ||
-            _minReliabilityRating != _defaultRating ||
-            _minHospitalityRating != _defaultRating) {}
       }
       if (_minComfortRating != _defaultRating) {
         ratingWidgets.add(
