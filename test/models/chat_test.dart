@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
 import '../util/factories/chat_factory.dart';
 import '../util/factories/message_factory.dart';
@@ -33,7 +33,8 @@ void main() {
       senderId: profileId + 1,
       createDependencies: false,
     );
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
+
     test('zero when Messages are empty', () async {
       final chat = ChatFactory().generateFake(
         messages: NullableParameter([]),

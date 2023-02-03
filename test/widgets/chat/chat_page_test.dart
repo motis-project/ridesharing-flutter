@@ -5,7 +5,7 @@ import 'package:motis_mitfahr_app/util/chat/chat_bubble.dart';
 import 'package:motis_mitfahr_app/util/chat/message_bar.dart';
 import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/message_factory.dart';
@@ -32,7 +32,7 @@ void main() {
       processor,
       urlMatcher: equals('/rest/v1/messages?select=%2A&chat_id=eq.$chatId&order=created_at.desc.nullslast'),
     ).called(1);
-    final List<RealtimeChannel> subscription = SupabaseManager.supabaseClient.getChannels();
+    final List<RealtimeChannel> subscription = supabaseManager.supabaseClient.getChannels();
     expect(subscription.length, 1);
     expect(subscription[0].topic, 'realtime:public:messages:1');
   });
@@ -70,7 +70,7 @@ void main() {
       const String message = 'Hello World';
 
       Future<void> setUpMessageBar(WidgetTester tester) async {
-        SupabaseManager.setCurrentProfile(profile);
+        supabaseManager.currentProfile = profile;
         await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
         await tester.pump();
 
@@ -137,7 +137,7 @@ void main() {
       whenRequest(processor).thenReturnJson([
         MessageFactory().generateFake(senderId: profile.id).toJsonForApi(),
       ]);
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
       await pumpMaterial(tester, ChatPage(profile: profile, chatId: chatId));
       await tester.pump();
 
@@ -160,7 +160,7 @@ void main() {
 
     testWidgets('shows tail exactly when it should be shown', (WidgetTester tester) async {
       final Profile currentProfile = ProfileFactory().generateFake();
-      SupabaseManager.setCurrentProfile(currentProfile);
+      supabaseManager.currentProfile = currentProfile;
       final List<Map<String, dynamic>> messages = [
         MessageFactory()
             .generateFake(

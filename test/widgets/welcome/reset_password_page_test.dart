@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/fields/password_field.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/welcome/pages/reset_password_page.dart';
 import 'package:progress_state_button/progress_button.dart';
 
@@ -36,7 +36,7 @@ void main() {
       urlMatcher: equals('/auth/v1/user?'),
       methodMatcher: equals('GET'),
     ).thenReturnJson(userHash);
-    SupabaseManager.supabaseClient.auth.getSessionFromUrl(
+    supabaseManager.supabaseClient.auth.getSessionFromUrl(
       Uri(host: 'localhost', port: 3000, queryParameters: {
         'access_token': 'access_token',
         'expires_in': '3600',

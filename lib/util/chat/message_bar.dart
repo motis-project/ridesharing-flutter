@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../supabase.dart';
+import '../supabase_manager.dart';
 
 class MessageBar extends StatefulWidget {
   const MessageBar(this.chatId, {super.key});
@@ -70,8 +70,8 @@ class _MessageBarState extends State<MessageBar> {
       return;
     }
     _textController.clear();
-    await SupabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
-      'sender_id': SupabaseManager.getCurrentProfile()!.id,
+    await supabaseManager.supabaseClient.from('messages').insert(<String, dynamic>{
+      'sender_id': supabaseManager.currentProfile!.id,
       'content': text,
       'chat_id': widget.chatId,
     });

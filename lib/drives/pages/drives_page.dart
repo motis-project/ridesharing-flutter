@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip_page_builder.dart';
 import '../models/drive.dart';
 import 'create_drive_page.dart';
@@ -17,8 +17,8 @@ class _DrivesPageState extends State<DrivesPage> {
 
   @override
   void initState() {
-    final int userId = SupabaseManager.getCurrentProfile()!.id!;
-    _drives = SupabaseManager.supabaseClient
+    final int userId = supabaseManager.currentProfile!.id!;
+    _drives = supabaseManager.supabaseClient
         .from('drives')
         .stream(primaryKey: <String>['id'])
         .eq('driver_id', userId)

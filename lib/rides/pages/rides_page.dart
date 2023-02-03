@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip_page_builder.dart';
 import '../models/ride.dart';
 import 'search_ride_page.dart';
@@ -17,8 +17,8 @@ class _RidesPageState extends State<RidesPage> {
 
   @override
   void initState() {
-    final int userId = SupabaseManager.getCurrentProfile()!.id!;
-    _rides = SupabaseManager.supabaseClient
+    final int userId = supabaseManager.currentProfile!.id!;
+    _rides = supabaseManager.supabaseClient
         .from('rides')
         .stream(primaryKey: <String>['id'])
         .eq('rider_id', userId)

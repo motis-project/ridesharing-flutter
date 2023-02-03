@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
-import '../../../util/supabase.dart';
+import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 
 class EditGenderPage extends StatefulWidget {
@@ -75,10 +75,10 @@ class _EditGenderPageState extends State<EditGenderPage> {
   }
 
   Future<void> onPressed() async {
-    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
+    await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'gender': _gender?.index,
     }).eq('id', widget.profile.id);
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

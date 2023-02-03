@@ -1,7 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+StorageManager storageManager = StorageManager();
+
 class StorageManager {
-  static Future<void> saveData(String key, dynamic value) async {
+  Future<void> saveData(String key, dynamic value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value is int) {
       await prefs.setInt(key, value);
@@ -16,18 +18,18 @@ class StorageManager {
     }
   }
 
-  static Future<List<String>> readStringList(String key) async {
+  Future<List<String>> readStringList(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getStringList(key) ?? <String>[];
   }
 
-  static Future<dynamic> readData(String key) async {
+  Future<dynamic> readData(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final dynamic obj = prefs.get(key);
     return obj;
   }
 
-  static Future<bool> deleteData(String key) async {
+  Future<bool> deleteData(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.remove(key);
   }

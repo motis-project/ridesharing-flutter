@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/fields/email_field.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
 import 'package:progress_state_button/progress_button.dart';
 
@@ -20,7 +20,7 @@ void main() {
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    SupabaseManager.setCurrentProfile(null);
+    supabaseManager.currentProfile = null;
   });
 
   group('ForgotPasswordPage', () {

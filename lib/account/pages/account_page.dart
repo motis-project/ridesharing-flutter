@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/locale_manager.dart';
 import '../../util/profiles/profile_widget.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/theme_manager.dart';
 import 'about_page.dart';
 import 'help_page.dart';
@@ -106,7 +106,7 @@ class _AccountPageState extends State<AccountPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             child: ProfileWidget(
-              SupabaseManager.getCurrentProfile()!,
+              supabaseManager.currentProfile!,
               size: 25,
               actionWidget: const Icon(Icons.chevron_right),
               onPop: (_) => setState(() {}),

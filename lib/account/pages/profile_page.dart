@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/button.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../models/profile.dart';
 import '../models/report.dart';
 import '../widgets/avatar.dart';
@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> loadProfile() async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> data = await supabaseManager.supabaseClient.from('profiles').select('''
       *,
       profile_features (*),
       reviews_received: reviews!reviews_receiver_id_fkey(
@@ -273,7 +273,7 @@ class _ProfilePageState extends State<ProfilePage> {
       widgets.add(buildReviews());
       if (!_profile!.isCurrentUser) {
         final bool hasRecentReport = _profile!.reportsReceived!
-            .any((Report report) => report.isRecent && report.reporterId == SupabaseManager.getCurrentProfile()!.id);
+            .any((Report report) => report.isRecent && report.reporterId == supabaseManager.currentProfile!.id);
 
         widgets.addAll(<Widget>[
           const SizedBox(height: 32),
@@ -386,21 +386,21 @@ class _ProfilePageState extends State<ProfilePage> {
       final String fileExt = imageFile.path.split('.').last;
       final String fileName = '${DateTime.now().toIso8601String()}.$fileExt';
 
-      await SupabaseManager.supabaseClient.storage.from('avatars').uploadBinary(
+      await supabaseManager.supabaseClient.storage.from('avatars').uploadBinary(
             fileName,
             bytes,
             fileOptions: FileOptions(contentType: imageFile.mimeType),
           );
 
-      final String imageUrlResponse = await SupabaseManager.supabaseClient.storage
+      final String imageUrlResponse = await supabaseManager.supabaseClient.storage
           .from('avatars')
           .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10);
 
-      await SupabaseManager.supabaseClient
+      await supabaseManager.supabaseClient
           .from('profiles')
           .update(<String, dynamic>{'avatar_url': imageUrlResponse}).eq('id', _profile!.id);
 
-      await SupabaseManager.reloadCurrentProfile();
+      await supabaseManager.reloadCurrentProfile();
       await loadProfile();
     } catch (error) {
       if (mounted) {
@@ -413,16 +413,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _deleteProfilePicture() async {
-    await SupabaseManager.supabaseClient
+    await supabaseManager.supabaseClient
         .from('profiles')
         .update(<String, dynamic>{'avatar_url': null}).eq('id', _profile!.id);
 
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
     await loadProfile();
   }
 
   void signOut() {
-    SupabaseManager.supabaseClient.auth.signOut();
+    supabaseManager.supabaseClient.auth.signOut();
   }
 }
 

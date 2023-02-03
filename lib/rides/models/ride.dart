@@ -5,7 +5,7 @@ import '../../drives/models/drive.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 
 class Ride extends Trip {
@@ -123,7 +123,7 @@ class Ride extends Trip {
 
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> jsonList = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId),
+      await supabaseManager.supabaseClient.from('rides').select().eq('rider_id', userId),
     );
     final List<Ride> rides =
         Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
@@ -159,12 +159,12 @@ class Ride extends Trip {
 
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
-    await SupabaseManager.supabaseClient.from('rides').update(<String, dynamic>{'status': status.index}).eq('id', id);
+    await supabaseManager.supabaseClient.from('rides').update(<String, dynamic>{'status': status.index}).eq('id', id);
   }
 
   Future<void> withdraw() async {
     status = RideStatus.withdrawnByRider;
-    await SupabaseManager.supabaseClient
+    await supabaseManager.supabaseClient
         .from('rides')
         .update(<String, dynamic>{'status': status.index, 'hide_in_list_view': true}).eq('id', id);
   }

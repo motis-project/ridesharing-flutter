@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/fields/email_field.dart';
 import 'package:motis_mitfahr_app/util/fields/password_field.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/welcome/pages/forgot_password_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
@@ -21,7 +21,7 @@ void main() {
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    SupabaseManager.setCurrentProfile(null);
+    supabaseManager.currentProfile = null;
   });
 
   group('LoginPage', () {

@@ -7,7 +7,7 @@ import '../icon_widget.dart';
 import '../locale_manager.dart';
 import '../profiles/profile_widget.dart';
 import '../snackbar.dart';
-import '../supabase.dart';
+import '../supabase_manager.dart';
 import 'trip_card.dart';
 
 class PendingRideCard extends TripCard<Ride> {
@@ -90,7 +90,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   Future<void> approveRide() async {
     //custom rpc call to mark the ride as approved,
     //so the user does not need the write permission on the rides table.
-    await SupabaseManager.supabaseClient.rpc(
+    await supabaseManager.supabaseClient.rpc(
       'approve_ride',
       params: <String, dynamic>{'ride_id': _ride.id},
     );
@@ -101,7 +101,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   Future<void> rejectRide() async {
     //custom rpc call to mark the ride as rejected,
     //so the user does not need the write permission on the rides table.
-    await SupabaseManager.supabaseClient.rpc(
+    await supabaseManager.supabaseClient.rpc(
       'reject_ride',
       params: <String, dynamic>{'ride_id': _ride.id},
     );

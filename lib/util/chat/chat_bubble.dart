@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../supabase.dart';
+import '../supabase_manager.dart';
 import 'models/message.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -21,7 +21,7 @@ class ChatBubble extends StatelessWidget {
     Message message, {
     super.key,
     this.tail = true,
-  })  : isSender = message.senderId == SupabaseManager.getCurrentProfile()!.id,
+  })  : isSender = message.senderId == supabaseManager.currentProfile!.id,
         text = message.content,
         read = message.read;
 

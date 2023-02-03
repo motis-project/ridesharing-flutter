@@ -9,7 +9,7 @@ import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import 'forgot_password_page.dart';
 import 'register_page.dart';
 
@@ -66,7 +66,7 @@ class LoginFormState extends State<LoginForm> {
     });
 
     try {
-      await SupabaseManager.supabaseClient.auth.signInWithPassword(
+      await supabaseManager.supabaseClient.auth.signInWithPassword(
         email: emailController.text,
         password: passwordController.text,
       );

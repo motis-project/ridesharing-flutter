@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
-import '../../../util/supabase.dart';
+import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 
 class EditFullNamePage extends StatefulWidget {
@@ -79,11 +79,11 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
   Future<void> onPressed() async {
     final String? surname = _surnameController.text == '' ? null : _surnameController.text;
     final String? name = _nameController.text == '' ? null : _nameController.text;
-    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
+    await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'surname': surname,
       'name': name,
     }).eq('id', widget.profile.id);
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

@@ -10,7 +10,7 @@ import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import 'after_registration_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -62,7 +62,7 @@ class RegisterFormState extends State<RegisterForm> {
       setState(() {
         buttonState = ButtonState.loading;
       });
-      res = await SupabaseManager.supabaseClient.auth.signUp(
+      res = await supabaseManager.supabaseClient.auth.signUp(
         password: passwordController.text,
         email: emailController.text,
         emailRedirectTo: 'io.supabase.flutter://login-callback/',
@@ -78,7 +78,7 @@ class RegisterFormState extends State<RegisterForm> {
     }
 
     try {
-      await SupabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
+      await supabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
         'auth_id': user.id,
         'email': user.email,
         'username': usernameController.text,

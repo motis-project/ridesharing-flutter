@@ -13,7 +13,7 @@ import '../../util/chat/pages/chat_page.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip_overview.dart';
 import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
@@ -78,13 +78,13 @@ class _RideDetailPageState extends State<RideDetailPage> {
       ride = _ride!;
 
       final Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
+          await supabaseManager.supabaseClient.from('drives').select(_driveQuery).eq('id', ride.driveId).single();
 
       ride.drive = Drive.fromJson(data);
     } else {
       final int id = _ride?.id ?? widget.id!;
       final Map<String, dynamic> data =
-          await SupabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
+          await supabaseManager.supabaseClient.from('rides').select(_rideQuery).eq('id', id).single();
       ride = Ride.fromJson(data);
     }
 
@@ -212,7 +212,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
       case RideStatus.withdrawnByRider:
         return Button(
           S.of(context).pageRideDetailButtonRequest,
-          onPressed: SupabaseManager.getCurrentProfile() == null ? _showLoginDialog : _showRequestDialog,
+          onPressed: supabaseManager.currentProfile == null ? _showLoginDialog : _showRequestDialog,
           key: const Key('requestRideButton'),
         );
       case RideStatus.approved:
@@ -312,7 +312,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
   }
 
   Future<void> hideRide() async {
-    await SupabaseManager.supabaseClient
+    await supabaseManager.supabaseClient
         .from('rides')
         .update(<String, dynamic>{'hide_in_list_view': true}).eq('id', widget.ride!.id);
   }
@@ -348,7 +348,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
     // chat gets created by trigger, somehow it does not get returned immediately by the insert
     final Map<String, dynamic> idHash =
-        await SupabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
+        await supabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
 
     // TODO: Use copyWith and make id final again
     ride.id = idHash['id'] as int;

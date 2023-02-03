@@ -6,7 +6,7 @@ import '../../util/buttons/button.dart';
 import '../../util/parse_helper.dart';
 import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/reviews/aggregate_review_widget.dart';
-import '../../util/supabase.dart';
+import '../../util/supabase_manager.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
 import '../widgets/review_detail.dart';
@@ -42,17 +42,17 @@ class _ReviewsPageState extends State<ReviewsPage> {
   }
 
   Future<void> load() async {
-    final Map<String, dynamic> profileData = await SupabaseManager.supabaseClient.from('profiles').select('''
+    final Map<String, dynamic> profileData = await supabaseManager.supabaseClient.from('profiles').select('''
       *,
       reviews_received: reviews!reviews_receiver_id_fkey(
         *,
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
     final List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('rides').select('''
+      await supabaseManager.supabaseClient.from('rides').select('''
           *,
           drive: drives!inner(*)
-        ''').eq('rider_id', SupabaseManager.getCurrentProfile()!.id).eq('drive.driver_id', _profileId),
+        ''').eq('rider_id', supabaseManager.currentProfile!.id).eq('drive.driver_id', _profileId),
     );
 
     setState(() {

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../util/buttons/button.dart';
 import '../../../util/locale_manager.dart';
-import '../../../util/supabase.dart';
+import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 
 class EditBirthDatePage extends StatefulWidget {
@@ -88,10 +88,10 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
 
   Future<void> onPressed() async {
     final String? date = _date == null ? null : _date!.toString();
-    await SupabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
+    await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'birth_date': date,
     }).eq('id', widget.profile.id);
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
 
     if (mounted) Navigator.of(context).pop();
   }

@@ -5,7 +5,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/pages/drives_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/rides_page.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/drive_card.dart';
 import 'package:motis_mitfahr_app/util/trip/ride_card.dart';
 
@@ -30,7 +30,7 @@ void main() {
   setUp(() async {
     reset(processor);
     profile = ProfileFactory().generateFake(id: 1);
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
   });
 
   // since the code for the TripPageBuilder is the same for both pages,

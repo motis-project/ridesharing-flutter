@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 
+// We need to write this custom class to define our timeline theme and use the "of" method naturally.
+// ignore: avoid_classes_with_only_static_members
 class CustomTimelineTheme {
-  static TimelineThemeData of(BuildContext context) {
+  static TimelineThemeData of(BuildContext context, {bool forBuilder = false}) {
     return TimelineTheme.of(context).copyWith(
       nodePosition: 0,
       nodeItemOverlap: true,
@@ -10,17 +12,8 @@ class CustomTimelineTheme {
       indicatorTheme: IndicatorThemeData(
         color: Theme.of(context).colorScheme.onSurface,
         size: 15.0,
+        position: forBuilder ? 0.5 : null,
       ),
-    );
-  }
-}
-
-class CustomTimelineThemeForBuilder {
-  static TimelineThemeData of(BuildContext context) {
-    return CustomTimelineTheme.of(context).copyWith(
-      indicatorTheme: CustomTimelineTheme.of(context).indicatorTheme.copyWith(
-            position: 0.5,
-          ),
     );
   }
 }
