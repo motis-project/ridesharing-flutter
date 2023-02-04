@@ -51,8 +51,8 @@ class Profile extends Model {
 
   bool get isCurrentUser => id == supabaseManager.currentProfile?.id;
 
-  static int get maxAge => DateTime(1900).year;
-  static int get minAge => DateTime.now().subtract(const Duration(days: 365 * 12)).year;
+  static const int maxAge = 120;
+  static const int minAge = 12;
 
   List<Feature>? get features =>
       profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.feature).toList();
