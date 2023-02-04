@@ -4,7 +4,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_birth_date_page.dart';
 import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/profile_factory.dart';
@@ -25,7 +25,7 @@ void main() {
 
   setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
 
     whenRequest(
       processor,
@@ -45,7 +45,7 @@ void main() {
       'email': email,
     });
 
-    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+    await supabaseManager.supabaseClient.auth.signInWithPassword(
       email: email,
       password: authId,
     );

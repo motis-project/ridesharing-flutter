@@ -12,7 +12,7 @@ import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/avatar.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/model_factory.dart';
@@ -34,7 +34,7 @@ void main() {
   });
 
   setUp(() async {
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
 
     whenRequest(
       processor,
@@ -54,7 +54,7 @@ void main() {
       'email': email,
     });
 
-    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+    await supabaseManager.supabaseClient.auth.signInWithPassword(
       email: email,
       password: authId,
     );
@@ -71,8 +71,8 @@ void main() {
     // run for both own and other profile
     for (int i = 0; i < 2; i++) {
       i == 0
-          ? SupabaseManager.setCurrentProfile(profile)
-          : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+          ? supabaseManager.currentProfile = profile
+          : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       testWidgets('Works with id parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage(profile.id!));
@@ -98,8 +98,8 @@ void main() {
     // run for both own and other profile
     for (int i = 0; i < 2; i++) {
       i == 0
-          ? SupabaseManager.setCurrentProfile(profile)
-          : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+          ? supabaseManager.currentProfile = profile
+          : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       testWidgets('avatar$i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
@@ -155,7 +155,7 @@ void main() {
         for (int h = 0; h < profile.features!.length; h++) {
           final feature = profile.features![h];
           final featureFinder = find.byKey(Key('feature_${feature.name}'));
-          await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
+          await tester.scrollUntilVisible(featureFinder, 100, scrollable: scrollableFinder);
           expect(featureFinder, findsOneWidget);
         }
 
@@ -179,7 +179,7 @@ void main() {
     });
 
     testWidgets('not currentUser email', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -188,7 +188,7 @@ void main() {
     });
 
     testWidgets('not currentUser no details', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       profile = ProfileFactory().generateFake(
           id: 1,
@@ -232,7 +232,7 @@ void main() {
         methodMatcher: equals('GET'),
       ).thenReturnJson(profile.toJsonForApi());
 
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -243,7 +243,7 @@ void main() {
 
   group('Buttons', () {
     testWidgets('not currentUser buttons', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
@@ -279,8 +279,8 @@ void main() {
     // run for both current and other profile
     for (int i = 0; i < 2; i++) {
       i == 0
-          ? SupabaseManager.setCurrentProfile(profile)
-          : SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+          ? supabaseManager.currentProfile = profile
+          : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       testWidgets('Avatar is tappable $i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
@@ -373,7 +373,7 @@ void main() {
     });
 
     testWidgets('Report button', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       profile = ProfileFactory().generateFake(id: 1, reportsReceived: [
         ReportFactory().generateFake(
@@ -406,7 +406,7 @@ void main() {
     });
 
     testWidgets('Disabled report button', (WidgetTester tester) async {
-      SupabaseManager.setCurrentProfile(ProfileFactory().generateFake(id: 2));
+      supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       profile = ProfileFactory().generateFake(id: 1, reportsReceived: [
         ReportFactory().generateFake(

@@ -86,7 +86,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
     await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'username': _controller.text,
     }).eq('id', widget.profile.id);
-    await SupabaseManager.reloadCurrentProfile();
+    await supabaseManager.reloadCurrentProfile();
     if (mounted) Navigator.of(context).pop();
   }
 }

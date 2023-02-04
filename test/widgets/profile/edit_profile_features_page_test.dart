@@ -5,7 +5,7 @@ import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_profile_features_page.dart';
 import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/util/snackbar.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/profile_factory.dart';
@@ -26,7 +26,7 @@ void main() {
 
   setUp(() async {
     profile = ProfileFactory().generateFake(id: 1);
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
 
     whenRequest(
       processor,
@@ -46,7 +46,7 @@ void main() {
       'email': email,
     });
 
-    await SupabaseManager.supabaseClient.auth.signInWithPassword(
+    await supabaseManager.supabaseClient.auth.signInWithPassword(
       email: email,
       password: authId,
     );
@@ -124,7 +124,7 @@ void main() {
           ProfileFeature(profileId: 1, feature: Feature.vaping, rank: 1),
         ],
       );
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
 
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
 
@@ -271,7 +271,7 @@ void main() {
 
     testWidgets('no features', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(id: 1, createDependencies: false);
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
 
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
 
@@ -290,7 +290,7 @@ void main() {
       );
       whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());
 
-      SupabaseManager.setCurrentProfile(profile);
+      supabaseManager.currentProfile = profile;
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
