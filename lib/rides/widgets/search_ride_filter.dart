@@ -219,26 +219,28 @@ class SearchRideFilter {
   }
 
   Widget _buildSortingFilter(BuildContext context, void Function(void Function()) setState) {
-    return DropdownButton<SearchRideSorting>(
-      key: const Key('searchRideSortingDropdownButton'),
-      icon: const Icon(Icons.sort),
-      value: sorting,
-      items: SearchRideSorting.values.map((SearchRideSorting rideSorting) {
-        final bool enabled = !(_wholeDay && rideSorting == SearchRideSorting.timeProximity);
-        return DropdownMenuItem<SearchRideSorting>(
-          key: Key('searchRideSortingDropdownItem${rideSorting.name}'),
-          enabled: enabled,
-          value: rideSorting,
-          child: Text(
-            rideSorting.getDescription(context),
-            style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
-          ),
-        );
-      }).toList(),
-      onChanged: (SearchRideSorting? value) => setState(
-        () => sorting = value!,
+    return RepaintBoundary(
+      child: DropdownButton<SearchRideSorting>(
+        key: const Key('searchRideSortingDropdownButton'),
+        icon: const Icon(Icons.sort),
+        value: sorting,
+        items: SearchRideSorting.values.map((SearchRideSorting rideSorting) {
+          final bool enabled = !(_wholeDay && rideSorting == SearchRideSorting.timeProximity);
+          return DropdownMenuItem<SearchRideSorting>(
+            key: Key('searchRideSortingDropdownItem${rideSorting.name}'),
+            enabled: enabled,
+            value: rideSorting,
+            child: Text(
+              rideSorting.getDescription(context),
+              style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
+            ),
+          );
+        }).toList(),
+        onChanged: (SearchRideSorting? value) => setState(
+          () => sorting = value!,
+        ),
+        underline: const SizedBox(),
       ),
-      underline: const SizedBox(),
     );
   }
 
