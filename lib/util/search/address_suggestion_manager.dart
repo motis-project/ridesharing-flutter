@@ -46,7 +46,7 @@ class AddressSuggestionManager {
   }
 
   Future<void> loadHistorySuggestions() async {
-    final List<String> data = await storageManager.readStringList(getStorageKey());
+    final List<String> data = await storageManager.readData<List<String>>(getStorageKey()) ?? <String>[];
 
     final Iterable<Map<String, dynamic>> suggestions = data.map((String suggestion) => jsonDecode(suggestion));
     _historySuggestions = suggestions

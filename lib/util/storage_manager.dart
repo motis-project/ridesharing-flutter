@@ -7,6 +7,8 @@ class StorageManager {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value is int) {
       await prefs.setInt(key, value);
+    } else if (value is double) {
+      await prefs.setDouble(key, value);
     } else if (value is String) {
       await prefs.setString(key, value);
     } else if (value is bool) {
@@ -18,15 +20,9 @@ class StorageManager {
     }
   }
 
-  Future<List<String>> readStringList(String key) async {
+  Future<T?> readData<T>(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(key) ?? <String>[];
-  }
-
-  Future<dynamic> readData(String key) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final dynamic obj = prefs.get(key);
-    return obj;
+    return prefs.get(key) as T?;
   }
 
   Future<bool> deleteData(String key) async {

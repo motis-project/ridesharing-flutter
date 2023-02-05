@@ -18,7 +18,7 @@ class ThemeManager with ChangeNotifier {
   late ThemeMode currentThemeMode;
 
   Future<void> loadTheme() async {
-    await storageManager.readData('themeMode').then((dynamic value) {
+    await storageManager.readData<String?>('themeMode').then((String? value) {
       switch (value) {
         case 'system':
           currentThemeMode = ThemeMode.system;
