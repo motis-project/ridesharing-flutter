@@ -350,11 +350,8 @@ class _RideDetailPageState extends State<RideDetailPage> {
     final Map<String, dynamic> idHash =
         await supabaseManager.supabaseClient.from('rides').insert(ride.toJson()).select().single();
 
-    // TODO: Use copyWith and make id final again
-    ride.id = idHash['id'] as int;
-
+    ride = ride.copyWith(id: idHash['id'] as int);
     await loadRide();
-    //todo: send notification to driver
   }
 
   void _showWithdrawDialog() {

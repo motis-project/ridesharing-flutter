@@ -111,7 +111,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        //todo: add right end_time from algorithm
         final DateTime endTime = DateTime(
           _selectedDate.year,
           _selectedDate.month,
@@ -167,7 +166,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           },
         );
       } on AuthException {
-        //todo: change error message when login is implemented
         showSnackBar(
           context,
           S.of(context).failureSnackBar,

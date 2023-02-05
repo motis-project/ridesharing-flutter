@@ -173,6 +173,29 @@ class Ride extends Trip {
   String toString() {
     return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
   }
+
+  Ride copyWith({int? id, RideStatus? status}) {
+    return Ride(
+      id: id ?? this.id,
+      createdAt: createdAt,
+      start: start,
+      startPosition: startPosition,
+      startTime: startTime,
+      end: end,
+      endPosition: endPosition,
+      endTime: endTime,
+      seats: seats,
+      price: price,
+      status: status ?? this.status,
+      hideInListView: hideInListView,
+      riderId: riderId,
+      rider: rider,
+      driveId: driveId,
+      drive: drive,
+      chatId: chatId,
+      chat: chat,
+    );
+  }
 }
 
 enum RideStatus { preview, pending, approved, rejected, cancelledByDriver, cancelledByRider, withdrawnByRider }

@@ -104,7 +104,6 @@ class _SearchRidePageState extends State<SearchRidePage> {
     return null;
   }
 
-  //todo: get possible Rides from Algorithm
   Future<void> loadRides() async {
     if (_startSuggestion == null || _destinationSuggestion == null) return;
     setState(() => _loading = true);
