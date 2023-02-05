@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -21,6 +22,7 @@ class WriteReviewPage extends StatefulWidget {
 }
 
 class _WriteReviewPageState extends State<WriteReviewPage> {
+  bool ratingChangedManually = false;
   Review? _review;
   late TextEditingController _textController;
   ButtonState _state = ButtonState.idle;
@@ -148,32 +150,49 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   void onRatingUpdate(double rating) {
+    ratingChangedManually = true;
     setState(() {
       _review!.rating = rating.toInt();
     });
   }
 
+  void _updateOverallReview() {
+    if (!ratingChangedManually) {
+      final List<int> givenCategoryRatings = <int?>[
+        _review!.comfortRating,
+        _review!.safetyRating,
+        _review!.hospitalityRating,
+        _review!.reliabilityRating
+      ].whereType<int>().toList();
+      _review!.rating = givenCategoryRatings.average.round();
+    }
+  }
+
   void onComfortRatingUpdate(double rating) {
     setState(() {
       _review!.comfortRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onSafetyRatingUpdate(double rating) {
     setState(() {
       _review!.safetyRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onReliabilityRatingUpdate(double rating) {
     setState(() {
       _review!.reliabilityRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
   void onHospitalityRatingUpdate(double rating) {
     setState(() {
       _review!.hospitalityRating = rating.toInt();
+      _updateOverallReview();
     });
   }
 
