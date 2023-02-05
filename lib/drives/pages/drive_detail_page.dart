@@ -48,7 +48,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data = await supabaseManager.supabaseClient.from('drives').select('''
+    final Map<String, dynamic> data =
+        await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
       *,
       rides(
         *,
@@ -401,7 +402,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   void _showHideDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         title: Text(S.of(context).pageDriveDetailButtonHide),
@@ -432,7 +433,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   void _showCancelDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(S.of(context).pageDriveDetailCancelDialogTitle),

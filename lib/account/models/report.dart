@@ -30,14 +30,14 @@ class Report extends Model {
   @override
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      offenderId: json['offender_id'],
-      offender: json['offender'] != null ? Profile.fromJson(json['offender']) : null,
-      reporterId: json['reporter_id'],
-      reporter: json['reporter'] != null ? Profile.fromJson(json['reporter']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      offenderId: json['offender_id'] as int,
+      offender: json['offender'] != null ? Profile.fromJson(json['offender'] as Map<String, dynamic>) : null,
+      reporterId: json['reporter_id'] as int,
+      reporter: json['reporter'] != null ? Profile.fromJson(json['reporter'] as Map<String, dynamic>) : null,
       category: ReportCategory.values.elementAt(json['category'] as int),
-      text: json['text'],
+      text: json['text'] as String?,
     );
   }
 

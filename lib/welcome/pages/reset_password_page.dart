@@ -8,7 +8,7 @@ import '../../util/fields/password_field.dart';
 import '../../util/supabase_manager.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  final Function() onPasswordReset;
+  final VoidCallback onPasswordReset;
 
   const ResetPasswordPage({super.key, required this.onPasswordReset});
 
@@ -36,7 +36,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
 }
 
 class ResetPasswordForm extends StatefulWidget {
-  final Function() onPasswordReset;
+  final VoidCallback onPasswordReset;
 
   const ResetPasswordForm({super.key, required this.onPasswordReset});
 

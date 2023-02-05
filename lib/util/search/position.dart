@@ -7,7 +7,7 @@ class Position {
   Position(this.lat, this.lng);
 
   factory Position.fromJson(Map<String, dynamic> json) {
-    return Position(json['lat'], json['lng']);
+    return Position.fromDynamicValues(json['lat'], json['lng']);
   }
 
   factory Position.fromDynamicValues(dynamic lat, dynamic lng) {

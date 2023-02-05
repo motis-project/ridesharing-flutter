@@ -6,7 +6,6 @@ import '../../drives/models/drive.dart';
 import '../../util/buttons/labeled_checkbox.dart';
 import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
-import '../../util/parse_helper.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/supabase_manager.dart';
@@ -107,16 +106,15 @@ class _SearchRidePageState extends State<SearchRidePage> {
   Future<void> loadRides() async {
     if (_startSuggestion == null || _destinationSuggestion == null) return;
     setState(() => _loading = true);
-    final List<Map<String, dynamic>> data = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('drives').select('''
+    final List<Map<String, dynamic>> data =
+        await supabaseManager.supabaseClient.from('drives').select<List<Map<String, dynamic>>>('''
           *,
           driver:driver_id (
             *,
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', _startController.text).eq('cancelled', false),
-    );
+        ''').eq('start', _startController.text).eq('cancelled', false);
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         .map(

@@ -89,10 +89,10 @@ class _AccountPageState extends State<AccountPage> {
   void refresh() => setState(() {});
 
   void showDesignDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
+        builder: (BuildContext context, void Function(VoidCallback) innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List<RadioListTile<ThemeMode>>.generate(
@@ -124,10 +124,10 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void showLanguageDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => StatefulBuilder(
-        builder: (BuildContext context, Function(VoidCallback) innerSetState) => AlertDialog(
+        builder: (BuildContext context, void Function(VoidCallback) innerSetState) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: List<RadioListTile<Locale>>.generate(

@@ -19,9 +19,9 @@ class Chat extends Model {
   @override
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      ride: json.containsKey('ride') ? Ride.fromJson(json['ride']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      ride: json.containsKey('ride') ? Ride.fromJson(json['ride'] as Map<String, dynamic>) : null,
       messages:
           json.containsKey('messages') ? Message.fromJsonList(parseHelper.parseListOfMaps(json['messages'])) : null,
     );

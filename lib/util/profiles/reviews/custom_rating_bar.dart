@@ -6,7 +6,7 @@ import 'custom_rating_bar_size.dart';
 
 class CustomRatingBar extends StatelessWidget {
   final CustomRatingBarSize size;
-  final Function(double) onRatingUpdate;
+  final void Function(double) onRatingUpdate;
   final int? rating;
 
   const CustomRatingBar({

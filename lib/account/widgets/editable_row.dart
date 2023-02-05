@@ -5,7 +5,7 @@ class EditableRow extends StatelessWidget {
   final String title;
   final Widget innerWidget;
   final bool isEditable;
-  final Function() onPressed;
+  final VoidCallback onPressed;
 
   const EditableRow({
     super.key,
