@@ -30,7 +30,7 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
         title: Text(S.of(context).pageCreateDriveTitle),
       ),
       body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: SingleChildScrollView(child: CreateDriveForm()),
       ),
     );
@@ -204,7 +204,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   setState(() => _destinationSuggestion = suggestion),
             ),
           ),
-          const Divider(),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -240,7 +240,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               ),
             ],
           ),
-          const Divider(),
+          const SizedBox(height: 5),
           SizedBox(
             width: 150,
             child: IncrementField(
