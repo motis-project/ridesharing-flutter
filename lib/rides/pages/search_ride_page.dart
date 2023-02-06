@@ -369,7 +369,9 @@ class _SearchRidePageState extends State<SearchRidePage> {
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 10)),
               SliverToBoxAdapter(child: buildDateRow()),
+              const SliverToBoxAdapter(child: SizedBox(height: 5)),
               SliverToBoxAdapter(child: buildSeats()),
+              const SliverToBoxAdapter(child: SizedBox(height: 5)),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
