@@ -9,14 +9,21 @@ ThemeManager themeManager = ThemeManager();
 class ThemeManager with ChangeNotifier {
   final ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
-    colorScheme: const ColorScheme.light(),
+    colorScheme: const ColorScheme.light().copyWith(
+      error: const Color(0xffd32f2f),
+    ),
+    appBarTheme: ThemeData.light().appBarTheme.copyWith(
+          backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+        ),
     dividerTheme: ThemeData.light().dividerTheme.copyWith(
           color: Colors.grey.withOpacity(0.5),
         ),
   )..addOwn(const OwnThemeFields());
   final ThemeData darkTheme = ThemeData.dark().copyWith(
     useMaterial3: true,
-    colorScheme: const ColorScheme.dark(),
+    colorScheme: const ColorScheme.dark().copyWith(
+      error: const Color(0xffd32f2f),
+    ),
     chipTheme: ThemeData.dark().chipTheme.copyWith(
           selectedColor: ThemeData.dark().highlightColor,
         ),
