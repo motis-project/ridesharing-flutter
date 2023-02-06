@@ -31,7 +31,8 @@ class ChatBubble extends StatelessWidget {
         ? Icon(
             Icons.done_all,
             size: 18,
-            color: read ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color:
+                read ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
           )
         : null;
 
@@ -41,7 +42,9 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: CustomPaint(
           painter: ChatBubblePainter(
-            color: isSender ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1) : Theme.of(context).primaryColor,
+            color: isSender
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1)
+                : Theme.of(context).colorScheme.primary,
             alignment: isSender ? Alignment.topRight : Alignment.topLeft,
             tail: tail,
           ),
@@ -59,6 +62,10 @@ class ChatBubble extends StatelessWidget {
                   child: Text(
                     text,
                     textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color:
+                          isSender ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ),
                 if (stateIcon == null)

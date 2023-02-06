@@ -108,7 +108,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                   Icons.done_all,
                   size: 18,
                   color: lastMessage.read
-                      ? Theme.of(context).primaryColor
+                      ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 ),
               Text(lastMessage.content),
@@ -125,11 +125,12 @@ class _DriveChatPageState extends State<DriveChatPage> {
               ? null
               : Container(
                   key: Key('chatWidget${chat.id}UnreadMessageCount'),
-                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       chat.getUnreadMessagesCount().toString(),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ),
                 ),
