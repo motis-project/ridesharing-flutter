@@ -333,7 +333,7 @@ void main() {
             status: RideStatus.cancelledByDriver, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
         final BuildContext context = tester.element(find.byType(Container).first);
-        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).errorColor);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
       });
 
       testWidgets('disabled for cancelledByRider', (WidgetTester tester) async {
@@ -429,7 +429,7 @@ void main() {
         await loadDriveCard(tester, drive);
 
         final BuildContext context = tester.element(find.byType(Container).first);
-        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).errorColor);
+        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
       });
 
       testWidgets('waring color for drive with ride requests', (WidgetTester tester) async {

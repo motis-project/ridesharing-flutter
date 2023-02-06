@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
       tag: 'Username-${_profile!.id}',
       child: Text(
         _profile!.username,
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
     if (_profile!.isCurrentUser) {
@@ -118,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final Widget description = _profile!.description?.isNotEmpty ?? false
         ? Text(
             _profile!.description!,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: Theme.of(context).textTheme.bodyLarge,
           )
         : buildNoInfoText(S.of(context).pageProfileDescriptionEmpty);
     return EditableRow(
@@ -213,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
       children: <Widget>[
         Text(
           S.of(context).pageProfileReviewsTitle,
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
         ReviewsPreview(_profile!)
@@ -224,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildNoInfoText(String noInfoText) {
     return Text(
       '<$noInfoText>',
-      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           ),
     );

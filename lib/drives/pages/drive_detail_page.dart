@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
@@ -282,14 +282,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           ),
         ),
       ).then((_) => loadDrive()),
-      icon: Badge(
+      icon: badges.Badge(
         badgeContent: Text(
           _drive!.getUnreadMessagesCount().toString(),
           style: const TextStyle(color: Colors.white),
           textScaleFactor: 1.0,
         ),
         showBadge: _drive!.getUnreadMessagesCount() != 0,
-        position: BadgePosition.topEnd(top: -12),
+        position: badges.BadgePosition.topEnd(top: -12),
         child: icon,
       ),
       tooltip: tooltip,
@@ -366,14 +366,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: Badge(
+                        child: badges.Badge(
                           badgeContent: Text(
                             action.ride.chat!.getUnreadMessagesCount().toString(),
                             style: const TextStyle(color: Colors.white),
                             textScaleFactor: 1.0,
                           ),
                           showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
-                          position: BadgePosition.topEnd(top: -12),
+                          position: badges.BadgePosition.topEnd(top: -12),
                           child: const Icon(Icons.chat),
                         ),
                       ),

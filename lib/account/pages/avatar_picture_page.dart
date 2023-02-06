@@ -21,13 +21,16 @@ class AvatarPicturePage extends StatelessWidget {
             width: width,
             child: profile.avatarUrl?.isEmpty ?? true
                 ? Container(
-                    color: getBackgroundColor(context),
+                    color: Theme.of(context).colorScheme.primary,
                     width: double.infinity,
                     height: double.infinity,
                     child: Center(
                       child: Text(
                         profile.username[0].toUpperCase(),
-                        style: Theme.of(context).primaryTextTheme.subtitle1!.copyWith(fontSize: width / 2),
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .titleMedium!
+                            .copyWith(fontSize: width / 2, color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   )
@@ -36,15 +39,5 @@ class AvatarPicturePage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color getBackgroundColor(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    switch (ThemeData.estimateBrightnessForColor(theme.primaryTextTheme.subtitle1!.color!)) {
-      case Brightness.dark:
-        return theme.primaryColorLight;
-      case Brightness.light:
-        return theme.primaryColorDark;
-    }
   }
 }

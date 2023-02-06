@@ -80,7 +80,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
       return Theme.of(context).disabledColor;
     } else {
       if (_drive.cancelled) {
-        return Theme.of(context).errorColor;
+        return Theme.of(context).colorScheme.error;
       } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
       } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
