@@ -17,6 +17,30 @@ class EditableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget row = Row(
+      children: <Widget>[
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        if (isEditable)
+          const Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Icon(Icons.edit),
+            ),
+          ),
+      ],
+    );
+    if (isEditable) {
+      row = Semantics(
+        tooltip: S.of(context).edit,
+        child: InkWell(
+          onTap: onPressed,
+          child: row,
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
