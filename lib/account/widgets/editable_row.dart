@@ -17,26 +17,30 @@ class EditableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget row = Row(
-      children: <Widget>[
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        if (isEditable)
-          const Expanded(
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Icon(Icons.edit),
-            ),
+    Widget row = Padding(
+      padding: const EdgeInsets.fromLTRB(0, 8, 6, 8),
+      child: Row(
+        children: <Widget>[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-      ],
+          if (isEditable)
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.edit),
+              ),
+            ),
+        ],
+      ),
     );
     if (isEditable) {
       row = Semantics(
         tooltip: S.of(context).edit,
         child: InkWell(
           onTap: onPressed,
+          key: const Key('editButton'),
           child: row,
         ),
       );
@@ -44,26 +48,7 @@ class EditableRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            if (isEditable)
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    tooltip: S.of(context).edit,
-                    icon: const Icon(Icons.edit),
-                    onPressed: onPressed,
-                    key: const Key('editButton'),
-                  ),
-                ),
-              ),
-          ],
-        ),
+        row,
         innerWidget,
       ],
     );
