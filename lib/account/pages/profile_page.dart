@@ -85,18 +85,17 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(child: Container()),
-          username,
+          InkWell(
+            onTap: () => _pushAndLoadProfile(EditUsernamePage(_profile!)),
+            child: username,
+          ),
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
                 tooltip: S.of(context).edit,
                 icon: const Icon(Icons.edit),
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
-                      .then((_) => loadProfile());
-                },
+                onPressed: () => _pushAndLoadProfile(EditUsernamePage(_profile!)),
                 key: const Key('editUsername'),
               ),
             ),
@@ -126,11 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileDescriptionTitle,
       innerWidget: description,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditDescriptionPage(_profile!)))
-            .then((_) => loadProfile());
-      },
+      onPressed: () => _pushAndLoadProfile(EditDescriptionPage(_profile!)),
       key: const Key('description'),
     );
   }
@@ -146,11 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileFullNameTitle,
       innerWidget: fullName,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditFullNamePage(_profile!)))
-            .then((_) => loadProfile());
-      },
+      onPressed: () => _pushAndLoadProfile(EditFullNamePage(_profile!)),
       key: const Key('fullName'),
     );
   }
@@ -166,11 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileAgeTitle,
       innerWidget: age,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditBirthDatePage(_profile!)))
-            .then((_) => loadProfile());
-      },
+      onPressed: () => _pushAndLoadProfile(EditBirthDatePage(_profile!)),
       key: const Key('age'),
     );
   }
@@ -187,11 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileGenderTitle,
       innerWidget: gender,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditGenderPage(_profile!)))
-            .then((_) => loadProfile());
-      },
+      onPressed: () => _pushAndLoadProfile(EditGenderPage(_profile!)),
       key: const Key('gender'),
     );
   }
@@ -204,11 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileFeaturesTitle,
       innerWidget: features,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditProfileFeaturesPage(_profile!)))
-            .then((_) => loadProfile());
-      },
+      onPressed: () => _pushAndLoadProfile(EditProfileFeaturesPage(_profile!)),
       key: const Key('features'),
     );
   }
@@ -340,6 +319,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
     );
+  }
+
+  Future<void> _pushAndLoadProfile(Widget page) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) => page))
+        .then((_) => loadProfile());
   }
 
   Future<void> _updateProfilePictureDialog() async {
