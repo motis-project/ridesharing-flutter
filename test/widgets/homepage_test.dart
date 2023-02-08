@@ -12,7 +12,7 @@ import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
 import 'package:motis_mitfahr_app/util/chat/pages/chat_page.dart';
 import 'package:motis_mitfahr_app/util/ride_event.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../util/factories/drive_factory.dart';
@@ -35,7 +35,7 @@ void main() {
 
   setUp(() async {
     reset(processor);
-    SupabaseManager.setCurrentProfile(profile);
+    supabaseManager.currentProfile = profile;
   });
 
   testWidgets('Page has stream subscriptions', (WidgetTester tester) async {
@@ -46,7 +46,7 @@ void main() {
     verifyRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).called(1);
     verifyRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).called(1);
 
-    final List<RealtimeChannel> subscriptions = SupabaseManager.supabaseClient.getChannels();
+    final List<RealtimeChannel> subscriptions = supabaseManager.supabaseClient.getChannels();
     expect(subscriptions.length, 4);
     expect(subscriptions[0].topic, 'realtime:public:messages');
     expect(subscriptions[1].topic, 'realtime:public:ride_events');
@@ -84,7 +84,7 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id.toString()}'));
+      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id}'));
       expect(rideEventFinder, findsOneWidget);
 
       await tester.tap(rideEventFinder);
@@ -120,7 +120,7 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id.toString()}'));
+      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id}'));
       expect(rideEventFinder, findsOneWidget);
 
       await tester.tap(rideEventFinder);
@@ -149,13 +149,13 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id.toString()}'));
+      final Finder rideEventFinder = find.byKey(Key('rideEvent${rideEvent.id}'));
       expect(rideEventFinder, findsOneWidget);
 
       await tester.drag(rideEventFinder, const Offset(500, 0));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('rideEvent${rideEvent.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsNothing);
       verifyRequest(
         processor,
         urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read'),
@@ -185,7 +185,7 @@ void main() {
       homePage.insertRideEvent(rideEvent.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('rideEvent${rideEvent.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsOneWidget);
     });
 
     testWidgets('updateRideEvent', (WidgetTester tester) async {
@@ -212,13 +212,13 @@ void main() {
       await tester.pump();
 
       final Finder hompage = find.byType(HomePage);
-      expect(find.byKey(Key('rideEvent${rideEvent.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsOneWidget);
 
       final HomePageState homePage = tester.state(hompage);
       homePage.updateRideEvent(rideEvent.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('rideEvent${rideEvent.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsNothing);
     });
   });
 
@@ -234,7 +234,7 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder messageFinder = find.byKey(Key('message${message.id.toString()}'));
+      final Finder messageFinder = find.byKey(Key('message${message.id}'));
       expect(messageFinder, findsOneWidget);
 
       await tester.tap(messageFinder);
@@ -253,13 +253,13 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder messageFinder = find.byKey(Key('message${message.id.toString()}'));
+      final Finder messageFinder = find.byKey(Key('message${message.id}'));
       expect(messageFinder, findsOneWidget);
 
       await tester.drag(messageFinder, const Offset(500, 0));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('message${message.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('message${message.id}')), findsNothing);
       verifyRequest(
         processor,
         urlMatcher: equals('/rest/v1/rpc/mark_message_as_read'),
@@ -270,7 +270,6 @@ void main() {
     testWidgets('insertMessage', (WidgetTester tester) async {
       final Profile sender = ProfileFactory().generateFake(id: 2);
       final Message message = MessageFactory().generateFake(sender: NullableParameter(sender));
-      message.id = 1;
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
@@ -292,7 +291,7 @@ void main() {
       homePage.insertMessage(message.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('message${message.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('message${message.id}')), findsOneWidget);
     });
 
     testWidgets('updateMessage', (WidgetTester tester) async {
@@ -313,13 +312,13 @@ void main() {
       await tester.pump();
 
       final Finder hompage = find.byType(HomePage);
-      expect(find.byKey(Key('message${message.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('message${message.id}')), findsOneWidget);
 
       final HomePageState homePage = tester.state(hompage);
       homePage.updateMessage(message.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('message${message.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('message${message.id}')), findsNothing);
     });
   });
 
@@ -339,7 +338,7 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder rideFinder = find.byKey(Key('ride${ride.id.toString()}'));
+      final Finder rideFinder = find.byKey(Key('ride${ride.id}'));
       expect(rideFinder, findsOneWidget);
 
       await tester.tap(rideFinder);
@@ -374,7 +373,7 @@ void main() {
       homePage.updateRide(ride.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('ride${ride.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('ride${ride.id}')), findsOneWidget);
     });
 
     testWidgets('updateRide removes ride if the status changes from approved to cancelled',
@@ -400,13 +399,13 @@ void main() {
       await tester.pump();
 
       final Finder hompage = find.byType(HomePage);
-      expect(find.byKey(Key('ride${ride.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('ride${ride.id}')), findsOneWidget);
 
       final HomePageState homePage = tester.state(hompage);
       homePage.updateRide(ride.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('ride${ride.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('ride${ride.id}')), findsNothing);
     });
   });
 
@@ -426,7 +425,7 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder driveFinder = find.byKey(Key('drive${drive.id.toString()}'));
+      final Finder driveFinder = find.byKey(Key('drive${drive.id}'));
       expect(driveFinder, findsOneWidget);
 
       await tester.tap(driveFinder);
@@ -460,7 +459,7 @@ void main() {
       homePage.insertDrive(drive.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('drive${drive.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('drive${drive.id}')), findsOneWidget);
     });
 
     testWidgets('updateDrive', (WidgetTester tester) async {
@@ -485,13 +484,13 @@ void main() {
       await tester.pump();
 
       final Finder hompage = find.byType(HomePage);
-      expect(find.byKey(Key('drive${drive.id.toString()}')), findsOneWidget);
+      expect(find.byKey(Key('drive${drive.id}')), findsOneWidget);
 
       final HomePageState homePage = tester.state(hompage);
       homePage.updateDrive(drive.toJsonForApi());
       await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('drive${drive.id.toString()}')), findsNothing);
+      expect(find.byKey(Key('drive${drive.id}')), findsNothing);
     });
   });
 
@@ -509,13 +508,13 @@ void main() {
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
 
-    final Finder driveFinder = find.byKey(Key('drive${drive.id.toString()}'));
+    final Finder driveFinder = find.byKey(Key('drive${drive.id}'));
     expect(driveFinder, findsOneWidget);
 
     await tester.drag(driveFinder, const Offset(500, 0));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(Key('drive${drive.id.toString()}')), findsNothing);
+    expect(find.byKey(Key('drive${drive.id}')), findsNothing);
   });
 
   testWidgets('works with multiple events', (WidgetTester tester) async {
@@ -551,10 +550,10 @@ void main() {
     final Finder hurensohn = find.byType(Dismissible, skipOffstage: false);
     expect(hurensohn, findsNWidgets(4));
 
-    expect(tester.widget(hurensohn.at(0)).key, Key('drive${drive.id.toString()}'));
-    expect(tester.widget(hurensohn.at(1)).key, Key('ride${ride.id.toString()}'));
-    expect(tester.widget(hurensohn.at(2)).key, Key('rideEvent${rideEvent.id.toString()}'));
-    expect(tester.widget(hurensohn.at(3)).key, Key('message${message.id.toString()}'));
+    expect(tester.widget(hurensohn.at(0)).key, Key('drive${drive.id}'));
+    expect(tester.widget(hurensohn.at(1)).key, Key('ride${ride.id}'));
+    expect(tester.widget(hurensohn.at(2)).key, Key('rideEvent${rideEvent.id}'));
+    expect(tester.widget(hurensohn.at(3)).key, Key('message${message.id}'));
 
     homePage.insertMessage(message2.toJsonForApi());
 
@@ -562,7 +561,7 @@ void main() {
 
     expect(hurensohn, findsNWidgets(5));
 
-    expect(tester.widget(hurensohn.at(2)).key, Key('message${message2.id.toString()}'));
+    expect(tester.widget(hurensohn.at(2)).key, Key('message${message2.id}'));
   });
 
   group('Buttons', () {

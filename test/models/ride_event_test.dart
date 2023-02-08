@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/util/ride_event.dart';
-import 'package:motis_mitfahr_app/util/supabase.dart';
+import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/model_factory.dart';
@@ -50,7 +50,7 @@ void main() {
     );
 
     setUp(() {
-      SupabaseManager.setCurrentProfile(user);
+      supabaseManager.currentProfile = user;
     });
 
     test('returns true if rideEvent is for current user', () async {

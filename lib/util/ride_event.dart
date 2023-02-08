@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../rides/models/ride.dart';
 import 'model.dart';
-import 'supabase.dart';
+import 'supabase_manager.dart';
 
 class RideEvent extends Model {
   RideEventCategory category;
@@ -22,12 +22,12 @@ class RideEvent extends Model {
 
   factory RideEvent.fromJson(Map<String, dynamic> json) {
     return RideEvent(
-      id: json['id'],
-      createdAt: DateTime.parse(json['created_at']),
-      rideId: json['ride_id'],
-      ride: json.containsKey('ride') ? Ride.fromJson(json['ride']) : null,
+      id: json['id'] as int,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      rideId: json['ride_id'] as int,
+      ride: json.containsKey('ride') ? Ride.fromJson(json['ride'] as Map<String, dynamic>) : null,
       category: RideEventCategory.values.elementAt(json['category'] as int),
-      read: json['read'],
+      read: json['read'] as bool,
     );
   }
 
@@ -55,7 +55,7 @@ class RideEvent extends Model {
   Future<void> markAsRead() async {
     read = true;
     //custom rpc call to mark rideEvent as read, so the user does not need the write permission on the ride_events table
-    await SupabaseManager.supabaseClient.rpc('mark_ride_event_as_read', params: <String, dynamic>{'ride_event_id': id});
+    await supabaseManager.supabaseClient.rpc('mark_ride_event_as_read', params: <String, dynamic>{'ride_event_id': id});
   }
 
   bool isForCurrentUser() {

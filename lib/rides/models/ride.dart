@@ -4,7 +4,6 @@ import '../../account/models/profile.dart';
 import '../../drives/models/drive.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/parse_helper.dart';
-import '../../util/ride_event.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
@@ -22,7 +21,6 @@ class Ride extends Trip {
   // Nullable for preview rides
   final int? chatId;
   Chat? chat;
-  final List<RideEvent>? events;
 
   Ride({
     super.id,
@@ -43,7 +41,6 @@ class Ride extends Trip {
     this.rider,
     this.chatId,
     this.chat,
-    this.events,
   });
 
   factory Ride.previewFromDrive(
@@ -92,9 +89,6 @@ class Ride extends Trip {
       drive: json.containsKey('drive') ? Drive.fromJson(json['drive'] as Map<String, dynamic>) : null,
       chatId: json['chat_id'] as int?,
       chat: json.containsKey('chat') ? Chat.fromJson(json['chat'] as Map<String, dynamic>) : null,
-      events: json.containsKey('ride_events')
-          ? RideEvent.fromJsonList(parseHelper.parseListOfMaps(json['ride_events']))
-          : null,
     );
   }
 

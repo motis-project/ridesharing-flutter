@@ -19,7 +19,7 @@ import 'util/locale_manager.dart';
 import 'util/model.dart';
 import 'util/parse_helper.dart';
 import 'util/ride_event.dart';
-import 'util/supabase.dart';
+import 'util/supabase_manager.dart';
 import 'util/trip/trip.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,9 +42,9 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     load();
-    final int profileId = SupabaseManager.getCurrentProfile()!.id!;
+    final int profileId = supabaseManager.currentProfile!.id!;
 
-    _messagesSubscriptions = SupabaseManager.supabaseClient.channel('public:messages').on(
+    _messagesSubscriptions = supabaseManager.supabaseClient.channel('public:messages').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
       (dynamic payload, [dynamic ref]) {
@@ -58,7 +58,7 @@ class HomePageState extends State<HomePage> {
       },
     );
 
-    _rideEventsSubscriptions = SupabaseManager.supabaseClient.channel('public:ride_events').on(
+    _rideEventsSubscriptions = supabaseManager.supabaseClient.channel('public:ride_events').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
       (dynamic payload, [dynamic ref]) {
@@ -72,7 +72,7 @@ class HomePageState extends State<HomePage> {
       },
     );
 
-    _ridesSubscriptions = SupabaseManager.supabaseClient.channel('public:rides').on(
+    _ridesSubscriptions = supabaseManager.supabaseClient.channel('public:rides').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'rides', filter: 'rider_id=eq.$profileId'),
       (dynamic payload, [dynamic ref]) {
@@ -80,7 +80,7 @@ class HomePageState extends State<HomePage> {
       },
     );
 
-    _drivesSubscriptions = SupabaseManager.supabaseClient.channel('public:drives').on(
+    _drivesSubscriptions = supabaseManager.supabaseClient.channel('public:drives').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(
         event: 'INSERT',
@@ -114,18 +114,18 @@ class HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    SupabaseManager.supabaseClient.removeChannel(_messagesSubscriptions);
-    SupabaseManager.supabaseClient.removeChannel(_rideEventsSubscriptions);
-    SupabaseManager.supabaseClient.removeChannel(_ridesSubscriptions);
-    SupabaseManager.supabaseClient.removeChannel(_drivesSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_messagesSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_rideEventsSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_ridesSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_drivesSubscriptions);
     super.dispose();
   }
 
   Future<void> load() async {
     final List<Model> items = <Model>[];
-    final int profileId = SupabaseManager.getCurrentProfile()!.id!;
+    final int profileId = supabaseManager.currentProfile!.id!;
     final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('messages').select('''
+      await supabaseManager.supabaseClient.from('messages').select<Map<String, dynamic>>('''
       *,
       sender: sender_id(*)
       )
@@ -133,7 +133,7 @@ class HomePageState extends State<HomePage> {
     );
     items.addAll(Message.fromJsonList(messagesData));
     final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
-      await SupabaseManager.supabaseClient.from('ride_events').select('''
+      await supabaseManager.supabaseClient.from('ride_events').select<Map<String, dynamic>>('''
       *,
       ride: ride_id(*,
         rider: rider_id(*),
@@ -152,9 +152,9 @@ class HomePageState extends State<HomePage> {
     trips.addAll(
       Ride.fromJsonList(
         parseHelper.parseListOfMaps(
-          await SupabaseManager.supabaseClient
+          await supabaseManager.supabaseClient
               .from('rides')
-              .select()
+              .select<Map<String, dynamic>>()
               .eq('rider_id', profileId)
               .eq('status', RideStatus.approved.index)
               .lt('start_time', tomorrow)
@@ -165,9 +165,9 @@ class HomePageState extends State<HomePage> {
     trips.addAll(
       Drive.fromJsonList(
         parseHelper.parseListOfMaps(
-          await SupabaseManager.supabaseClient
+          await supabaseManager.supabaseClient
               .from('drives')
-              .select()
+              .select<Map<String, dynamic>>()
               .eq('driver_id', profileId)
               .eq('cancelled', false)
               .lt('start_time', tomorrow)
@@ -189,7 +189,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${S.of(context).hello} ${SupabaseManager.getCurrentProfile()!.username} :)'),
+        title: Text('${S.of(context).hello} ${supabaseManager.currentProfile!.username} :)'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
@@ -253,7 +253,7 @@ class HomePageState extends State<HomePage> {
                             const SizedBox(height: 16),
                             Text(
                               S.of(context).pageHomePageEmpty,
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.titleLarge,
                             ),
                             const SizedBox(height: 3),
                           ],
@@ -272,7 +272,8 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> insertRideEvent(Map<String, dynamic> rideEventData) async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('ride_events').select('''
+    final Map<String, dynamic> data =
+        await supabaseManager.supabaseClient.from('ride_events').select<Map<String, dynamic>>('''
       *,
       ride: ride_id(*,
         rider: rider_id(*),
@@ -290,7 +291,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void updateRideEvent(Map<String, dynamic> rideEventData) {
-    if (rideEventData['read']) {
+    if (rideEventData['read'] as bool) {
       setState(() {
         _items.removeWhere(
           (Model element) => element is RideEvent && element.id == rideEventData['id'],
@@ -300,8 +301,9 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> insertMessage(Map<String, dynamic> messageData) async {
-    if (messageData['sender_id'] != SupabaseManager.getCurrentProfile()!.id) {
-      final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('messages').select('''
+    if (messageData['sender_id'] != supabaseManager.currentProfile!.id) {
+      final Map<String, dynamic> data =
+          await supabaseManager.supabaseClient.from('messages').select<Map<String, dynamic>>('''
       *,
       sender: sender_id(*)
       )
@@ -325,7 +327,7 @@ class HomePageState extends State<HomePage> {
 
   void updateRide(Map<String, dynamic> rideData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(rideData['start_time']);
+    final DateTime startTime = DateTime.parse(rideData['start_time'] as String);
     if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       if (rideData['status'] == RideStatus.approved.index) {
         setState(() {
@@ -355,7 +357,7 @@ class HomePageState extends State<HomePage> {
 
   void insertDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time']);
+    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
     if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
         for (int i = 0; i <= _upcomingTripsCount; i++) {
@@ -371,7 +373,7 @@ class HomePageState extends State<HomePage> {
 
   void updateDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time']);
+    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
     if (driveData['cancelled'] == true &&
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
@@ -393,7 +395,7 @@ class HomePageState extends State<HomePage> {
     return Card(
       child: InkWell(
         child: Dismissible(
-          key: Key('message${message.id.toString()}'),
+          key: Key('message${message.id}'),
           onDismissed: (DismissDirection direction) async {
             unawaited(message.markAsRead());
             setState(() {
@@ -406,7 +408,7 @@ class HomePageState extends State<HomePage> {
             subtitle: Text(message.content, maxLines: 1),
             trailing: Text(
               localeManager.formatTime(message.createdAt!),
-              style: Theme.of(context).textTheme.caption,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -429,7 +431,7 @@ class HomePageState extends State<HomePage> {
     return Card(
       child: InkWell(
         child: Dismissible(
-          key: Key('rideEvent${rideEvent.id.toString()}'),
+          key: Key('rideEvent${rideEvent.id}'),
           onDismissed: (DismissDirection direction) async {
             unawaited(rideEvent.markAsRead());
             setState(() {
@@ -442,7 +444,7 @@ class HomePageState extends State<HomePage> {
             subtitle: Text(rideEvent.getMessage(context)),
             trailing: Text(
               localeManager.formatTime(rideEvent.createdAt!),
-              style: Theme.of(context).textTheme.caption,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               rideEvent.markAsRead();
@@ -463,7 +465,7 @@ class HomePageState extends State<HomePage> {
     return Card(
       child: InkWell(
         child: Dismissible(
-          key: trip is Ride ? Key('ride${trip.id.toString()}') : Key('drive${trip.id.toString()}'),
+          key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
           onDismissed: (DismissDirection direction) async {
             setState(() {
               _items.remove(trip);
