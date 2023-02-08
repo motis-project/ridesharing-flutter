@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: <Widget>[
           Expanded(child: Container()),
           InkWell(
-            onTap: () => _pushAndLoadProfile(EditUsernamePage(_profile!)),
+            onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
             child: username,
           ),
           Expanded(
@@ -95,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: IconButton(
                 tooltip: S.of(context).edit,
                 icon: const Icon(Icons.edit),
-                onPressed: () => _pushAndLoadProfile(EditUsernamePage(_profile!)),
+                onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
                 key: const Key('editUsername'),
               ),
             ),
@@ -125,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileDescriptionTitle,
       innerWidget: description,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () => _pushAndLoadProfile(EditDescriptionPage(_profile!)),
+      onPressed: () => _pushEditPage(EditDescriptionPage(_profile!)),
       key: const Key('description'),
     );
   }
@@ -141,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileFullNameTitle,
       innerWidget: fullName,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () => _pushAndLoadProfile(EditFullNamePage(_profile!)),
+      onPressed: () => _pushEditPage(EditFullNamePage(_profile!)),
       key: const Key('fullName'),
     );
   }
@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileAgeTitle,
       innerWidget: age,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () => _pushAndLoadProfile(EditBirthDatePage(_profile!)),
+      onPressed: () => _pushEditPage(EditBirthDatePage(_profile!)),
       key: const Key('age'),
     );
   }
@@ -174,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileGenderTitle,
       innerWidget: gender,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () => _pushAndLoadProfile(EditGenderPage(_profile!)),
+      onPressed: () => _pushEditPage(EditGenderPage(_profile!)),
       key: const Key('gender'),
     );
   }
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
       title: S.of(context).pageProfileFeaturesTitle,
       innerWidget: features,
       isEditable: _profile!.isCurrentUser,
-      onPressed: () => _pushAndLoadProfile(EditProfileFeaturesPage(_profile!)),
+      onPressed: () => _pushEditPage(EditProfileFeaturesPage(_profile!)),
       key: const Key('features'),
     );
   }
@@ -321,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<void> _pushAndLoadProfile(Widget page) async {
+  Future<void> _pushEditPage(Widget page) async {
     await Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (BuildContext context) => page))
         .then((_) => loadProfile());
