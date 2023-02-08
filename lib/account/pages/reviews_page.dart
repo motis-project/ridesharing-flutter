@@ -50,7 +50,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
         writer: writer_id(*)
       )''').eq('id', _profileId).single();
     final List<Map<String, dynamic>> commonRidesData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('rides').select<Map<String, dynamic>>('''
+      await supabaseManager.supabaseClient.from('rides').select<List<Map<String, dynamic>>>('''
           *,
           drive: drives!inner(*)
         ''').eq('rider_id', supabaseManager.currentProfile!.id).eq('drive.driver_id', _profileId),

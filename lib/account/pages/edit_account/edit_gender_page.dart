@@ -48,6 +48,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                           _gender = value;
                         });
                       },
+                      key: Key('genderRadioListTile$index'),
                     );
                   }
                   return RadioListTile<Gender?>(
@@ -59,6 +60,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                         _gender = value;
                       });
                     },
+                    key: const Key('preferNotToSayGenderRadioListTile'),
                   );
                 },
               ),
@@ -66,6 +68,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
               Button(
                 S.of(context).save,
                 onPressed: onPressed,
+                key: const Key('saveButton'),
               ),
             ],
           ),

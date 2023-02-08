@@ -59,6 +59,7 @@ class AvatarState extends State<Avatar> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(builder: (BuildContext context) => AvatarPicturePage(widget.profile)),
                   ),
+                  key: const Key('avatarTappable'),
                 ),
               ),
             ),
@@ -76,6 +77,7 @@ class AvatarState extends State<Avatar> {
                 iconSize: 20,
                 onPressed: widget.onAction,
                 icon: const Icon(Icons.photo_library),
+                key: const Key('avatarUpload'),
               ),
             ),
           ),

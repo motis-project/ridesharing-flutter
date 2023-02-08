@@ -34,6 +34,7 @@ class EditableRow extends StatelessWidget {
                     tooltip: S.of(context).edit,
                     icon: const Icon(Icons.edit),
                     onPressed: onPressed,
+                    key: const Key('editButton'),
                   ),
                 ),
               ),

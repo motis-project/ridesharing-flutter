@@ -42,11 +42,13 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
                   suffixIcon: _getClearButton(),
                 ),
                 controller: _controller,
+                key: const Key('description'),
               ),
               const SizedBox(height: 10),
               Button(
                 S.of(context).save,
                 onPressed: onPressed,
+                key: const Key('saveButton'),
               ),
             ],
           ),
@@ -63,6 +65,7 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => _controller.clear(),
+      key: const Key('clearButton'),
     );
   }
 

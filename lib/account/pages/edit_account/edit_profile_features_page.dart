@@ -32,6 +32,14 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
     _otherFeatures = Feature.values.where((Feature e) => !_features.contains(e)).toList();
   }
 
+  ReorderableDragStartListener buildDragStartListener(int index) {
+    return ReorderableDragStartListener(
+      index: index,
+      key: const Key('dragHandle'),
+      child: const Icon(Icons.drag_handle),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +55,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                 header: _features.isEmpty
                     ? Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesHint,
+                        key: const Key('emptyList'),
                         child: Container(
                           width: double.infinity,
                           height: 60,
@@ -71,6 +80,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesSelected,
+                        key: Key('$feature Tile'),
                         child: Text(feature.getDescription(context)),
                       ),
                       trailing: Row(
@@ -80,11 +90,9 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                             onPressed: () => _removeFeature(index),
                             icon: const Icon(Icons.remove_circle_outline),
+                            key: const Key('removeButton'),
                           ),
-                          ReorderableDragStartListener(
-                            index: index,
-                            child: const Icon(Icons.drag_handle),
-                          ),
+                          buildDragStartListener(index),
                         ],
                       ),
                     );
@@ -103,6 +111,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
+                        key: Key('$feature Tile'),
                         child: Text(feature.getDescription(context)),
                       ),
                       trailing: Row(
@@ -112,11 +121,9 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                             onPressed: () => _addFeature(index),
                             icon: const Icon(Icons.add_circle_outline),
+                            key: const Key('addButton'),
                           ),
-                          ReorderableDragStartListener(
-                            index: index,
-                            child: const Icon(Icons.drag_handle),
-                          ),
+                          buildDragStartListener(index),
                         ],
                       ),
                     );
@@ -128,6 +135,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
             Button(
               S.of(context).save,
               onPressed: _isSaving ? null : onPressed,
+              key: const Key('saveButton'),
             ),
           ],
         ),
@@ -196,6 +204,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
           durationType: SnackBarDurationType.medium,
           replace: true,
+          key: Key('$newFeature mutuallyExclusiveSnackBar'),
         );
       }
 

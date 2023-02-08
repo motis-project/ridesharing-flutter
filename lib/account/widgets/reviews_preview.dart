@@ -81,6 +81,7 @@ class ReviewsPreview extends StatelessWidget {
                     MaterialPageRoute<void>(builder: (_) => ReviewsPage.fromProfile(profile)),
                   );
                 },
+                key: const Key('reviewsPreview'),
               ),
             ),
           ),

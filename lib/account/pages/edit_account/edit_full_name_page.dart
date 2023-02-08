@@ -43,6 +43,7 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
                   suffixIcon: _getClearButton(_surnameController),
                 ),
                 controller: _surnameController,
+                key: const Key('surname'),
               ),
               const SizedBox(height: 10),
               TextField(
@@ -52,11 +53,13 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
                   suffixIcon: _getClearButton(_nameController),
                 ),
                 controller: _nameController,
+                key: const Key('name'),
               ),
               const SizedBox(height: 10),
               Button(
                 S.of(context).save,
                 onPressed: onPressed,
+                key: const Key('saveButton'),
               ),
             ],
           ),
@@ -73,6 +76,7 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => controller.clear(),
+      key: const Key('clearButton'),
     );
   }
 

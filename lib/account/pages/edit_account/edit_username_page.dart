@@ -51,11 +51,13 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
                     }
                     return null;
                   },
+                  key: const Key('usernameTextField'),
                 ),
                 const SizedBox(height: 10),
                 Button(
                   S.of(context).save,
                   onPressed: onPressed,
+                  key: const Key('saveButton'),
                 ),
               ],
             ),
@@ -73,6 +75,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),
       onPressed: () => _controller.clear(),
+      key: const Key('clearButton'),
     );
   }
 
@@ -84,7 +87,6 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
       'username': _controller.text,
     }).eq('id', widget.profile.id);
     await supabaseManager.reloadCurrentProfile();
-
     if (mounted) Navigator.of(context).pop();
   }
 }
