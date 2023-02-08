@@ -9,6 +9,7 @@ import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/factories/profile_factory.dart';
+import '../../util/factories/profile_feature_factory.dart';
 import '../../util/mocks/mock_server.dart';
 import '../../util/mocks/request_processor.dart';
 import '../../util/mocks/request_processor.mocks.dart';
@@ -119,8 +120,8 @@ void main() {
       profile = ProfileFactory().generateFake(
         id: 1,
         profileFeatures: [
-          ProfileFeature(profileId: 1, feature: Feature.smoking, rank: 0),
-          ProfileFeature(profileId: 1, feature: Feature.vaping, rank: 1),
+          ProfileFeatureFactory().generateFake(profileId: 1, feature: Feature.smoking, rank: 0),
+          ProfileFeatureFactory().generateFake(profileId: 1, feature: Feature.vaping, rank: 1),
         ],
       );
       supabaseManager.currentProfile = profile;
@@ -276,9 +277,12 @@ void main() {
       profile = ProfileFactory().generateFake(
         id: 1,
         profileFeatures: [
-          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.smoking, rank: 0),
-          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.petsAllowed, rank: 1),
-          ProfileFeature(profileId: 1, createdAt: DateTime.now(), feature: Feature.quiet, rank: 2),
+          ProfileFeatureFactory()
+              .generateFake(profileId: 1, createdAt: DateTime.now(), feature: Feature.smoking, rank: 0),
+          ProfileFeatureFactory()
+              .generateFake(profileId: 1, createdAt: DateTime.now(), feature: Feature.petsAllowed, rank: 1),
+          ProfileFeatureFactory()
+              .generateFake(profileId: 1, createdAt: DateTime.now(), feature: Feature.quiet, rank: 2),
         ],
       );
       whenRequest(processor, urlMatcher: contains('/rest/v1/profile')).thenReturnJson(profile.toJsonForApi());

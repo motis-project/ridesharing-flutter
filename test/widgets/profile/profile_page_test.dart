@@ -283,6 +283,15 @@ void main() {
           : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       testWidgets('Avatar is tappable $i', (WidgetTester tester) async {
+        whenRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/profiles'),
+        ).thenReturnJson(profile.toJsonForApi());
+        whenRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/rides'),
+        ).thenReturnJson([]);
+
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
@@ -293,6 +302,15 @@ void main() {
       });
 
       testWidgets('Reviews button $i', (WidgetTester tester) async {
+        whenRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/profiles'),
+        ).thenReturnJson(profile.toJsonForApi());
+        whenRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/rides'),
+        ).thenReturnJson([]);
+
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
