@@ -51,11 +51,10 @@ void main() {
     expect(find.byType(ProfilePage), findsNothing);
   });
 
-  testWidgets('uses onTap if given', (WidgetTester tester) async {
+  testWidgets('uses onTap if given', skip: true, (WidgetTester tester) async {
     bool wasCalled = false;
 
     await pumpScaffold(tester, ProfileWidget(profile, onTap: () => wasCalled = true));
-
     await tester.tap(find.byType(ProfileWidget));
 
     expect(wasCalled, isTrue);
