@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/util/chat/models/chat.dart';
 import 'package:motis_mitfahr_app/util/chat/models/message.dart';
@@ -39,7 +37,7 @@ class MessageFactory extends ModelFactory<Message> {
       content: content ?? faker.lorem.sentences(random.nextInt(2) + 1).join(' '),
       senderId: generatedSender?.id ?? senderId ?? randomId,
       sender: generatedSender,
-      read: read ?? Random().nextBool(),
+      read: read ?? false,
     );
   }
 }

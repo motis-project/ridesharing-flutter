@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/ride_event.dart';
 
@@ -26,7 +24,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       category: category ?? RideEventCategory.values[random.nextInt(RideEventCategory.values.length)],
-      read: read ?? Random().nextBool(),
+      read: read ?? false,
       rideId: generatedRide?.id ?? rideId ?? randomId,
       ride: generatedRide,
     );

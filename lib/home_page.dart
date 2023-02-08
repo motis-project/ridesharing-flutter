@@ -26,10 +26,10 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   //needs to be initialized in case the subscription gets something new before load is done
   List<Model> _items = <Model>[];
   bool _fullyLoaded = false;
@@ -48,22 +48,13 @@ class _HomePageState extends State<HomePage> {
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
       (dynamic payload, [dynamic ref]) {
-        if (pick(pick(payload, 'new').asMapOrEmpty(), 'sender_id').asIntOrThrow() != profileId) {
-          _loadNewMessage(pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow());
-        }
+        insertMessage(pick(payload, 'new').asMapOrEmpty());
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
       (dynamic payload, [dynamic ref]) {
-        if (pick(pick(payload, 'new').asMapOrEmpty(), 'read').asBoolOrThrow() == true) {
-          setState(() {
-            _items.removeWhere(
-              (Model element) =>
-                  element is Message && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
-            );
-          });
-        }
+        updateMessage(pick(payload, 'new').asMapOrEmpty());
       },
     );
 
@@ -71,63 +62,21 @@ class _HomePageState extends State<HomePage> {
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
       (dynamic payload, [dynamic ref]) {
-        _loadNewRideEvent(pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow());
+        insertRideEvent(pick(payload, 'new').asMapOrEmpty());
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'),
       (dynamic payload, [dynamic ref]) {
-        if (pick(pick(payload, 'new').asMapOrEmpty(), 'read').asBoolOrThrow()) {
-          setState(() {
-            _items.removeWhere(
-              (Model element) =>
-                  element is RideEvent && element.id == pick(pick(payload, 'new').asMapOrEmpty(), 'id').asIntOrThrow(),
-            );
-          });
-        }
+        updateRideEvent(pick(payload, 'new').asMapOrEmpty());
       },
     );
-    final DateTime now = DateTime.now();
 
     _ridesSubscriptions = SupabaseManager.supabaseClient.channel('public:rides').on(
       RealtimeListenTypes.postgresChanges,
       ChannelFilter(event: 'UPDATE', schema: 'public', table: 'rides', filter: 'rider_id=eq.$profileId'),
       (dynamic payload, [dynamic ref]) {
-        final Map<String, dynamic> rideData = pick(payload, 'new').asMapOrEmpty();
-        final DateTime startTime = DateTime.parse(rideData['start_time']);
-        if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-          if (rideData['status'] == RideStatus.approved.index) {
-            setState(() {
-              for (int i = 0; i <= _upcomingTripsCount; i++) {
-                if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
-                  _items.insert(i, Ride.fromJson(rideData));
-                  break;
-                }
-              }
-              _upcomingTripsCount++;
-            });
-          } else {
-            setState(() {
-              final List<Model> ride = _items
-                  .where(
-                    (Model element) => element is Ride && element.id == rideData['id'],
-                  )
-                  .toList();
-              if (ride.isNotEmpty) {
-                _items.remove(ride.first);
-                _upcomingTripsCount--;
-              }
-              final List<RideEvent> events = _items
-                  .where((Model element) => element is RideEvent && element.rideId == rideData['id'])
-                  .map((Model e) => e as RideEvent)
-                  .toList();
-              _items.removeWhere((Model element) => events.contains(element));
-              for (final RideEvent event in events) {
-                event.markAsRead();
-              }
-            });
-          }
-        }
+        updateRide(pick(payload, 'new').asMapOrEmpty());
       },
     );
 
@@ -140,19 +89,7 @@ class _HomePageState extends State<HomePage> {
         filter: 'driver_id=eq.$profileId',
       ),
       (dynamic payload, [dynamic ref]) {
-        final Map<String, dynamic> driveData = pick(payload, 'new').asMapOrEmpty();
-        final DateTime startTime = DateTime.parse(driveData['start_time']);
-        if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-          setState(() {
-            for (int i = 0; i <= _upcomingTripsCount; i++) {
-              if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
-                _items.insert(i, Drive.fromJson(driveData));
-                break;
-              }
-            }
-            _upcomingTripsCount++;
-          });
-        }
+        insertDrive(pick(payload, 'new').asMapOrEmpty());
       },
     ).on(
       RealtimeListenTypes.postgresChanges,
@@ -163,31 +100,7 @@ class _HomePageState extends State<HomePage> {
         filter: 'driver_id=eq.$profileId',
       ),
       (dynamic payload, [dynamic ref]) {
-        final Map<String, dynamic> driveData = pick(payload, 'new').asMapOrEmpty();
-        final DateTime startTime = DateTime.parse(driveData['start_time']);
-        if (driveData['cancelled'] == true &&
-            startTime.isAfter(now) &&
-            startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-          setState(() {
-            final List<Model> drive = _items
-                .where(
-                  (Model element) => element is Drive && element.id == driveData['id'],
-                )
-                .toList();
-            if (drive.isNotEmpty) {
-              _items.remove(drive.first);
-              _upcomingTripsCount--;
-            }
-            final List<RideEvent> events = _items
-                .where((Model element) => element is RideEvent && element.ride!.driveId == driveData['id'])
-                .map((Model e) => e as RideEvent)
-                .toList();
-            _items.removeWhere((Model element) => events.contains(element));
-            for (final RideEvent event in events) {
-              event.markAsRead();
-            }
-          });
-        }
+        updateDrive(pick(payload, 'new').asMapOrEmpty());
       },
     );
 
@@ -286,18 +199,24 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             const SizedBox(height: 30),
-            Button(
-              S.of(context).pageHomeSearchButton,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+            Hero(
+              tag: 'SearchButton',
+              transitionOnUserGestures: true,
+              child: Button(
+                S.of(context).pageHomeSearchButton,
+                key: const Key('SearchButton'),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+                ),
               ),
             ),
             const SizedBox(height: 15),
             Hero(
-              tag: 'createButton',
+              tag: 'CreateButton',
               transitionOnUserGestures: true,
               child: Button(
                 S.of(context).pageHomeCreateButton,
+                key: const Key('CreateButton'),
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
                 ),
@@ -307,6 +226,7 @@ class _HomePageState extends State<HomePage> {
             if (_fullyLoaded)
               Expanded(
                 child: Container(
+                  key: const Key('MessageContainer'),
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
@@ -351,7 +271,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _loadNewRideEvent(int rideEventId) async {
+  Future<void> insertRideEvent(Map<String, dynamic> rideEventData) async {
     final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('ride_events').select('''
       *,
       ride: ride_id(*,
@@ -360,7 +280,7 @@ class _HomePageState extends State<HomePage> {
           driver: driver_id(*)
           )
       )
-      ''').eq('id', rideEventId).single();
+      ''').eq('id', rideEventData['id']).single();
     final RideEvent rideEvent = RideEvent.fromJson(data);
     if (rideEvent.isForCurrentUser()) {
       setState(() {
@@ -369,16 +289,102 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _loadNewMessage(int messageId) async {
-    final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('messages').select('''
+  void updateRideEvent(Map<String, dynamic> rideEventData) {
+    if (rideEventData['read']) {
+      setState(() {
+        _items.removeWhere(
+          (Model element) => element is RideEvent && element.id == rideEventData['id'],
+        );
+      });
+    }
+  }
+
+  Future<void> insertMessage(Map<String, dynamic> messageData) async {
+    if (messageData['sender_id'] != SupabaseManager.getCurrentProfile()!.id) {
+      final Map<String, dynamic> data = await SupabaseManager.supabaseClient.from('messages').select('''
       *,
       sender: sender_id(*)
       )
-    ''').eq('id', messageId).single();
-    final Message message = Message.fromJson(data);
-    if (!message.read) {
+    ''').eq('id', messageData['id']).single();
+      final Message message = Message.fromJson(data);
       setState(() {
         _items.insert(_upcomingTripsCount, message);
+      });
+    }
+  }
+
+  void updateMessage(Map<String, dynamic> messageData) {
+    if (messageData['read'] == true) {
+      setState(() {
+        _items.removeWhere(
+          (Model element) => element is Message && element.id == messageData['id'],
+        );
+      });
+    }
+  }
+
+  void updateRide(Map<String, dynamic> rideData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(rideData['start_time']);
+    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      if (rideData['status'] == RideStatus.approved.index) {
+        setState(() {
+          for (int i = 0; i <= _upcomingTripsCount; i++) {
+            if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
+              _items.insert(i, Ride.fromJson(rideData));
+              break;
+            }
+          }
+          _upcomingTripsCount++;
+        });
+      } else {
+        setState(() {
+          final List<Model> ride = _items
+              .where(
+                (Model element) => element is Ride && element.id == rideData['id'],
+              )
+              .toList();
+          if (ride.isNotEmpty) {
+            _items.remove(ride.first);
+            _upcomingTripsCount--;
+          }
+        });
+      }
+    }
+  }
+
+  void insertDrive(Map<String, dynamic> driveData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(driveData['start_time']);
+    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      setState(() {
+        for (int i = 0; i <= _upcomingTripsCount; i++) {
+          if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
+            _items.insert(i, Drive.fromJson(driveData));
+            break;
+          }
+        }
+        _upcomingTripsCount++;
+      });
+    }
+  }
+
+  void updateDrive(Map<String, dynamic> driveData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(driveData['start_time']);
+    if (driveData['cancelled'] == true &&
+        startTime.isAfter(now) &&
+        startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      setState(() {
+        final List<Model> drive = _items
+            .where(
+              (Model element) => element is Drive && element.id == driveData['id'],
+            )
+            .toList();
+        if (drive.isNotEmpty) {
+          _items.remove(drive.first);
+          _upcomingTripsCount--;
+        }
       });
     }
   }
@@ -457,7 +463,7 @@ class _HomePageState extends State<HomePage> {
     return Card(
       child: InkWell(
         child: Dismissible(
-          key: Key('trip${trip.id.toString()}'),
+          key: trip is Ride ? Key('ride${trip.id.toString()}') : Key('drive${trip.id.toString()}'),
           onDismissed: (DismissDirection direction) async {
             setState(() {
               _items.remove(trip);
