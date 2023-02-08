@@ -1,9 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Dart
+name: Flutter Build
 
 on:
   push
@@ -32,6 +27,15 @@ jobs:
 
       - name: Analyze project source
         run: flutter analyze
+
+      - name: Verify translations
+        shell: bash
+        run: |
+          if [[ "$(< lib/l10n/untranslatedMessages.txt)" == "{}" ]]; then
+            exit 0
+          else
+            exit 1
+          fi
 
       - name: Generate coverage_helper file
         run: ./scripts/coverage_helper.sh
