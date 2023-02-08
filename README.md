@@ -21,7 +21,7 @@ A ride-sharing app by the Motis team.
 
 - Before committing, please do the following:
 
-  - Run `flutter format --line-length=120 .` to format the code
+  - Run `dart format --line-length=120 $(find lib test -name "*.dart" -not -name "*.mocks.dart")` to format the code
   - Run `flutter analyze` to check for any static analysis issues (not really needed if you use VSCode)
   - Run `flutter test` to run all tests
 
