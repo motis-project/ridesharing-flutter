@@ -29,8 +29,8 @@ void main() {
     profile = ProfileFactory().generateFake(
       id: 1,
       profileFeatures: [
-        ProfileFeatureFactory().generateFake(rank: 0, feature: Feature.noSmoking),
-        ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.petsAllowed),
+        ProfileFeatureFactory().generateFake(rank: 0, feature: Feature.accessible),
+        ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.requires3G),
         ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.music),
       ],
     );
@@ -238,16 +238,11 @@ void main() {
         await tester.drag(dragFinder, const Offset(0, -50));
         await tester.pump();
 
-        //check if tried adding feature
-        try {
-          expect(
-              find.descendant(
-                  of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
-                  matching: find.byKey(const Key('removeButton'))),
-              findsOneWidget);
-        } catch (e) {
-          expect(find.byType(SnackBar), findsOneWidget);
-        }
+        expect(
+            find.descendant(
+                of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
+                matching: find.byKey(const Key('removeButton'))),
+            findsOneWidget);
       });
 
       testWidgets('use move to remove feature', (WidgetTester tester) async {
