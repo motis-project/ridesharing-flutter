@@ -375,7 +375,8 @@ void main() {
         testWidgets('Can request ride', (WidgetTester tester) async {
           await openDialog(tester);
 
-          final Ride returnedRide = ride.copyWith(status: RideStatus.pending);
+          // Using ride.id + 1 to simulate the assigned id of the new ride
+          final Ride returnedRide = ride.copyWith(id: ride.id! + 1, status: RideStatus.pending);
           whenRequest(processor).thenReturnJson(returnedRide.toJsonForApi());
 
           final Finder requestRideYesButton = find.byKey(const Key('requestRideYesButton'));

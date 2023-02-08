@@ -308,7 +308,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
             key: const Key('requestRideYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
-              confirmRequest(_ride!);
+              confirmRequest();
               Navigator.of(dialogContext).pop();
             },
           ),
@@ -349,17 +349,17 @@ class _RideDetailPageState extends State<RideDetailPage> {
     );
   }
 
-  Future<void> confirmRequest(Ride ride) async {
-    ride.status = RideStatus.pending;
+  Future<void> confirmRequest() async {
+    _ride!.status = RideStatus.pending;
 
     // chat gets created by trigger, somehow it does not get returned immediately by the insert
-    final Map<String, dynamic> idHash = await supabaseManager.supabaseClient
+    final Map<String, dynamic> rideHash = await supabaseManager.supabaseClient
         .from('rides')
-        .insert(ride.toJson())
+        .insert(_ride!.toJson())
         .select<Map<String, dynamic>>()
         .single();
 
-    ride = ride.copyWith(id: idHash['id'] as int);
+    _ride = Ride.fromJson(rideHash);
     await loadRide();
   }
 
