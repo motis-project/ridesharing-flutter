@@ -145,6 +145,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
     for (int i = 0; i < min(profileFeatures.length, 3); i++) {
       featureicons.add(profileFeatures[i].feature.getIcon(context));
     }
+
     return Row(
       key: const Key('profileFeatures'),
       mainAxisAlignment: MainAxisAlignment.end,
@@ -155,11 +156,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   @override
   Color pickStatusColor() {
     if (_ride.endTime.isBefore(DateTime.now())) {
-      if (_ride.status == RideStatus.approved) {
-        return Theme.of(context).own().success;
-      } else {
-        return Theme.of(context).disabledColor;
-      }
+      return _ride.status == RideStatus.approved ? Theme.of(context).own().success : Theme.of(context).disabledColor;
     } else {
       switch (_ride.status) {
         case RideStatus.pending:
@@ -184,6 +181,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
     if (_ride.status.isCancelled() || _ride.status == RideStatus.rejected) {
       return disabledDecoration;
     }
+
     return super.pickDecoration();
   }
 }

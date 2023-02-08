@@ -46,6 +46,7 @@ class Profile extends Model {
     if (name != null && surname != null) return '$surname $name';
     if (name != null) return name!;
     if (surname != null) return surname!;
+
     return '';
   }
 
@@ -107,11 +108,9 @@ class Profile extends Model {
 
     final int yearsDifference = today.year - birthDate!.year;
 
-    if (today.month > birthDate!.month || (today.month == birthDate!.month && today.day >= birthDate!.day)) {
-      return yearsDifference;
-    } else {
-      return yearsDifference - 1;
-    }
+    return today.month > birthDate!.month || (today.month == birthDate!.month && today.day >= birthDate!.day)
+        ? yearsDifference
+        : yearsDifference - 1;
   }
 
   @override

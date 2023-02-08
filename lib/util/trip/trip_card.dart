@@ -60,6 +60,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
 
   EdgeInsets get middlePadding => const EdgeInsets.all(16);
 
+  // ignore: long-method
   FixedTimeline buildRoute() {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
@@ -127,7 +128,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
             indicator: CustomOutlinedDotIndicator(),
             startConnector: CustomSolidLineConnector(),
           ),
-        )
+        ),
       ],
     );
   }

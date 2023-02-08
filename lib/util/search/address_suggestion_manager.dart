@@ -124,7 +124,7 @@ class AddressSuggestionManager {
         json.encode(<String, dynamic>{
           'destination': <String, dynamic>{'type': 'Module', 'target': target},
           'content_type': contentType,
-          'content': <String, dynamic>{'input': query}
+          'content': <String, dynamic>{'input': query},
         }),
       ),
     );

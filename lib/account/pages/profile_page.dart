@@ -80,32 +80,35 @@ class _ProfilePageState extends State<ProfilePage> {
         style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
-    if (_profile!.isCurrentUser) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(child: Container()),
-          username,
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                tooltip: S.of(context).edit,
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute<void>(builder: (BuildContext context) => EditUsernamePage(_profile!)))
-                      .then((_) => loadProfile());
-                },
-                key: const Key('editUsername'),
+
+    return _profile!.isCurrentUser
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(child: Container()),
+              username,
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    tooltip: S.of(context).edit,
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) => EditUsernamePage(_profile!),
+                            ),
+                          )
+                          .then((_) => loadProfile());
+                    },
+                    key: const Key('editUsername'),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      return username;
-    }
+            ],
+          )
+        : username;
   }
 
   Widget buildEmail() {
@@ -122,6 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
             style: Theme.of(context).textTheme.bodyLarge,
           )
         : buildNoInfoText(S.of(context).pageProfileDescriptionEmpty);
+
     return EditableRow(
       title: S.of(context).pageProfileDescriptionTitle,
       innerWidget: description,
@@ -142,6 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
             style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText(S.of(context).pageProfileFullNameEmpty);
+
     return EditableRow(
       title: S.of(context).pageProfileFullNameTitle,
       innerWidget: fullName,
@@ -162,6 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
             style: Theme.of(context).textTheme.titleMedium,
           )
         : buildNoInfoText(S.of(context).pageProfileAgeEmpty);
+
     return EditableRow(
       title: S.of(context).pageProfileAgeTitle,
       innerWidget: age,
@@ -200,6 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final Widget features = _profile!.profileFeatures!.isNotEmpty
         ? FeaturesColumn(_profile!.profileFeatures!)
         : buildNoInfoText(S.of(context).pageProfileFeaturesEmpty);
+
     return EditableRow(
       title: S.of(context).pageProfileFeaturesTitle,
       innerWidget: features,
@@ -222,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
-        ReviewsPreview(_profile!)
+        ReviewsPreview(_profile!),
       ],
     );
   }
@@ -237,6 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // ignore: long-method
   Column buildWidgetColumn() {
     final List<Widget> widgets = <Widget>[
       buildAvatar(),
@@ -309,9 +317,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
-    return Column(
-      children: widgets,
-    );
+
+    return Column(children: widgets);
   }
 
   @override
@@ -346,8 +353,8 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() => _isLoadingProfilePicture = true);
     if (_profile!.avatarUrl == null) {
       await _uploadProfilePicture();
-      setState(() => _isLoadingProfilePicture = false);
-      return;
+
+      return setState(() => _isLoadingProfilePicture = false);
     }
     switch (await showDialog<ProfilePictureUpdateMethod>(
       context: context,

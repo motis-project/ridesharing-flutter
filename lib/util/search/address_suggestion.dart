@@ -67,6 +67,7 @@ class AddressSuggestion {
 
   static List<AddressSuggestion> deduplicate(List<AddressSuggestion> suggestions) {
     final Set<AddressSuggestion> seen = <AddressSuggestion>{};
+
     return suggestions.where((AddressSuggestion suggestion) => seen.add(suggestion)).toList();
   }
 
@@ -75,11 +76,13 @@ class AddressSuggestion {
       try {
         final Map<String, dynamic> matchedRegion =
             regions.firstWhere((Map<String, dynamic> region) => region['admin_level'] == adminLevel);
+
         return matchedRegion['name'] as String;
       } catch (e) {
         continue;
       }
     }
+
     return '';
   }
 

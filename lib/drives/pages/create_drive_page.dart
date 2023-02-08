@@ -108,6 +108,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     });
   }
 
+  // ignore: long-method
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -181,6 +182,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     if (_selectedDate.isBefore(DateTime.now())) {
       return S.of(context).formTimeValidateFuture;
     }
+
     return null;
   }
 

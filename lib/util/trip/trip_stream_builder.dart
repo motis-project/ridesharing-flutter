@@ -17,6 +17,7 @@ class TripStreamBuilder<T extends Trip> extends StreamBuilder<List<T>> {
             if (snapshot.hasData) {
               final List<T> trips = snapshot.data!;
               final List<T> filteredTrips = filterTrips(trips);
+
               return filteredTrips.isEmpty
                   ? Center(key: const Key('emptyMessage'), child: Text(emptyMessage))
                   : ListView.separated(

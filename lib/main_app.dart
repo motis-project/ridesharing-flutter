@@ -53,6 +53,7 @@ class _MainAppState extends State<MainApp> {
 
           _selectTab(TabItem.home);
         }
+
         return false;
       },
       child: Scaffold(

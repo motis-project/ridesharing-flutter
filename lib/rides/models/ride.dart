@@ -133,6 +133,7 @@ class Ride extends Trip {
         return true;
       }
     }
+
     return false;
   }
 
@@ -146,6 +147,7 @@ class Ride extends Trip {
   bool equals(Trip other) {
     if (other is! Ride) return false;
     final Ride ride = other;
+
     return super.equals(other) &&
         status == ride.status &&
         driveId == ride.driveId &&

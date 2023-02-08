@@ -100,6 +100,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     if (_selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
       return S.of(context).formTimeValidateFuture;
     }
+
     return null;
   }
 
@@ -271,6 +272,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
     );
   }
 
+  // ignore: long-method
   Widget buildMainContentSliver() {
     if (_rideSuggestions == null || _loading) {
       if (_startSuggestion == null || _destinationSuggestion == null) {
@@ -288,6 +290,7 @@ class _SearchRidePageState extends State<SearchRidePage> {
           ),
         );
       }
+
       return const SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.only(top: 10),
@@ -298,53 +301,51 @@ class _SearchRidePageState extends State<SearchRidePage> {
       );
     }
     final List<Ride> filteredSuggestions = _filter.apply(_rideSuggestions!, _selectedDate);
-    if (filteredSuggestions.isEmpty) {
-      return SliverToBoxAdapter(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: <Widget>[
-              Image.asset('assets/shrug.png'),
-              const SizedBox(height: 10),
-              Text(
-                S.of(context).pageSearchRideEmpty,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              if (_rideSuggestions!.isNotEmpty)
-                Semantics(
-                  button: true,
-                  tooltip: S.of(context).pageSearchRideTooltipFilter,
-                  child: InkWell(
-                    onTap: () => _filter.dialog(context, setState),
-                    child: Text(
-                      S.of(context).pageSearchRideRelaxRestrictions,
+
+    return filteredSuggestions.isEmpty
+        ? SliverToBoxAdapter(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: <Widget>[
+                  Image.asset('assets/shrug.png'),
+                  const SizedBox(height: 10),
+                  Text(
+                    S.of(context).pageSearchRideEmpty,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  if (_rideSuggestions!.isNotEmpty)
+                    Semantics(
+                      button: true,
+                      tooltip: S.of(context).pageSearchRideTooltipFilter,
+                      child: InkWell(
+                        onTap: () => _filter.dialog(context, setState),
+                        child: Text(
+                          S.of(context).pageSearchRideRelaxRestrictions,
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  else
+                    Text(
+                      S.of(context).pageSearchRideNoResults,
                       style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.center,
                     ),
-                  ),
-                )
-              else
-                Text(
-                  S.of(context).pageSearchRideNoResults,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
-                ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            final Ride ride = filteredSuggestions[index];
-            return RideCard(ride);
-          },
-          childCount: filteredSuggestions.length,
-        ),
-      );
-    }
+                ],
+              ),
+            ),
+          )
+        : SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return RideCard(filteredSuggestions[index]);
+              },
+              childCount: filteredSuggestions.length,
+            ),
+          );
   }
 
   @override

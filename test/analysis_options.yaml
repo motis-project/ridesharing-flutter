@@ -6,6 +6,13 @@ analyzer:
     strict-inference: false
     strict-raw-types: false
 
+dart_code_metrics:
+  anti-patterns:
+    long-method: false
+    long-parameter-list: false
+  rules:
+    prefer-trailing-comma: false
+
 linter:
   rules:
     always_specify_types: false

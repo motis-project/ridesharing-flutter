@@ -54,9 +54,7 @@ class _IncrementFieldState extends State<IncrementField> {
             children: <Widget>[
               if (widget.icon != null) ...<Widget>[
                 widget.icon!,
-                const SizedBox(
-                  width: 4,
-                )
+                const SizedBox(width: 4),
               ],
               Text(_value.toString()),
             ],

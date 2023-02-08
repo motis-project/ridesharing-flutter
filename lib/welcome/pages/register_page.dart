@@ -140,6 +140,7 @@ class RegisterFormState extends State<RegisterForm> {
                 if (value == null || value.isEmpty) {
                   return S.of(context).pageRegisterUsernameValidateEmpty;
                 }
+
                 return null;
               },
             ),
@@ -163,7 +164,7 @@ class RegisterFormState extends State<RegisterForm> {
                 onPressed: onSubmit,
                 state: buttonState,
               ),
-            )
+            ),
           ],
         ),
       ),

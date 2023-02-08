@@ -93,7 +93,7 @@ class ResetPasswordFormState extends State<ResetPasswordForm> {
               idleText: S.of(context).pageResetPasswordButtonReset,
               onPressed: onSubmit,
               state: buttonState,
-            )
+            ),
           ],
         ),
       ),

@@ -59,6 +59,7 @@ class AddressSearchField extends StatelessWidget {
           if (value == null || value.isEmpty) {
             return getValidatorEmptyText(context);
           }
+
           return null;
         },
         onTap: () async {

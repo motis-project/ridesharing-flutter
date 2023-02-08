@@ -61,7 +61,7 @@ class _WelcomePageState extends State<WelcomePage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: indicators(images.length, activePage),
-        )
+        ),
       ],
     );
     final Widget buttons = Center(
@@ -104,6 +104,7 @@ class _WelcomePageState extends State<WelcomePage> {
         ],
       ),
     );
+
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -125,7 +126,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       )
                     : buttons,
               ),
-            )
+            ),
           ],
         ),
       ),

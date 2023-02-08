@@ -30,6 +30,7 @@ class EmailField extends StatelessWidget {
         } else if (!value.isValidEmail()) {
           return S.of(context).formEmailValidateInvalid;
         }
+
         return null;
       },
     );

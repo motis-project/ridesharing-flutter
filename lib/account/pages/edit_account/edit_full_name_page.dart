@@ -72,6 +72,7 @@ class _EditFullNamePageState extends State<EditFullNamePage> {
     if (controller.text == '') {
       return null;
     }
+
     return IconButton(
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),

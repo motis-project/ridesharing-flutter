@@ -30,6 +30,7 @@ extension ThemeDataExtensions on ThemeData {
       empty ??= const OwnThemeFields();
       o = empty;
     }
+
     return o!;
   }
 }

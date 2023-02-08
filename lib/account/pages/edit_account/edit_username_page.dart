@@ -49,6 +49,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
                     if (value == null || value.isEmpty) {
                       return S.of(context).pageProfileEditUsernameValidateEmpty;
                     }
+
                     return null;
                   },
                   key: const Key('usernameTextField'),
@@ -71,6 +72,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
     if (_controller.text == '') {
       return null;
     }
+
     return IconButton(
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),

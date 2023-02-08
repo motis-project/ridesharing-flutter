@@ -12,6 +12,7 @@ abstract class Model {
     if (other is Model) {
       return runtimeType == other.runtimeType && id == other.id;
     }
+
     return false;
   }
 

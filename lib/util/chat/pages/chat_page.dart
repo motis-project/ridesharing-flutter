@@ -29,16 +29,14 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    if (widget.active) {
-      _messagesStream = supabaseManager.supabaseClient
-          .from('messages')
-          .stream(primaryKey: <String>['id'])
-          .eq('chat_id', widget.chatId)
-          .order('created_at')
-          .map((List<Map<String, dynamic>> messages) => Message.fromJsonList(messages));
-    } else {
-      _messagesStream = Stream<List<Message>>.value(<Message>[]);
-    }
+    _messagesStream = widget.active
+        ? supabaseManager.supabaseClient
+            .from('messages')
+            .stream(primaryKey: <String>['id'])
+            .eq('chat_id', widget.chatId)
+            .order('created_at')
+            .map((List<Map<String, dynamic>> messages) => Message.fromJsonList(messages))
+        : Stream<List<Message>>.value(<Message>[]);
     super.initState();
   }
 
@@ -54,6 +52,7 @@ class _ChatPageState extends State<ChatPage> {
               builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
                 if (snapshot.hasData) {
                   final List<Message> messages = snapshot.data!;
+
                   return Column(
                     children: <Widget>[
                       Expanded(
@@ -127,6 +126,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
+
     return chatBubbles;
   }
 }

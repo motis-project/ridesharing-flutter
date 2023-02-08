@@ -39,6 +39,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                 (int index) {
                   if (index < Gender.values.length) {
                     final Gender gender = Gender.values[index];
+
                     return RadioListTile<Gender>(
                       title: Text(gender.getName(context)),
                       value: gender,
@@ -51,6 +52,7 @@ class _EditGenderPageState extends State<EditGenderPage> {
                       key: Key('genderRadioListTile$index'),
                     );
                   }
+
                   return RadioListTile<Gender?>(
                     title: Text(S.of(context).pageProfileEditGenderPreferNotToSay),
                     value: null,

@@ -41,7 +41,7 @@ class AfterRegistrationPage extends StatelessWidget {
                     MaterialPageRoute<void>(builder: (BuildContext context) => const LoginPage()),
                     (Route<void> route) => route.isFirst,
                   ),
-                )
+                ),
               ],
             ),
           ),

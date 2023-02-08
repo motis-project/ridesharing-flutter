@@ -75,6 +75,7 @@ class SearchRideFilter {
     );
   }
 
+  // ignore: long-method
   Widget _buildRatingFilter(BuildContext context, void Function(void Function()) innerSetState) {
     return _filterCategory(
       context,
@@ -128,7 +129,7 @@ class SearchRideFilter {
             child: Row(
               children: <Widget>[
                 Text(_isRatingExpanded ? S.of(context).retract : S.of(context).expand),
-                Icon(_isRatingExpanded ? Icons.expand_less : Icons.expand_more)
+                Icon(_isRatingExpanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
           ),
@@ -137,13 +138,12 @@ class SearchRideFilter {
     );
   }
 
+  // ignore: long-method
   Widget _buildFeaturesFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    List<Feature> shownFeatures;
-    if (_isFeatureListExpanded) {
-      shownFeatures = <Feature>{..._selectedFeatures, ...Feature.values}.toList();
-    } else {
-      shownFeatures = <Feature>{..._selectedFeatures, ..._retractedAdditionalFeatures}.toList();
-    }
+    final List<Feature> shownFeatures = _isFeatureListExpanded
+        ? <Feature>{..._selectedFeatures, ...Feature.values}.toList()
+        : <Feature>{..._selectedFeatures, ..._retractedAdditionalFeatures}.toList();
+
     return _filterCategory(
       context,
       S.of(context).searchRideFilterFeatures,
@@ -158,6 +158,7 @@ class SearchRideFilter {
               (int index) {
                 final Feature feature = shownFeatures[index];
                 final bool featureSelected = _selectedFeatures.contains(feature);
+
                 return FilterChip(
                   avatar: feature.getIcon(context),
                   label: Text(feature.getDescription(context)),
@@ -176,6 +177,7 @@ class SearchRideFilter {
                           .firstWhereOrNull((Feature selectedFeature) => selectedFeature.isMutuallyExclusive(feature));
                       if (mutuallyExclusiveFeature != null) {
                         final String description = mutuallyExclusiveFeature.getDescription(context);
+
                         return showSnackBar(
                           context,
                           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
@@ -191,16 +193,12 @@ class SearchRideFilter {
           TextButton(
             onPressed: () => innerSetState(() {
               _isFeatureListExpanded = !_isFeatureListExpanded;
-              if (_selectedFeatures.isNotEmpty) {
-                _retractedAdditionalFeatures = <Feature>[];
-              } else {
-                _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
-              }
+              _retractedAdditionalFeatures = _selectedFeatures.isNotEmpty ? <Feature>[] : <Feature>[..._commonFeatures];
             }),
             child: Row(
               children: <Widget>[
                 Text(_isFeatureListExpanded ? S.of(context).retract : S.of(context).expand),
-                Icon(_isFeatureListExpanded ? Icons.expand_less : Icons.expand_more)
+                Icon(_isFeatureListExpanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
           ),
@@ -215,6 +213,7 @@ class SearchRideFilter {
       value: _sorting,
       items: SearchRideSorting.values.map((SearchRideSorting sorting) {
         final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
+
         return DropdownMenuItem<SearchRideSorting>(
           enabled: enabled,
           value: sorting,
@@ -276,14 +275,12 @@ class SearchRideFilter {
       children: <Widget>[
         if (icon != null) ...<Widget>[icon, const SizedBox(width: 3)],
         Text(rating.toString()),
-        const Icon(
-          Icons.star,
-          color: Colors.amber,
-        )
+        const Icon(Icons.star, color: Colors.amber),
       ],
     );
   }
 
+  // ignore: long-method
   Widget buildIndicatorRow(BuildContext context, void Function(void Function()) setState) {
     final bool isRatingDefault = _minRating == _defaultRating &&
         _minComfortRating == _defaultRating &&
@@ -364,6 +361,7 @@ class SearchRideFilter {
     for (int i = 0; i < numDividers; i++) {
       widgets.insert(i * 2 + 1, const VerticalDivider(thickness: 2));
     }
+
     return IntrinsicHeight(
       child: Row(
         children: <Widget>[
@@ -398,7 +396,7 @@ class SearchRideFilter {
             ),
           ),
           const SizedBox(width: 4),
-          _buildSortingFilter(context, setState)
+          _buildSortingFilter(context, setState),
         ],
       ),
     );
@@ -417,6 +415,7 @@ class SearchRideFilter {
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
             final bool onSameDaySatisfied = date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
+
             return ratingSatisfied && featuresSatisfied && onSameDaySatisfied;
           },
         )

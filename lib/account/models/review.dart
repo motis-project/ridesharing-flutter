@@ -64,7 +64,7 @@ class Review extends Model implements Comparable<Review> {
       'hospitality_rating': hospitalityRating,
       'text': text,
       'writer_id': writerId,
-      'receiver_id': receiverId
+      'receiver_id': receiverId,
     };
   }
 

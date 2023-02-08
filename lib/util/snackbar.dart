@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
+// ignore: long-parameter-list
 void showSnackBar(
   BuildContext context,
   String message, {

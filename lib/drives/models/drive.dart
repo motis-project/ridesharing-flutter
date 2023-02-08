@@ -92,6 +92,7 @@ class Drive extends Trip {
         return true;
       }
     }
+
     return false;
   }
 
@@ -118,6 +119,7 @@ class Drive extends Trip {
         maxUsedSeats = usedSeats;
       }
     }
+
     return maxUsedSeats;
   }
 
@@ -142,6 +144,7 @@ class Drive extends Trip {
         return false;
       }
     }
+
     return true;
   }
 
@@ -164,6 +167,7 @@ class Drive extends Trip {
   bool equals(Trip other) {
     if (other is! Drive) return false;
     final Drive drive = other;
+
     return super.equals(other) && cancelled == drive.cancelled && driverId == drive.driverId;
   }
 }

@@ -14,7 +14,7 @@ class PasswordField extends StatefulWidget {
     required this.controller,
     this.originalPasswordController,
     this.validateSecurity = false,
-  }) : assert(validateSecurity == false || originalPasswordController == null);
+  }) : assert(!validateSecurity || originalPasswordController == null);
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -85,6 +85,7 @@ class _PasswordFieldState extends State<PasswordField> {
     } else if (value != widget.originalPasswordController?.text) {
       return S.of(context).formPasswordConfirmValidateMatch;
     }
+
     return null;
   }
 
@@ -92,6 +93,7 @@ class _PasswordFieldState extends State<PasswordField> {
     if (value == null || value.isEmpty) {
       return S.of(context).formPasswordValidateEmpty;
     }
+
     return null;
   }
 
@@ -100,15 +102,16 @@ class _PasswordFieldState extends State<PasswordField> {
       return S.of(context).formPasswordValidateEmpty;
     } else if (value.length < 8) {
       return S.of(context).formPasswordValidateMinLength;
-    } else if (RegExp('[0-9]').hasMatch(value) == false) {
+    } else if (!RegExp('[0-9]').hasMatch(value)) {
       return S.of(context).formPasswordValidateNumber;
-    } else if (RegExp('[A-Z]').hasMatch(value) == false) {
+    } else if (!RegExp('[A-Z]').hasMatch(value)) {
       return S.of(context).formPasswordValidateUppercase;
-    } else if (RegExp('[a-z]').hasMatch(value) == false) {
+    } else if (!RegExp('[a-z]').hasMatch(value)) {
       return S.of(context).formPasswordValidateLowercase;
-    } else if (RegExp('[^A-z0-9]').hasMatch(value) == false) {
+    } else if (!RegExp('[^A-z0-9]').hasMatch(value)) {
       return S.of(context).formPasswordValidateSpecial;
     }
+
     return null;
   }
 }

@@ -38,6 +38,7 @@ class AvatarState extends State<Avatar> {
             )
           : null,
     );
+
     return widget.withHero ? Hero(tag: 'Avatar-${widget.profile.id}', child: avatar) : avatar;
   }
 

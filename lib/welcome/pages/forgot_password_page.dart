@@ -99,7 +99,7 @@ class ForgotPasswordFormState extends State<ForgotPasswordForm> {
               state: buttonState,
               idleText: S.of(context).pageForgotPasswordButtonSend,
               successText: S.of(context).pageForgotPasswordButtonSent,
-            )
+            ),
           ],
         ),
       ),

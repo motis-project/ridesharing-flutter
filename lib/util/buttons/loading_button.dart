@@ -56,7 +56,7 @@ class _LoadingButtonState extends State<LoadingButton> {
             color: Theme.of(context).own().onSuccess,
           ),
           color: Theme.of(context).own().success,
-        )
+        ),
       },
       onPressed: widget.onPressed,
       state: widget.state,

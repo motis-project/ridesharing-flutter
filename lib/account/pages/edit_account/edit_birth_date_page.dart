@@ -64,6 +64,7 @@ class _EditBirthDatePageState extends State<EditBirthDatePage> {
     if (_controller.text == '') {
       return null;
     }
+
     return IconButton(
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),

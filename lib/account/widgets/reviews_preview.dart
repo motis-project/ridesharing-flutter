@@ -58,7 +58,7 @@ class ReviewsPreview extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
             ],
           ),
           if (reviews.isNotEmpty)

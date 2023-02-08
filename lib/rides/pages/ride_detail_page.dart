@@ -196,7 +196,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
                   ),
                   tooltip: S.of(context).openChat,
                   key: const Key('chatButton'),
-                )
+                ),
               ]
             : null,
       ),

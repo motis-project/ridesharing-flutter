@@ -61,6 +61,7 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
 
   List<T> Function(List<T>) getFilterTrips({required bool past}) => (List<T> trips) {
         if (past) trips = trips.reversed.toList();
+
         return trips.where((T trip) => trip.shouldShowInListView(past: past)).toList();
       };
 

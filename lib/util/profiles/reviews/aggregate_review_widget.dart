@@ -50,7 +50,7 @@ class AggregateReviewWidget extends StatelessWidget {
                 children: <Widget>[
                   Text(S.of(context).reviewCategorySafety),
                   const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.safetyRating)
+                  CustomRatingBarIndicator(rating: _aggregateReview.safetyRating),
                 ],
               ),
               Row(
@@ -58,7 +58,7 @@ class AggregateReviewWidget extends StatelessWidget {
                 children: <Widget>[
                   Text(S.of(context).reviewCategoryReliability),
                   const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.reliabilityRating)
+                  CustomRatingBarIndicator(rating: _aggregateReview.reliabilityRating),
                 ],
               ),
               Row(
@@ -66,7 +66,7 @@ class AggregateReviewWidget extends StatelessWidget {
                 children: <Widget>[
                   Text(S.of(context).reviewCategoryHospitality),
                   const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.hospitalityRating)
+                  CustomRatingBarIndicator(rating: _aggregateReview.hospitalityRating),
                 ],
               ),
             ],

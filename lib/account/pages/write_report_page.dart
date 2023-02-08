@@ -55,6 +55,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                       ReportCategory.values.length,
                       (int index) {
                         final ReportCategory category = ReportCategory.values[index];
+
                         return RadioListTile<ReportCategory>(
                           visualDensity: VisualDensity.compact,
                           title: Row(
@@ -90,6 +91,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                       if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
                         return S.of(context).pageWriteReportFieldValidateEmpty;
                       }
+
                       return null;
                     },
                   ),
@@ -97,7 +99,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                   LoadingButton(
                     onPressed: _onSubmit,
                     state: _state,
-                  )
+                  ),
                 ],
               ),
             ),

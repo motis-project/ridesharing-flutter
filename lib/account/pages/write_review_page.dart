@@ -100,7 +100,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                     LoadingButton(
                       onPressed: _onSubmit,
                       state: _state,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -162,7 +162,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         _review!.comfortRating,
         _review!.safetyRating,
         _review!.hospitalityRating,
-        _review!.reliabilityRating
+        _review!.reliabilityRating,
       ].whereType<int>().toList();
       _review!.rating = givenCategoryRatings.average.round();
     }
@@ -215,6 +215,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       setState(() {
         _state = ButtonState.idle;
       });
+
       return;
     }
 

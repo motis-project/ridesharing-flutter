@@ -29,11 +29,7 @@ class SupabaseManager {
           .eq('auth_id', supabaseClient.auth.currentUser!.id)
           .maybeSingle();
 
-      if (response == null) {
-        currentProfile = null;
-      } else {
-        currentProfile = Profile.fromJson(response);
-      }
+      currentProfile = response == null ? null : Profile.fromJson(response);
     } catch (e) {
       currentProfile = null;
     }

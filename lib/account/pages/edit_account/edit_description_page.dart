@@ -61,6 +61,7 @@ class _EditDescriptionPageState extends State<EditDescriptionPage> {
     if (_controller.text == '') {
       return null;
     }
+
     return IconButton(
       tooltip: S.of(context).formClearInput,
       icon: const Icon(Icons.clear),

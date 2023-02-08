@@ -14,6 +14,8 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
+  // This method is allowed to be long because it is just a list of Strings.
+  // ignore: long-method
   List<Widget> getFaqCards() => <Widget>[
         FAQCard(
           question: S.of(context).pageHelpQuestion1,
@@ -125,6 +127,7 @@ class _FAQCardState extends State<FAQCard> {
       textAlign: TextAlign.center,
       style: const TextStyle(fontWeight: FontWeight.bold),
     );
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: ExpansionTile(

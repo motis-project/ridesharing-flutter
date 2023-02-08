@@ -37,7 +37,7 @@ class LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 child: LoginForm(),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -149,7 +149,7 @@ class LoginFormState extends State<LoginForm> {
                   child: Text(S.of(context).pageLoginNoAccount),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

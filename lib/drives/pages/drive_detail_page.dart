@@ -152,6 +152,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           connectorBuilder: (BuildContext context, int index, ConnectorType type) => const CustomSolidLineConnector(),
           contentsBuilder: (BuildContext context, int index) {
             final Waypoint stop = stops[index];
+
             return Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Column(
@@ -171,7 +172,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                       children: buildCard(stop),
                     ),
                   ),
-                  const SizedBox(height: 10.0)
+                  const SizedBox(height: 10.0),
                 ],
               ),
             );
@@ -199,26 +200,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             ),
           ),
           const SizedBox(height: 10.0),
-          ..._pendingRidesList(pendingRides)
+          ..._pendingRidesList(pendingRides),
         ];
         widgets.addAll(pendingRidesColumn);
       }
 
       widgets.add(const SizedBox(height: 10));
-      Widget bottomButton;
-      if (_drive!.isFinished || _drive!.cancelled) {
-        bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonHide,
-          onPressed: _showHideDialog,
-          key: const Key('hideDriveButton'),
-        );
-      } else {
-        bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonCancel,
-          onPressed: _showCancelDialog,
-          key: const Key('cancelDriveButton'),
-        );
-      }
+      final Button bottomButton = (_drive!.isFinished || _drive!.cancelled)
+          ? Button.error(
+              S.of(context).pageDriveDetailButtonHide,
+              onPressed: _showHideDialog,
+              key: const Key('hideDriveButton'),
+            )
+          : Button.error(
+              S.of(context).pageDriveDetailButtonCancel,
+              onPressed: _showCancelDialog,
+              key: const Key('cancelDriveButton'),
+            );
       widgets.add(bottomButton);
       widgets.add(const SizedBox(height: 5));
     } else {
@@ -296,6 +294,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
+  // ignore: long-method
   List<Widget> buildCard(Waypoint waypoint) {
     final List<Widget> list = <Widget>[];
     list.add(
@@ -475,6 +474,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ),
       );
     }
+
     return pendingRidesColumn;
   }
 }

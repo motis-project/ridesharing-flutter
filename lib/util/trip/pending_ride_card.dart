@@ -84,6 +84,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
       Icons.chair,
       color: Theme.of(context).colorScheme.primary,
     );
+
     return IconWidget(icon: icon, count: trip.seats);
   }
 

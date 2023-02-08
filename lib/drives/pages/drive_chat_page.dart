@@ -54,6 +54,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
                     chat.messages!.add(message);
                   }
                   final List<Card> widgets = _ridesWithChat.map<Card>((Ride ride) => _buildChatWidget(ride)).toList();
+
                   return ListView.separated(
                     itemCount: widgets.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -92,6 +93,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
     );
   }
 
+  // ignore: long-method
   Card _buildChatWidget(Ride ride) {
     final Chat chat = ride.chat!;
 
@@ -114,6 +116,7 @@ class _DriveChatPageState extends State<DriveChatPage> {
               Text(lastMessage.content),
             ],
           );
+
     return Card(
       key: Key('chatWidget${chat.id}'),
       child: InkWell(

@@ -75,7 +75,7 @@ class ChatBubble extends StatelessWidget {
                     bottom: 0,
                     right: 0,
                     child: stateIcon,
-                  )
+                  ),
               ],
             ),
           ),
@@ -99,6 +99,7 @@ class ChatBubblePainter extends CustomPainter {
   final double _radius = 10.0;
 
   @override
+  // ignore: long-method
   void paint(Canvas canvas, Size size) {
     final double h = size.height;
     final double w = size.width;

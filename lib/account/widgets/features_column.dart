@@ -12,6 +12,7 @@ class FeaturesColumn extends StatelessWidget {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         final Feature feature = features[index].feature;
+
         return ListTile(
           leading: feature.getIcon(context),
           title: Text(feature.getDescription(context)),

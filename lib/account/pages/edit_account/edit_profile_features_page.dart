@@ -75,6 +75,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                 itemBuilder: (BuildContext context, int index) {
                   if (index < _features.length) {
                     final Feature feature = _features[index];
+
                     return ListTile(
                       key: ValueKey<int>(index),
                       leading: feature.getIcon(context),
@@ -105,6 +106,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                     );
                   } else {
                     final Feature feature = _otherFeatures[index - _features.length - 1];
+
                     return ListTile(
                       textColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                       key: ValueKey<int>(index),
@@ -163,12 +165,14 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
       if (newIndex < dividerIndex && oldIndex < dividerIndex) {
         final Feature feature = _features.removeAt(oldIndex);
         _features.insert(newIndex, feature);
+
         return;
       }
 
       if (newIndex > dividerIndex && oldIndex > dividerIndex) {
         final Feature feature = _otherFeatures.removeAt(oldIndex - dividerIndex - 1);
         _otherFeatures.insert(newIndex - dividerIndex - 1, feature);
+
         return;
       }
     });
@@ -199,6 +203,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
           _features.firstWhereOrNull((Feature feature) => feature.isMutuallyExclusive(newFeature));
       if (mutuallyExclusiveFeature != null) {
         final String description = mutuallyExclusiveFeature.getDescription(context);
+
         return showSnackBar(
           context,
           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),

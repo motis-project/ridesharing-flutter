@@ -32,6 +32,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   Widget buildResults(BuildContext context) {
     // This method is used when pressing enter, so we just return the first result here
     returnFirstResult(context);
+
     return buildSuggestions(context);
   }
 
@@ -65,6 +66,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     final AddressSuggestion suggestion = suggestions[index];
+
                     return ListTile(
                       leading: suggestion.getIcon(),
                       title: Text(suggestion.toString()),
@@ -88,6 +90,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                 );
               }
             }
+
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
                   ? Text(S.of(context).searchAddressEnterMoreCharacters)
