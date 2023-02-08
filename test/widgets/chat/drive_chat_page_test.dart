@@ -43,6 +43,7 @@ void main() {
           RideFactory().generateFake(status: RideStatus.pending),
         ],
       );
+
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
 
@@ -60,6 +61,7 @@ void main() {
         driverId: profile.id,
         rides: [],
       );
+
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
 
@@ -80,6 +82,7 @@ void main() {
           RideFactory().generateFake(status: RideStatus.withdrawnByRider),
         ],
       );
+
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
 
@@ -101,6 +104,7 @@ void main() {
         RideFactory().generateFake(status: RideStatus.cancelledByRider),
       ],
     );
+
     whenRequest(processor).thenReturnJson([]);
     await pumpMaterial(tester, DriveChatPage(drive: drive));
     await tester.pump();
@@ -120,6 +124,7 @@ void main() {
           RideFactory().generateFake(status: RideStatus.withdrawnByRider),
         ],
       );
+
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
@@ -135,6 +140,7 @@ void main() {
         driverId: profile.id,
         rides: [],
       );
+
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
@@ -149,6 +155,7 @@ void main() {
         driverId: profile.id,
         rides: [RideFactory().generateFake(status: RideStatus.approved)],
       );
+
       whenRequest(processor).thenReturnJson([]);
       await pumpMaterial(tester, DriveChatPage(drive: drive));
       await tester.pump();
@@ -177,14 +184,17 @@ void main() {
             ),
           ],
         );
+
         whenRequest(processor).thenReturnJson([MessageFactory().generateFake().toJsonForApi()]);
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
 
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
+
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.text(message.content)), findsOneWidget);
       });
+
       testWidgets('is not shown when Chat has no messages', (WidgetTester tester) async {
         drive = DriveFactory().generateFake(
           driverId: profile.id,
@@ -200,6 +210,7 @@ void main() {
           ],
         );
         whenRequest(processor).thenReturnJson([]);
+
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
 
@@ -210,6 +221,7 @@ void main() {
       setUp(() {
         supabaseManager.currentProfile = profile;
       });
+
       testWidgets('is shown when last Message is from current user', (WidgetTester tester) async {
         final Message message = MessageFactory().generateFake(
           senderId: profile.id,
@@ -228,13 +240,16 @@ void main() {
           ],
         );
         whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
+
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
 
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
+
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.byIcon(Icons.done_all)), findsOneWidget);
       });
+
       testWidgets('is not shown when last Message is not from current User', (WidgetTester tester) async {
         final Message message = MessageFactory().generateFake(
           senderId: profile.id! + 1,
@@ -253,12 +268,52 @@ void main() {
           ],
         );
         whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
+
         await pumpMaterial(tester, DriveChatPage(drive: drive));
         await tester.pump();
 
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
+
         expect(subtitle, findsOneWidget);
         expect(find.descendant(of: subtitle, matching: find.byIcon(Icons.done_all)), findsNothing);
+      });
+
+      testWidgets('has right color', (WidgetTester tester) async {
+        final Message message = MessageFactory().generateFake(
+          senderId: profile.id,
+          read: false,
+        );
+        drive = DriveFactory().generateFake(
+          driverId: profile.id,
+          rides: [
+            RideFactory().generateFake(
+              chat: NullableParameter(
+                ChatFactory().generateFake(
+                  messages: NullableParameter([message]),
+                ),
+              ),
+              status: RideStatus.approved,
+            ),
+          ],
+        );
+        whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
+
+        await pumpMaterial(tester, DriveChatPage(drive: drive));
+        await tester.pump();
+
+        final Finder icon = find.byIcon(Icons.done_all);
+        final Icon iconWidget = tester.widget(icon);
+        final BuildContext context = tester.element(find.byType(Container).first);
+        expect(iconWidget.color, Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
+
+        message.read = true;
+        whenRequest(processor).thenReturnJson([message.toJsonForApi()]);
+
+        await pumpMaterial(tester, DriveChatPage(drive: drive));
+        await tester.pump();
+
+        final Icon iconWidget2 = tester.widget(icon);
+        expect(iconWidget2.color, Theme.of(context).colorScheme.primary);
       });
     });
     group('shows unreadMessage count', () {

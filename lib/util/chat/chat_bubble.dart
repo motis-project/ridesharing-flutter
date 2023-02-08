@@ -9,14 +9,6 @@ class ChatBubble extends StatelessWidget {
   final bool tail;
   final bool read;
 
-  const ChatBubble({
-    super.key,
-    this.isSender = true,
-    required this.text,
-    this.tail = true,
-    this.read = false,
-  });
-
   ChatBubble.fromMessage(
     Message message, {
     super.key,
