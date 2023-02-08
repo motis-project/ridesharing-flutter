@@ -547,21 +547,21 @@ void main() {
 
     final HomePageState homePage = tester.state(find.byType(HomePage));
 
-    final Finder hurensohn = find.byType(Dismissible, skipOffstage: false);
-    expect(hurensohn, findsNWidgets(4));
+    final Finder finder = find.byType(Dismissible, skipOffstage: false);
+    expect(finder, findsNWidgets(4));
 
-    expect(tester.widget(hurensohn.at(0)).key, Key('drive${drive.id}'));
-    expect(tester.widget(hurensohn.at(1)).key, Key('ride${ride.id}'));
-    expect(tester.widget(hurensohn.at(2)).key, Key('rideEvent${rideEvent.id}'));
-    expect(tester.widget(hurensohn.at(3)).key, Key('message${message.id}'));
+    expect(tester.widget(finder.at(0)).key, Key('drive${drive.id}'));
+    expect(tester.widget(finder.at(1)).key, Key('ride${ride.id}'));
+    expect(tester.widget(finder.at(2)).key, Key('rideEvent${rideEvent.id}'));
+    expect(tester.widget(finder.at(3)).key, Key('message${message.id}'));
 
     homePage.insertMessage(message2.toJsonForApi());
 
     await tester.pumpAndSettle();
 
-    expect(hurensohn, findsNWidgets(5));
+    expect(finder, findsNWidgets(5));
 
-    expect(tester.widget(hurensohn.at(2)).key, Key('message${message2.id}'));
+    expect(tester.widget(finder.at(2)).key, Key('message${message2.id}'));
   });
 
   group('Buttons', () {
