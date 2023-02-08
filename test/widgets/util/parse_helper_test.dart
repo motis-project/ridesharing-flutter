@@ -10,7 +10,7 @@ void main() {
       expect(parseHelper.parseDouble(1.1), 1.1);
       expect(parseHelper.parseDouble(1.1), 1.1);
     });
-    test('throws Excpetion when value is not num', () async {
+    test('throws Exception when value is not num', () async {
       expect(() => parseHelper.parseDouble('1'), throwsException);
       expect(() => parseHelper.parseDouble(true), throwsException);
       expect(() => parseHelper.parseDouble(null), throwsException);
@@ -31,7 +31,7 @@ void main() {
             {'b': 2}
           ]);
     });
-    test('throws Excpetion when value is not a List of Map', () async {
+    test('throws Exception when value is not a List of Map', () async {
       expect(() => parseHelper.parseListOfMaps({}), throwsException);
       expect(() => parseHelper.parseListOfMaps('1'), throwsException);
       expect(() => parseHelper.parseListOfMaps(true), throwsException);

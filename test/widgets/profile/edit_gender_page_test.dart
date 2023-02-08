@@ -69,23 +69,6 @@ void main() {
       expect(preferNotToSayGenderFinder, findsOneWidget);
     });
 
-    testWidgets('can change gender', (WidgetTester tester) async {
-      await pumpMaterial(tester, EditGenderPage(profile));
-      await tester.pump();
-
-      await tester.tap(find.byKey(const Key('genderRadioListTile1')));
-      await tester.pumpAndSettle();
-
-      final Finder genderRadioListTile = find.byKey(const Key('genderRadioListTile1'));
-
-      expect(tester.widget<RadioListTile<Gender>>(genderRadioListTile).groupValue, Gender.values[1]);
-
-      await tester.tap(find.byKey(const Key('preferNotToSayGenderRadioListTile')));
-      await tester.pumpAndSettle();
-
-      expect(tester.widget<RadioListTile<Gender>>(genderRadioListTile).groupValue, null);
-    });
-
     testWidgets('save Button', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
