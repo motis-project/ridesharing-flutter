@@ -40,7 +40,7 @@ class EditableRow extends StatelessWidget {
         tooltip: S.of(context).edit,
         child: InkWell(
           onTap: onPressed,
-          key: const Key('editButton'),
+          key: const Key('editableRowButton'),
           child: row,
         ),
       );

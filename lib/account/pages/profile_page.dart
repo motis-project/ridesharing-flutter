@@ -87,6 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Expanded(child: Container()),
           InkWell(
             onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
+            key: const Key('editUsernameText'),
             child: username,
           ),
           Expanded(
@@ -96,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 tooltip: S.of(context).edit,
                 icon: const Icon(Icons.edit),
                 onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
-                key: const Key('editUsername'),
+                key: const Key('editUsernameIcon'),
               ),
             ),
           ),
