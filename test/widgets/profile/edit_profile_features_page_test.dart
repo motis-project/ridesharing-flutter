@@ -26,7 +26,14 @@ void main() {
   });
 
   setUp(() async {
-    profile = ProfileFactory().generateFake(id: 1);
+    profile = ProfileFactory().generateFake(
+      id: 1,
+      profileFeatures: [
+        ProfileFeatureFactory().generateFake(rank: 0, feature: Feature.noSmoking),
+        ProfileFeatureFactory().generateFake(rank: 1, feature: Feature.petsAllowed),
+        ProfileFeatureFactory().generateFake(rank: 2, feature: Feature.music),
+      ],
+    );
     supabaseManager.currentProfile = profile;
 
     whenRequest(
