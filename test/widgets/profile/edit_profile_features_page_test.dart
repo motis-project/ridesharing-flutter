@@ -57,7 +57,7 @@ void main() {
     testWidgets('show added features', (WidgetTester tester) async {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
       for (int i = 0; i < profile.features!.length; i++) {
-        final featureFinder = find.byKey(Key('${profile.features![i].toString()} Tile'));
+        final featureFinder = find.byKey(Key('${profile.features![i]} Tile'));
         expect(featureFinder, findsOneWidget);
       }
     });
@@ -71,7 +71,7 @@ void main() {
       expect(notAddedFeatures.length + profile.features!.length, Feature.values.length);
 
       for (int i = 0; i < notAddedFeatures.length; i++) {
-        final featureFinder = find.byKey(Key('${notAddedFeatures[i].toString()} Tile'));
+        final featureFinder = find.byKey(Key('${notAddedFeatures[i]} Tile'));
         await tester.scrollUntilVisible(featureFinder, 100, scrollable: find.byType(Scrollable));
         expect(featureFinder, findsOneWidget);
       }
@@ -89,8 +89,7 @@ void main() {
       //try adding features until found one that is not mutually exclusive
       for (final Feature notAddedFeature in notAddedFeatures) {
         addFinder = find.descendant(
-            of: find.ancestor(
-                of: find.byKey(Key('${notAddedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+            of: find.ancestor(of: find.byKey(Key('$notAddedFeature Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('addButton')));
         expect(addFinder, findsOneWidget);
 
@@ -111,7 +110,7 @@ void main() {
       expect(addFinder, findsNothing);
 
       final Finder addedFeatureFinder = find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton')));
       expect(addedFeatureFinder, findsOneWidget);
     });
@@ -129,12 +128,10 @@ void main() {
       await pumpMaterial(tester, EditProfileFeaturesPage(profile));
 
       final Finder notSmokingFinder = find.descendant(
-          of: find.ancestor(
-              of: find.byKey(Key('${Feature.noSmoking.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('${Feature.noSmoking} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
       final Finder notVapingFinder = find.descendant(
-          of: find.ancestor(
-              of: find.byKey(Key('${Feature.noVaping.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('${Feature.noVaping} Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
 
       await tester.tap(notSmokingFinder);
@@ -155,7 +152,7 @@ void main() {
 
       final Feature feature = profile.features!.first;
       final Finder deleteFinder = find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton')));
       expect(deleteFinder, findsOneWidget);
 
@@ -165,7 +162,7 @@ void main() {
       expect(deleteFinder, findsNothing);
 
       final Finder deletedFeatureFinder = find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton')));
       await tester.scrollUntilVisible(deletedFeatureFinder, 100, scrollable: find.byType(Scrollable));
       expect(deletedFeatureFinder, findsOneWidget);
@@ -177,25 +174,21 @@ void main() {
 
         final Feature feature = profile.features!.first;
         final Finder dragFinder = find.descendant(
-            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
         await tester.drag(dragFinder, const Offset(0, 50));
         await tester.pump();
 
-        expect(
-            find.descendant(
-                of: find.byKey(const ValueKey<int>(0)), matching: find.byKey(Key('${feature.toString()} Tile'))),
+        expect(find.descendant(of: find.byKey(const ValueKey<int>(0)), matching: find.byKey(Key('$feature Tile'))),
             findsNothing);
 
         //check if feature is at new position
         //1 if there were more than one added features (still in added features)
         //2 if there was only one added feature (now in not added features)
         final int newIndex = profile.features!.length == 1 ? 2 : 1;
-        expect(
-            find.descendant(
-                of: find.byKey(ValueKey<int>(newIndex)), matching: find.byKey(Key('${feature.toString()} Tile'))),
+        expect(find.descendant(of: find.byKey(ValueKey<int>(newIndex)), matching: find.byKey(Key('$feature Tile'))),
             findsOneWidget);
       });
 
@@ -204,7 +197,7 @@ void main() {
 
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
-            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
@@ -214,14 +207,14 @@ void main() {
         expect(
             find.descendant(
                 of: find.byKey(ValueKey<int>(profile.profileFeatures!.length + 1)),
-                matching: find.byKey(Key('${feature.toString()} Tile'))),
+                matching: find.byKey(Key('$feature Tile'))),
             findsNothing);
 
         //check if feature now at the second position in the removed features
         expect(
             find.descendant(
                 of: find.byKey(ValueKey<int>(profile.profileFeatures!.length + 2)),
-                matching: find.byKey(Key('${feature.toString()} Tile'))),
+                matching: find.byKey(Key('$feature Tile'))),
             findsOneWidget);
       });
 
@@ -230,7 +223,7 @@ void main() {
 
         final Feature feature = Feature.values.where((Feature e) => !profile.features!.contains(e)).toList().first;
         final Finder dragFinder = find.descendant(
-            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
@@ -241,7 +234,7 @@ void main() {
         try {
           expect(
               find.descendant(
-                  of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+                  of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
                   matching: find.byKey(const Key('removeButton'))),
               findsOneWidget);
         } catch (e) {
@@ -254,7 +247,7 @@ void main() {
 
         final Feature feature = profile.features!.last;
         final Finder dragFinder = find.descendant(
-            of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+            of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
             matching: find.byKey(const Key('dragHandle')));
         expect(dragFinder, findsOneWidget);
 
@@ -263,7 +256,7 @@ void main() {
 
         expect(
             find.descendant(
-                of: find.ancestor(of: find.byKey(Key('${feature.toString()} Tile')), matching: find.byType(ListTile)),
+                of: find.ancestor(of: find.byKey(Key('$feature Tile')), matching: find.byType(ListTile)),
                 matching: find.byKey(const Key('addButton'))),
             findsOneWidget);
       });
@@ -304,13 +297,13 @@ void main() {
 
       final deletedFeature = profile.features!.first;
       await tester.tap(find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${deletedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('$deletedFeature Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('removeButton'))));
       await tester.pump();
 
       const addedFeature = Feature.noSmoking;
       await tester.tap(find.descendant(
-          of: find.ancestor(of: find.byKey(Key('${addedFeature.toString()} Tile')), matching: find.byType(ListTile)),
+          of: find.ancestor(of: find.byKey(Key('$addedFeature Tile')), matching: find.byType(ListTile)),
           matching: find.byKey(const Key('addButton'))));
       await tester.pump();
 

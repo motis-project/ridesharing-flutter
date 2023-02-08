@@ -80,7 +80,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesSelected,
-                        key: Key('${feature.toString()} Tile'),
+                        key: Key('$feature Tile'),
                         child: Text(feature.getDescription(context)),
                       ),
                       trailing: Row(
@@ -111,7 +111,7 @@ class _EditProfileFeaturesPageState extends State<EditProfileFeaturesPage> {
                       leading: feature.getIcon(context),
                       title: Semantics(
                         label: S.of(context).pageProfileEditProfileFeaturesNotSelected,
-                        key: Key('${feature.toString()} Tile'),
+                        key: Key('$feature Tile'),
                         child: Text(feature.getDescription(context)),
                       ),
                       trailing: Row(
