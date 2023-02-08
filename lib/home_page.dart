@@ -230,7 +230,7 @@ class HomePageState extends State<HomePage> {
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).primaryColor),
+                    border: Border.all(color: Theme.of(context).colorScheme.primary),
                     borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                   ),
                   child: _items.isNotEmpty
