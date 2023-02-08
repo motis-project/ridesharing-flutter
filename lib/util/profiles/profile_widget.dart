@@ -11,7 +11,6 @@ class ProfileWidget extends StatelessWidget {
   final bool showDescription;
   final Widget? actionWidget;
   final bool isTappable;
-  final VoidCallback? onTap;
   final void Function(dynamic)? onPop;
   final bool withHero;
 
@@ -22,11 +21,9 @@ class ProfileWidget extends StatelessWidget {
     this.showDescription = false,
     this.actionWidget,
     this.isTappable = true,
-    this.onTap,
     this.onPop,
     this.withHero = false,
-  })  : assert(onTap == null || onPop == null, 'onTap and onPop cannot be set at the same time.'),
-        assert((onTap == null && onPop == null) || isTappable, 'isTappable has to be true if onTap or onPop are set');
+  }) : assert(onPop == null || isTappable, 'isTappable has to be true if onPop is set');
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +62,9 @@ class ProfileWidget extends StatelessWidget {
     }
     return isTappable
         ? InkWell(
-            onTap: () {
-              onTap ??
-                  Navigator.of(context)
-                      .push(MaterialPageRoute<dynamic>(builder: (_) => ProfilePage.fromProfile(profile)))
-                      .then((dynamic value) => onPop?.call(value));
-            },
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute<dynamic>(builder: (_) => ProfilePage.fromProfile(profile)))
+                .then((dynamic value) => onPop?.call(value)),
             child: profileRow,
           )
         : profileRow;
