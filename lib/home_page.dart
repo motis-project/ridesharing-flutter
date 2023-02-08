@@ -125,7 +125,7 @@ class HomePageState extends State<HomePage> {
     final List<Model> items = <Model>[];
     final int profileId = supabaseManager.currentProfile!.id!;
     final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('messages').select<Map<String, dynamic>>('''
+      await supabaseManager.supabaseClient.from('messages').select<List<Map<String, dynamic>>>('''
       *,
       sender: sender_id(*)
       )
@@ -133,7 +133,7 @@ class HomePageState extends State<HomePage> {
     );
     items.addAll(Message.fromJsonList(messagesData));
     final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('ride_events').select<Map<String, dynamic>>('''
+      await supabaseManager.supabaseClient.from('ride_events').select<List<Map<String, dynamic>>>('''
       *,
       ride: ride_id(*,
         rider: rider_id(*),
@@ -154,7 +154,7 @@ class HomePageState extends State<HomePage> {
         parseHelper.parseListOfMaps(
           await supabaseManager.supabaseClient
               .from('rides')
-              .select<Map<String, dynamic>>()
+              .select<List<Map<String, dynamic>>>()
               .eq('rider_id', profileId)
               .eq('status', RideStatus.approved.index)
               .lt('start_time', tomorrow)
@@ -167,7 +167,7 @@ class HomePageState extends State<HomePage> {
         parseHelper.parseListOfMaps(
           await supabaseManager.supabaseClient
               .from('drives')
-              .select<Map<String, dynamic>>()
+              .select<List<Map<String, dynamic>>>()
               .eq('driver_id', profileId)
               .eq('cancelled', false)
               .lt('start_time', tomorrow)
