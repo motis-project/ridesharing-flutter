@@ -240,7 +240,7 @@ class HomePageState extends State<HomePage> {
                             return const SizedBox(height: 2);
                           },
                           itemBuilder: (BuildContext context, int index) {
-                            return _buildWidget(_items[index], context);
+                            return _buildWidget(_items[index]);
                           },
                         )
                       : Column(
@@ -391,7 +391,7 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  Card _buildMessageWidget(Message message, BuildContext context) {
+  Card _buildMessageWidget(Message message) {
     return Card(
       child: InkWell(
         child: Dismissible(
@@ -426,7 +426,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRideEventWidget(RideEvent rideEvent, BuildContext context) {
+  Widget _buildRideEventWidget(RideEvent rideEvent) {
     final bool isForRide = rideEvent.ride!.rider!.isCurrentUser;
     return Card(
       child: InkWell(
@@ -461,7 +461,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTripWidget(Trip trip, BuildContext context) {
+  Widget _buildTripWidget(Trip trip) {
     return Card(
       child: InkWell(
         child: Dismissible(
@@ -499,13 +499,13 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildWidget(Model model, BuildContext context) {
+  Widget _buildWidget(Model model) {
     if (model is Message) {
-      return _buildMessageWidget(model, context);
+      return _buildMessageWidget(model);
     } else if (model is RideEvent) {
-      return _buildRideEventWidget(model, context);
+      return _buildRideEventWidget(model);
     } else {
-      return _buildTripWidget(model as Trip, context);
+      return _buildTripWidget(model as Trip);
     }
   }
 }

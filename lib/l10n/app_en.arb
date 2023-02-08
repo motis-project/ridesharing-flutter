@@ -102,23 +102,8 @@
   "pageAboutTitle": "About",
   "pageAboutLogoSemantics": "MOTIS Logo",
   "pageAboutVersion": "Version {version}",
-  "@pageAboutVersion": {
-    "placeholders": {
-      "version": {}
-    }
-  },
   "pageAboutBuildNumber": "Build number: {number}",
-  "@pageAboutBuildNumber": {
-    "placeholders": {
-      "number": {}
-    }
-  },
   "pageAboutBuildSignature": "Build signature: {signature}",
-  "@pageAboutBuildSignature": {
-    "placeholders": {
-      "signature": {}
-    }
-  },
   "pageAboutText": "This app was coded by a group of students at TU Darmstadt.\nLicensed under the MIT License.",
   "pageAboutGithub": "GitHub",
   "pageAboutWebsite": "Website",
@@ -366,50 +351,12 @@
   "pageHomeUpcomingRideToday": "Upcoming Ride today!",
   "pageHomeUpcomingRideTomorrow": "Upcoming Ride tomorrow!",
   "rideEventPendingMessage": "{username} has requested a ride",
-  "@rideEventPendingMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventApprovedMessage": "{username} has approved your ride",
-  "@rideEventApprovedMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventRejectedMessage": "{username} has rejected your ride",
-  "@rideEventRejectedMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventWithdrawnMessage": "{username} has withdrawn his ride",
-  "@rideEventWithdrawnMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
   "rideEventCancelledByDriverMessage": "{username} has cancelled his drive",
-  "@rideEventCancelledByDriverMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
- "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
-  "@rideEventCancelledByRiderMessage": {
-    "placeholders": {
-      "username": {}
-    }
-  },
- "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
-  "@pageHomeUpcomingTripMessage": {
-    "placeholders": {
-      "start": {},
-      "end": {},
-      "startTime": {}
-    }
-  },
-
+  "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
+  "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
   "pageHomePageEmpty": "No new messages",
 
   "hello": "Hello",
