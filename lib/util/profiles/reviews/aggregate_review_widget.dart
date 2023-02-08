@@ -30,47 +30,55 @@ class AggregateReviewWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        SizedBox(
-          width: double.infinity,
-          child: Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            alignment: WrapAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(S.of(context).reviewCategoryComfort),
-                  const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.comfortRating),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(S.of(context).reviewCategorySafety),
-                  const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.safetyRating)
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(S.of(context).reviewCategoryReliability),
-                  const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.reliabilityRating)
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(S.of(context).reviewCategoryHospitality),
-                  const SizedBox(width: 10),
-                  CustomRatingBarIndicator(rating: _aggregateReview.hospitalityRating)
-                ],
-              ),
-            ],
-          ),
+        _buildRatingTable(context),
+      ],
+    );
+  }
+
+  static const double verticalTableSpacing = 3.0;
+  static TableRow verticalTableSpacer =
+      TableRow(children: List<Widget>.generate(3, (int _) => const SizedBox(height: verticalTableSpacing)));
+  static const double horizontalSpacing = 20.0;
+  static TableCell horizontalTableSpacer = const TableCell(child: SizedBox(width: horizontalSpacing));
+
+  Widget _buildRatingTable(BuildContext context) {
+    return Table(
+      columnWidths: const <int, TableColumnWidth>{
+        0: IntrinsicColumnWidth(),
+        1: FixedColumnWidth(horizontalSpacing),
+        2: FlexColumnWidth(),
+      },
+      children: <TableRow>[
+        TableRow(
+          children: <Widget>[
+            Text(S.of(context).reviewCategoryComfort),
+            horizontalTableSpacer,
+            CustomRatingBarIndicator(rating: _aggregateReview.comfortRating),
+          ],
+        ),
+        verticalTableSpacer,
+        TableRow(
+          children: <Widget>[
+            Text(S.of(context).reviewCategorySafety),
+            horizontalTableSpacer,
+            CustomRatingBarIndicator(rating: _aggregateReview.safetyRating),
+          ],
+        ),
+        verticalTableSpacer,
+        TableRow(
+          children: <Widget>[
+            Text(S.of(context).reviewCategoryReliability),
+            horizontalTableSpacer,
+            CustomRatingBarIndicator(rating: _aggregateReview.reliabilityRating),
+          ],
+        ),
+        verticalTableSpacer,
+        TableRow(
+          children: <Widget>[
+            Text(S.of(context).reviewCategoryHospitality),
+            horizontalTableSpacer,
+            CustomRatingBarIndicator(rating: _aggregateReview.hospitalityRating),
+          ],
         ),
       ],
     );
