@@ -22,6 +22,11 @@ class StorageManager {
 
   Future<T?> readData<T>(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (T == List<String>) {
+      return prefs.getStringList(key) as T?;
+    }
+
     return prefs.get(key) as T?;
   }
 
