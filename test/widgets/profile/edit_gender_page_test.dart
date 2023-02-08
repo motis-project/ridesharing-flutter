@@ -6,6 +6,7 @@ import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../util/factories/model_factory.dart';
 import '../../util/factories/profile_factory.dart';
 import '../../util/mocks/mock_server.dart';
 import '../../util/mocks/request_processor.dart';
@@ -23,7 +24,7 @@ void main() {
   });
 
   setUp(() async {
-    profile = ProfileFactory().generateFake(id: 1);
+    profile = ProfileFactory().generateFake(id: 1, gender: NullableParameter(null));
     supabaseManager.currentProfile = profile;
 
     whenRequest(
@@ -69,36 +70,74 @@ void main() {
       expect(preferNotToSayGenderFinder, findsOneWidget);
     });
 
-    testWidgets('save Button', (WidgetTester tester) async {
-      await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-      await tester.pump();
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editButton'))));
-      await tester.pumpAndSettle();
-      expect(find.byType(EditGenderPage), findsOneWidget);
+    group('save Button', () {
+      testWidgets('Switching to a gender', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        await tester
+            .tap(find.descendant(of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editButton'))));
+        await tester.pumpAndSettle();
+        expect(find.byType(EditGenderPage), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('genderRadioListTile0')));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('genderRadioListTile1')));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('saveButton')), findsOneWidget);
+        expect(find.byKey(const Key('saveButton')), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('saveButton')));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('saveButton')));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(ProfilePage), findsOneWidget);
+        expect(find.byType(ProfilePage), findsOneWidget);
 
-      verifyRequest(
-        processor,
-        urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
-        methodMatcher: equals('PATCH'),
-        bodyMatcher: equals({'gender': Gender.male.index}),
-      ).called(1);
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'gender': Gender.female.index}),
+        ).called(1);
 
-      verifyRequest(
-        processor,
-        urlMatcher: startsWith('/rest/v1/profiles'),
-        methodMatcher: equals('GET'),
-      ).called(3);
+        verifyRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/profiles'),
+          methodMatcher: equals('GET'),
+        ).called(3);
+      });
+
+      testWidgets('Preferring not to say', (WidgetTester tester) async {
+        profile = ProfileFactory().generateFake(id: 1, gender: NullableParameter(Gender.male));
+        supabaseManager.currentProfile = profile;
+        whenRequest(processor).thenReturnJson(profile.toJsonForApi());
+
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        await tester.pump();
+        await tester
+            .tap(find.descendant(of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editButton'))));
+        await tester.pumpAndSettle();
+        expect(find.byType(EditGenderPage), findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('preferNotToSayGenderRadioListTile')));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('saveButton')), findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('saveButton')));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ProfilePage), findsOneWidget);
+
+        verifyRequest(
+          processor,
+          urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
+          methodMatcher: equals('PATCH'),
+          bodyMatcher: equals({'gender': null}),
+        ).called(1);
+
+        verifyRequest(
+          processor,
+          urlMatcher: startsWith('/rest/v1/profiles'),
+          methodMatcher: equals('GET'),
+        ).called(3);
+      });
     });
   });
 }
