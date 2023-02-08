@@ -18,6 +18,9 @@ class ThemeManager with ChangeNotifier {
     dividerTheme: ThemeData.light().dividerTheme.copyWith(
           color: Colors.grey.withOpacity(0.5),
         ),
+    inputDecorationTheme: InputDecorationTheme(
+      hintStyle: TextStyle(color: ThemeData.light().hintColor),
+    ),
   )..addOwn(const OwnThemeFields());
   final ThemeData darkTheme = ThemeData.dark().copyWith(
     useMaterial3: true,
@@ -33,6 +36,9 @@ class ThemeManager with ChangeNotifier {
     dividerTheme: ThemeData.dark().dividerTheme.copyWith(
           color: Colors.grey.withOpacity(0.5),
         ),
+    inputDecorationTheme: InputDecorationTheme(
+      hintStyle: TextStyle(color: ThemeData.light().hintColor),
+    ),
   )..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
   late ThemeMode currentThemeMode;

@@ -53,6 +53,7 @@ class AddressSearchField extends StatelessWidget {
           labelText: getLabelText(context),
           hintText: getLabelText(context),
           floatingLabelBehavior: FloatingLabelBehavior.never,
+          labelStyle: Theme.of(context).inputDecorationTheme.hintStyle,
         ),
         readOnly: true,
         validator: (String? value) {
@@ -72,6 +73,8 @@ class AddressSearchField extends StatelessWidget {
             controller.text = addressSuggestion.name;
             onSelected(addressSuggestion);
           }
+
+          FocusManager.instance.primaryFocus?.unfocus();
         },
       ),
     );
