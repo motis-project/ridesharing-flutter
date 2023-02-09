@@ -10,7 +10,7 @@ import '../../util/trip/trip_like.dart';
 import 'drive.dart';
 
 class RecurringDrive extends TripLike {
-  bool stopped;
+  DateTime? stoppedAt;
   RecurrenceRule recurrenceRule;
 
   final int driverId;
@@ -31,7 +31,7 @@ class RecurringDrive extends TripLike {
     required super.endPosition,
     required this.endTime,
     required super.seats,
-    this.stopped = false,
+    this.stoppedAt,
     required this.recurrenceRule,
     required this.driverId,
     this.driver,
@@ -50,7 +50,7 @@ class RecurringDrive extends TripLike {
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
       endTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['end_time'] as String)),
       seats: json['seats'] as int,
-      stopped: json['stopped'] as bool,
+      stoppedAt: json['stopped_at'] == null ? null : DateTime.parse(json['stopped_at'] as String),
       recurrenceRule: RecurrenceRule.fromString((json['recurrence_rule'] as String).split('\n')[1]),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
@@ -66,7 +66,7 @@ class RecurringDrive extends TripLike {
   Map<String, dynamic> toJson() {
     return super.toJson()
       ..addAll(<String, dynamic>{
-        'stopped': stopped,
+        'stopped_at': stoppedAt?.toString(),
         'start_time': startTime.formatted,
         'end_time': endTime.formatted,
         'recurrence_rule': 'DTSTART:${(createdAt ?? DateTime.now()).millisecondsSinceEpoch}\n$recurrenceRule',
@@ -88,11 +88,11 @@ class RecurringDrive extends TripLike {
     return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
 
-  Future<void> stop() async {
-    stopped = true;
+  Future<void> stop(DateTime stoppedAt) async {
+    this.stoppedAt = stoppedAt;
     await supabaseManager.supabaseClient
         .from('recurring_drives')
-        .update(<String, dynamic>{'stopped': true}).eq('id', id);
+        .update(<String, dynamic>{'stopped_at': stoppedAt.toString()}).eq('id', id);
   }
 }
 

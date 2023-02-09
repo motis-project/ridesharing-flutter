@@ -1564,8 +1564,8 @@ BEGIN
 		FROM
 			recurring_drives
 		WHERE
-			_rrule.rruleset (recurring_rule) @> (now()::timestamp + interval '30 days') AND
-			stopped IS FALSE
+			_rrule.rruleset (recurrence_rule) @> (now()::timestamp + interval '30 days') AND
+			stopped_at IS NULL
 	LOOP
 		drive_start_time = CURRENT_DATE + interval '30 days' + recurring_drive.start_time;
 		drive_end_time = CURRENT_DATE + interval '30 days' + recurring_drive.end_time;
@@ -2179,8 +2179,8 @@ CREATE TABLE "public"."recurring_drives" (
     "start_lng" real NOT NULL,
     "end_lat" real NOT NULL,
     "end_lng" real NOT NULL,
-    "stopped" boolean DEFAULT false NOT NULL,
     "recurrence_rule" "text",
+    "stopped_at" timestamp with time zone,
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
 );
 

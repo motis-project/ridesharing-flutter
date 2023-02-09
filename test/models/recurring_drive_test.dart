@@ -30,7 +30,6 @@ void main() {
         'end_lng': 5,
         'end_time': '12:47:01',
         'seats': 2,
-        'stopped': false,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
         'driver_id': 7,
       };
@@ -41,7 +40,7 @@ void main() {
       expect(recurringDrive.startPosition.lat, json['start_lat']);
       expect(recurringDrive.startPosition.lng, json['start_lng']);
       expect(recurringDrive.startTime, const TimeOfDay(hour: 22, minute: 37));
-      expect(recurringDrive.stopped, json['stopped']);
+      expect(recurringDrive.stoppedAt, json['stopped_at']);
       expect(recurringDrive.recurrenceRule.frequency, Frequency.daily);
       expect(recurringDrive.driverId, json['driver_id']);
     });
@@ -59,13 +58,14 @@ void main() {
         'end_lng': 5,
         'end_time': '12:47:01',
         'seats': 2,
-        'stopped': false,
+        'stopped_at': DateTime.now().toString(),
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
         'driver_id': 7,
         'driver': ProfileFactory().generateFake().toJsonForApi(),
         'drives': [DriveFactory().generateFake().toJsonForApi(), DriveFactory().generateFake().toJsonForApi()],
       };
       final RecurringDrive recurringDrive = RecurringDrive.fromJson(json);
+      expect(recurringDrive.stoppedAt, isNotNull);
       expect(recurringDrive.driver, isNotNull);
       expect(recurringDrive.drives, hasLength(2));
     });
@@ -85,7 +85,6 @@ void main() {
         'end_lng': 5,
         'end_time': '12:47:01',
         'seats': 2,
-        'stopped': false,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
         'driver_id': 7,
       };
@@ -107,27 +106,28 @@ void main() {
       final Map<String, dynamic> json = recurringDrive.toJson();
       expect(json['start'], recurringDrive.start);
       expect(json['start_time'], recurringDrive.startTime.formatted);
-      expect(json['stopped'], recurringDrive.stopped);
+      expect(json['stopped_at'], recurringDrive.stoppedAt?.toString());
       expect(json['recurrence_rule'], contains('\n${recurringDrive.recurrenceRule}'));
       expect(json.keys.length, 12);
     });
   });
 
   group('RecurringDrive.stop', () {
-    test('cancelled is being changed from false to true', () async {
-      final RecurringDrive recurringDrive =
-          RecurringDriveFactory().generateFake(stopped: false, createDependencies: false);
+    test('stoppedAt is set to the given timestamp', () async {
+      final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(createDependencies: false);
       whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
-      await recurringDrive.stop();
+
+      final DateTime stoppedAt = DateTime.now();
+      await recurringDrive.stop(stoppedAt);
       verifyRequest(
         processor,
         urlMatcher: equals('/rest/v1/recurring_drives?id=eq.${recurringDrive.id}'),
         methodMatcher: equals('PATCH'),
         bodyMatcher: equals({
-          'stopped': true,
+          'stopped_at': stoppedAt.toString(),
         }),
       );
-      expect(recurringDrive.stopped, true);
+      expect(recurringDrive.stoppedAt, stoppedAt);
     });
   });
 
