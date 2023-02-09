@@ -1568,11 +1568,10 @@ BEGIN
 		WHERE _rrule.rruleset (recurrence_rule) @> considered_date 
 		AND stopped_at IS NULL
 	LOOP
-		drive_start_time = considered_date + recurring_drive.start_time;
-		drive_end_time = considered_date + recurring_drive.end_time;
-		IF recurring_drive.start_time > recurring_drive.end_time THEN
-			drive_end_time = drive_end_time + interval '1 day';
-		END IF;
+		SELECT * 
+		INTO drive_start_time, drive_end_time 
+		FROM recurring_drive_generate_datetimes(considered_date, recurring_drive.start_time, recurring_drive.end_time) 
+		AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
 		
 	
 		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
@@ -1781,6 +1780,32 @@ END; $$;
 ALTER FUNCTION "public"."recurring_drive_creation_interval"() OWNER TO "postgres";
 
 --
+-- Name: recurring_drive_generate_datetimes("date", time without time zone, time without time zone); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) RETURNS "record"
+    LANGUAGE "plpgsql" IMMUTABLE
+    AS $$
+DECLARE
+	ret RECORD;
+	generated_start_time TIMESTAMP;
+	generated_end_time TIMESTAMP;
+BEGIN
+   	generated_start_time = base_date + start_time;
+	generated_end_time = base_date + end_time;
+	IF start_time > end_time THEN
+		generated_end_time = generated_end_time + interval '1 day';
+	END IF;
+	
+	SELECT generated_start_time, generated_end_time INTO ret;
+	
+	RETURN ret;	
+END; $$;
+
+
+ALTER FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) OWNER TO "postgres";
+
+--
 -- Name: recurring_drive_insert(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1805,11 +1830,10 @@ BEGIN
 		) next_dates(d)
 		WHERE _rrule.rruleset(recurring_drive.recurrence_rule) @> next_dates.d
 	LOOP
-		drive_start_time = next_date + recurring_drive.start_time;
-		drive_end_time = next_date + recurring_drive.end_time;
-		IF recurring_drive.start_time > recurring_drive.end_time THEN
-			drive_end_time = drive_end_time + interval '1 day';
-		END IF;
+		SELECT * 
+		INTO drive_start_time, drive_end_time 
+		FROM recurring_drive_generate_datetimes(next_date, recurring_drive.start_time, recurring_drive.end_time) 
+		AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
 		
 	
 		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
@@ -1864,11 +1888,10 @@ BEGIN
 				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time)
 			)
 		LOOP
-			drive_start_time = next_date + new.start_time;
-			drive_end_time = next_date + new.end_time;
-			IF new.start_time > new.end_time THEN
-				drive_end_time = drive_end_time + interval '1 day';
-			END IF;
+			SELECT * 
+			INTO drive_start_time, drive_end_time 
+			FROM recurring_drive_generate_datetimes(next_date, new.start_time, new.end_time) 
+			AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
 			
 		
 			INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
@@ -3746,6 +3769,15 @@ GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "anon";
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "service_role";
+
+
+--
+-- Name: FUNCTION "recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "service_role";
 
 
 --
