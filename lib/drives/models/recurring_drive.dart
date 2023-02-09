@@ -83,6 +83,11 @@ class RecurringDrive extends TripLike {
       });
   }
 
+  @override
+  String toString() {
+    return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $rrule}';
+  }
+
   Future<void> stop() async {
     stopped = true;
     await supabaseManager.supabaseClient

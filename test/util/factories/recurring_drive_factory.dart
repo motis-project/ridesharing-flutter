@@ -46,17 +46,20 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
         RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,
-          byWeekDays: (List<int>.generate(7, (index) => index)..shuffle()).map((day) => ByWeekDayEntry(day)).toSet(),
+          until: generatedCreatedAt.add(const Duration(days: 30)).toUtc(),
+          byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
+              .take(random.nextInt(7))
+              .map((day) => ByWeekDayEntry(day + 1))
+              .toSet(),
         );
 
     final List<Drive> generatedDrives = drives ??
         generatedRrule
             .getInstances(
-              start: generatedCreatedAt,
+              start: generatedCreatedAt.toUtc(),
               includeAfter: true,
               includeBefore: true,
             )
-            .where((DateTime element) => element.isBefore(generatedCreatedAt.add(const Duration(days: 30))))
             .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
                   start: start,
                   startPosition: startPosition,
