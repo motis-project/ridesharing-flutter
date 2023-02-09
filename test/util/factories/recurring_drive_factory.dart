@@ -53,38 +53,40 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
               .toSet(),
         );
 
-    final List<Drive> generatedDrives = drives ??
-        generatedRecurrenceRule
-            .getInstances(
-              start: generatedCreatedAt.toUtc(),
-              includeAfter: true,
-              includeBefore: true,
-            )
-            .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
-                  start: start,
-                  startPosition: startPosition,
-                  startTime: DateTime(
-                    startDate.year,
-                    startDate.month,
-                    startDate.day,
-                    generatedStartTime.hour,
-                    generatedEndTime.hour,
-                  ),
-                  end: end,
-                  endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-                  endTime: DateTime(
-                    startDate.year,
-                    startDate.month,
-                    generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,
-                    generatedEndTime.hour,
-                    generatedEndTime.minute,
-                  ),
-                  seats: seats,
-                  driverId: generatedDriverId,
-                  driver: NullableParameter(generatedDriver),
-                  createDependencies: false,
-                ))
-            .toList();
+    final List<Drive>? generatedDrives = drives ??
+        (createDependencies
+            ? generatedRecurrenceRule
+                .getInstances(
+                  start: generatedCreatedAt.toUtc(),
+                  includeAfter: true,
+                  includeBefore: true,
+                )
+                .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
+                      start: start,
+                      startPosition: startPosition,
+                      startTime: DateTime(
+                        startDate.year,
+                        startDate.month,
+                        startDate.day,
+                        generatedStartTime.hour,
+                        generatedEndTime.hour,
+                      ),
+                      end: end,
+                      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+                      endTime: DateTime(
+                        startDate.year,
+                        startDate.month,
+                        generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,
+                        generatedEndTime.hour,
+                        generatedEndTime.minute,
+                      ),
+                      seats: seats,
+                      driverId: generatedDriverId,
+                      driver: NullableParameter(generatedDriver),
+                      createDependencies: false,
+                    ))
+                .toList()
+            : null);
 
     return RecurringDrive(
       id: id ?? randomId,
