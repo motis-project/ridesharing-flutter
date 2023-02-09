@@ -52,22 +52,26 @@ class _AboutPageState extends State<AboutPage> {
                       S.of(context).appName,
                       style: Theme.of(context).textTheme.headlineMedium,
                       textAlign: TextAlign.center,
+                      key: const Key('aboutPageAppName'),
                     ),
                     if (_packageInfo != null) ...<Widget>[
                       Text(
                         S.of(context).pageAboutVersion(_packageInfo!.version),
                         style: packageInfoStyle,
                         textAlign: TextAlign.center,
+                        key: const Key('aboutPageVersion'),
                       ),
                       Text(
                         S.of(context).pageAboutBuildNumber(_packageInfo!.buildNumber),
                         style: packageInfoStyle,
                         textAlign: TextAlign.center,
+                        key: const Key('aboutPageBuildNumber'),
                       ),
                       Text(
                         S.of(context).pageAboutBuildSignature(_packageInfo!.buildSignature),
                         style: packageInfoStyle,
                         textAlign: TextAlign.center,
+                        key: const Key('aboutPageBuildSignature'),
                       ),
                     ],
                     SvgPicture.asset(
