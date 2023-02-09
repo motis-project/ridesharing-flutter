@@ -1564,11 +1564,14 @@ BEGIN
 		FROM
 			recurring_drives
 		WHERE
-			_rrule.rruleset (rrule) @> (now()::timestamp + interval '30 days') AND
+			_rrule.rruleset (recurring_rule) @> (now()::timestamp + interval '30 days') AND
 			stopped IS FALSE
 	LOOP
 		drive_start_time = CURRENT_DATE + interval '30 days' + recurring_drive.start_time;
 		drive_end_time = CURRENT_DATE + interval '30 days' + recurring_drive.end_time;
+		IF recurring_drive.start_time > recurring_drive.end_time THEN
+			drive_end_time = drive_end_time + interval '1 day';
+		END IF;
 		
 	
 		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
@@ -2177,7 +2180,7 @@ CREATE TABLE "public"."recurring_drives" (
     "end_lat" real NOT NULL,
     "end_lng" real NOT NULL,
     "stopped" boolean DEFAULT false NOT NULL,
-    "rrule" "text",
+    "recurrence_rule" "text",
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
 );
 
@@ -2669,6 +2672,17 @@ CREATE POLICY "Users can insert Messages for themselves in their own chats" ON "
 
 
 --
+-- Name: recurring_drives Users can manage their own recurring drives; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "Users can manage their own recurring drives" ON "public"."recurring_drives" TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "recurring_drives"."driver_id")))) WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "recurring_drives"."driver_id"))));
+
+
+--
 -- Name: drives Users can only create drives for themselves; Type: POLICY; Schema: public; Owner: postgres
 --
 
@@ -2824,6 +2838,13 @@ CREATE POLICY "admins have full control" ON "public"."profile_features" TO "auth
 --
 
 CREATE POLICY "admins have full control" ON "public"."profiles" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+
+
+--
+-- Name: recurring_drives admins have full control; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "admins have full control" ON "public"."recurring_drives" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
 
 
 --

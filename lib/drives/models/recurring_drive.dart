@@ -11,7 +11,7 @@ import 'drive.dart';
 
 class RecurringDrive extends TripLike {
   bool stopped;
-  RecurrenceRule rrule;
+  RecurrenceRule recurrenceRule;
 
   final int driverId;
   final Profile? driver;
@@ -32,7 +32,7 @@ class RecurringDrive extends TripLike {
     required this.endTime,
     required super.seats,
     this.stopped = false,
-    required this.rrule,
+    required this.recurrenceRule,
     required this.driverId,
     this.driver,
     this.drives,
@@ -51,7 +51,7 @@ class RecurringDrive extends TripLike {
       endTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['end_time'] as String)),
       seats: json['seats'] as int,
       stopped: json['stopped'] as bool,
-      rrule: RecurrenceRule.fromString((json['rrule'] as String).split('\n')[1]),
+      recurrenceRule: RecurrenceRule.fromString((json['recurring_rule'] as String).split('\n')[1]),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
       drives: json.containsKey('drives') ? Drive.fromJsonList(parseHelper.parseListOfMaps(json['drives'])) : null,
@@ -69,7 +69,7 @@ class RecurringDrive extends TripLike {
         'stopped': stopped,
         'start_time': startTime.toString(),
         'end_time': endTime.toString(),
-        'rrule': 'DTSTART:${(createdAt ?? DateTime.now()).millisecondsSinceEpoch}\n$rrule',
+        'recurrence_rule': 'DTSTART:${(createdAt ?? DateTime.now()).millisecondsSinceEpoch}\n$recurrenceRule',
         'driver_id': driverId,
       });
   }
@@ -85,7 +85,7 @@ class RecurringDrive extends TripLike {
 
   @override
   String toString() {
-    return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $rrule}';
+    return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
 
   Future<void> stop() async {

@@ -22,7 +22,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     TimeOfDay? endTime,
     int? seats,
     bool? stopped,
-    RecurrenceRule? rrule,
+    RecurrenceRule? recurrenceRule,
     int? driverId,
     NullableParameter<Profile>? driver,
     List<Drive>? drives,
@@ -42,7 +42,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
 
-    final RecurrenceRule generatedRrule = rrule ??
+    final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
         RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,
@@ -54,7 +54,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
         );
 
     final List<Drive> generatedDrives = drives ??
-        generatedRrule
+        generatedRecurrenceRule
             .getInstances(
               start: generatedCreatedAt.toUtc(),
               includeAfter: true,
@@ -97,7 +97,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       endTime: generatedEndTime,
       seats: seats ?? random.nextInt(5) + 1,
       stopped: stopped ?? false,
-      rrule: generatedRrule,
+      recurrenceRule: generatedRecurrenceRule,
       driverId: generatedDriverId,
       driver: generatedDriver,
       drives: generatedDrives,
