@@ -2746,12 +2746,10 @@ CREATE POLICY "Users can insert Messages for themselves in their own chats" ON "
 
 
 --
--- Name: recurring_drives Users can manage their own recurring drives; Type: POLICY; Schema: public; Owner: postgres
+-- Name: recurring_drives Users can insert their own recurring drives; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "Users can manage their own recurring drives" ON "public"."recurring_drives" TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
-   FROM "public"."profiles"
-  WHERE ("profiles"."id" = "recurring_drives"."driver_id")))) WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+CREATE POLICY "Users can insert their own recurring drives" ON "public"."recurring_drives" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
    FROM "public"."profiles"
   WHERE ("profiles"."id" = "recurring_drives"."driver_id"))));
 
@@ -2822,6 +2820,15 @@ CREATE POLICY "Users can see rides for their own drives" ON "public"."rides" FOR
 
 
 --
+-- Name: recurring_drives Users can see their own recurring drives; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "Users can see their own recurring drives" ON "public"."recurring_drives" FOR SELECT TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "recurring_drives"."driver_id"))));
+
+
+--
 -- Name: rides Users can see their own rides; Type: POLICY; Schema: public; Owner: postgres
 --
 
@@ -2866,6 +2873,17 @@ CREATE POLICY "Users can update their own profile_features" ON "public"."profile
   WHERE ("profiles"."id" = "profile_features"."profile_id")))) WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
    FROM "public"."profiles"
   WHERE ("profiles"."id" = "profile_features"."profile_id"))));
+
+
+--
+-- Name: recurring_drives Users can update their own recurring drives; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "Users can update their own recurring drives" ON "public"."recurring_drives" FOR UPDATE TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "recurring_drives"."driver_id")))) WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "recurring_drives"."driver_id"))));
 
 
 --
