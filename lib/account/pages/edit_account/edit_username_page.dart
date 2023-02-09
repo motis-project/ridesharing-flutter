@@ -5,23 +5,13 @@ import '../../../util/buttons/button.dart';
 import '../../../util/supabase_manager.dart';
 import '../../models/profile.dart';
 
-class EditUsernamePage extends StatefulWidget {
+class EditUsernamePage extends StatelessWidget {
   final Profile profile;
-
-  const EditUsernamePage(this.profile, {super.key});
-
-  @override
-  State<EditUsernamePage> createState() => _EditUsernamePageState();
-}
-
-class _EditUsernamePageState extends State<EditUsernamePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = widget.profile.username;
+  EditUsernamePage(this.profile, {super.key}) {
+    _controller.text = profile.username;
   }
 
   @override
@@ -42,7 +32,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     hintText: S.of(context).pageProfileEditUsernameHint,
-                    suffixIcon: _getClearButton(),
+                    suffixIcon: _getClearButton(context),
                   ),
                   controller: _controller,
                   validator: (String? value) {
@@ -56,7 +46,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
                 const SizedBox(height: 10),
                 Button(
                   S.of(context).save,
-                  onPressed: onPressed,
+                  onPressed: () => onPressed(context),
                   key: const Key('saveButton'),
                 ),
               ],
@@ -67,7 +57,7 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
     );
   }
 
-  Widget? _getClearButton() {
+  Widget? _getClearButton(BuildContext context) {
     if (_controller.text == '') {
       return null;
     }
@@ -79,14 +69,14 @@ class _EditUsernamePageState extends State<EditUsernamePage> {
     );
   }
 
-  Future<void> onPressed() async {
+  Future<void> onPressed(BuildContext context) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
       'username': _controller.text,
-    }).eq('id', widget.profile.id);
+    }).eq('id', profile.id);
     await supabaseManager.reloadCurrentProfile();
-    if (mounted) Navigator.of(context).pop();
+    if (context.mounted) Navigator.of(context).pop();
   }
 }

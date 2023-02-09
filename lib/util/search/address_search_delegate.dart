@@ -34,12 +34,10 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
     return buildSuggestions(context);
   }
 
-  // [bool mounted = true] is a hack to be able to use context
-  // (StatelessWidget is always mounted, so this is fine)
-  Future<void> returnFirstResult(BuildContext context, {bool mounted = true}) async {
+  Future<void> returnFirstResult(BuildContext context) async {
     final List<AddressSuggestion> suggestions = await addressSuggestionManager.getSuggestions(query);
 
-    if (mounted) close(context, suggestions.firstOrNull);
+    if (context.mounted) close(context, suggestions.firstOrNull);
   }
 
   @override
