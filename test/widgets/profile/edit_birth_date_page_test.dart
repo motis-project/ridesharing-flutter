@@ -105,8 +105,8 @@ void main() {
       await tester.pump();
       expect(find.text(profile.age.toString()), findsOneWidget);
 
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('editableRowButton'))));
+      await tester.tap(
+          find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditBirthDatePage), findsOneWidget);
 

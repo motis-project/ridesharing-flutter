@@ -83,7 +83,7 @@ void main() {
       expect(find.text(profile.description!), findsOneWidget);
 
       await tester.tap(find.descendant(
-          of: find.byKey(const Key('description')), matching: find.byKey(const Key('editableRowButton'))));
+          of: find.byKey(const Key('description')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditDescriptionPage), findsOneWidget);
 
