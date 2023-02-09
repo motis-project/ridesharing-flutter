@@ -51,7 +51,7 @@ class RecurringDrive extends TripLike {
       endTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['end_time'] as String)),
       seats: json['seats'] as int,
       stopped: json['stopped'] as bool,
-      recurrenceRule: RecurrenceRule.fromString((json['recurring_rule'] as String).split('\n')[1]),
+      recurrenceRule: RecurrenceRule.fromString((json['recurrence_rule'] as String).split('\n')[1]),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
       drives: json.containsKey('drives') ? Drive.fromJsonList(parseHelper.parseListOfMaps(json['drives'])) : null,
@@ -67,8 +67,8 @@ class RecurringDrive extends TripLike {
     return super.toJson()
       ..addAll(<String, dynamic>{
         'stopped': stopped,
-        'start_time': startTime.toString(),
-        'end_time': endTime.toString(),
+        'start_time': startTime.formatted,
+        'end_time': endTime.formatted,
         'recurrence_rule': 'DTSTART:${(createdAt ?? DateTime.now()).millisecondsSinceEpoch}\n$recurrenceRule',
         'driver_id': driverId,
       });
@@ -93,5 +93,11 @@ class RecurringDrive extends TripLike {
     await supabaseManager.supabaseClient
         .from('recurring_drives')
         .update(<String, dynamic>{'stopped': true}).eq('id', id);
+  }
+}
+
+extension TimeOfDayExtension on TimeOfDay {
+  String get formatted {
+    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00';
   }
 }

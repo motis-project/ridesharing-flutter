@@ -80,8 +80,10 @@ class Drive extends Trip {
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
       ..addAll(<String, dynamic>{
-        'driver': driver?.toJsonForApi(),
-        'recurring_drive': recurringDrive?.toJsonForApi(),
+        ...driver == null ? <String, dynamic>{} : <String, dynamic>{'driver': driver?.toJsonForApi()},
+        ...recurringDrive == null
+            ? <String, dynamic>{}
+            : <String, dynamic>{'recurring_drive': recurringDrive?.toJsonForApi()},
         'rides': rides?.map((Ride ride) => ride.toJsonForApi()).toList() ?? <Map<String, dynamic>>[],
       });
   }

@@ -106,6 +106,7 @@ void main() {
       final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake();
       final Map<String, dynamic> json = recurringDrive.toJson();
       expect(json['start'], recurringDrive.start);
+      expect(json['start_time'], recurringDrive.startTime.formatted);
       expect(json['stopped'], recurringDrive.stopped);
       expect(json['recurrence_rule'], contains('\n${recurringDrive.recurrenceRule}'));
       expect(json.keys.length, 12);

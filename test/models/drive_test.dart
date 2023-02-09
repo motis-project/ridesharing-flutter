@@ -141,7 +141,7 @@ void main() {
       expect(json['driver_id'], drive.driverId);
       expect(json['recurring_drive_id'], drive.recurringDriveId);
       expect(json['hide_in_list_view'], drive.hideInListView);
-      expect(json.keys.length, 12);
+      expect(json.keys.length, 13);
     });
   });
   group('Drive.approvedRides', () {
