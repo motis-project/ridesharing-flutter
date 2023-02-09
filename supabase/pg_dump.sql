@@ -1779,14 +1779,13 @@ DECLARE
 	drive_end_time TIMESTAMP;
 BEGIN
 	FOR next_date IN
-		SELECT
-			*
-		FROM
-			generate_series(
-				CURRENT_DATE,
-				CURRENT_DATE + INTERVAL '30 days',
-				INTERVAL '1 day'
-			)
+		SELECT next_dates.d
+		FROM generate_series(
+			CURRENT_DATE,
+			CURRENT_DATE + INTERVAL '30 days',
+			INTERVAL '1 day'
+		) next_dates(d)
+		WHERE _rrule.rruleset(recurring_drive.recurrence_rule) @> next_dates.d
 	LOOP
 		drive_start_time = next_date + recurring_drive.start_time;
 		drive_end_time = next_date + recurring_drive.end_time;
@@ -1812,12 +1811,50 @@ ALTER FUNCTION "public"."recurring_drive_insert"() OWNER TO "postgres";
 CREATE FUNCTION "public"."recurring_drive_update"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
+DECLARE
+	day_offset INTERVAL;
+	next_date DATE;	
+	drive_start_time TIMESTAMP;
+	drive_end_time TIMESTAMP;
 BEGIN
 	IF new.stopped_at IS NOT NULL AND old.stopped_at IS NULL THEN
 		UPDATE drives
 		SET cancelled = TRUE
 		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP;
+		RETURN NEW;
 	END IF;
+
+	IF new.recurrence_rule != old.recurrence_rule THEN
+		UPDATE drives
+		SET cancelled = TRUE
+		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP AND NOT(_rrule.rruleset (new.recurrence_rule) @> DATE(drives.start_time));
+
+		FOR next_date IN
+			SELECT next_dates.d
+			FROM generate_series(
+				CURRENT_DATE,
+				CURRENT_DATE + INTERVAL '30 days',
+				INTERVAL '1 day'
+			) next_dates(d)
+			WHERE _rrule.rruleset(new.recurrence_rule) @> next_dates.d
+			AND NOT EXISTS(
+				SELECT *
+				FROM drives
+				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time)
+			)
+		LOOP
+			drive_start_time = next_date + new.start_time;
+			drive_end_time = next_date + new.end_time;
+			IF new.start_time > new.end_time THEN
+				drive_end_time = drive_end_time + interval '1 day';
+			END IF;
+			
+		
+			INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
+			VALUES (new.driver_id, new."start", drive_start_time, new."end", drive_end_time, new.seats, new.start_lat, new.start_lng, new.end_lat, new.end_lng, new.id);
+		END LOOP;
+	END IF;
+
   	RETURN new;
 END;
 $$;
