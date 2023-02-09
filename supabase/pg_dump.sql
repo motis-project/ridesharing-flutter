@@ -1766,6 +1766,66 @@ end;$$;
 ALTER FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) OWNER TO "postgres";
 
 --
+-- Name: recurring_drive_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."recurring_drive_insert"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+DECLARE
+	next_date DATE;
+	recurring_drive RECORD := new;
+	drive_start_time TIMESTAMP;
+	drive_end_time TIMESTAMP;
+BEGIN
+	FOR next_date IN
+		SELECT
+			*
+		FROM
+			generate_series(
+				CURRENT_DATE,
+				CURRENT_DATE + INTERVAL '30 days',
+				INTERVAL '1 day'
+			)
+	LOOP
+		drive_start_time = next_date + recurring_drive.start_time;
+		drive_end_time = next_date + recurring_drive.end_time;
+		IF recurring_drive.start_time > recurring_drive.end_time THEN
+			drive_end_time = drive_end_time + interval '1 day';
+		END IF;
+		
+	
+		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
+		VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_time, recurring_drive."end", drive_end_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.end_lat, recurring_drive.end_lng, recurring_drive.id);
+	END LOOP;
+  RETURN new;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."recurring_drive_insert"() OWNER TO "postgres";
+
+--
+-- Name: recurring_drive_update(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."recurring_drive_update"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+	IF new.stopped_at IS NOT NULL AND old.stopped_at IS NULL THEN
+		UPDATE drives
+		SET cancelled = TRUE
+		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP;
+	END IF;
+  	RETURN new;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."recurring_drive_update"() OWNER TO "postgres";
+
+--
 -- Name: reject_ride(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -2454,6 +2514,20 @@ CREATE TRIGGER "create_chat_trigger" BEFORE INSERT ON "public"."rides" FOR EACH 
 --
 
 CREATE TRIGGER "create_ride_event_trigger" AFTER INSERT OR UPDATE ON "public"."rides" FOR EACH ROW EXECUTE FUNCTION "public"."create_ride_event"();
+
+
+--
+-- Name: recurring_drives recurring_drive_insert_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER "recurring_drive_insert_trigger" AFTER INSERT ON "public"."recurring_drives" FOR EACH ROW EXECUTE FUNCTION "public"."recurring_drive_insert"();
+
+
+--
+-- Name: recurring_drives recurring_drive_update_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER "recurring_drive_update_trigger" BEFORE UPDATE ON "public"."recurring_drives" FOR EACH ROW EXECUTE FUNCTION "public"."recurring_drive_update"();
 
 
 --
@@ -3587,6 +3661,24 @@ GRANT ALL ON FUNCTION "public"."mark_message_as_read"("message_id" integer) TO "
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "service_role";
+
+
+--
+-- Name: FUNCTION "recurring_drive_insert"(); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."recurring_drive_insert"() TO "anon";
+GRANT ALL ON FUNCTION "public"."recurring_drive_insert"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."recurring_drive_insert"() TO "service_role";
+
+
+--
+-- Name: FUNCTION "recurring_drive_update"(); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."recurring_drive_update"() TO "anon";
+GRANT ALL ON FUNCTION "public"."recurring_drive_update"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."recurring_drive_update"() TO "service_role";
 
 
 --
