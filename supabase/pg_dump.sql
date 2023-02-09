@@ -31,7 +31,6 @@ ALTER SCHEMA "_rrule" OWNER TO "postgres";
 
 CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "extensions";
 
-
 --
 -- Name: pgsodium; Type: EXTENSION; Schema: -; Owner: -
 --
@@ -1557,18 +1556,20 @@ DECLARE
 	recurring_drive RECORD;
 	drive_start_time TIMESTAMP;
 	drive_end_time TIMESTAMP;
+	considered_date DATE;
 BEGIN
+	SELECT (recurring_drive_creation_interval() + CURRENT_DATE) INTO considered_date;
+
 	FOR recurring_drive IN
 		SELECT
 			*
 		FROM
 			recurring_drives
-		WHERE
-			_rrule.rruleset (recurrence_rule) @> (now()::timestamp + interval '30 days') AND
-			stopped_at IS NULL
+		WHERE _rrule.rruleset (recurrence_rule) @> considered_date 
+		AND stopped_at IS NULL
 	LOOP
-		drive_start_time = CURRENT_DATE + interval '30 days' + recurring_drive.start_time;
-		drive_end_time = CURRENT_DATE + interval '30 days' + recurring_drive.end_time;
+		drive_start_time = considered_date + recurring_drive.start_time;
+		drive_end_time = considered_date + recurring_drive.end_time;
 		IF recurring_drive.start_time > recurring_drive.end_time THEN
 			drive_end_time = drive_end_time + interval '1 day';
 		END IF;
@@ -1766,6 +1767,20 @@ end;$$;
 ALTER FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) OWNER TO "postgres";
 
 --
+-- Name: recurring_drive_creation_interval(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."recurring_drive_creation_interval"() RETURNS interval
+    LANGUAGE "plpgsql" IMMUTABLE
+    AS $$
+BEGIN
+    RETURN INTERVAL '30 days';
+END; $$;
+
+
+ALTER FUNCTION "public"."recurring_drive_creation_interval"() OWNER TO "postgres";
+
+--
 -- Name: recurring_drive_insert(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1777,12 +1792,15 @@ DECLARE
 	recurring_drive RECORD := new;
 	drive_start_time TIMESTAMP;
 	drive_end_time TIMESTAMP;
+	recurring_drive_creation_interval INTERVAL;
 BEGIN
+	SELECT recurring_drive_creation_interval() INTO recurring_drive_creation_interval;
+
 	FOR next_date IN
 		SELECT next_dates.d
 		FROM generate_series(
 			CURRENT_DATE,
-			CURRENT_DATE + INTERVAL '30 days',
+			CURRENT_DATE + recurring_drive_creation_interval,
 			INTERVAL '1 day'
 		) next_dates(d)
 		WHERE _rrule.rruleset(recurring_drive.recurrence_rule) @> next_dates.d
@@ -1816,7 +1834,10 @@ DECLARE
 	next_date DATE;	
 	drive_start_time TIMESTAMP;
 	drive_end_time TIMESTAMP;
+	recurring_drive_creation_interval INTERVAL;
 BEGIN
+	SELECT recurring_drive_creation_interval() INTO recurring_drive_creation_interval;
+
 	IF new.stopped_at IS NOT NULL AND old.stopped_at IS NULL THEN
 		UPDATE drives
 		SET cancelled = TRUE
@@ -1833,7 +1854,7 @@ BEGIN
 			SELECT next_dates.d
 			FROM generate_series(
 				CURRENT_DATE,
-				CURRENT_DATE + INTERVAL '30 days',
+				CURRENT_DATE + recurring_drive_creation_interval,
 				INTERVAL '1 day'
 			) next_dates(d)
 			WHERE _rrule.rruleset(new.recurrence_rule) @> next_dates.d
@@ -3716,6 +3737,15 @@ GRANT ALL ON FUNCTION "public"."mark_message_as_read"("message_id" integer) TO "
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "service_role";
+
+
+--
+-- Name: FUNCTION "recurring_drive_creation_interval"(); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "anon";
+GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "service_role";
 
 
 --
