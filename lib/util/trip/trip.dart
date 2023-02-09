@@ -1,48 +1,35 @@
 import 'package:flutter/material.dart';
 
-import '../model.dart';
-import '../search/position.dart';
+import 'trip_like.dart';
 
-class Trip extends Model {
+class Trip extends TripLike {
   static const int maxSelectableSeats = 8;
 
-  final String start;
-  final Position startPosition;
   final DateTime startTime;
-  final String end;
-  final Position endPosition;
   final DateTime endTime;
   final bool hideInListView;
-
-  final int seats;
 
   Trip({
     super.id,
     super.createdAt,
-    required this.start,
-    required this.startPosition,
+    required super.start,
+    required super.startPosition,
     required this.startTime,
-    required this.end,
-    required this.endPosition,
+    required super.end,
+    required super.endPosition,
     required this.endTime,
-    required this.seats,
+    required super.seats,
     this.hideInListView = false,
   });
 
   @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'start': start,
-      'start_lat': startPosition.lat,
-      'start_lng': startPosition.lng,
-      'start_time': startTime.toString(),
-      'end': end,
-      'end_lat': endPosition.lat,
-      'end_lng': endPosition.lng,
-      'end_time': endTime.toString(),
-      'seats': seats,
-      'hide_in_list_view': hideInListView,
-    };
+    return super.toJson()
+      ..addAll(<String, dynamic>{
+        'start_time': startTime.toString(),
+        'end_time': endTime.toString(),
+        'hide_in_list_view': hideInListView,
+      });
   }
 
   Duration get duration => endTime.difference(startTime);
