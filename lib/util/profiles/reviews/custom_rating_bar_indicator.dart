@@ -19,6 +19,7 @@ class CustomRatingBarIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label: S.of(context).ratingBarSemantics(rating.toStringAsFixed(1)),
+      key: const Key('ratingBarIndicator'),
       child: RatingBarIndicator(
         rating: rating,
         itemBuilder: (BuildContext context, int index) => const Icon(

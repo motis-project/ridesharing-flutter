@@ -14,6 +14,7 @@ class AggregateReviewWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         Row(
+          key: const Key('aggregateReview'),
           children: <Widget>[
             ExcludeSemantics(
               child: Text(_aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
@@ -25,6 +26,7 @@ class AggregateReviewWidget extends StatelessWidget {
                 S.of(context).pageReviewCount(_aggregateReview.numberOfReviews),
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                 textAlign: TextAlign.right,
+                key: const Key('reviewCount'),
               ),
             ),
           ],
@@ -50,6 +52,7 @@ class AggregateReviewWidget extends StatelessWidget {
       },
       children: <TableRow>[
         TableRow(
+          key: const ValueKey<String>('comfortRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryComfort),
             horizontalTableSpacer,
@@ -58,6 +61,7 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
+          key: const ValueKey<String>('safetyRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategorySafety),
             horizontalTableSpacer,
@@ -66,6 +70,7 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
+          key: const ValueKey<String>('reliabilityRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryReliability),
             horizontalTableSpacer,
@@ -74,6 +79,7 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
+          key: const ValueKey<String>('hospitalityRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryHospitality),
             horizontalTableSpacer,

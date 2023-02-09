@@ -23,6 +23,7 @@ class ProfileChip extends StatelessWidget {
         excludeSemantics: true,
         button: true,
         tooltip: S.of(context).seeProfile,
+        key: Key('profile-${profile.id}'),
         child: ActionChip(
           avatar: Avatar(profile, withHero: withHero),
           label: usernameText,
