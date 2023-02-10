@@ -347,6 +347,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         () => _recurrenceOptions.setRecurrenceIntervalType(value, context),
       ),
       itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
+          // Days is not a valid interval type for recurring drives, just use weekly and every week day
+          .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
           .map(
             (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
               value: intervalType,

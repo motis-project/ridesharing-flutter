@@ -284,6 +284,7 @@ extension RecurrenceEndIntervalTypeExtension on RecurrenceIntervalType {
 
   Frequency get frequency {
     switch (this) {
+      // This case is not possible, but the analyzer doesn't know that
       case RecurrenceIntervalType.days:
         return Frequency.daily;
       case RecurrenceIntervalType.weeks:
