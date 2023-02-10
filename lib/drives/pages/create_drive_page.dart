@@ -64,10 +64,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   late RecurrenceOptions _recurrenceOptions;
 
   static List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
-    RecurrenceEndChoiceInterval(1, RecurrenceEndIntervalType.months),
-    RecurrenceEndChoiceInterval(3, RecurrenceEndIntervalType.months),
-    RecurrenceEndChoiceInterval(6, RecurrenceEndIntervalType.months),
-    RecurrenceEndChoiceInterval(1, RecurrenceEndIntervalType.years),
+    RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(3, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(6, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.years),
   ];
 
   @override
@@ -77,7 +77,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     _seats = 1;
 
     _isRecurring = false;
-    _recurrenceOptions = RecurrenceOptions(endChoice: predefinedRecurrenceEndChoices.last);
+    _recurrenceOptions = RecurrenceOptions(
+      endChoice: predefinedRecurrenceEndChoices.last,
+      recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
+      context: context,
+    );
   }
 
   @override
@@ -286,6 +290,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           if (_isRecurring) ...<Widget>[
             buildWeekDayPicker(),
             buildUntilPicker(),
+            buildIntervalPicker(),
           ],
           const SizedBox(height: 10),
           Button.submit(
@@ -324,6 +329,60 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         }),
         child: Text(weekDay.getAbbreviation(context)),
       ),
+    );
+  }
+
+  Widget buildIntervalPicker() {
+    final Widget intervalSizeField = TextFormField(
+      decoration: const InputDecoration(border: OutlineInputBorder()),
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+      controller: _recurrenceOptions.recurrenceIntervalSizeController,
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a value';
+        }
+        if (int.tryParse(value)! <= 0) {
+          return 'Please enter a positive value';
+        }
+        return null;
+      },
+      onChanged: (String value) {
+        setState(() {
+          _recurrenceOptions.recurrenceInterval.intervalSize = int.tryParse(value);
+        });
+      },
+    );
+
+    final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
+      initialValue: _recurrenceOptions.recurrenceInterval.intervalType,
+      onSelected: (RecurrenceIntervalType value) => setState(
+        () => _recurrenceOptions.setRecurrenceIntervalType(value, context),
+      ),
+      itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
+          .map(
+            (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
+              value: intervalType,
+              child: Text(intervalType.getName(context)),
+            ),
+          )
+          .toList(),
+      child: AbsorbPointer(
+        child: TextFormField(
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+          readOnly: true,
+          controller: _recurrenceOptions.recurrenceIntervalTypeController,
+        ),
+      ),
+    );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const Text('Every '),
+        SizedBox(width: 80, child: intervalSizeField),
+        SizedBox(width: 120, child: intervalTypeField),
+      ],
     );
   }
 
@@ -383,7 +442,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             enabled: currentlySelected,
                             onTap: () => showDatePicker(
                               context: context,
-                              initialDate: _recurrenceOptions.customDateChoice.date ?? DateTime.now(),
+                              initialDate: _recurrenceOptions.customEndDateChoice.date ?? DateTime.now(),
                               firstDate: DateTime.now(),
                               lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
                             ).then((DateTime? value) {
@@ -393,7 +452,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                                 });
                               }
                             }),
-                            controller: _recurrenceOptions.customDateController,
+                            controller: _recurrenceOptions.customEndDateController,
                           );
 
                           row = Row(
@@ -415,23 +474,23 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                             enabled: currentlySelected,
-                            controller: _recurrenceOptions.customIntervalSizeController,
+                            controller: _recurrenceOptions.customEndIntervalSizeController,
                             onChanged: (String value) {
                               setState(() {
-                                _recurrenceOptions.customIntervalChoice.intervalSize = int.tryParse(value);
+                                _recurrenceOptions.customEndIntervalChoice.intervalSize = int.tryParse(value);
                               });
                             },
                           );
 
-                          final Widget intervalTypeField = PopupMenuButton<RecurrenceEndIntervalType>(
-                            initialValue: _recurrenceOptions.customIntervalChoice.intervalType,
-                            onSelected: (RecurrenceEndIntervalType value) => innerSetState(
-                              () => _recurrenceOptions.setCustomIntervalType(value, context),
+                          final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
+                            initialValue: _recurrenceOptions.customEndIntervalChoice.intervalType,
+                            onSelected: (RecurrenceIntervalType value) => innerSetState(
+                              () => _recurrenceOptions.setCustomEndIntervalType(value, context),
                             ),
                             enabled: currentlySelected,
-                            itemBuilder: (BuildContext context) => RecurrenceEndIntervalType.values
+                            itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
                                 .map(
-                                  (RecurrenceEndIntervalType intervalType) => PopupMenuItem<RecurrenceEndIntervalType>(
+                                  (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
                                     value: intervalType,
                                     child: Text(intervalType.getName(context)),
                                   ),
@@ -448,7 +507,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                                 ),
                                 enabled: currentlySelected,
                                 readOnly: true,
-                                controller: _recurrenceOptions.customIntervalTypeController,
+                                controller: _recurrenceOptions.customEndIntervalTypeController,
                               ),
                             ),
                           );
@@ -473,10 +532,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                             enabled: currentlySelected,
-                            controller: _recurrenceOptions.customOccurrenceController,
+                            controller: _recurrenceOptions.customEndOccurrenceController,
                             onChanged: (String value) {
                               setState(() {
-                                _recurrenceOptions.customOccurrenceChoice.occurrences = int.tryParse(value);
+                                _recurrenceOptions.customEndOccurrenceChoice.occurrences = int.tryParse(value);
                               });
                             },
                           );
@@ -544,45 +603,49 @@ class RecurrenceOptions {
     _endChoice = value;
     if (value.isCustom) {
       if (value is RecurrenceEndChoiceDate) {
-        customDateChoice = value;
+        customEndDateChoice = value;
       } else if (value is RecurrenceEndChoiceInterval) {
-        customIntervalChoice = value;
+        customEndIntervalChoice = value;
       } else if (value is RecurrenceEndChoiceOccurrence) {
-        customOccurrenceChoice = value;
+        customEndOccurrenceChoice = value;
       }
     }
   }
 
   late final List<WeekDay> weekDays;
 
-  RecurrenceEndChoiceDate customDateChoice = RecurrenceEndChoiceDate(null, isCustom: true);
-  final TextEditingController customDateController = TextEditingController();
+  late RecurrenceInterval recurrenceInterval;
+  final TextEditingController recurrenceIntervalSizeController = TextEditingController();
+  final TextEditingController recurrenceIntervalTypeController = TextEditingController();
+
+  void setRecurrenceIntervalType(RecurrenceIntervalType type, BuildContext context) {
+    recurrenceInterval.intervalType = type;
+    recurrenceIntervalTypeController.text = type.getName(context);
+  }
+
+  RecurrenceEndChoiceDate customEndDateChoice = RecurrenceEndChoiceDate(null, isCustom: true);
+  final TextEditingController customEndDateController = TextEditingController();
 
   void setCustomDate(DateTime date) {
-    customDateChoice.date = date;
-    customDateController.text = localeManager.formatDate(date);
+    customEndDateChoice.date = date;
+    customEndDateController.text = localeManager.formatDate(date);
   }
 
-  RecurrenceEndChoiceInterval customIntervalChoice = RecurrenceEndChoiceInterval(null, null, isCustom: true);
-  final TextEditingController customIntervalSizeController = TextEditingController();
-  final TextEditingController customIntervalTypeController = TextEditingController();
+  RecurrenceEndChoiceInterval customEndIntervalChoice = RecurrenceEndChoiceInterval(null, null, isCustom: true);
+  final TextEditingController customEndIntervalSizeController = TextEditingController();
+  final TextEditingController customEndIntervalTypeController = TextEditingController();
 
-  void setCustomIntervalSize(int size) {
-    customIntervalChoice.intervalSize = size;
-    customIntervalSizeController.text = size.toString();
+  void setCustomEndIntervalType(RecurrenceIntervalType type, BuildContext context) {
+    customEndIntervalChoice.intervalType = type;
+    customEndIntervalTypeController.text = type.getName(context);
   }
 
-  void setCustomIntervalType(RecurrenceEndIntervalType type, BuildContext context) {
-    customIntervalChoice.intervalType = type;
-    customIntervalTypeController.text = type.getName(context);
-  }
+  RecurrenceEndChoiceOccurrence customEndOccurrenceChoice = RecurrenceEndChoiceOccurrence(null, isCustom: true);
+  final TextEditingController customEndOccurrenceController = TextEditingController();
 
-  RecurrenceEndChoiceOccurrence customOccurrenceChoice = RecurrenceEndChoiceOccurrence(null, isCustom: true);
-  final TextEditingController customOccurrenceController = TextEditingController();
-
-  void setCustomOccurrence(int occurrence) {
-    customOccurrenceChoice.occurrences = occurrence;
-    customOccurrenceController.text = occurrence.toString();
+  void setCustomEndOccurrence(int occurrence) {
+    customEndOccurrenceChoice.occurrences = occurrence;
+    customEndOccurrenceController.text = occurrence.toString();
   }
 
   String? validationError;
@@ -590,26 +653,35 @@ class RecurrenceOptions {
   RecurrenceEndChoice getRecurrenceEndChoice(RecurrenceEndType type) {
     switch (type) {
       case RecurrenceEndType.date:
-        return customDateChoice;
+        return customEndDateChoice;
       case RecurrenceEndType.interval:
-        return customIntervalChoice;
+        return customEndIntervalChoice;
       case RecurrenceEndType.occurrence:
-        return customOccurrenceChoice;
+        return customEndOccurrenceChoice;
     }
   }
 
   String getEndChoiceName(BuildContext context) => endChoice.getName(context, weekDays: weekDays);
 
-  RecurrenceOptions({required RecurrenceEndChoice endChoice, List<WeekDay>? weekDays}) {
+  RecurrenceOptions({
+    required RecurrenceEndChoice endChoice,
+    required this.recurrenceInterval,
+    List<WeekDay>? weekDays,
+    required BuildContext context,
+  }) {
     _endChoice = endChoice;
+    recurrenceIntervalSizeController.text = recurrenceInterval.intervalSize.toString();
+    recurrenceIntervalTypeController.text = recurrenceInterval.intervalType!.getName(context);
     this.weekDays = weekDays ?? <WeekDay>[];
   }
 
   void dispose() {
-    customDateController.dispose();
-    customIntervalSizeController.dispose();
-    customIntervalTypeController.dispose();
-    customOccurrenceController.dispose();
+    recurrenceIntervalSizeController.dispose();
+    recurrenceIntervalTypeController.dispose();
+    customEndDateController.dispose();
+    customEndIntervalSizeController.dispose();
+    customEndIntervalTypeController.dispose();
+    customEndOccurrenceController.dispose();
   }
 
   bool validate() {
@@ -623,6 +695,35 @@ class RecurrenceOptions {
     // TODO: implement recurrenceRule
     throw UnimplementedError();
   }
+}
+
+class RecurrenceInterval {
+  int? intervalSize;
+  RecurrenceIntervalType? intervalType;
+
+  RecurrenceInterval(this.intervalSize, this.intervalType);
+
+  String getName(BuildContext context, {List<WeekDay>? weekDays}) {
+    final String? validationError = validate();
+    if (validationError != null) return validationError;
+
+    switch (intervalType!) {
+      case RecurrenceIntervalType.days:
+        return 'Every $intervalSize ${intervalSize == 1 ? 'day' : 'days'}';
+      case RecurrenceIntervalType.weeks:
+        return 'Every $intervalSize ${intervalSize == 1 ? 'week' : 'weeks'}';
+      case RecurrenceIntervalType.months:
+        return 'Every $intervalSize ${intervalSize == 1 ? 'month' : 'months'}';
+      case RecurrenceIntervalType.years:
+        return 'Every $intervalSize ${intervalSize == 1 ? 'year' : 'years'}';
+    }
+  }
+
+  String? validate() => intervalSize == null
+      ? 'Interval size needed'
+      : intervalType == null
+          ? 'Interval type needed'
+          : null;
 }
 
 abstract class RecurrenceEndChoice {
@@ -680,7 +781,7 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
 
 class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   int? intervalSize;
-  RecurrenceEndIntervalType? intervalType;
+  RecurrenceIntervalType? intervalType;
 
   RecurrenceEndChoiceInterval(this.intervalSize, this.intervalType, {super.isCustom})
       : assert((intervalSize != null && intervalType != null) || isCustom),
@@ -690,14 +791,14 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   DateTime getEndDate({List<WeekDay>? weekDays}) {
     final DateTime now = DateTime.now();
     switch (intervalType!) {
-      case RecurrenceEndIntervalType.days:
+      case RecurrenceIntervalType.days:
         return now.add(Duration(days: intervalSize!));
-      case RecurrenceEndIntervalType.weeks:
+      case RecurrenceIntervalType.weeks:
         return now.add(Duration(days: intervalSize! * 7));
-      case RecurrenceEndIntervalType.months:
+      case RecurrenceIntervalType.months:
         final int nextMonth = now.month + intervalSize!;
         return DateTime(now.year + (nextMonth + 1) ~/ 12, (nextMonth + 1) % 12 - 1, now.day);
-      case RecurrenceEndIntervalType.years:
+      case RecurrenceIntervalType.years:
         return DateTime(now.year + intervalSize!, now.month, now.day);
     }
   }
@@ -713,13 +814,13 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
     if (validationError != null) return validationError;
 
     switch (intervalType!) {
-      case RecurrenceEndIntervalType.days:
+      case RecurrenceIntervalType.days:
         return 'For $intervalSize ${intervalSize == 1 ? 'day' : 'days'}';
-      case RecurrenceEndIntervalType.weeks:
+      case RecurrenceIntervalType.weeks:
         return 'For $intervalSize ${intervalSize == 1 ? 'week' : 'weeks'}';
-      case RecurrenceEndIntervalType.months:
+      case RecurrenceIntervalType.months:
         return 'For $intervalSize ${intervalSize == 1 ? 'month' : 'months'}';
-      case RecurrenceEndIntervalType.years:
+      case RecurrenceIntervalType.years:
         return 'For $intervalSize ${intervalSize == 1 ? 'year' : 'years'}';
     }
   }
@@ -742,18 +843,18 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   int get hashCode => isCustom.hashCode ^ intervalSize.hashCode ^ intervalType.hashCode;
 }
 
-enum RecurrenceEndIntervalType { days, weeks, months, years }
+enum RecurrenceIntervalType { days, weeks, months, years }
 
-extension RecurrenceEndIntervalTypeExtension on RecurrenceEndIntervalType {
+extension RecurrenceEndIntervalTypeExtension on RecurrenceIntervalType {
   String getName(BuildContext context) {
     switch (this) {
-      case RecurrenceEndIntervalType.days:
+      case RecurrenceIntervalType.days:
         return 'Days';
-      case RecurrenceEndIntervalType.weeks:
+      case RecurrenceIntervalType.weeks:
         return 'Weeks';
-      case RecurrenceEndIntervalType.months:
+      case RecurrenceIntervalType.months:
         return 'Months';
-      case RecurrenceEndIntervalType.years:
+      case RecurrenceIntervalType.years:
         return 'Years';
     }
   }
@@ -775,8 +876,6 @@ class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
 
   @override
   DateTime getEndDate({List<WeekDay>? weekDays}) {
-    //assert(weekDays != null);
-
     final RecurrenceRule recurrenceRule = RecurrenceRule(
       frequency: Frequency.weekly,
       interval: 1,
