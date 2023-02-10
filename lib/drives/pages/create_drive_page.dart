@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
+import '../../util/buttons/labeled_checkbox.dart';
 import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
@@ -13,6 +14,7 @@ import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 import '../models/drive.dart';
+import '../models/recurring_drive.dart';
 import '../pages/drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
@@ -56,11 +58,16 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   late DateTime _selectedDate;
   late int _seats;
 
+  late bool _isRecurring;
+  late List<WeekDay> _weekDays;
+
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
     _seats = 1;
+    _isRecurring = false;
+    _weekDays = <WeekDay>[];
   }
 
   @override
@@ -258,12 +265,51 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               },
             ),
           ),
+          LabeledCheckbox(
+            label: 'Recurring',
+            value: _isRecurring,
+            onChanged: (bool? value) => setState(() {
+              _isRecurring = value!;
+            }),
+          ),
+          if (_isRecurring) ...<Widget>[
+            buildWeekDayPicker(),
+          ],
           const SizedBox(height: 10),
           Button.submit(
             S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildWeekDayPicker() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: WeekDay.values.map((WeekDay weekDay) => buildWeekDayButton(weekDay)).toList(),
+    );
+  }
+
+  Widget buildWeekDayButton(WeekDay weekDay) {
+    return Semantics(
+      button: true,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(),
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromRadius(15),
+          backgroundColor: _weekDays.contains(weekDay) ? Theme.of(context).colorScheme.primary : Colors.grey,
+        ),
+        onPressed: () => setState(() {
+          if (_weekDays.contains(weekDay)) {
+            _weekDays.remove(weekDay);
+          } else {
+            _weekDays.add(weekDay);
+          }
+        }),
+        child: Text(weekDay.getAbbreviation(context)),
       ),
     );
   }
