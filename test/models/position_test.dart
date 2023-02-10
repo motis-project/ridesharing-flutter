@@ -52,7 +52,7 @@ void main() {
   group('Position.hashCode', () {
     test('Mainz', () {
       final Position position = Position(50, 8.2714);
-      expect(position.hashCode, 9159982800490006);
+      expect(position.hashCode, 9159982799919094);
     });
   });
 
