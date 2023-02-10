@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:rrule/rrule.dart';
 
@@ -106,28 +105,5 @@ class RecurringDrive extends TripLike {
 extension TimeOfDayExtension on TimeOfDay {
   String get formatted {
     return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00';
-  }
-}
-
-enum WeekDay { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
-
-extension WeekDayExtension on WeekDay {
-  String getAbbreviation(BuildContext context) {
-    switch (this) {
-      case WeekDay.monday:
-        return S.of(context).weekDayMondayAbbreviation;
-      case WeekDay.tuesday:
-        return S.of(context).weekDayTuesdayAbbreviation;
-      case WeekDay.wednesday:
-        return S.of(context).weekDayWednesdayAbbreviation;
-      case WeekDay.thursday:
-        return S.of(context).weekDayThursdayAbbreviation;
-      case WeekDay.friday:
-        return S.of(context).weekDayFridayAbbreviation;
-      case WeekDay.saturday:
-        return S.of(context).weekDaySaturdayAbbreviation;
-      case WeekDay.sunday:
-        return S.of(context).weekDaySundayAbbreviation;
-    }
   }
 }
