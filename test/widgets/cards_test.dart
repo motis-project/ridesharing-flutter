@@ -421,10 +421,10 @@ void main() {
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
       });
       testWidgets('errorColor cancelled Drive', (WidgetTester tester) async {
-        //cancelld drive in the future
+        //cancelled drive in the future
         drive = DriveFactory().generateFake(
           endTime: DateTime.now().add(const Duration(hours: 1)),
-          cancelled: true,
+          status: DriveStatus.cancelledByDriver,
         );
         await loadDriveCard(tester, drive);
 

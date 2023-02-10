@@ -9,7 +9,7 @@ import '../../util/trip/trip.dart';
 import 'recurring_drive.dart';
 
 class Drive extends Trip {
-  bool cancelled;
+  DriveStatus status;
 
   final int driverId;
   final Profile? driver;
@@ -29,7 +29,7 @@ class Drive extends Trip {
     required super.endPosition,
     required super.endTime,
     required super.seats,
-    this.cancelled = false,
+    this.status = DriveStatus.plannedOrFinished,
     super.hideInListView,
     required this.driverId,
     this.driver,
@@ -50,7 +50,7 @@ class Drive extends Trip {
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
       endTime: DateTime.parse(json['end_time'] as String),
       seats: json['seats'] as int,
-      cancelled: json['cancelled'] as bool,
+      status: DriveStatus.values[json['status'] as int],
       hideInListView: json['hide_in_list_view'] as bool,
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
@@ -70,7 +70,7 @@ class Drive extends Trip {
   Map<String, dynamic> toJson() {
     return super.toJson()
       ..addAll(<String, dynamic>{
-        'cancelled': cancelled,
+        'status': status.index,
         'driver_id': driverId,
         'recurring_drive_id': recurringDriveId,
       });
@@ -98,7 +98,7 @@ class Drive extends Trip {
         .select<List<Map<String, dynamic>>>()
         .eq('driver_id', userId);
     List<Drive> drives = Drive.fromJsonList(data);
-    drives = drives.where((Drive drive) => !drive.cancelled && !drive.isFinished).toList();
+    drives = drives.where((Drive drive) => !drive.status.isCancelled() && !drive.isFinished).toList();
 
     //check if drive overlaps with start and end
     for (final Drive drive in drives) {
@@ -160,8 +160,8 @@ class Drive extends Trip {
   }
 
   Future<void> cancel() async {
-    cancelled = true;
-    await supabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'cancelled': true}).eq('id', id);
+    status = DriveStatus.cancelledByDriver;
+    await supabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'status': status.index}).eq('id', id);
     //the rides get updated automatically by a supabase function.
   }
 
@@ -178,6 +178,14 @@ class Drive extends Trip {
   bool equals(Trip other) {
     if (other is! Drive) return false;
     final Drive drive = other;
-    return super.equals(other) && cancelled == drive.cancelled && driverId == drive.driverId;
+    return super.equals(other) && status == drive.status && driverId == drive.driverId;
+  }
+}
+
+enum DriveStatus { plannedOrFinished, cancelledByDriver, cancelledByRecurrenceRule }
+
+extension DriveStatusExtension on DriveStatus {
+  bool isCancelled() {
+    return this == DriveStatus.cancelledByDriver || this == DriveStatus.cancelledByRecurrenceRule;
   }
 }

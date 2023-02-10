@@ -79,7 +79,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     } else if (_drive.endTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {
-      if (_drive.cancelled) {
+      if (_drive.status.isCancelled()) {
         return Theme.of(context).colorScheme.error;
       } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
@@ -93,7 +93,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_drive.cancelled) {
+    if (_drive.status.isCancelled()) {
       return disabledDecoration;
     }
 

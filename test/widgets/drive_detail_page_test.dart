@@ -80,15 +80,16 @@ void main() {
       );
     });
 
-    group('Shows cancel/hide button depending on circumstances', () {
-      testWidgets('Shows cancel when ride is upcoming', (WidgetTester tester) async {
+    group('Shows button and banner depending on circumstances', () {
+      testWidgets('Shows cancel button when ride is upcoming', (WidgetTester tester) async {
         await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
         await tester.pump();
 
         expect(find.byKey(const Key('cancelDriveButton')), findsOneWidget);
         expect(find.byKey(const Key('hideDriveButton')), findsNothing);
       });
-      testWidgets('Shows hide when drive is finished', (WidgetTester tester) async {
+
+      testWidgets('Shows hide button when drive is finished', (WidgetTester tester) async {
         final Drive finishedDrive = DriveFactory().generateFake(
           startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
           endTime: DateTime.now().subtract(const Duration(days: 1)),
@@ -100,8 +101,9 @@ void main() {
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
         expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
       });
-      testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
-        final Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
+
+      testWidgets('Shows hide button and banner when drive is cancelledByDriver', (WidgetTester tester) async {
+        final Drive cancelledDrive = DriveFactory().generateFake(status: DriveStatus.cancelledByDriver);
 
         whenRequest(processor).thenReturnJson(cancelledDrive.toJsonForApi());
 
@@ -109,6 +111,21 @@ void main() {
         await tester.pump();
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
         expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+
+        expect(find.byKey(const Key('cancelledByDriverDriveBanner')), findsOneWidget);
+      });
+
+      testWidgets('Shows hide button and banner when drive is cancelledByRecurrenceRule', (WidgetTester tester) async {
+        final Drive cancelledDrive = DriveFactory().generateFake(status: DriveStatus.cancelledByRecurrenceRule);
+
+        whenRequest(processor).thenReturnJson(cancelledDrive.toJsonForApi());
+
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
+        await tester.pump();
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+
+        expect(find.byKey(const Key('cancelledByRecurrenceRuleDriveBanner')), findsOneWidget);
       });
     });
 
@@ -258,10 +275,10 @@ void main() {
           processor,
           urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
           methodMatcher: equals('PATCH'),
-          bodyMatcher: equals({'cancelled': true}),
+          bodyMatcher: equals({'status': DriveStatus.cancelledByDriver.index}),
         ).called(1);
 
-        expect(find.byKey(const Key('cancelledDriveBanner')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledByDriverDriveBanner')), findsOneWidget);
       });
 
       testWidgets('Can abort cancelling drive', (WidgetTester tester) async {
@@ -280,7 +297,7 @@ void main() {
 
     group('Hiding drive', () {
       setUp(() {
-        drive = DriveFactory().generateFake(cancelled: true);
+        drive = DriveFactory().generateFake(status: DriveStatus.cancelledByDriver);
         whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 

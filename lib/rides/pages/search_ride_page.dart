@@ -109,15 +109,19 @@ class SearchRidePageState extends State<SearchRidePage> {
   Future<void> loadRides() async {
     if (_startSuggestion == null || _destinationSuggestion == null) return;
     setState(() => _loading = true);
-    final List<Map<String, dynamic>> data =
-        await supabaseManager.supabaseClient.from('drives').select<List<Map<String, dynamic>>>('''
+    final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient
+        .from('drives')
+        .select<List<Map<String, dynamic>>>('''
           *,
           driver:driver_id (
             *,
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', startController.text).eq('cancelled', false).gt('start_time', DateTime.now());
+        ''')
+        .eq('start', startController.text)
+        .eq('status', DriveStatus.plannedOrFinished)
+        .gt('start_time', DateTime.now());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         .map(

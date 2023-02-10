@@ -31,7 +31,7 @@ void main() {
         'end_lng': 5,
         'end_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
-        'cancelled': true,
+        'status': 1,
         'driver_id': 7,
         'recurring_drive_id': 8,
         'hide_in_list_view': false,
@@ -46,7 +46,7 @@ void main() {
       expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
       expect(drive.endTime, DateTime.parse(json['end_time']));
       expect(drive.seats, json['seats']);
-      expect(drive.cancelled, json['cancelled']);
+      expect(drive.status.index, json['status']);
       expect(drive.driverId, json['driver_id']);
       expect(drive.driver, null);
       expect(drive.recurringDriveId, json['recurring_drive_id']);
@@ -67,7 +67,7 @@ void main() {
         'end_lng': 5,
         'end_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
-        'cancelled': true,
+        'status': 1,
         'hide_in_list_view': false,
         'driver_id': 7,
         'driver': ProfileFactory().generateFake().toJsonForApi(),
@@ -85,7 +85,7 @@ void main() {
       expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
       expect(drive.endTime, DateTime.parse(json['end_time']));
       expect(drive.seats, json['seats']);
-      expect(drive.cancelled, json['cancelled']);
+      expect(drive.status.index, json['status']);
       expect(drive.hideInListView, json['hide_in_list_view']);
       expect(drive.driverId, json['driver_id']);
       expect(drive.driver, isNotNull);
@@ -108,7 +108,7 @@ void main() {
         'end_lng': 5,
         'end_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
-        'cancelled': true,
+        'status': 1,
         'driver_id': 7,
         'hide_in_list_view': false,
       };
@@ -136,7 +136,7 @@ void main() {
       expect(json['end_lat'], drive.endPosition.lat);
       expect(json['end_lng'], drive.endPosition.lng);
       expect(json['end_time'], drive.endTime.toString());
-      expect(json['cancelled'], drive.cancelled);
+      expect(json['status'], drive.status.index);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
       expect(json['recurring_drive_id'], drive.recurringDriveId);
@@ -417,8 +417,8 @@ void main() {
     });
   });
   group('Drive.cancel', () {
-    test('cancelled is being changed from false to true', () async {
-      final Drive drive = DriveFactory().generateFake(cancelled: false, createDependencies: false);
+    test('status is set to cancelledByDriver', () async {
+      final Drive drive = DriveFactory().generateFake(createDependencies: false);
       whenRequest(driveProcessor).thenReturnJson(drive.toJsonForApi());
       await drive.cancel();
       verifyRequest(
@@ -426,10 +426,10 @@ void main() {
         urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
         methodMatcher: equals('PATCH'),
         bodyMatcher: equals({
-          'cancelled': true,
+          'status': 1,
         }),
       );
-      expect(drive.cancelled, true);
+      expect(drive.status, DriveStatus.cancelledByDriver);
     });
   });
   group('Drive.toString', () {
@@ -460,7 +460,7 @@ void main() {
       endPosition: Position(2, 2),
       endTime: DateTime(2022, 12),
       seats: 1,
-      cancelled: false,
+      status: DriveStatus.cancelledByDriver,
       driverId: 2,
       createDependencies: false,
     );
@@ -475,7 +475,7 @@ void main() {
         endPosition: Position(2, 2),
         endTime: DateTime(2022, 12),
         seats: 1,
-        cancelled: false,
+        status: DriveStatus.cancelledByDriver,
         driverId: 2,
         createDependencies: false,
       );
@@ -497,7 +497,7 @@ void main() {
           endPosition: Position(2, 2),
           endTime: DateTime(2022, 12),
           seats: 1,
-          cancelled: i != 0,
+          status: i != 0 ? DriveStatus.plannedOrFinished : DriveStatus.cancelledByDriver,
           driverId: i == 1 ? 2 : 3,
           createDependencies: false,
         );
