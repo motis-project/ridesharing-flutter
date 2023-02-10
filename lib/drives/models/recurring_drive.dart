@@ -70,9 +70,15 @@ class RecurringDrive extends TripLike {
         'stopped_at': stoppedAt?.toString(),
         'start_time': startTime.formatted,
         'end_time': endTime.formatted,
-        'recurrence_rule': 'DTSTART:${(createdAt ?? DateTime.now()).millisecondsSinceEpoch}\n$recurrenceRule',
+        'recurrence_rule': recurrenceRuleString,
         'driver_id': driverId,
       });
+  }
+
+  String get recurrenceRuleString {
+    final DateTime createdAt = this.createdAt ?? DateTime.now();
+    final String dtStart = '${DateFormat('yyyyMMdd').format(createdAt)}T${DateFormat('HHmmss').format(createdAt)}Z';
+    return 'DTSTART:$dtStart\n$recurrenceRule';
   }
 
   @override

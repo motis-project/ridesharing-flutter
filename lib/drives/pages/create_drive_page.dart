@@ -5,7 +5,6 @@ import 'package:rrule/rrule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../account/models/profile.dart';
-import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
 import '../../util/buttons/labeled_checkbox.dart';
 import '../../util/fields/increment_field.dart';
@@ -60,7 +59,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   late DateTime _selectedDate;
   late int _seats;
 
-  late bool _isRecurring;
   late RecurrenceOptions _recurrenceOptions;
 
   static List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
@@ -76,7 +74,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     _selectedDate = DateTime.now();
     _seats = 1;
 
-    _isRecurring = false;
     _recurrenceOptions = RecurrenceOptions(
       endChoice: predefinedRecurrenceEndChoices.last,
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
@@ -142,51 +139,61 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         );
         final Profile driver = supabaseManager.currentProfile!;
 
-        final bool hasDrive =
-            await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (hasDrive && mounted) {
-          return showSnackBar(
-            context,
-            S.of(context).pageCreateDriveYouAlreadyHaveDrive,
+        if (_recurrenceOptions.enabled) {
+          final RecurringDrive recurringDrive = RecurringDrive(
+            driverId: driver.id!,
+            start: _startSuggestion.name,
+            startPosition: _startSuggestion.position,
+            end: _destinationSuggestion.name,
+            endPosition: _destinationSuggestion.position,
+            seats: _seats,
+            startTime: TimeOfDay.fromDateTime(_selectedDate),
+            endTime: TimeOfDay.fromDateTime(endTime),
+            recurrenceRule: _recurrenceOptions.recurrenceRule,
           );
-        }
+          final Map<String, dynamic> data = await supabaseManager.supabaseClient
+              .from('recurring_drives')
+              .insert(recurringDrive.toJson())
+              .select<Map<String, dynamic>>()
+              .single();
+          final RecurringDrive insertedRecurringDrive = RecurringDrive.fromJson(data);
 
-        final bool hasRide =
-            await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (hasRide && mounted) {
-          return showSnackBar(
-            context,
-            S.of(context).pageCreateDriveYouAlreadyHaveRide,
+          if (mounted) {
+            Navigator.pop(context, insertedRecurringDrive);
+            // await Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute<void>(
+            //     builder: (BuildContext context) => RecurringDriveDetailPage(insertedRecurringDrive),
+            //   ),
+            // );
+          }
+        } else {
+          final Drive drive = Drive(
+            driverId: driver.id!,
+            start: _startSuggestion.name,
+            startPosition: _startSuggestion.position,
+            end: _destinationSuggestion.name,
+            endPosition: _destinationSuggestion.position,
+            seats: _seats,
+            startTime: _selectedDate,
+            endTime: endTime,
           );
-        }
+          final Map<String, dynamic> data = await supabaseManager.supabaseClient
+              .from('drives')
+              .insert(drive.toJson())
+              .select<Map<String, dynamic>>()
+              .single();
+          final Drive insertedDrive = Drive.fromJson(data);
 
-        final Drive drive = Drive(
-          driverId: driver.id!,
-          start: _startSuggestion.name,
-          startPosition: _startSuggestion.position,
-          end: _destinationSuggestion.name,
-          endPosition: _destinationSuggestion.position,
-          seats: _seats,
-          startTime: _selectedDate,
-          endTime: endTime,
-        );
-
-        await supabaseManager.supabaseClient
-            .from('drives')
-            .insert(drive.toJson())
-            .select<Map<String, dynamic>>()
-            .single()
-            .then(
-          (Map<String, dynamic> data) {
-            final Drive drive = Drive.fromJson(data);
-            Navigator.pushReplacement(
+          if (mounted) {
+            await Navigator.pushReplacement(
               context,
               MaterialPageRoute<void>(
-                builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
+                builder: (BuildContext context) => DriveDetailPage.fromDrive(insertedDrive),
               ),
             );
-          },
-        );
+          }
+        }
       } on AuthException {
         showSnackBar(
           context,
@@ -282,12 +289,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           ),
           LabeledCheckbox(
             label: 'Recurring',
-            value: _isRecurring,
+            value: _recurrenceOptions.enabled,
             onChanged: (bool? value) => setState(() {
-              _isRecurring = value!;
+              _recurrenceOptions.enabled = value!;
             }),
           ),
-          if (_isRecurring) ...<Widget>[
+          if (_recurrenceOptions.enabled) ...<Widget>[
             buildWeekDayPicker(),
             buildUntilPicker(),
             buildIntervalPicker(),
@@ -303,32 +310,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 
   Widget buildWeekDayPicker() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: WeekDay.values.map((WeekDay weekDay) => buildWeekDayButton(weekDay)).toList(),
-    );
-  }
-
-  Widget buildWeekDayButton(WeekDay weekDay) {
-    return Semantics(
-      button: true,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromRadius(15),
-          backgroundColor:
-              _recurrenceOptions.weekDays.contains(weekDay) ? Theme.of(context).colorScheme.primary : Colors.grey,
-        ),
-        onPressed: () => setState(() {
-          if (_recurrenceOptions.weekDays.contains(weekDay)) {
-            _recurrenceOptions.weekDays.remove(weekDay);
-          } else {
-            _recurrenceOptions.weekDays.add(weekDay);
-          }
-        }),
-        child: Text(weekDay.getAbbreviation(context)),
-      ),
+    return WeekDaySelector(
+      weekDays: _recurrenceOptions.weekDays,
+      onWeekDaysChanged: (List<WeekDay> weekDays) => setState(() {
+        _recurrenceOptions.weekDays = weekDays;
+      }),
     );
   }
 
@@ -389,7 +375,10 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   Widget buildUntilPicker() {
     return InkWell(
       onTap: showRecurrenceEndDialog,
-      child: Text(_recurrenceOptions.getEndChoiceName(context)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Text(_recurrenceOptions.getEndChoiceName(context)),
+      ),
     );
   }
 
@@ -447,7 +436,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                               lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
                             ).then((DateTime? value) {
                               if (value != null) {
-                                setState(() {
+                                innerSetState(() {
                                   _recurrenceOptions.setCustomDate(value);
                                 });
                               }
@@ -476,7 +465,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             enabled: currentlySelected,
                             controller: _recurrenceOptions.customEndIntervalSizeController,
                             onChanged: (String value) {
-                              setState(() {
+                              innerSetState(() {
                                 _recurrenceOptions.customEndIntervalChoice.intervalSize = int.tryParse(value);
                               });
                             },
@@ -534,7 +523,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             enabled: currentlySelected,
                             controller: _recurrenceOptions.customEndOccurrenceController,
                             onChanged: (String value) {
-                              setState(() {
+                              innerSetState(() {
                                 _recurrenceOptions.customEndOccurrenceChoice.occurrences = int.tryParse(value);
                               });
                             },
@@ -562,11 +551,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   },
                 ),
                 const SizedBox(height: 20),
-                if (_recurrenceOptions.validate())
-                  Text(
-                    'This drive will be repeated until ${localeManager.formatDate(_recurrenceOptions.getEndDate())}',
-                  )
-                else
+                if (!_recurrenceOptions.validate(createError: false) && _recurrenceOptions.validationError != null)
                   Text(
                     'Please select a valid recurrence end option: ${_recurrenceOptions.validationError}',
                     style: const TextStyle(color: Colors.red),
@@ -578,9 +563,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                 key: const Key('okButtonRecurrenceEndDialog'),
                 child: Text(S.of(context).okay),
                 onPressed: () {
-                  setState(() {
+                  innerSetState(() {
                     final bool valid = _recurrenceOptions.validate();
                     if (valid) {
+                      // Update the recurrence options in the parent widget
+                      setState(() {});
                       Navigator.of(context).pop();
                     }
                   });
@@ -594,7 +581,90 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   }
 }
 
+class WeekDaySelector extends FormField<List<WeekDay>> {
+  final List<WeekDay> weekDays;
+  final ValueChanged<List<WeekDay>> onWeekDaysChanged;
+
+  WeekDaySelector({
+    super.key,
+    this.weekDays = const <WeekDay>[],
+    required this.onWeekDaysChanged,
+  }) : super(
+          builder: (FormFieldState<List<WeekDay>> state) {
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: WeekDay.values
+                      .map(
+                        (WeekDay weekDay) => WeekDayButton(
+                          weekDay: weekDay,
+                          selected: weekDays.contains(weekDay),
+                          onPressed: () {
+                            if (weekDays.contains(weekDay)) {
+                              weekDays.remove(weekDay);
+                            } else {
+                              weekDays.add(weekDay);
+                            }
+                            state.didChange(weekDays);
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+              ],
+            );
+          },
+          validator: (List<WeekDay>? value) {
+            if (value == null || value.isEmpty) {
+              return 'Please select at least one day';
+            }
+            return null;
+          },
+        );
+}
+
+class WeekDayButton extends StatelessWidget {
+  const WeekDayButton({
+    super.key,
+    required this.weekDay,
+    required this.onPressed,
+    required this.selected,
+  });
+
+  final WeekDay weekDay;
+  final VoidCallback onPressed;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(),
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromRadius(15),
+          backgroundColor: selected ? Theme.of(context).colorScheme.primary : Colors.grey,
+        ),
+        onPressed: onPressed,
+        child: Text(weekDay.getAbbreviation(context)),
+      ),
+    );
+  }
+}
+
 class RecurrenceOptions {
+  bool enabled = false;
+
   late RecurrenceEndChoice _endChoice;
 
   RecurrenceEndChoice get endChoice => _endChoice;
@@ -671,7 +741,7 @@ class RecurrenceOptions {
   }) {
     _endChoice = endChoice;
     recurrenceIntervalSizeController.text = recurrenceInterval.intervalSize.toString();
-    recurrenceIntervalTypeController.text = recurrenceInterval.intervalType!.getName(context);
+    recurrenceIntervalTypeController.text = recurrenceInterval.intervalType.getName(context);
     this.weekDays = weekDays ?? <WeekDay>[];
   }
 
@@ -684,22 +754,46 @@ class RecurrenceOptions {
     customEndOccurrenceController.dispose();
   }
 
-  bool validate() {
-    validationError = endChoice.validate(weekDays: weekDays);
-    return validationError == null;
+  bool validate({bool createError = true}) {
+    final String? error = endChoice.validate(weekDays: weekDays);
+    if (createError || error == null) {
+      validationError = error;
+    }
+    return error == null;
   }
 
-  DateTime getEndDate() => endChoice.getEndDate(weekDays: weekDays);
+  RecurrenceRule get recurrenceRule {
+    final Frequency frequency = recurrenceInterval.intervalType.frequency;
+    final int interval = recurrenceInterval.intervalSize!;
+    final Set<ByWeekDayEntry> byWeekDays = weekDays.map((WeekDay weekDay) => ByWeekDayEntry(weekDay.index + 1)).toSet();
 
-  String get recurrenceRule {
-    // TODO: implement recurrenceRule
-    throw UnimplementedError();
+    DateTime? until;
+
+    if (_endChoice.type == RecurrenceEndType.date) {
+      until = (endChoice as RecurrenceEndChoiceDate).date;
+    } else if (_endChoice.type == RecurrenceEndType.interval) {
+      until = (endChoice as RecurrenceEndChoiceInterval).date;
+    } else if (_endChoice.type == RecurrenceEndType.occurrence) {
+      return RecurrenceRule(
+        frequency: frequency,
+        interval: interval,
+        byWeekDays: byWeekDays,
+        count: (endChoice as RecurrenceEndChoiceOccurrence).occurrences,
+      );
+    }
+
+    return RecurrenceRule(
+      frequency: frequency,
+      interval: interval,
+      byWeekDays: byWeekDays,
+      until: until!.toUtc(),
+    );
   }
 }
 
 class RecurrenceInterval {
   int? intervalSize;
-  RecurrenceIntervalType? intervalType;
+  RecurrenceIntervalType intervalType;
 
   RecurrenceInterval(this.intervalSize, this.intervalType);
 
@@ -707,7 +801,7 @@ class RecurrenceInterval {
     final String? validationError = validate();
     if (validationError != null) return validationError;
 
-    switch (intervalType!) {
+    switch (intervalType) {
       case RecurrenceIntervalType.days:
         return 'Every $intervalSize ${intervalSize == 1 ? 'day' : 'days'}';
       case RecurrenceIntervalType.weeks:
@@ -719,11 +813,7 @@ class RecurrenceInterval {
     }
   }
 
-  String? validate() => intervalSize == null
-      ? 'Interval size needed'
-      : intervalType == null
-          ? 'Interval type needed'
-          : null;
+  String? validate() => intervalSize == null ? 'Interval size needed' : null;
 }
 
 abstract class RecurrenceEndChoice {
@@ -732,11 +822,7 @@ abstract class RecurrenceEndChoice {
 
   RecurrenceEndChoice({this.type = RecurrenceEndType.occurrence, this.isCustom = false});
 
-  String get partForRecurrenceRule;
-
   String getName(BuildContext context, {List<WeekDay>? weekDays});
-
-  DateTime getEndDate({List<WeekDay>? weekDays});
 
   @override
   bool operator ==(Object other) =>
@@ -745,10 +831,7 @@ abstract class RecurrenceEndChoice {
   @override
   int get hashCode => type.hashCode ^ isCustom.hashCode;
 
-  String? validate({List<WeekDay>? weekDays}) =>
-      getEndDate(weekDays: weekDays).isBefore(DateTime.now().add(const Duration(days: 365 * 10)))
-          ? null
-          : 'Invalid date';
+  String? validate({List<WeekDay>? weekDays});
 }
 
 class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
@@ -759,14 +842,8 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.date);
 
   @override
-  String get partForRecurrenceRule => 'UNTIL=${date!.toUtc().toIso8601String()}';
-
-  @override
   String getName(BuildContext context, {List<WeekDay>? weekDays}) =>
       validate(weekDays: weekDays) ?? 'Until ${localeManager.formatDate(date!)}';
-
-  @override
-  DateTime getEndDate({List<WeekDay>? weekDays}) => date!;
 
   @override
   bool operator ==(Object other) =>
@@ -776,7 +853,11 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
   int get hashCode => isCustom.hashCode ^ date.hashCode;
 
   @override
-  String? validate({List<WeekDay>? weekDays}) => date == null ? 'Date needed' : super.validate(weekDays: weekDays);
+  String? validate({List<WeekDay>? weekDays}) => date == null
+      ? 'Date needed'
+      : date!.isAfter(DateTime.now().add(const Duration(days: 10 * 365)))
+          ? 'Date too far in the future'
+          : null;
 }
 
 class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
@@ -787,8 +868,7 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
       : assert((intervalSize != null && intervalType != null) || isCustom),
         super(type: RecurrenceEndType.interval);
 
-  @override
-  DateTime getEndDate({List<WeekDay>? weekDays}) {
+  DateTime get date {
     final DateTime now = DateTime.now();
     switch (intervalType!) {
       case RecurrenceIntervalType.days:
@@ -801,11 +881,6 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
       case RecurrenceIntervalType.years:
         return DateTime(now.year + intervalSize!, now.month, now.day);
     }
-  }
-
-  @override
-  String get partForRecurrenceRule {
-    return 'UNTIL=${getEndDate().toIso8601String()}';
   }
 
   @override
@@ -826,11 +901,14 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   }
 
   @override
-  String? validate({List<WeekDay>? weekDays}) => intervalSize == null
-      ? 'Interval size needed'
-      : intervalType == null
-          ? 'Interval type needed'
-          : super.validate(weekDays: weekDays);
+  String? validate({List<WeekDay>? weekDays}) {
+    if (intervalSize == null) return 'Interval size needed';
+    if (intervalType == null) return 'Interval type needed';
+    if (intervalSize! >= 100) return 'Interval too large';
+    if (intervalSize! <= 0) return 'Interval is negative';
+    if (intervalType == RecurrenceIntervalType.years && intervalSize! > 10) return 'Interval too large';
+    return null;
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -858,6 +936,19 @@ extension RecurrenceEndIntervalTypeExtension on RecurrenceIntervalType {
         return 'Years';
     }
   }
+
+  Frequency get frequency {
+    switch (this) {
+      case RecurrenceIntervalType.days:
+        return Frequency.daily;
+      case RecurrenceIntervalType.weeks:
+        return Frequency.weekly;
+      case RecurrenceIntervalType.months:
+        return Frequency.monthly;
+      case RecurrenceIntervalType.years:
+        return Frequency.yearly;
+    }
+  }
 }
 
 class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
@@ -868,27 +959,15 @@ class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.occurrence);
 
   @override
-  String get partForRecurrenceRule => 'COUNT=$occurrences';
-
-  @override
   String getName(BuildContext context, {List<WeekDay>? weekDays}) =>
       validate(weekDays: weekDays) ?? 'After $occurrences ${occurrences == 1 ? 'occurrence' : 'occurrences'}';
 
   @override
-  DateTime getEndDate({List<WeekDay>? weekDays}) {
-    final RecurrenceRule recurrenceRule = RecurrenceRule(
-      frequency: Frequency.weekly,
-      interval: 1,
-      byWeekDays: weekDays!.map((WeekDay weekDay) => ByWeekDayEntry(weekDay.index)).toSet(),
-      count: occurrences,
-    );
-
-    return recurrenceRule.getAllInstances(start: DateTime.now().toUtc()).last;
-  }
-
-  @override
-  String? validate({List<WeekDay>? weekDays}) =>
-      occurrences == null ? 'Occurrences needed' : super.validate(weekDays: weekDays);
+  String? validate({List<WeekDay>? weekDays}) => occurrences == null
+      ? 'Occurrences needed'
+      : occurrences! >= 100
+          ? 'Too many occurrences'
+          : null;
 
   @override
   bool operator ==(Object other) =>
