@@ -684,18 +684,20 @@ void main() {
         ];
 
         //I am setting the duration and positions here because default Dart sort isn't stable and I want indices to work
-        final List<Drive> drives = drivers
-            .map((Profile driver) => DriveFactory().generateFake(
-                startTime: startTime,
-                endTime: startTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
-                startPosition: Position(0, 0),
-                endPosition: Position(0, 0),
-                driver: NullableParameter(driver)))
-            .toList();
-        final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
+        final Map<Profile, Drive> drives = Map.fromIterables(
+            drivers,
+            drivers
+                .map((Profile driver) => DriveFactory().generateFake(
+                    startTime: startTime,
+                    endTime: startTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
+                    startPosition: Position(0, 0),
+                    endPosition: Position(0, 0),
+                    driver: NullableParameter(driver)))
+                .toList());
+        final List<Map<String, dynamic>> driveJsons = drives.values.map((Drive drive) => drive.toJsonForApi()).toList();
 
         whenRequest(processor).thenReturnJson(driveJsons);
-        for (final Drive drive in drives) {
+        for (final Drive drive in drives.values) {
           whenRequest(processor, urlMatcher: matches(RegExp('/rest/v1/drives.*id=eq.${drive.id}')))
               .thenReturnJson(drive.toJsonForApi());
         }
@@ -706,7 +708,6 @@ void main() {
 
         await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
 
-        //Only ratings, shows 3 drives: Satisfies everything, no ratings, not enough features
         await enterFilter(
           tester,
           rating: minRating,
@@ -718,21 +719,19 @@ void main() {
 
         List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(3));
-        expect(filteredRides[0].driveId, drives[0].id);
-        expect(filteredRides[1].driveId, drives[3].id);
-        expect(filteredRides[2].driveId, drives[4].id);
+        expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
+        expect(filteredRides[1].driveId, drives[noRatings]!.id);
+        expect(filteredRides[2].driveId, drives[notEnoughFeatures]!.id);
 
-        //Only filters, shows 4 drives: Satisfies everything, not enough category ratings, not enough overall rating, no ratings
         await enterFilter(tester, features: requiredFeatures);
 
         filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(4));
-        expect(filteredRides[0].driveId, drives[0].id);
-        expect(filteredRides[1].driveId, drives[1].id);
-        expect(filteredRides[2].driveId, drives[2].id);
-        expect(filteredRides[3].driveId, drives[3].id);
+        expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
+        expect(filteredRides[1].driveId, drives[notEnoughCategoryRating]!.id);
+        expect(filteredRides[2].driveId, drives[notEnoughOverallRating]!.id);
+        expect(filteredRides[3].driveId, drives[noRatings]!.id);
 
-        //Ratings and features, shows 2 drives: Satisfies everything, no ratings
         await enterFilter(
           tester,
           rating: minRating,
@@ -745,8 +744,8 @@ void main() {
 
         filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
         expect(filteredRides, hasLength(2));
-        expect(filteredRides[0].driveId, drives[0].id);
-        expect(filteredRides[1].driveId, drives[3].id);
+        expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
+        expect(filteredRides[1].driveId, drives[noRatings]!.id);
       });
 
       group('Sort', () {
