@@ -34,7 +34,7 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                 ),
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
                       state.errorText!,
                       style: const TextStyle(color: Colors.red),
@@ -43,8 +43,8 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
               ],
             );
           },
-          validator: (List<WeekDay>? value) {
-            if (value == null || value.isEmpty) {
+          validator: (List<WeekDay>? _) {
+            if (weekDays.isEmpty) {
               return 'Please select at least one day';
             }
             return null;
