@@ -196,7 +196,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       widgets.add(const SizedBox(height: 10));
       Widget bottomButton;
-      if (_drive!.isFinished || _drive!.cancelled) {
+      if (_drive!.isFinished || _drive!.status.isCancelled()) {
         bottomButton = Button.error(
           S.of(context).pageDriveDetailButtonHide,
           onPressed: _showHideDialog,
@@ -218,10 +218,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     final Widget content = Column(
       children: <Widget>[
-        if (_drive?.cancelled ?? false)
+        if (_drive?.status == DriveStatus.cancelledByDriver)
           CustomBanner.error(
-            S.of(context).pageDriveDetailBannerCancelled,
-            key: const Key('cancelledDriveBanner'),
+            S.of(context).pageDriveDetailBannerCancelledByDriver,
+            key: const Key('cancelledByDriverDriveBanner'),
+          )
+        else if (_drive?.status == DriveStatus.cancelledByRecurrenceRule)
+          CustomBanner.error(
+            S.of(context).pageDriveDetailBannerCancelledByRecurrenceRule,
+            key: const Key('cancelledByRecurrenceRuleDriveBanner'),
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),

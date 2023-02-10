@@ -263,7 +263,8 @@
   "pageDriveDetailCancelDialogTitle": "Absage bestätigen",
   "pageDriveDetailCancelDialogMessage": "Bist du sicher, dass du diese Fahrt absagen möchtest?",
   "pageDriveDetailCancelDialogToast": "Fahrt abgesagt.",
-  "pageDriveDetailBannerCancelled": "Du hast diese Fahrt abgesagt.",
+  "pageDriveDetailBannerCancelledByDriver": "Du hast diese Fahrt abgesagt.",
+  "pageDriveDetailBannerCancelledByRecurrenceRule": "Diese Fahrt wurde abgesagt, weil du deine Wiederholungsregeln geändert hast.",
   "pageDriveDetailButtonHide": "Fahrt löschen",
   "pageDriveDetailHideDialog": "Bist du sicher, dass du die Fahrt löschen möchtest?",
 
