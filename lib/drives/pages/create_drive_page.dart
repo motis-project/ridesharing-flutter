@@ -786,7 +786,7 @@ class RecurrenceOptions {
       frequency: frequency,
       interval: interval,
       byWeekDays: byWeekDays,
-      until: until!.toUtc(),
+      until: until!.copyWith(hour: 23, minute: 59).toUtc(),
     );
   }
 }
