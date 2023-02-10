@@ -103,15 +103,7 @@ extension TimeOfDayExtension on TimeOfDay {
   }
 }
 
-enum WeekDay {
-  monday,
-  tuesday,
-  wednesday,
-  thursday,
-  friday,
-  saturday,
-  sunday,
-}
+enum WeekDay { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 
 extension WeekDayExtension on WeekDay {
   String getAbbreviation(BuildContext context) {
