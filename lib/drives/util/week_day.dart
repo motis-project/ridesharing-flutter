@@ -14,20 +14,23 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
             return Column(
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
                   children: WeekDay.values
                       .map(
-                        (WeekDay weekDay) => WeekDayButton(
-                          weekDay: weekDay,
-                          selected: weekDays.contains(weekDay),
-                          onPressed: () {
-                            if (weekDays.contains(weekDay)) {
-                              weekDays.remove(weekDay);
-                            } else {
-                              weekDays.add(weekDay);
-                            }
-                            state.didChange(weekDays);
-                          },
+                        (WeekDay weekDay) => Padding(
+                          padding: const EdgeInsets.symmetric(),
+                          child: WeekDayButton(
+                            weekDay: weekDay,
+                            selected: weekDays.contains(weekDay),
+                            onPressed: () {
+                              if (weekDays.contains(weekDay)) {
+                                weekDays.remove(weekDay);
+                              } else {
+                                weekDays.add(weekDay);
+                              }
+                              state.didChange(weekDays);
+                            },
+                          ),
                         ),
                       )
                       .toList(),
@@ -66,18 +69,12 @@ class WeekDayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromRadius(15),
-          backgroundColor: selected ? Theme.of(context).colorScheme.primary : Colors.grey,
-        ),
-        onPressed: onPressed,
-        child: Text(weekDay.getAbbreviation(context)),
-      ),
+    return RawMaterialButton(
+      onPressed: onPressed,
+      fillColor: selected ? Theme.of(context).colorScheme.primary : Colors.grey,
+      shape: const CircleBorder(),
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+      child: Text(weekDay.getAbbreviation(context), style: const TextStyle(color: Colors.white)),
     );
   }
 }
