@@ -294,6 +294,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             value: _recurrenceOptions.enabled,
             onChanged: (bool? value) => setState(() {
               _recurrenceOptions.enabled = value!;
+              if (value && _recurrenceOptions.weekDays.isEmpty) {
+                _recurrenceOptions.weekDays.add(WeekDay.values[_selectedDate.weekday - 1]);
+              }
             }),
           ),
           if (_recurrenceOptions.enabled) ...<Widget>[
