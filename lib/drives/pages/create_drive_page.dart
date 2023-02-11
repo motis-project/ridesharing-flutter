@@ -75,7 +75,14 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     super.initState();
     _selectedDate = DateTime.now();
     _seats = 1;
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // This is here instead of initState
+    // because the context is needed for the recurrence options
     _recurrenceOptions = RecurrenceOptions(
       endChoice: predefinedRecurrenceEndChoices.last,
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
@@ -290,7 +297,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             ),
           ),
           LabeledCheckbox(
-            label: 'Recurring',
+            label: S.of(context).pageCreateDriveRecurringCheckbox,
             value: _recurrenceOptions.enabled,
             onChanged: (bool? value) => setState(() {
               _recurrenceOptions.enabled = value!;
@@ -332,10 +339,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       controller: _recurrenceOptions.recurrenceIntervalSizeController,
       validator: (String? value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter a value';
-        }
-        if (int.tryParse(value)! <= 0) {
-          return 'Please enter a positive value';
+          return S.of(context).pageCreateDriveIntervalSizeValidationEmpty;
         }
         return null;
       },
@@ -371,7 +375,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     );
 
     return TextWithFields(
-      'Every ${TextWithFields.placeholder}${TextWithFields.placeholder}',
+      S.of(context).pageCreateDriveEveryInterval(TextWithFields.placeholder),
       fields: <Widget>[
         SizedBox(width: 80, child: intervalSizeField),
         SizedBox(width: 120, child: intervalTypeField),
@@ -454,7 +458,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                           );
 
                           content = TextWithFields(
-                            'Until ${TextWithFields.placeholder}',
+                            S.of(context).pageCreateDriveRecurrenceEndUntil(TextWithFields.placeholder),
                             fields: <Widget>[Flexible(child: datePicker)],
                           );
                           break;
@@ -494,12 +498,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                                 .toList(),
                             child: AbsorbPointer(
                               child: TextFormField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
                                   // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
-                                  contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
+                                  contentPadding: const EdgeInsets.fromLTRB(6, 24, 12, 6),
                                   isDense: true,
-                                  hintText: 'Weeks',
+                                  hintText: RecurrenceIntervalType.weeks.getName(context),
                                 ),
                                 enabled: currentlySelected,
                                 readOnly: true,
@@ -509,7 +513,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                           );
 
                           content = TextWithFields(
-                            'For ${TextWithFields.placeholder}${TextWithFields.placeholder}',
+                            S.of(context).pageCreateDriveRecurrenceEndFor(TextWithFields.placeholder),
                             fields: <Widget>[
                               SizedBox(width: 45, child: intervalSizeField),
                               SizedBox(width: 80, child: intervalTypeField),
@@ -537,7 +541,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                           );
 
                           content = TextWithFields(
-                            'After ${TextWithFields.placeholder} occurrences',
+                            S.of(context).pageCreateDriveRecurrenceEndAfterOccurrences(TextWithFields.placeholder),
                             fields: <Widget>[SizedBox(width: 45, child: occurenceField)],
                           );
                           break;
@@ -554,10 +558,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   },
                 ),
                 const SizedBox(height: 20),
-                if (!_recurrenceOptions.validate(createError: false) && _recurrenceOptions.validationError != null)
+                if (!_recurrenceOptions.validate(context, createError: false) &&
+                    _recurrenceOptions.validationError != null)
                   Text(
-                    'Please select a valid recurrence end option: ${_recurrenceOptions.validationError}',
-                    style: const TextStyle(color: Colors.red),
+                    S.of(context).pageCreateDriveRecurrenceEndError(_recurrenceOptions.validationError!),
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
               ],
             ),
@@ -567,7 +572,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                 child: Text(S.of(context).okay),
                 onPressed: () {
                   innerSetState(() {
-                    final bool valid = _recurrenceOptions.validate();
+                    final bool valid = _recurrenceOptions.validate(context);
                     if (valid) {
                       // Update the recurrence options in the parent widget
                       setState(() {});
