@@ -1546,6 +1546,30 @@ end;$$;
 ALTER FUNCTION "public"."create_chat"() OWNER TO "postgres";
 
 --
+-- Name: create_drive_from_recurring("record", "date"); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record", "base_date" "date") RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+	drive_start_time TIMESTAMP;
+	drive_end_time TIMESTAMP;
+BEGIN
+   	drive_start_time = base_date + recurring_drive.start_time;
+	drive_end_time = base_date + recurring_drive.end_time;
+	IF drive_start_time > drive_end_time THEN
+		drive_end_time = drive_end_time + interval '1 day';
+	END IF;
+	
+	INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
+	VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_time, recurring_drive."end", drive_end_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.end_lat, recurring_drive.end_lng, recurring_drive.id);
+END; $$;
+
+
+ALTER FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record", "base_date" "date") OWNER TO "postgres";
+
+--
 -- Name: create_drives_from_recurring(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1566,16 +1590,9 @@ BEGIN
 		FROM
 			recurring_drives
 		WHERE _rrule.rruleset (recurrence_rule) @> considered_date 
-		AND stopped_at IS NULL
+		AND (stopped_at IS NULL OR stopped_at <= considered_date)
 	LOOP
-		SELECT * 
-		INTO drive_start_time, drive_end_time 
-		FROM recurring_drive_generate_datetimes(considered_date, recurring_drive.start_time, recurring_drive.end_time) 
-		AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
-		
-	
-		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
-		VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_time, recurring_drive."end", drive_end_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.end_lat, recurring_drive.end_lng, recurring_drive.id);
+		PERFORM create_drive_from_recurring(recurring_drive, considered_date);
 	END LOOP;
 	RETURN;
 END
@@ -1596,7 +1613,7 @@ CREATE FUNCTION "public"."create_ride_event"() RETURNS "trigger"
     insert into ride_events(ride_id,category)
     values(
       new.id,
-      /* the corresponding status of a event is the ride status -1 since there is now event for preview and the ride status therrefore begins with one in Supabase*/
+      /* the corresponding status of a event is the ride status -1 since there is now event for preview and the ride status therefore begins with one in Supabase*/
       new.status -1
     );
   end if;
@@ -1780,32 +1797,6 @@ END; $$;
 ALTER FUNCTION "public"."recurring_drive_creation_interval"() OWNER TO "postgres";
 
 --
--- Name: recurring_drive_generate_datetimes("date", time without time zone, time without time zone); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) RETURNS "record"
-    LANGUAGE "plpgsql" IMMUTABLE
-    AS $$
-DECLARE
-	ret RECORD;
-	generated_start_time TIMESTAMP;
-	generated_end_time TIMESTAMP;
-BEGIN
-   	generated_start_time = base_date + start_time;
-	generated_end_time = base_date + end_time;
-	IF start_time > end_time THEN
-		generated_end_time = generated_end_time + interval '1 day';
-	END IF;
-	
-	SELECT generated_start_time, generated_end_time INTO ret;
-	
-	RETURN ret;	
-END; $$;
-
-
-ALTER FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) OWNER TO "postgres";
-
---
 -- Name: recurring_drive_insert(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1814,9 +1805,6 @@ CREATE FUNCTION "public"."recurring_drive_insert"() RETURNS "trigger"
     AS $$
 DECLARE
 	next_date DATE;
-	recurring_drive RECORD := new;
-	drive_start_time TIMESTAMP;
-	drive_end_time TIMESTAMP;
 	recurring_drive_creation_interval INTERVAL;
 BEGIN
 	SELECT recurring_drive_creation_interval() INTO recurring_drive_creation_interval;
@@ -1828,16 +1816,9 @@ BEGIN
 			CURRENT_DATE + recurring_drive_creation_interval,
 			INTERVAL '1 day'
 		) next_dates(d)
-		WHERE _rrule.rruleset(recurring_drive.recurrence_rule) @> next_dates.d
+		WHERE _rrule.rruleset(new.recurrence_rule) @> next_dates.d
 	LOOP
-		SELECT * 
-		INTO drive_start_time, drive_end_time 
-		FROM recurring_drive_generate_datetimes(next_date, recurring_drive.start_time, recurring_drive.end_time) 
-		AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
-		
-	
-		INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
-		VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_time, recurring_drive."end", drive_end_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.end_lat, recurring_drive.end_lng, recurring_drive.id);
+		PERFORM create_drive_from_recurring(new, next_date);
 	END LOOP;
   RETURN new;
 END;
@@ -1864,14 +1845,16 @@ BEGIN
 
 	IF new.stopped_at IS NOT NULL AND old.stopped_at IS NULL THEN
 		UPDATE drives
-		SET cancelled = TRUE
-		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP;
+		/* status=2 means cancelledByRecurrenceRule */
+		SET cancelled = TRUE, status = 2
+		WHERE drives.recurring_drive_id = new.id AND drives.start_time >= stopped_at;
 		RETURN NEW;
 	END IF;
 
 	IF new.recurrence_rule != old.recurrence_rule THEN
 		UPDATE drives
-		SET cancelled = TRUE
+		/* status=2 means cancelledByRecurrenceRule */
+		SET cancelled = TRUE, status = 2
 		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP AND NOT(_rrule.rruleset (new.recurrence_rule) @> DATE(drives.start_time));
 
 		FOR next_date IN
@@ -1882,20 +1865,14 @@ BEGIN
 				INTERVAL '1 day'
 			) next_dates(d)
 			WHERE _rrule.rruleset(new.recurrence_rule) @> next_dates.d
+			/* Check that there is no drive on this date that was not cancelledByRecurrenceRule */
 			AND NOT EXISTS(
 				SELECT *
 				FROM drives
-				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time)
+				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time) AND drive.status != 2
 			)
 		LOOP
-			SELECT * 
-			INTO drive_start_time, drive_end_time 
-			FROM recurring_drive_generate_datetimes(next_date, new.start_time, new.end_time) 
-			AS ret (generated_start_time TIMESTAMP, generated_end_time TIMESTAMP);
-			
-		
-			INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
-			VALUES (new.driver_id, new."start", drive_start_time, new."end", drive_end_time, new.seats, new.start_lat, new.start_lng, new.end_lat, new.end_lng, new.id);
+			PERFORM create_drive_from_recurring(new, next_date);
 		END LOOP;
 	END IF;
 
@@ -1998,7 +1975,7 @@ ALTER FUNCTION "public"."set_claim"("uid" "uuid", "claim" "text", "value" "jsonb
 CREATE FUNCTION "public"."update_ride_status"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$begin
-    if new.cancelled = True and old.cancelled = False then 
+    if (new.cancelled = True and old.cancelled = False) or (new.status != old.status and old.status = 0)  then 
       update public.rides 
       /* status = 4 is the cancelledByDriver status for rides in the app */
       set status = 4
@@ -2009,7 +1986,7 @@ CREATE FUNCTION "public"."update_ride_status"() RETURNS "trigger"
       /* status = 3 is the rejected status for drives in the app */
       set status = 3
       where rides.drive_id = new.id 
-      /* the status is only pdated when status = 1 (pending ride) */
+      /* the status is only updated when status = 1 (pending ride) */
         and (rides.status = 1);
     end if;
     return new;
@@ -2200,6 +2177,7 @@ CREATE TABLE "public"."drives" (
     "end_lat" real NOT NULL,
     "end_lng" real NOT NULL,
     "recurring_drive_id" bigint,
+    "status" smallint DEFAULT '0'::smallint NOT NULL,
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
 );
 
@@ -3664,6 +3642,15 @@ GRANT ALL ON FUNCTION "public"."create_chat"() TO "service_role";
 
 
 --
+-- Name: FUNCTION "create_drive_from_recurring"("recurring_drive" "record", "base_date" "date"); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record", "base_date" "date") TO "anon";
+GRANT ALL ON FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record", "base_date" "date") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record", "base_date" "date") TO "service_role";
+
+
+--
 -- Name: FUNCTION "create_drives_from_recurring"(); Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -3769,15 +3756,6 @@ GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "anon";
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."recurring_drive_creation_interval"() TO "service_role";
-
-
---
--- Name: FUNCTION "recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "anon";
-GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."recurring_drive_generate_datetimes"("base_date" "date", "start_time" time without time zone, "end_time" time without time zone) TO "service_role";
 
 
 --
