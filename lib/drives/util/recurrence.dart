@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rrule/rrule.dart';
 
 import '../../util/locale_manager.dart';
@@ -99,8 +100,8 @@ class RecurrenceOptions {
     customEndOccurrenceController.dispose();
   }
 
-  bool validate({bool createError = true}) {
-    final String? error = endChoice.validate();
+  bool validate(BuildContext context, {bool createError = true}) {
+    final String? error = endChoice.validate(context);
     if (createError || error == null) {
       validationError = error;
     }
@@ -144,22 +145,23 @@ class RecurrenceInterval {
   RecurrenceInterval(this.intervalSize, this.intervalType);
 
   String getName(BuildContext context) {
-    final String? validationError = validate();
+    final String? validationError = validate(context);
     if (validationError != null) return validationError;
 
     switch (intervalType) {
       case RecurrenceIntervalType.days:
-        return 'Every $intervalSize ${intervalSize == 1 ? 'day' : 'days'}';
+        return S.of(context).recurrenceIntervalEveryDays(intervalSize!);
       case RecurrenceIntervalType.weeks:
-        return 'Every $intervalSize ${intervalSize == 1 ? 'week' : 'weeks'}';
+        return S.of(context).recurrenceIntervalEveryWeeks(intervalSize!);
       case RecurrenceIntervalType.months:
-        return 'Every $intervalSize ${intervalSize == 1 ? 'month' : 'months'}';
+        return S.of(context).recurrenceIntervalEveryMonths(intervalSize!);
       case RecurrenceIntervalType.years:
-        return 'Every $intervalSize ${intervalSize == 1 ? 'year' : 'years'}';
+        return S.of(context).recurrenceIntervalEveryYears(intervalSize!);
     }
   }
 
-  String? validate() => intervalSize == null ? 'Interval size needed' : null;
+  String? validate(BuildContext context) =>
+      intervalSize == null ? S.of(context).recurrenceIntervalValidationIntervalNull : null;
 }
 
 abstract class RecurrenceEndChoice {
@@ -177,7 +179,7 @@ abstract class RecurrenceEndChoice {
   @override
   int get hashCode => type.hashCode ^ isCustom.hashCode;
 
-  String? validate();
+  String? validate(BuildContext context);
 }
 
 class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
@@ -188,7 +190,8 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.date);
 
   @override
-  String getName(BuildContext context) => validate() ?? 'Until ${localeManager.formatDate(date!)}';
+  String getName(BuildContext context) =>
+      validate(context) ?? S.of(context).recurrenceEndUntilDate(localeManager.formatDate(date!));
 
   @override
   bool operator ==(Object other) =>
@@ -198,11 +201,7 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
   int get hashCode => isCustom.hashCode ^ date.hashCode;
 
   @override
-  String? validate() => date == null
-      ? 'Date needed'
-      : date!.isAfter(DateTime.now().add(const Duration(days: 10 * 365)))
-          ? 'Date too far in the future'
-          : null;
+  String? validate(BuildContext context) => date == null ? S.of(context).recurrenceEndUntilDateValidationNull : null;
 }
 
 class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
@@ -230,28 +229,28 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
 
   @override
   String getName(BuildContext context, {List<WeekDay>? weekDays}) {
-    final String? validationError = validate();
+    final String? validationError = validate(context);
     if (validationError != null) return validationError;
 
     switch (intervalType!) {
       case RecurrenceIntervalType.days:
-        return 'For $intervalSize ${intervalSize == 1 ? 'day' : 'days'}';
+        return S.of(context).recurrenceEndForDays(intervalSize!);
       case RecurrenceIntervalType.weeks:
-        return 'For $intervalSize ${intervalSize == 1 ? 'week' : 'weeks'}';
+        return S.of(context).recurrenceEndForWeeks(intervalSize!);
       case RecurrenceIntervalType.months:
-        return 'For $intervalSize ${intervalSize == 1 ? 'month' : 'months'}';
+        return S.of(context).recurrenceEndForMonths(intervalSize!);
       case RecurrenceIntervalType.years:
-        return 'For $intervalSize ${intervalSize == 1 ? 'year' : 'years'}';
+        return S.of(context).recurrenceEndForYears(intervalSize!);
     }
   }
 
   @override
-  String? validate() {
-    if (intervalSize == null) return 'Interval size needed';
-    if (intervalType == null) return 'Interval type needed';
-    if (intervalSize! >= 100) return 'Interval too large';
-    if (intervalSize! <= 0) return 'Interval is negative';
-    if (intervalType == RecurrenceIntervalType.years && intervalSize! > 10) return 'Interval too large';
+  String? validate(BuildContext context) {
+    if (intervalSize == null) return S.of(context).recurrenceEndForValidationIntervalSizeNull;
+    if (intervalType == null) return S.of(context).recurrenceEndForValidationIntervalTypeNull;
+    if (intervalType == RecurrenceIntervalType.years && intervalSize! >= 10 || intervalSize! >= 100) {
+      return S.of(context).recurrenceEndForValidationIntervalTooLarge;
+    }
     return null;
   }
 
@@ -266,19 +265,47 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   int get hashCode => isCustom.hashCode ^ intervalSize.hashCode ^ intervalType.hashCode;
 }
 
+class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
+  int? occurrences;
+
+  RecurrenceEndChoiceOccurrence(this.occurrences, {super.isCustom})
+      : assert(occurrences != null || isCustom),
+        super(type: RecurrenceEndType.occurrence);
+
+  @override
+  String getName(BuildContext context) =>
+      validate(context) ?? S.of(context).recurrenceEndAfterOccurrences(occurrences!);
+
+  @override
+  String? validate(BuildContext context) => occurrences == null
+      ? S.of(context).recurrenceEndOccurrencesValidationNull
+      : occurrences! >= 100
+          ? S.of(context).recurrenceEndValidationOccurrencesTooMany
+          : null;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RecurrenceEndChoiceOccurrence && isCustom == other.isCustom && occurrences == other.occurrences;
+
+  @override
+  int get hashCode => isCustom.hashCode ^ occurrences.hashCode;
+}
+
+enum RecurrenceEndType { date, interval, occurrence }
+
 enum RecurrenceIntervalType { days, weeks, months, years }
 
-extension RecurrenceEndIntervalTypeExtension on RecurrenceIntervalType {
+extension RecurrenceIntervalTypeExtension on RecurrenceIntervalType {
   String getName(BuildContext context) {
     switch (this) {
       case RecurrenceIntervalType.days:
-        return 'Days';
+        return S.of(context).recurrenceIntervalDays;
       case RecurrenceIntervalType.weeks:
-        return 'Weeks';
+        return S.of(context).recurrenceIntervalWeeks;
       case RecurrenceIntervalType.months:
-        return 'Months';
+        return S.of(context).recurrenceIntervalMonths;
       case RecurrenceIntervalType.years:
-        return 'Years';
+        return S.of(context).recurrenceIntervalYears;
     }
   }
 
@@ -296,31 +323,3 @@ extension RecurrenceEndIntervalTypeExtension on RecurrenceIntervalType {
     }
   }
 }
-
-class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
-  int? occurrences;
-
-  RecurrenceEndChoiceOccurrence(this.occurrences, {super.isCustom})
-      : assert(occurrences != null || isCustom),
-        super(type: RecurrenceEndType.occurrence);
-
-  @override
-  String getName(BuildContext context) =>
-      validate() ?? 'After $occurrences ${occurrences == 1 ? 'occurrence' : 'occurrences'}';
-
-  @override
-  String? validate() => occurrences == null
-      ? 'Occurrences needed'
-      : occurrences! >= 100
-          ? 'Too many occurrences'
-          : null;
-
-  @override
-  bool operator ==(Object other) =>
-      other is RecurrenceEndChoiceOccurrence && isCustom == other.isCustom && occurrences == other.occurrences;
-
-  @override
-  int get hashCode => isCustom.hashCode ^ occurrences.hashCode;
-}
-
-enum RecurrenceEndType { date, interval, occurrence }
