@@ -17,6 +17,7 @@ import '../models/drive.dart';
 import '../models/recurring_drive.dart';
 import '../pages/drive_detail_page.dart';
 import '../util/recurrence.dart';
+import '../util/text_with_fields.dart';
 import '../util/week_day.dart';
 
 class CreateDrivePage extends StatefulWidget {
@@ -365,10 +366,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       ),
     );
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        const Text('Every '),
+    return TextWithFields(
+      'Every ${TextWithFields.placeholder}${TextWithFields.placeholder}',
+      fields: <Widget>[
         SizedBox(width: 80, child: intervalSizeField),
         SizedBox(width: 120, child: intervalTypeField),
       ],
@@ -423,7 +423,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                           _recurrenceOptions.getRecurrenceEndChoice(recurrenceEndType);
                       final bool currentlySelected = _recurrenceOptions.endChoice == recurrenceEndChoiceCustom;
 
-                      Widget row;
+                      Widget content;
 
                       switch (recurrenceEndType) {
                         case RecurrenceEndType.date:
@@ -449,12 +449,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             controller: _recurrenceOptions.customEndDateController,
                           );
 
-                          row = Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              const Text('Until '),
-                              Flexible(child: datePicker),
-                            ],
+                          content = TextWithFields(
+                            'Until ${TextWithFields.placeholder}',
+                            fields: <Widget>[Flexible(child: datePicker)],
                           );
                           break;
                         case RecurrenceEndType.interval:
@@ -507,10 +504,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             ),
                           );
 
-                          row = Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              const Text('For '),
+                          content = TextWithFields(
+                            'For ${TextWithFields.placeholder}${TextWithFields.placeholder}',
+                            fields: <Widget>[
                               SizedBox(width: 45, child: intervalSizeField),
                               SizedBox(width: 80, child: intervalTypeField),
                             ],
@@ -536,20 +532,16 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                             },
                           );
 
-                          row = Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              const Text('After '),
-                              SizedBox(width: 45, child: occurenceField),
-                              const Text(' occurrences'),
-                            ],
+                          content = TextWithFields(
+                            'After ${TextWithFields.placeholder} occurrences',
+                            fields: <Widget>[SizedBox(width: 45, child: occurenceField)],
                           );
                           break;
                       }
 
                       return RadioListTile<RecurrenceEndChoice>(
                         contentPadding: EdgeInsets.zero,
-                        title: row,
+                        title: content,
                         value: recurrenceEndChoiceCustom,
                         groupValue: _recurrenceOptions.endChoice,
                         onChanged: onChanged,
