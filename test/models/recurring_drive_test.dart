@@ -40,8 +40,9 @@ void main() {
       expect(recurringDrive.startPosition.lat, json['start_lat']);
       expect(recurringDrive.startPosition.lng, json['start_lng']);
       expect(recurringDrive.startTime, const TimeOfDay(hour: 22, minute: 37));
-      expect(recurringDrive.stoppedAt, json['stopped_at']);
+      expect(recurringDrive.startedAt, DateTime.parse('20230207T234500Z'));
       expect(recurringDrive.recurrenceRule.frequency, Frequency.daily);
+      expect(recurringDrive.stoppedAt, json['stopped_at']);
       expect(recurringDrive.driverId, json['driver_id']);
     });
 
