@@ -19,6 +19,7 @@ import '../pages/drive_detail_page.dart';
 import '../util/recurrence.dart';
 import '../util/text_with_fields.dart';
 import '../util/week_day.dart';
+import 'recurring_drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
   const CreateDrivePage({super.key});
@@ -139,7 +140,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final DateTime endTime = DateTime(
+        final DateTime endDateTime = DateTime(
           _selectedDate.year,
           _selectedDate.month,
           _selectedDate.day,
@@ -157,7 +158,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             endPosition: _destinationSuggestion.position,
             seats: _seats,
             startTime: TimeOfDay.fromDateTime(_selectedDate),
-            endTime: TimeOfDay.fromDateTime(endTime),
+            endTime: TimeOfDay.fromDateTime(endDateTime),
             startedAt: _selectedDate,
             recurrenceRule: _recurrenceOptions.recurrenceRule,
           );
@@ -170,12 +171,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
           if (mounted) {
             Navigator.pop(context, insertedRecurringDrive);
-            // await Navigator.pushReplacement(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (BuildContext context) => RecurringDriveDetailPage(insertedRecurringDrive),
-            //   ),
-            // );
+            await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => RecurringDriveDetailPage.fromRecurringDrive(insertedRecurringDrive),
+              ),
+            );
           }
         } else {
           final Drive drive = Drive(
@@ -185,8 +186,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             end: _destinationSuggestion.name,
             endPosition: _destinationSuggestion.position,
             seats: _seats,
-            startTime: _selectedDate,
-            endTime: endTime,
+            startDateTime: _selectedDate,
+            endDateTime: endDateTime,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
               .from('drives')

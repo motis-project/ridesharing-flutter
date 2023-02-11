@@ -38,10 +38,10 @@ void main() {
   // This test is to show that if the ridesPage is called there are rideCards shown.
   testWidgets('shows Ride card for RidesPage', (WidgetTester tester) async {
     final Ride ride1 = RideFactory().generateFake(
-      endTime: DateTime.now().add(const Duration(days: 1)),
+      endDateTime: DateTime.now().add(const Duration(days: 1)),
     );
     final Ride ride2 = RideFactory().generateFake(
-      endTime: DateTime.now().add(const Duration(days: 1)),
+      endDateTime: DateTime.now().add(const Duration(days: 1)),
     );
     final List<Map<String, dynamic>> rides = [ride1.toJsonForApi(), ride2.toJsonForApi()];
     whenRequest(
@@ -127,7 +127,7 @@ void main() {
       drives = [
         DriveFactory().generateFake(
           id: 1,
-          endTime: DateTime.now().add(const Duration(days: 1)),
+          endDateTime: DateTime.now().add(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -138,7 +138,7 @@ void main() {
         ).toJsonForApi(),
         DriveFactory().generateFake(
           id: 2,
-          endTime: DateTime.now().add(const Duration(days: 1)),
+          endDateTime: DateTime.now().add(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -173,7 +173,7 @@ void main() {
       drives = [
         DriveFactory().generateFake(
           id: 1,
-          endTime: DateTime.now().subtract(const Duration(days: 1)),
+          endDateTime: DateTime.now().subtract(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -184,7 +184,7 @@ void main() {
         ).toJsonForApi(),
         DriveFactory().generateFake(
           id: 2,
-          endTime: DateTime.now().add(const Duration(days: 1)),
+          endDateTime: DateTime.now().add(const Duration(days: 1)),
           hideInListView: true,
           rides: [
             RideFactory().generateFake(
@@ -232,7 +232,7 @@ void main() {
       drives = [
         DriveFactory().generateFake(
           id: 1,
-          endTime: DateTime.now().subtract(const Duration(days: 1)),
+          endDateTime: DateTime.now().subtract(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -243,7 +243,7 @@ void main() {
         ).toJsonForApi(),
         DriveFactory().generateFake(
           id: 2,
-          endTime: DateTime.now().subtract(const Duration(days: 1)),
+          endDateTime: DateTime.now().subtract(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -285,7 +285,7 @@ void main() {
       drives = [
         DriveFactory().generateFake(
           id: 1,
-          endTime: DateTime.now().add(const Duration(days: 1)),
+          endDateTime: DateTime.now().add(const Duration(days: 1)),
           hideInListView: false,
           rides: [
             RideFactory().generateFake(
@@ -296,7 +296,7 @@ void main() {
         ).toJsonForApi(),
         DriveFactory().generateFake(
             id: 2,
-            endTime: DateTime.now().subtract(const Duration(days: 1)),
+            endDateTime: DateTime.now().subtract(const Duration(days: 1)),
             hideInListView: true,
             rides: [
               RideFactory().generateFake(

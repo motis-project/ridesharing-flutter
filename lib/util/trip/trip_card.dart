@@ -70,7 +70,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.startTime),
+                  localeManager.formatTime(trip.startDateTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
@@ -121,7 +121,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.endTime),
+                  localeManager.formatTime(trip.endDateTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
@@ -182,7 +182,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
 
   Widget buildTopLeft() {
     return Text(
-      localeManager.formatDate(trip.startTime),
+      localeManager.formatDate(trip.startDateTime),
       style: Theme.of(context).textTheme.titleMedium,
     );
   }

@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 
+import '../../drives/models/recurring_drive.dart';
 import '../../rides/models/ride.dart';
 import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
 import 'seat_indicator.dart';
 import 'trip.dart';
+import 'trip_like.dart';
 
 class TripOverview extends StatelessWidget {
-  final Trip trip;
+  final TripLike trip;
 
   const TripOverview(this.trip, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final Widget date = Text(
-      localeManager.formatDate(trip.startTime),
-      style: Theme.of(context).textTheme.titleMedium,
-    );
-
     final Widget startDest = FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: <Widget>[
@@ -28,7 +25,7 @@ class TripOverview extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.startTime),
+                  localeManager.formatTimeOfDay(trip.startTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
@@ -54,11 +51,12 @@ class TripOverview extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Row(
-                    children: <Widget>[
-                      const Icon(Icons.access_time_outlined),
-                      const SizedBox(width: 4),
+                    children: const <Widget>[
+                      Icon(Icons.access_time_outlined),
+                      SizedBox(width: 4),
                       Text(
-                        localeManager.formatDuration(trip.duration),
+                        'PLACEHOLDER',
+                        //TODO: localeManager.formatDurationOfDay(trip.duration),
                       ),
                     ],
                   ),
@@ -77,7 +75,7 @@ class TripOverview extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.endTime),
+                  localeManager.formatTimeOfDay(trip.endTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
@@ -96,6 +94,14 @@ class TripOverview extends StatelessWidget {
           ),
         )
       ],
+    );
+
+    final String dateText = (trip is Trip)
+        ? localeManager.formatDate((trip as Trip).startDateTime)
+        : 'Seit ${localeManager.formatDate((trip as RecurringDrive).startedAt)}';
+    final Widget date = Text(
+      dateText,
+      style: Theme.of(context).textTheme.titleMedium,
     );
 
     final Widget seatIndicator = SeatIndicator(trip);

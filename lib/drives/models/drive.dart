@@ -24,10 +24,10 @@ class Drive extends Trip {
     super.createdAt,
     required super.start,
     required super.startPosition,
-    required super.startTime,
+    required super.startDateTime,
     required super.end,
     required super.endPosition,
-    required super.endTime,
+    required super.endDateTime,
     required super.seats,
     this.status = DriveStatus.plannedOrFinished,
     super.hideInListView,
@@ -45,10 +45,10 @@ class Drive extends Trip {
       createdAt: DateTime.parse(json['created_at'] as String),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: DateTime.parse(json['start_time'] as String),
+      startDateTime: DateTime.parse(json['start_time'] as String),
       end: json['end'] as String,
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endTime: DateTime.parse(json['end_time'] as String),
+      endDateTime: DateTime.parse(json['end_time'] as String),
       seats: json['seats'] as int,
       status: DriveStatus.values[json['status'] as int],
       hideInListView: json['hide_in_list_view'] as bool,
@@ -113,7 +113,7 @@ class Drive extends Trip {
     if (rides == null) return null;
 
     final Set<DateTime> times = approvedRides!
-        .map((Ride ride) => <DateTime>[ride.startTime, ride.endTime])
+        .map((Ride ride) => <DateTime>[ride.startDateTime, ride.endDateTime])
         .expand((List<DateTime> x) => x)
         .toSet();
 
@@ -121,8 +121,9 @@ class Drive extends Trip {
     for (final DateTime time in times) {
       int usedSeats = 0;
       for (final Ride ride in approvedRides!) {
-        final bool startTimeBeforeOrEqual = ride.startTime.isBefore(time) || ride.startTime.isAtSameMomentAs(time);
-        final bool endTimeAfter = ride.endTime.isAfter(time);
+        final bool startTimeBeforeOrEqual =
+            ride.startDateTime.isBefore(time) || ride.startDateTime.isAtSameMomentAs(time);
+        final bool endTimeAfter = ride.endDateTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
           usedSeats += ride.seats;
         }
@@ -138,15 +139,15 @@ class Drive extends Trip {
   bool isRidePossible(Ride ride) {
     final List<Ride> consideredRides = approvedRides!..add(ride);
     final Set<DateTime> times = consideredRides
-        .map((Ride consideredRide) => <DateTime>[consideredRide.startTime, consideredRide.endTime])
+        .map((Ride consideredRide) => <DateTime>[consideredRide.startDateTime, consideredRide.endDateTime])
         .expand((List<DateTime> x) => x)
         .toSet();
     for (final DateTime time in times) {
       int usedSeats = 0;
       for (final Ride consideredRide in consideredRides) {
         final bool startTimeBeforeOrEqual =
-            consideredRide.startTime.isBefore(time) || consideredRide.startTime.isAtSameMomentAs(time);
-        final bool endTimeAfter = consideredRide.endTime.isAfter(time);
+            consideredRide.startDateTime.isBefore(time) || consideredRide.startDateTime.isAtSameMomentAs(time);
+        final bool endTimeAfter = consideredRide.endDateTime.isAfter(time);
         if (startTimeBeforeOrEqual && endTimeAfter) {
           usedSeats += consideredRide.seats;
         }
@@ -171,7 +172,7 @@ class Drive extends Trip {
 
   @override
   String toString() {
-    return 'Drive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId}';
+    return 'Drive{id: $id, from: $start at $startDateTime, to: $end at $endDateTime, by: $driverId}';
   }
 
   @override

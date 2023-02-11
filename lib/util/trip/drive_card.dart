@@ -76,7 +76,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else if (_drive.endTime.isBefore(DateTime.now())) {
+    } else if (_drive.endDateTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {
       if (_drive.status.isCancelled()) {
