@@ -158,6 +158,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             seats: _seats,
             startTime: TimeOfDay.fromDateTime(_selectedDate),
             endTime: TimeOfDay.fromDateTime(endTime),
+            startedAt: _selectedDate,
             recurrenceRule: _recurrenceOptions.recurrenceRule,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
