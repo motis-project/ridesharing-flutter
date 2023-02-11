@@ -41,10 +41,10 @@ void main() {
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
       expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(drive.startTime, DateTime.parse(json['start_time']));
+      expect(drive.startDateTime, DateTime.parse(json['start_time']));
       expect(drive.end, json['end']);
       expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(drive.endTime, DateTime.parse(json['end_time']));
+      expect(drive.endDateTime, DateTime.parse(json['end_time']));
       expect(drive.seats, json['seats']);
       expect(drive.status.index, json['status']);
       expect(drive.driverId, json['driver_id']);
@@ -80,10 +80,10 @@ void main() {
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
       expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(drive.startTime, DateTime.parse(json['start_time']));
+      expect(drive.startDateTime, DateTime.parse(json['start_time']));
       expect(drive.end, json['end']);
       expect(drive.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(drive.endTime, DateTime.parse(json['end_time']));
+      expect(drive.endDateTime, DateTime.parse(json['end_time']));
       expect(drive.seats, json['seats']);
       expect(drive.status.index, json['status']);
       expect(drive.hideInListView, json['hide_in_list_view']);
@@ -131,11 +131,11 @@ void main() {
       expect(json['start'], drive.start);
       expect(json['start_lat'], drive.startPosition.lat);
       expect(json['start_lng'], drive.startPosition.lng);
-      expect(json['start_time'], drive.startTime.toString());
+      expect(json['start_time'], drive.startDateTime.toString());
       expect(json['end'], drive.end);
       expect(json['end_lat'], drive.endPosition.lat);
       expect(json['end_lng'], drive.endPosition.lng);
-      expect(json['end_time'], drive.endTime.toString());
+      expect(json['end_time'], drive.endDateTime.toString());
       expect(json['status'], drive.status.index);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
@@ -210,8 +210,8 @@ void main() {
         DriveFactory()
             .generateFake(
               driverId: 2,
-              startTime: DateTime.now().add(const Duration(hours: 2)),
-              endTime: DateTime.now().add(const Duration(hours: 4)),
+              startDateTime: DateTime.now().add(const Duration(hours: 2)),
+              endDateTime: DateTime.now().add(const Duration(hours: 4)),
             )
             .toJsonForApi()
       ]);
@@ -228,15 +228,15 @@ void main() {
         DriveFactory()
             .generateFake(
               driverId: 2,
-              startTime: DateTime.now().add(const Duration(hours: 8)),
-              endTime: DateTime.now().add(const Duration(hours: 10)),
+              startDateTime: DateTime.now().add(const Duration(hours: 8)),
+              endDateTime: DateTime.now().add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
         DriveFactory()
             .generateFake(
               driverId: 2,
-              startTime: DateTime.now().add(const Duration(hours: 14)),
-              endTime: DateTime.now().add(const Duration(hours: 16)),
+              startDateTime: DateTime.now().add(const Duration(hours: 14)),
+              endDateTime: DateTime.now().add(const Duration(hours: 16)),
             )
             .toJsonForApi(),
       ]);
@@ -256,8 +256,8 @@ void main() {
         DriveFactory()
             .generateFake(
               driverId: 2,
-              startTime: DateTime.now().add(const Duration(hours: 7)),
-              endTime: DateTime.now().add(const Duration(hours: 10)),
+              startDateTime: DateTime.now().add(const Duration(hours: 7)),
+              endDateTime: DateTime.now().add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
       ]);
@@ -293,23 +293,23 @@ void main() {
         seats: 3,
         rides: <Ride>[
           RideFactory().generateFake(
-            startTime: now,
-            endTime: now.add(const Duration(minutes: 30)),
+            startDateTime: now,
+            endDateTime: now.add(const Duration(minutes: 30)),
             status: RideStatus.approved,
             seats: 2,
           ),
           RideFactory().generateFake(
-            startTime: now,
+            startDateTime: now,
             status: RideStatus.cancelledByRider,
             seats: 2,
           ),
           RideFactory().generateFake(
-            startTime: now,
+            startDateTime: now,
             status: RideStatus.rejected,
             seats: 2,
           ),
           RideFactory().generateFake(
-            startTime: now.add(const Duration(hours: 1)),
+            startDateTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 1,
           ),
@@ -323,20 +323,20 @@ void main() {
         seats: 3,
         rides: [
           RideFactory().generateFake(
-            startTime: now.add(const Duration(minutes: 30)),
-            endTime: now.add(const Duration(hours: 1)),
+            startDateTime: now.add(const Duration(minutes: 30)),
+            endDateTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 1,
           ),
           RideFactory().generateFake(
-            startTime: now,
-            endTime: now.add(const Duration(minutes: 20)),
+            startDateTime: now,
+            endDateTime: now.add(const Duration(minutes: 20)),
             status: RideStatus.approved,
             seats: 1,
           ),
           RideFactory().generateFake(
-            startTime: now.add(const Duration(minutes: 20)),
-            endTime: now.add(const Duration(hours: 1)),
+            startDateTime: now.add(const Duration(minutes: 20)),
+            endDateTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 2,
           ),
@@ -353,8 +353,8 @@ void main() {
         createDependencies: false,
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: drive.startTime,
-        endTime: drive.endTime,
+        startDateTime: drive.startDateTime,
+        endDateTime: drive.endDateTime,
         seats: 2,
       );
       expect(drive.isRidePossible(ride), true);
@@ -362,13 +362,13 @@ void main() {
     test('full ride', () async {
       final DateTime now = DateTime.now();
       final Drive drive = DriveFactory().generateFake(
-        startTime: now,
-        endTime: now.add(const Duration(hours: 1)),
+        startDateTime: now,
+        endDateTime: now.add(const Duration(hours: 1)),
         seats: 1,
         rides: [
           RideFactory().generateFake(
-            startTime: now,
-            endTime: now.add(const Duration(hours: 1)),
+            startDateTime: now,
+            endDateTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 1,
           )
@@ -376,41 +376,41 @@ void main() {
         createDependencies: false,
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: now.add(const Duration(minutes: 30)),
-        endTime: now.add(const Duration(hours: 1)),
+        startDateTime: now.add(const Duration(minutes: 30)),
+        endDateTime: now.add(const Duration(hours: 1)),
       );
       expect(drive.isRidePossible(ride), false);
     });
     test('share ride with other rides', () async {
       final DateTime now = DateTime.now();
       final Drive drive = DriveFactory().generateFake(
-        startTime: now,
-        endTime: now.add(const Duration(hours: 2)),
+        startDateTime: now,
+        endDateTime: now.add(const Duration(hours: 2)),
         seats: 4,
         rides: <Ride>[
           RideFactory().generateFake(
-            startTime: now.add(const Duration(minutes: 20)),
-            endTime: now.add(const Duration(hours: 1)),
+            startDateTime: now.add(const Duration(minutes: 20)),
+            endDateTime: now.add(const Duration(hours: 1)),
             status: RideStatus.approved,
             seats: 2,
           ),
           RideFactory().generateFake(
-            startTime: now.add(const Duration(minutes: 40)),
-            endTime: now.add(const Duration(minutes: 50)),
+            startDateTime: now.add(const Duration(minutes: 40)),
+            endDateTime: now.add(const Duration(minutes: 50)),
             status: RideStatus.approved,
             seats: 1,
           ),
           RideFactory().generateFake(
-            startTime: now.add(const Duration(hours: 1)),
-            endTime: now.add(const Duration(hours: 1, minutes: 30)),
+            startDateTime: now.add(const Duration(hours: 1)),
+            endDateTime: now.add(const Duration(hours: 1, minutes: 30)),
             status: RideStatus.approved,
             seats: 2,
           ),
         ],
       );
       final Ride ride = RideFactory().generateFake(
-        startTime: now.add(const Duration(minutes: 50)),
-        endTime: now.add(const Duration(hours: 1, minutes: 10)),
+        startDateTime: now.add(const Duration(minutes: 50)),
+        endDateTime: now.add(const Duration(hours: 1, minutes: 10)),
         seats: 1,
       );
       expect(drive.isRidePossible(ride), true);
@@ -437,9 +437,9 @@ void main() {
       final Drive drive = DriveFactory().generateFake(
         id: 1,
         start: 'start',
-        startTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
+        startDateTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
         end: 'end',
-        endTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
+        endDateTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
         driverId: 5,
         createDependencies: false,
       );
@@ -455,10 +455,10 @@ void main() {
       createdAt: DateTime(2022, 10),
       start: 'Berlin',
       startPosition: Position(1, 1),
-      startTime: DateTime(2022, 11),
+      startDateTime: DateTime(2022, 11),
       end: 'Frankfurt',
       endPosition: Position(2, 2),
-      endTime: DateTime(2022, 12),
+      endDateTime: DateTime(2022, 12),
       seats: 1,
       status: DriveStatus.cancelledByDriver,
       driverId: 2,
@@ -470,10 +470,10 @@ void main() {
         createdAt: DateTime(2022, 10),
         start: 'Berlin',
         startPosition: Position(1, 1),
-        startTime: DateTime(2022, 11),
+        startDateTime: DateTime(2022, 11),
         end: 'Frankfurt',
         endPosition: Position(2, 2),
-        endTime: DateTime(2022, 12),
+        endDateTime: DateTime(2022, 12),
         seats: 1,
         status: DriveStatus.cancelledByDriver,
         driverId: 2,
@@ -492,10 +492,10 @@ void main() {
           createdAt: DateTime(2022, 10),
           start: 'Berlin',
           startPosition: Position(1, 1),
-          startTime: DateTime(2022, 11),
+          startDateTime: DateTime(2022, 11),
           end: 'Frankfurt',
           endPosition: Position(2, 2),
-          endTime: DateTime(2022, 12),
+          endDateTime: DateTime(2022, 12),
           seats: 1,
           status: i != 0 ? DriveStatus.plannedOrFinished : DriveStatus.cancelledByDriver,
           driverId: i == 1 ? 2 : 3,

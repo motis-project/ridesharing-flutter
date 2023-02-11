@@ -27,10 +27,10 @@ class Ride extends Trip {
     super.createdAt,
     required super.start,
     required super.startPosition,
-    required super.startTime,
+    required super.startDateTime,
     required super.end,
     required super.endPosition,
-    required super.endTime,
+    required super.endDateTime,
     required super.seats,
     this.price,
     required this.status,
@@ -55,10 +55,10 @@ class Ride extends Trip {
     return Ride(
       start: start,
       startPosition: startPosition,
-      startTime: drive.startTime,
+      startDateTime: drive.startDateTime,
       end: end,
       endPosition: endPosition,
-      endTime: drive.endTime,
+      endDateTime: drive.endDateTime,
       seats: seats,
       riderId: riderId,
       status: RideStatus.preview,
@@ -75,10 +75,10 @@ class Ride extends Trip {
       createdAt: DateTime.parse(json['created_at'] as String),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: DateTime.parse(json['start_time'] as String),
+      startDateTime: DateTime.parse(json['start_time'] as String),
       end: json['end'] as String,
       endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endTime: DateTime.parse(json['end_time'] as String),
+      endDateTime: DateTime.parse(json['end_time'] as String),
       seats: json['seats'] as int,
       price: parseHelper.parseDouble(json['price']),
       status: RideStatus.values[json['status'] as int],
@@ -167,7 +167,7 @@ class Ride extends Trip {
 
   @override
   String toString() {
-    return 'Ride{id: $id, in: $driveId, from: $start at $startTime, to: $end at $endTime, by: $riderId}';
+    return 'Ride{id: $id, in: $driveId, from: $start at $startDateTime, to: $end at $endDateTime, by: $riderId}';
   }
 
   Ride copyWith({int? id, RideStatus? status}) {
@@ -176,10 +176,10 @@ class Ride extends Trip {
       createdAt: createdAt,
       start: start,
       startPosition: startPosition,
-      startTime: startTime,
+      startDateTime: startDateTime,
       end: end,
       endPosition: endPosition,
-      endTime: endTime,
+      endDateTime: endDateTime,
       seats: seats,
       price: price,
       status: status ?? this.status,

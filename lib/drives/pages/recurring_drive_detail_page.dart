@@ -1,0 +1,189 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../util/buttons/button.dart';
+import '../../util/snackbar.dart';
+import '../../util/supabase_manager.dart';
+import '../../util/trip/drive_card.dart';
+import '../../util/trip/trip_overview.dart';
+import '../models/drive.dart';
+import '../models/recurring_drive.dart';
+
+class RecurringDriveDetailPage extends StatefulWidget {
+  final int id;
+  final RecurringDrive? recurringDrive;
+
+  const RecurringDriveDetailPage({super.key, required this.id}) : recurringDrive = null;
+  RecurringDriveDetailPage.fromRecurringDrive(this.recurringDrive, {super.key}) : id = recurringDrive!.id!;
+
+  @override
+  State<RecurringDriveDetailPage> createState() => _RecurringDriveDetailPageState();
+}
+
+class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
+  RecurringDrive? _recurringDrive;
+  bool _fullyLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      _recurringDrive = widget.recurringDrive;
+    });
+
+    loadRecurringDrive();
+  }
+
+  Future<void> loadRecurringDrive() async {
+    final Map<String, dynamic> data =
+        await supabaseManager.supabaseClient.from('recurring_drives').select<Map<String, dynamic>>('''
+      *,    
+      drives(
+        *,
+        rides(
+          *,
+          rider: rider_id(*),
+          chat: chat_id(
+            *,
+            messages: messages!messages_chat_id_fkey(*)
+          )
+        )
+      )
+    ''').eq('id', widget.id).single();
+
+    setState(() {
+      _recurringDrive = RecurringDrive.fromJson(data);
+      _fullyLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> widgets = <Widget>[];
+
+    if (_recurringDrive != null) {
+      widgets.add(TripOverview(_recurringDrive!));
+      widgets.add(const Divider(thickness: 1));
+    }
+
+    if (_fullyLoaded) {
+      final RecurringDrive recurringDrive = _recurringDrive!;
+
+      final List<Widget> driveWidgets = <Widget>[];
+
+      final List<Drive> upcomingDrives = recurringDrive.upcomingDrives;
+      if (upcomingDrives.isNotEmpty) {
+        final List<Widget> upcomingDrivesColumn = <Widget>[
+          const SizedBox(height: 5.0),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              S.of(context).pageDriveChatRequestsHeadline,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          ...upcomingDrives.map((Drive drive) => DriveCard(drive)),
+        ];
+        driveWidgets.addAll(upcomingDrivesColumn);
+      } else {
+        driveWidgets.add(const SizedBox(height: 10));
+        driveWidgets.add(
+          Text(
+            'There are no upcoming drives for this recurring drive. Try changing the recurrence rule to plan new drives.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        );
+      }
+
+      widgets.add(const SizedBox(height: 10));
+      Widget bottomButton;
+      if (recurringDrive.stoppedAt == null) {
+        bottomButton = Button.error(
+          'Stop recurring drive',
+          onPressed: _showStopDialog,
+          key: const Key('stopRecurringDriveButton'),
+        );
+      } else {
+        bottomButton = Button.error(
+          S.of(context).pageDriveDetailButtonCancel,
+          onPressed: _showStopDialog,
+          key: const Key('cancelDriveButton'),
+        );
+      }
+      widgets.add(bottomButton);
+      widgets.add(const SizedBox(height: 5));
+    } else {
+      widgets.add(const SizedBox(height: 10));
+      widgets.add(const Center(child: CircularProgressIndicator()));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Recurring Drive Detail'),
+        actions: <Widget>[buildEditButton()],
+      ),
+      body: _recurringDrive == null
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: loadRecurringDrive,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widgets,
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget buildEditButton() {
+    return IconButton(
+      icon: const Icon(Icons.edit),
+      onPressed: () {
+        // Navigator.of(context).push(MaterialPageRoute(RecurringDriveEditPage(recurringDrive: _recurringDrive!)));
+      },
+    );
+  }
+
+  Future<void> _stopRecurringDrive(DateTime date) async {
+    await _recurringDrive?.stop(date);
+    setState(() {});
+  }
+
+  void _showStopDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Stop recurring drive'),
+        content: const Text('Do you really want to stop this recurring drive?'),
+        actions: <Widget>[
+          TextButton(
+            key: const Key('stopRecurringDriveNoButton'),
+            child: Text(S.of(context).no),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            key: const Key('stopRecurringDriveYesButton'),
+            child: Text(S.of(context).yes),
+            onPressed: () {
+              _stopRecurringDrive(DateTime.now());
+
+              Navigator.of(context).pop();
+              showSnackBar(
+                context,
+                'Recurring drive stopped',
+                durationType: SnackBarDurationType.medium,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

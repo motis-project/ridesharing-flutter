@@ -17,7 +17,9 @@ class RecurringDrive extends TripLike {
   final int driverId;
   final Profile? driver;
 
+  @override
   final TimeOfDay startTime;
+  @override
   final TimeOfDay endTime;
 
   final List<Drive>? drives;
@@ -93,6 +95,9 @@ class RecurringDrive extends TripLike {
   String toString() {
     return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
+
+  List<Drive> get upcomingDrives =>
+      drives!.where((Drive drive) => drive.startDateTime.isAfter(DateTime.now()) && !drive.hideInListView).toList();
 
   Future<void> stop(DateTime stoppedAt) async {
     this.stoppedAt = stoppedAt;

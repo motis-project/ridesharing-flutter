@@ -326,7 +326,7 @@ class SearchRidePageState extends State<SearchRidePage> {
                   key: const Key('searchRideWrongTime'),
                   onTap: () => setState(
                     () {
-                      selectedDate = filterApplied[0].startTime;
+                      selectedDate = filterApplied[0].startDateTime;
                       _dateController.text = localeManager.formatDate(selectedDate);
                       if (!_wholeDay) {
                         _timeController.text = localeManager.formatTime(selectedDate);
@@ -422,12 +422,12 @@ class SearchRidePageState extends State<SearchRidePage> {
   List<Ride> applyTimeConstraints(List<Ride> rides) {
     if (_wholeDay) {
       return rides.where((Ride ride) {
-        return selectedDate.isSameDayAs(ride.startTime) || selectedDate.isSameDayAs(ride.endTime);
+        return selectedDate.isSameDayAs(ride.startDateTime) || selectedDate.isSameDayAs(ride.endDateTime);
       }).toList();
     }
     return rides.where((Ride ride) {
-      return selectedDate.difference(ride.startTime).inDays.abs() < 1 ||
-          selectedDate.difference(ride.endTime).inDays.abs() < 1;
+      return selectedDate.difference(ride.startDateTime).inDays.abs() < 1 ||
+          selectedDate.difference(ride.endDateTime).inDays.abs() < 1;
     }).toList();
   }
 }

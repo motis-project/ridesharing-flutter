@@ -50,7 +50,7 @@ void main() {
     await tester.pump();
 
     //date is shown
-    expect(find.text(localeManager.formatDate(ride.startTime)), findsOneWidget);
+    expect(find.text(localeManager.formatDate(ride.startDateTime)), findsOneWidget);
 
     //duration is shown
     expect(find.byIcon(Icons.access_time_outlined), findsOneWidget);
@@ -233,7 +233,7 @@ void main() {
     }) async {
       ride = RideFactory().generateFake(
         status: status,
-        endTime: endTime,
+        endDateTime: endTime,
         drive: NullableParameter(
           DriveFactory().generateFake(
             driver: NullableParameter(
@@ -413,7 +413,7 @@ void main() {
       testWidgets('disabledColor for past Drive', (WidgetTester tester) async {
         //drive in the past
         drive = DriveFactory().generateFake(
-          endTime: DateTime.now().subtract(const Duration(hours: 1)),
+          endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
         );
         await loadDriveCard(tester, drive);
 
@@ -423,7 +423,7 @@ void main() {
       testWidgets('errorColor cancelled Drive', (WidgetTester tester) async {
         //cancelled drive in the future
         drive = DriveFactory().generateFake(
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endDateTime: DateTime.now().add(const Duration(hours: 1)),
           status: DriveStatus.cancelledByDriver,
         );
         await loadDriveCard(tester, drive);
@@ -435,7 +435,7 @@ void main() {
       testWidgets('waring color for drive with ride requests', (WidgetTester tester) async {
         //drive in the future with ride requests
         drive = DriveFactory().generateFake(
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [RideFactory().generateFake(status: RideStatus.pending)],
         );
         await loadDriveCard(tester, drive);
@@ -447,7 +447,7 @@ void main() {
       testWidgets('successColor for drive with only approved rides', (WidgetTester tester) async {
         //drive in the future with approved rides
         drive = DriveFactory().generateFake(
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [RideFactory().generateFake(status: RideStatus.approved)],
         );
         await loadDriveCard(tester, drive);
@@ -459,7 +459,7 @@ void main() {
       testWidgets('disabledColor for drive with no rides', (WidgetTester tester) async {
         //drive in the future with no rides
         drive = DriveFactory().generateFake(
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [],
         );
         await loadDriveCard(tester, drive);

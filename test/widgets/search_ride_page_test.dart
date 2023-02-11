@@ -370,12 +370,12 @@ void main() {
 
       testWidgets('Normal input', (WidgetTester tester) async {
         final DateTime now = DateTime.now();
-        final DateTime startTime = DateTime(now.year, now.month, now.day + 1);
+        final DateTime startDateTime = DateTime(now.year, now.month, now.day + 1);
 
         final List<Map<String, dynamic>> drives = [
-          DriveFactory().generateFake(startTime: startTime).toJsonForApi(),
-          DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 1))).toJsonForApi(),
-          DriveFactory().generateFake(startTime: startTime.add(const Duration(days: 1))).toJsonForApi(),
+          DriveFactory().generateFake(startDateTime: startDateTime).toJsonForApi(),
+          DriveFactory().generateFake(startDateTime: startDateTime.add(const Duration(hours: 1))).toJsonForApi(),
+          DriveFactory().generateFake(startDateTime: startDateTime.add(const Duration(days: 1))).toJsonForApi(),
         ];
 
         whenRequest(processor).thenReturnJson(drives);
@@ -386,7 +386,7 @@ void main() {
 
         final String start = faker.address.city();
         await enterStartAndDestination(tester, start, faker.address.city());
-        await enterDateAndTime(tester, startTime);
+        await enterDateAndTime(tester, startDateTime);
 
         verifyRequest(
           processor,
@@ -422,11 +422,11 @@ void main() {
       });
 
       testWidgets('Too restrictive filters', (WidgetTester tester) async {
-        final DateTime startTime = DateTime.now();
+        final DateTime startDateTime = DateTime.now();
 
         final Profile driver = ProfileFactory().generateFake(profileFeatures: []);
         final List<Map<String, dynamic>> drives = [
-          DriveFactory().generateFake(driver: NullableParameter(driver), startTime: startTime).toJsonForApi(),
+          DriveFactory().generateFake(driver: NullableParameter(driver), startDateTime: startDateTime).toJsonForApi(),
         ];
 
         whenRequest(processor).thenReturnJson(drives);
@@ -455,10 +455,10 @@ void main() {
 
         final List<Map<String, dynamic>> drives = [
           DriveFactory()
-              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startTime: farAwayTime)
+              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startDateTime: farAwayTime)
               .toJsonForApi(),
           DriveFactory()
-              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startTime: rightTime)
+              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startDateTime: rightTime)
               .toJsonForApi(),
         ];
 
@@ -605,7 +605,7 @@ void main() {
       });
 
       testWidgets('Filter rating and features', (WidgetTester tester) async {
-        final DateTime startTime = DateTime.now();
+        final DateTime startDateTime = DateTime.now();
 
         const int minRating = 3;
         final List<Feature> shuffledFeatures = [...Feature.values]..shuffle();
@@ -689,8 +689,8 @@ void main() {
             drivers,
             drivers
                 .map((Profile driver) => DriveFactory().generateFake(
-                    startTime: startTime,
-                    endTime: startTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
+                    startDateTime: startDateTime,
+                    endDateTime: startDateTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
                     startPosition: Position(0, 0),
                     endPosition: Position(0, 0),
                     driver: NullableParameter(driver)))
@@ -753,26 +753,26 @@ void main() {
         double latDiffForKm(double km) => km / 110.574;
 
         testWidgets('Relevance (not whole day)', (WidgetTester tester) async {
-          final DateTime startTime = DateTime.now();
+          final DateTime startDateTime = DateTime.now();
 
           final List<Drive> drives = [
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
-                startTime: startTime.add(const Duration(hours: 1)),
-                endTime: startTime.add(const Duration(hours: 2)),
+                startDateTime: startDateTime.add(const Duration(hours: 1)),
+                endDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(10), 0)),
             //Time proximity and duration are weighted equally, so this is better by 9 minutes
             DriveFactory().generateFake(
-                startTime: startTime.add(const Duration(minutes: 50)),
-                endTime: startTime.add(const Duration(minutes: 111)),
+                startDateTime: startDateTime.add(const Duration(minutes: 50)),
+                endDateTime: startDateTime.add(const Duration(minutes: 111)),
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(10), 0)),
             //The price of this will be approx. 9.95€ because the price of rides is equal to the distance in km right now
             //Every cent is worth one minute of time proximity/duration, so this is better than the base by 5 minutes but worse than the previous by 4 minutes
             DriveFactory().generateFake(
-                startTime: startTime.add(const Duration(hours: 1)),
-                endTime: startTime.add(const Duration(hours: 2)),
+                startDateTime: startDateTime.add(const Duration(hours: 1)),
+                endDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(9.95), 0)),
           ];
@@ -790,7 +790,7 @@ void main() {
           final SearchRidePageState pageState = tester.state(pageFinder);
 
           await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
-          await enterDateAndTime(tester, startTime);
+          await enterDateAndTime(tester, startDateTime);
 
           await enterSorting(tester, SearchRideSorting.relevance);
 
@@ -802,19 +802,19 @@ void main() {
         });
 
         testWidgets('Relevance (whole day)', (WidgetTester tester) async {
-          final DateTime startTime = DateTime.now();
+          final DateTime startDateTime = DateTime.now();
 
           final List<Drive> drives = [
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
-                startTime: startTime.add(const Duration(hours: 1)),
-                endTime: startTime.add(const Duration(hours: 2)),
+                startDateTime: startDateTime.add(const Duration(hours: 1)),
+                endDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(10), 0)),
             //Time proximity is ignored in wholeDay, so this is worse because it's longer
             DriveFactory().generateFake(
-                startTime: startTime.add(const Duration(minutes: 50)),
-                endTime: startTime.add(const Duration(minutes: 111)),
+                startDateTime: startDateTime.add(const Duration(minutes: 50)),
+                endDateTime: startDateTime.add(const Duration(minutes: 111)),
                 startPosition: Position(0, 0),
                 endPosition: Position(latDiffForKm(10), 0)),
           ];
@@ -831,7 +831,7 @@ void main() {
           final SearchRidePageState pageState = tester.state(pageFinder);
 
           await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
-          await enterDate(tester, startTime);
+          await enterDate(tester, startDateTime);
 
           await enterSorting(tester, SearchRideSorting.relevance);
 
@@ -842,12 +842,15 @@ void main() {
         });
 
         testWidgets('Travel Duration', (WidgetTester tester) async {
-          final DateTime startTime = DateTime.now();
+          final DateTime startDateTime = DateTime.now();
 
           final List<Drive> drives = [
-            DriveFactory().generateFake(startTime: startTime, endTime: startTime.add(const Duration(hours: 2))),
-            DriveFactory().generateFake(startTime: startTime, endTime: startTime.add(const Duration(hours: 3))),
-            DriveFactory().generateFake(startTime: startTime, endTime: startTime.add(const Duration(hours: 1))),
+            DriveFactory()
+                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 2))),
+            DriveFactory()
+                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 3))),
+            DriveFactory()
+                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 1))),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
 
@@ -902,12 +905,12 @@ void main() {
         }, skip: true);
 
         testWidgets('Time proximity', (WidgetTester tester) async {
-          final DateTime startTime = DateTime.now();
+          final DateTime startDateTime = DateTime.now();
 
           final List<Drive> drives = [
-            DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 3))),
-            DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 2))),
-            DriveFactory().generateFake(startTime: startTime.add(const Duration(hours: 1))),
+            DriveFactory().generateFake(startDateTime: startDateTime.add(const Duration(hours: 3))),
+            DriveFactory().generateFake(startDateTime: startDateTime.add(const Duration(hours: 2))),
+            DriveFactory().generateFake(startDateTime: startDateTime.add(const Duration(hours: 1))),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
 
@@ -922,7 +925,7 @@ void main() {
           final SearchRidePageState pageState = tester.state(pageFinder);
 
           await enterStartAndDestination(tester, faker.address.city(), faker.address.city());
-          await enterDateAndTime(tester, startTime);
+          await enterDateAndTime(tester, startDateTime);
 
           await enterSorting(tester, SearchRideSorting.timeProximity);
 

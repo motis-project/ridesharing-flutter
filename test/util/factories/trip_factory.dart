@@ -10,25 +10,25 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
     DateTime? createdAt,
     String? start,
     Position? startPosition,
-    DateTime? startTime,
+    DateTime? startDateTime,
     String? end,
     Position? endPosition,
-    DateTime? endTime,
+    DateTime? endDateTime,
     int? seats,
     bool hideInListView = false,
     bool createDependencies = true,
   }) {
-    final TripTimes times = generateTimes(startTime, endTime);
+    final TripTimes times = generateTimes(startDateTime, endDateTime);
 
     return Trip(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: times.start,
+      startDateTime: times.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: times.end,
+      endDateTime: times.end,
       seats: seats ?? random.nextInt(5) + 1,
       hideInListView: hideInListView,
     ) as T;

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../drives/models/recurring_drive.dart';
 import '../locale_manager.dart';
 import 'seat_indicator.dart';
 import 'trip.dart';
+import 'trip_like.dart';
 
 class TripOverview extends StatelessWidget {
-  final Trip trip;
+  final TripLike trip;
 
   const TripOverview(this.trip, {super.key});
 
@@ -26,36 +28,42 @@ class TripOverview extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          localeManager.formatTime(trip.startTime),
+          localeManager.formatTimeOfDay(trip.startTime),
           style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
         ),
         Text(
-          localeManager.formatTime(trip.endTime),
+          localeManager.formatTimeOfDay(trip.endTime),
           style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
         ),
       ],
     );
 
+    final Widget overview = Column(
+      children: <Widget>[startDest, timeWidget, const SizedBox(height: 10.0), buildInfoRow(context)],
+    );
+
+    return overview;
+  }
+
+  Widget buildInfoRow(BuildContext context) {
     final List<Widget> infoRowWidgets = <Widget>[];
 
+    final String dateText = trip is Trip
+        ? localeManager.formatDate((trip as Trip).startDateTime)
+        : 'Seit ${localeManager.formatDate((trip as RecurringDrive).startedAt)}';
+
     final Widget dateWidget = Text(
-      localeManager.formatDate(trip.startTime),
+      dateText,
       style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
     );
     infoRowWidgets.add(dateWidget);
 
     infoRowWidgets.add(SeatIndicator(trip));
 
-    final Widget infoRow = Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: infoRowWidgets,
     );
-
-    final Widget overview = Column(
-      children: <Widget>[startDest, timeWidget, const SizedBox(height: 10.0), infoRow],
-    );
-
-    return overview;
   }
 }

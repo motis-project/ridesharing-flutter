@@ -84,14 +84,14 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         Waypoint(
           actions: <WaypointAction>[],
           place: drive.start,
-          time: drive.startTime,
+          time: drive.startDateTime,
         ),
       );
       stops.add(
         Waypoint(
           actions: <WaypointAction>[],
           place: drive.end,
-          time: drive.endTime,
+          time: drive.endDateTime,
         ),
       );
       final List<Ride> approvedRides = drive.approvedRides!;
@@ -116,7 +116,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             Waypoint(
               actions: <WaypointAction>[rideStartAction],
               place: ride.start,
-              time: ride.startTime,
+              time: ride.startDateTime,
             ),
           );
         }
@@ -126,7 +126,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             Waypoint(
               actions: <WaypointAction>[rideEndAction],
               place: ride.end,
-              time: ride.endTime,
+              time: ride.endDateTime,
             ),
           );
         }

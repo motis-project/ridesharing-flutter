@@ -16,10 +16,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     DateTime? createdAt,
     String? start,
     Position? startPosition,
-    TimeOfDay? startTime,
+    TimeOfDay? startDateTime,
     String? end,
     Position? endPosition,
-    TimeOfDay? endTime,
+    TimeOfDay? endDateTime,
     int? seats,
     DateTime? startedAt,
     RecurrenceRule? recurrenceRule,
@@ -40,8 +40,8 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     final generatedDriverId = generatedDriver?.id ?? driverId ?? randomId;
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
-    final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
-    final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedStartTime = startDateTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedEndTime = endDateTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
 
     final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
         RecurrenceRule(
@@ -65,7 +65,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                 .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
                       start: start,
                       startPosition: startPosition,
-                      startTime: DateTime(
+                      startDateTime: DateTime(
                         startDate.year,
                         startDate.month,
                         startDate.day,
@@ -74,7 +74,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                       ),
                       end: end,
                       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-                      endTime: DateTime(
+                      endDateTime: DateTime(
                         startDate.year,
                         startDate.month,
                         generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,

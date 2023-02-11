@@ -5,8 +5,8 @@ import 'trip_like.dart';
 class Trip extends TripLike {
   static const int maxSelectableSeats = 8;
 
-  final DateTime startTime;
-  final DateTime endTime;
+  final DateTime startDateTime;
+  final DateTime endDateTime;
   final bool hideInListView;
 
   Trip({
@@ -14,10 +14,10 @@ class Trip extends TripLike {
     super.createdAt,
     required super.start,
     required super.startPosition,
-    required this.startTime,
+    required this.startDateTime,
     required super.end,
     required super.endPosition,
-    required this.endTime,
+    required this.endDateTime,
     required super.seats,
     this.hideInListView = false,
   });
@@ -26,22 +26,28 @@ class Trip extends TripLike {
   Map<String, dynamic> toJson() {
     return super.toJson()
       ..addAll(<String, dynamic>{
-        'start_time': startTime.toString(),
-        'end_time': endTime.toString(),
+        'start_time': startDateTime.toString(),
+        'end_time': endDateTime.toString(),
         'hide_in_list_view': hideInListView,
       });
   }
 
-  Duration get duration => endTime.difference(startTime);
-  bool get isFinished => endTime.isBefore(DateTime.now());
-  bool get isOngoing => startTime.isBefore(DateTime.now()) && endTime.isAfter(DateTime.now());
+  Duration get duration => endDateTime.difference(startDateTime);
+  bool get isFinished => endDateTime.isBefore(DateTime.now());
+  bool get isOngoing => startDateTime.isBefore(DateTime.now()) && endDateTime.isAfter(DateTime.now());
+
+  @override
+  TimeOfDay get startTime => TimeOfDay.fromDateTime(startDateTime);
+
+  @override
+  TimeOfDay get endTime => TimeOfDay.fromDateTime(endDateTime);
 
   bool overlapsWith(Trip other) {
-    return startTime.isBefore(other.endTime) && endTime.isAfter(other.startTime);
+    return startDateTime.isBefore(other.endDateTime) && endDateTime.isAfter(other.startDateTime);
   }
 
   bool overlapsWithTimeRange(DateTimeRange range) {
-    return startTime.isBefore(range.end) && endTime.isAfter(range.start);
+    return startDateTime.isBefore(range.end) && endDateTime.isAfter(range.start);
   }
 
   bool shouldShowInListView({required bool past}) {
@@ -53,10 +59,10 @@ class Trip extends TripLike {
         createdAt == other.createdAt &&
         start == other.start &&
         startPosition == other.startPosition &&
-        startTime == other.startTime &&
+        startDateTime == other.startDateTime &&
         end == other.end &&
         endPosition == other.endPosition &&
-        endTime == other.endTime &&
+        endDateTime == other.endDateTime &&
         seats == other.seats &&
         hideInListView == other.hideInListView;
   }

@@ -351,7 +351,7 @@ void main() {
       final Ride ride = RideFactory().generateFake(
         status: RideStatus.approved,
         rider: NullableParameter(profile),
-        startTime: DateTime.now().add(const Duration(hours: 1)),
+        startDateTime: DateTime.now().add(const Duration(hours: 1)),
       );
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
@@ -381,7 +381,7 @@ void main() {
       final Ride ride = RideFactory().generateFake(
         status: RideStatus.approved,
         rider: NullableParameter(profile),
-        startTime: DateTime.now().add(const Duration(hours: 1)),
+        startDateTime: DateTime.now().add(const Duration(hours: 1)),
       );
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
@@ -436,7 +436,7 @@ void main() {
     testWidgets('insertDrive', (WidgetTester tester) async {
       final Drive drive = DriveFactory().generateFake(
         driver: NullableParameter(profile),
-        startTime: DateTime.now().add(const Duration(hours: 1)),
+        startDateTime: DateTime.now().add(const Duration(hours: 1)),
       );
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
@@ -465,16 +465,16 @@ void main() {
     testWidgets('updateDrive', (WidgetTester tester) async {
       final Drive drive = DriveFactory().generateFake(
         driver: NullableParameter(profile),
-        startTime: DateTime.now().add(const Duration(hours: 1)),
-        cancelled: false,
+        startDateTime: DateTime.now().add(const Duration(hours: 1)),
+        status: DriveStatus.plannedOrFinished,
       );
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([drive.toJsonForApi()]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
-      drive.cancelled = true;
-      //the folowing request is for the drive in the updateDrive function
+      drive.status = DriveStatus.cancelledByDriver;
+      //the following request is for the drive in the updateDrive function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/drives.*&id=eq\.' + drive.id.toString())),
@@ -498,7 +498,7 @@ void main() {
     // testing the dismiss for a drive is enough since it is the same for a ride
     final Drive drive = DriveFactory().generateFake(
       driver: NullableParameter(profile),
-      startTime: DateTime.now().add(const Duration(hours: 1)),
+      startDateTime: DateTime.now().add(const Duration(hours: 1)),
     );
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([drive.toJsonForApi()]);
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
@@ -520,19 +520,19 @@ void main() {
   testWidgets('works with multiple events', (WidgetTester tester) async {
     final Drive driveToday = DriveFactory().generateFake(
       driver: NullableParameter(profile),
-      startTime: DateTime.now(),
+      startDateTime: DateTime.now(),
     );
     final Drive driveTomorrow = DriveFactory().generateFake(
       driver: NullableParameter(profile),
-      startTime: DateTime.now().add(const Duration(days: 1)),
+      startDateTime: DateTime.now().add(const Duration(days: 1)),
     );
     final Ride rideToday = RideFactory().generateFake(
       rider: NullableParameter(profile),
-      startTime: DateTime.now(),
+      startDateTime: DateTime.now(),
     );
     final Ride rideTomorrow = RideFactory().generateFake(
       rider: NullableParameter(profile),
-      startTime: DateTime.now().add(const Duration(days: 1)),
+      startDateTime: DateTime.now().add(const Duration(days: 1)),
     );
     final Message message = MessageFactory().generateFake(createdAt: DateTime.now().subtract(const Duration(hours: 2)));
     final Message message2 = MessageFactory().generateFake(createdAt: DateTime.now());

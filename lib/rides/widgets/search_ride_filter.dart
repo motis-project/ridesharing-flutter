@@ -463,7 +463,7 @@ extension SearchRideSortingExtension on SearchRideSorting {
     int travelDurationFunc(Ride ride1, Ride ride2) => (ride1.duration - ride2.duration).inMinutes;
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     int timeProximityFunc(Ride ride1, Ride ride2) =>
-        (date.difference(ride1.startTime).abs() - date.difference(ride2.startTime).abs()).inMinutes;
+        (date.difference(ride1.startDateTime).abs() - date.difference(ride2.startDateTime).abs()).inMinutes;
     switch (this) {
       case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>

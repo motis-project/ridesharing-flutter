@@ -164,7 +164,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Color pickStatusColor() {
-    if (_ride.endTime.isBefore(DateTime.now())) {
+    if (_ride.endDateTime.isBefore(DateTime.now())) {
       if (_ride.status == RideStatus.approved) {
         return Theme.of(context).own().success;
       } else {

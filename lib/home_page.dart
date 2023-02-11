@@ -169,13 +169,13 @@ class HomePageState extends State<HomePage> {
               .from('drives')
               .select<List<Map<String, dynamic>>>()
               .eq('driver_id', profileId)
-              .eq('cancelled', false)
+              .eq('status', DriveStatus.plannedOrFinished.index)
               .lt('start_time', tomorrow)
               .gte('start_time', today),
         ),
       ),
     );
-    trips.sort((Trip a, Trip b) => a.startTime.compareTo(b.startTime));
+    trips.sort((Trip a, Trip b) => a.startDateTime.compareTo(b.startDateTime));
     _upcomingTripsCount = trips.length;
     items.insertAll(0, trips);
 
@@ -319,12 +319,12 @@ class HomePageState extends State<HomePage> {
 
   void updateRide(Map<String, dynamic> rideData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(rideData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+    final DateTime startDateTime = DateTime.parse(rideData['start_time'] as String);
+    if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       if (rideData['status'] == RideStatus.approved.index) {
         setState(() {
           for (int i = 0; i <= _upcomingTripsCount; i++) {
-            if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
+            if (_items is! Trip || (_items[i] as Trip).startDateTime.isAfter(startDateTime)) {
               _items.insert(i, Ride.fromJson(rideData));
               break;
             }
@@ -349,11 +349,11 @@ class HomePageState extends State<HomePage> {
 
   void insertDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+    final DateTime startDateTime = DateTime.parse(driveData['start_time'] as String);
+    if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
         for (int i = 0; i <= _upcomingTripsCount; i++) {
-          if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
+          if (_items is! Trip || (_items[i] as Trip).startDateTime.isAfter(startDateTime)) {
             _items.insert(i, Drive.fromJson(driveData));
             break;
           }
@@ -366,7 +366,7 @@ class HomePageState extends State<HomePage> {
   void updateDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
     final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (driveData['cancelled'] == true &&
+    if (driveData['status'] != DriveStatus.plannedOrFinished.index &&
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
@@ -467,15 +467,19 @@ class HomePageState extends State<HomePage> {
             leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
             title: Text(
               trip is Drive
-                  ? trip.startTime.day == DateTime.now().day
+                  ? trip.startDateTime.day == DateTime.now().day
                       ? S.of(context).pageHomeUpcomingDriveToday
                       : S.of(context).pageHomeUpcomingDriveTomorrow
-                  : trip.startTime.day == DateTime.now().day
+                  : trip.startDateTime.day == DateTime.now().day
                       ? S.of(context).pageHomeUpcomingRideToday
                       : S.of(context).pageHomeUpcomingRideTomorrow,
             ),
             subtitle: Text(
-              S.of(context).pageHomeUpcomingTripMessage(trip.end, trip.start, localeManager.formatTime(trip.startTime)),
+              S.of(context).pageHomeUpcomingTripMessage(
+                    trip.end,
+                    trip.start,
+                    localeManager.formatTime(trip.startDateTime),
+                  ),
             ),
             onTap: () {
               Navigator.of(context).push(

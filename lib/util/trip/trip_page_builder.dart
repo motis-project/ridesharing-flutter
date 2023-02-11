@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../drives/pages/recurring_drive_detail_page.dart';
 import '../../rides/models/ride.dart';
 import 'trip.dart';
 import 'trip_stream_builder.dart';
@@ -28,6 +29,15 @@ class TripPageBuilder<T extends Trip> extends StatelessWidget {
               Tab(text: S.of(context).widgetTripBuilderTabPast),
             ],
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.arrow_circle_down),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute<void>(builder: (_) => const RecurringDriveDetailPage(id: 9)));
+              },
+            ),
+          ],
         ),
         body: Semantics(
           sortKey: const OrdinalSortKey(1),

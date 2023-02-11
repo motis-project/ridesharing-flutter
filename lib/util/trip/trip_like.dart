@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../model.dart';
 import '../search/position.dart';
 
@@ -21,6 +23,9 @@ abstract class TripLike extends Model {
     required this.endPosition,
     required this.seats,
   });
+
+  TimeOfDay get startTime;
+  TimeOfDay get endTime;
 
   @override
   Map<String, dynamic> toJson() {

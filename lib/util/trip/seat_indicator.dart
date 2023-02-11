@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../drives/models/drive.dart';
-import 'trip.dart';
+import 'trip_like.dart';
 
 class SeatIndicator extends StatelessWidget {
-  final Trip trip;
+  final TripLike trip;
 
   const SeatIndicator(this.trip, {super.key});
 
