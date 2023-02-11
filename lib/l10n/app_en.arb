@@ -246,8 +246,6 @@
   "modelProfileFeatureRequires3G": "Requires 3G Certification",
 
   "pageCreateDriveTitle": "Create Drive",
-  "pageCreateDriveYouAlreadyHaveDrive": "You already have a drive scheduled for this time.",
-  "pageCreateDriveYouAlreadyHaveRide": "You already have a ride scheduled for this time.",
   "pageCreateDriveButtonCreate": "Create",
 
   "weekDayMonday": "Monday",
@@ -264,6 +262,7 @@
   "weekDayFridayAbbreviation": "Fr",
   "weekDaySaturdayAbbreviation": "Sa",
   "weekDaySundayAbbreviation": "Su",
+  "weekDayPickerValidationEmpty": "Please select at least one day of the week.",
 
   "pageDriveDetailTitle": "Drive Detail",
   "pageDriveDetailLabelStartDrive": "Start of drive",

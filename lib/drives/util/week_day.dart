@@ -4,11 +4,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class WeekDayPicker extends FormField<List<WeekDay>> {
   final List<WeekDay> weekDays;
   final ValueChanged<List<WeekDay>> onWeekDaysChanged;
+  final BuildContext context;
 
   WeekDayPicker({
     super.key,
     this.weekDays = const <WeekDay>[],
     required this.onWeekDaysChanged,
+    required this.context,
   }) : super(
           builder: (FormFieldState<List<WeekDay>> state) {
             return Column(
@@ -17,20 +19,17 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                   mainAxisSize: MainAxisSize.min,
                   children: WeekDay.values
                       .map(
-                        (WeekDay weekDay) => Padding(
-                          padding: const EdgeInsets.symmetric(),
-                          child: WeekDayButton(
-                            weekDay: weekDay,
-                            selected: weekDays.contains(weekDay),
-                            onPressed: () {
-                              if (weekDays.contains(weekDay)) {
-                                weekDays.remove(weekDay);
-                              } else {
-                                weekDays.add(weekDay);
-                              }
-                              state.didChange(weekDays);
-                            },
-                          ),
+                        (WeekDay weekDay) => WeekDayButton(
+                          weekDay: weekDay,
+                          selected: weekDays.contains(weekDay),
+                          onPressed: () {
+                            if (weekDays.contains(weekDay)) {
+                              weekDays.remove(weekDay);
+                            } else {
+                              weekDays.add(weekDay);
+                            }
+                            state.didChange(weekDays);
+                          },
                         ),
                       )
                       .toList(),
@@ -40,7 +39,7 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
                       state.errorText!,
-                      style: const TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
               ],
@@ -48,7 +47,7 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
           },
           validator: (List<WeekDay>? _) {
             if (weekDays.isEmpty) {
-              return 'Please select at least one day';
+              return S.of(context).weekDayPickerValidationEmpty;
             }
             return null;
           },
