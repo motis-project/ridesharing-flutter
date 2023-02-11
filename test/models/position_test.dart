@@ -50,9 +50,15 @@ void main() {
   });
 
   group('Position.hashCode', () {
-    test('Mainz', () {
+    test('equal', () {
       final Position position = Position(50, 8.2714);
-      expect(position.hashCode, 9159982799919094);
+      final Position samePosition = Position(50, 8.2714);
+      expect(position.hashCode == samePosition.hashCode, isTrue);
+    });
+    test('not equal', () {
+      final Position position = Position(50, 8.2714);
+      final Position otherPosition = Position(50, 8.2715);
+      expect(position.hashCode == otherPosition.hashCode, isFalse);
     });
   });
 
