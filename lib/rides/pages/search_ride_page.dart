@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -15,7 +16,9 @@ import '../models/ride.dart';
 import '../widgets/search_ride_filter.dart';
 
 class SearchRidePage extends StatefulWidget {
-  const SearchRidePage({super.key});
+  //This is needed in order to mock the time in tests
+  final Clock clock;
+  const SearchRidePage({super.key, this.clock = const Clock()});
 
   @override
   State<SearchRidePage> createState() => SearchRidePageState();
@@ -29,7 +32,7 @@ class SearchRidePageState extends State<SearchRidePage> {
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
   bool _wholeDay = true;
   int seats = 1;
 
@@ -42,6 +45,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   @override
   void initState() {
     super.initState();
+    selectedDate = widget.clock.now();
     filter = SearchRideFilter(wholeDay: _wholeDay);
     loadRides();
   }
@@ -56,7 +60,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   void _showDatePicker() {
-    final DateTime firstDate = DateTime.now();
+    final DateTime firstDate = widget.clock.now();
 
     showDatePicker(
       context: context,
@@ -96,7 +100,7 @@ class SearchRidePageState extends State<SearchRidePage> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (selectedDate.add(const Duration(minutes: 10)).isBefore(DateTime.now())) {
+    if (selectedDate.add(const Duration(minutes: 10)).isBefore(widget.clock.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -209,7 +213,7 @@ class SearchRidePageState extends State<SearchRidePage> {
             IconButton(
               key: const Key('searchRideBeforeButton'),
               tooltip: S.of(context).before,
-              onPressed: selectedDate.isSameDayAs(DateTime.now())
+              onPressed: selectedDate.isSameDayAs(widget.clock.now())
                   ? null
                   : () => setState(() => selectedDate = selectedDate.subtract(const Duration(days: 1))),
               icon: const Icon(Icons.chevron_left),

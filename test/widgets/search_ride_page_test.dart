@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
@@ -304,13 +305,13 @@ void main() {
           });
 
           testWidgets('Impossible time', (WidgetTester tester) async {
-            final DateTime dateTime = DateTime.now().subtract(const Duration(minutes: 11));
-            if (dateTime.day != DateTime.now().day) {
-              // Code is untestable from 00:00 to 00:11
-              return;
-            }
+            final DateTime now = DateTime.now();
+            //This is needed because it's impossible to try to select an impossible time between 00:00 and 00:10
+            final DateTime mockTime =
+                DateTime(now.year, now.month, now.day + 1, random.integer(24, min: 1), random.integer(60));
+            final DateTime dateTime = mockTime.subtract(const Duration(minutes: 11));
 
-            await pumpMaterial(tester, const SearchRidePage());
+            await pumpMaterial(tester, SearchRidePage(clock: Clock.fixed(mockTime)));
             await tester.pump();
 
             await enterDateAndTime(tester, dateTime);

@@ -75,6 +75,7 @@ dependencies:
   deep_pick: ^0.10.0
   sliver_tools: ^0.2.9
   rrule: ^0.2.10
+  clock: ^1.1.1
 
 dev_dependencies:
   flutter_test:
