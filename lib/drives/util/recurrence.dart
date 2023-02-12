@@ -7,19 +7,26 @@ import 'week_day.dart';
 
 class RecurrenceOptions {
   RecurrenceOptions({
+    required this.startedAt,
     required RecurrenceEndChoice endChoice,
+    required this.predefinedEndChoices,
     required this.recurrenceInterval,
     List<WeekDay>? weekDays,
     required BuildContext context,
   }) {
-    _endChoice = endChoice;
-    endChoiceController.text = endChoice.getName(context);
+    if (!predefinedEndChoices.contains(endChoice)) {
+      endChoice.isCustom = true;
+    }
+
+    setEndChoice(endChoice, context, initializeControllers: true);
+
     recurrenceIntervalSizeController.text = recurrenceInterval.intervalSize.toString();
     recurrenceIntervalTypeController.text = recurrenceInterval.intervalType.getName(context);
     this.weekDays = weekDays ?? <WeekDay>[];
   }
 
   bool enabled = false;
+  DateTime startedAt;
 
   late RecurrenceEndChoice _endChoice;
   final TextEditingController endChoiceController = TextEditingController();
@@ -27,19 +34,31 @@ class RecurrenceOptions {
 
   RecurrenceEndChoice get endChoice => _endChoice;
 
-  void setEndChoice(RecurrenceEndChoice value, BuildContext context) {
+  void setEndChoice(RecurrenceEndChoice value, BuildContext context, {bool initializeControllers = false}) {
     _endChoice = value;
     rebuildEndChoiceController(context);
     if (value.isCustom) {
       if (value is RecurrenceEndChoiceDate) {
         customEndDateChoice = value;
+        if (initializeControllers) {
+          customEndDateController.text = localeManager.formatDate(value.date!);
+        }
       } else if (value is RecurrenceEndChoiceInterval) {
         customEndIntervalChoice = value;
+        if (initializeControllers) {
+          customEndIntervalSizeController.text = value.intervalSize.toString();
+          customEndIntervalTypeController.text = value.intervalType!.getName(context);
+        }
       } else if (value is RecurrenceEndChoiceOccurrence) {
         customEndOccurrenceChoice = value;
+        if (initializeControllers) {
+          customEndOccurrenceController.text = value.occurrences.toString();
+        }
       }
     }
   }
+
+  List<RecurrenceEndChoice> predefinedEndChoices;
 
   late final List<WeekDay> weekDays;
 
@@ -118,7 +137,7 @@ class RecurrenceOptions {
     if (_endChoice.type == RecurrenceEndType.date) {
       until = (endChoice as RecurrenceEndChoiceDate).date;
     } else if (_endChoice.type == RecurrenceEndType.interval) {
-      until = (endChoice as RecurrenceEndChoiceInterval).date;
+      until = (endChoice as RecurrenceEndChoiceInterval).getDate(startedAt);
     } else if (_endChoice.type == RecurrenceEndType.occurrence) {
       return RecurrenceRule(
         frequency: frequency,
@@ -170,7 +189,7 @@ class RecurrenceInterval {
 
 abstract class RecurrenceEndChoice {
   RecurrenceEndType type;
-  final bool isCustom;
+  bool isCustom;
 
   RecurrenceEndChoice({this.type = RecurrenceEndType.occurrence, this.isCustom = false});
 
@@ -216,18 +235,17 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
       : assert((intervalSize != null && intervalType != null) || isCustom),
         super(type: RecurrenceEndType.interval);
 
-  DateTime get date {
-    final DateTime now = DateTime.now();
+  DateTime getDate(DateTime startedAt) {
     switch (intervalType!) {
       case RecurrenceIntervalType.days:
-        return now.add(Duration(days: intervalSize!));
+        return startedAt.add(Duration(days: intervalSize!));
       case RecurrenceIntervalType.weeks:
-        return now.add(Duration(days: intervalSize! * 7));
+        return startedAt.add(Duration(days: intervalSize! * 7));
       case RecurrenceIntervalType.months:
-        final int nextMonth = now.month + intervalSize!;
-        return DateTime(now.year + (nextMonth + 1) ~/ 12, (nextMonth + 1) % 12 - 1, now.day);
+        final int nextMonth = startedAt.month + intervalSize!;
+        return DateTime(startedAt.year + (nextMonth + 1) ~/ 12, (nextMonth + 1) % 12 - 1, startedAt.day);
       case RecurrenceIntervalType.years:
-        return DateTime(now.year + intervalSize!, now.month, now.day);
+        return DateTime(startedAt.year + intervalSize!, startedAt.month, startedAt.day);
     }
   }
 

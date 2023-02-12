@@ -84,6 +84,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     // This is here instead of initState
     // because the context is needed for the recurrence options
     _recurrenceOptions = RecurrenceOptions(
+      predefinedEndChoices: predefinedRecurrenceEndChoices,
+      startedAt: _selectedDate,
       endChoice: predefinedRecurrenceEndChoices.last,
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
       context: context,
@@ -130,6 +132,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
       setState(() {
         if (value != null) {
           _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
+          _recurrenceOptions.startedAt = _selectedDate;
           _dateController.text = localeManager.formatDate(_selectedDate);
         }
       });
@@ -158,7 +161,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             seats: _seats,
             startTime: TimeOfDay.fromDateTime(_selectedDate),
             endTime: TimeOfDay.fromDateTime(endDateTime),
-            startedAt: _selectedDate,
+            startedAt: _recurrenceOptions.startedAt,
             recurrenceRule: _recurrenceOptions.recurrenceRule,
             recurrenceEndType: _recurrenceOptions.endChoice.type,
           );
@@ -311,7 +314,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           if (_recurrenceOptions.enabled) ...<Widget>[
             const SizedBox(height: 10),
             RecurrenceOptionsEdit(
-              predefinedRecurrenceEndChoices: predefinedRecurrenceEndChoices,
               recurrenceOptions: _recurrenceOptions,
               setState: setState,
             ),
