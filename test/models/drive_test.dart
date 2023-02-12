@@ -6,6 +6,7 @@ import 'package:motis_mitfahr_app/util/search/position.dart';
 
 import '../util/factories/drive_factory.dart';
 import '../util/factories/profile_factory.dart';
+import '../util/factories/recurring_drive_factory.dart';
 import '../util/factories/ride_factory.dart';
 import '../util/mocks/mock_server.dart';
 import '../util/mocks/request_processor.dart';
@@ -32,6 +33,7 @@ void main() {
         'seats': 2,
         'cancelled': true,
         'driver_id': 7,
+        'recurring_drive_id': 8,
         'hide_in_list_view': false,
       };
       final Drive drive = Drive.fromJson(json);
@@ -47,6 +49,8 @@ void main() {
       expect(drive.cancelled, json['cancelled']);
       expect(drive.driverId, json['driver_id']);
       expect(drive.driver, null);
+      expect(drive.recurringDriveId, json['recurring_drive_id']);
+      expect(drive.recurringDrive, null);
       expect(drive.rides, null);
       expect(drive.hideInListView, json['hide_in_list_view']);
     });
@@ -67,6 +71,8 @@ void main() {
         'hide_in_list_view': false,
         'driver_id': 7,
         'driver': ProfileFactory().generateFake().toJsonForApi(),
+        'recurring_drive_id': 8,
+        'recurring_drive': RecurringDriveFactory().generateFake().toJsonForApi(),
         'rides': RideFactory().generateFakeJsonList(length: 3),
       };
       final Drive drive = Drive.fromJson(json);
@@ -80,9 +86,11 @@ void main() {
       expect(drive.endTime, DateTime.parse(json['end_time']));
       expect(drive.seats, json['seats']);
       expect(drive.cancelled, json['cancelled']);
-      expect(drive.driverId, json['driver_id']);
       expect(drive.hideInListView, json['hide_in_list_view']);
+      expect(drive.driverId, json['driver_id']);
       expect(drive.driver, isNotNull);
+      expect(drive.recurringDriveId, json['recurring_drive_id']);
+      expect(drive.recurringDrive, isNotNull);
       expect(drive.rides!.length, 3);
     });
   });
@@ -131,8 +139,9 @@ void main() {
       expect(json['cancelled'], drive.cancelled);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
+      expect(json['recurring_drive_id'], drive.recurringDriveId);
       expect(json['hide_in_list_view'], drive.hideInListView);
-      expect(json.keys.length, 12);
+      expect(json.keys.length, 13);
     });
   });
   group('Drive.approvedRides', () {
@@ -411,7 +420,15 @@ void main() {
     test('cancelled is being changed from false to true', () async {
       final Drive drive = DriveFactory().generateFake(cancelled: false, createDependencies: false);
       whenRequest(driveProcessor).thenReturnJson(drive.toJsonForApi());
-      drive.cancel();
+      await drive.cancel();
+      verifyRequest(
+        driveProcessor,
+        urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
+        methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({
+          'cancelled': true,
+        }),
+      );
       expect(drive.cancelled, true);
     });
   });

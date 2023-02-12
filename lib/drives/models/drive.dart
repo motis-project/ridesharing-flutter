@@ -6,12 +6,16 @@ import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
+import 'recurring_drive.dart';
 
 class Drive extends Trip {
   bool cancelled;
 
   final int driverId;
   final Profile? driver;
+
+  final int? recurringDriveId;
+  final RecurringDrive? recurringDrive;
 
   final List<Ride>? rides;
 
@@ -29,6 +33,8 @@ class Drive extends Trip {
     super.hideInListView,
     required this.driverId,
     this.driver,
+    this.recurringDriveId,
+    this.recurringDrive,
     this.rides,
   });
 
@@ -48,6 +54,10 @@ class Drive extends Trip {
       hideInListView: json['hide_in_list_view'] as bool,
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
+      recurringDriveId: json['recurring_drive_id'] as int?,
+      recurringDrive: json.containsKey('recurring_drive')
+          ? RecurringDrive.fromJson(json['recurring_drive'] as Map<String, dynamic>)
+          : null,
       rides: json.containsKey('rides') ? Ride.fromJsonList(parseHelper.parseListOfMaps(json['rides'])) : null,
     );
   }
@@ -62,6 +72,7 @@ class Drive extends Trip {
       ..addAll(<String, dynamic>{
         'cancelled': cancelled,
         'driver_id': driverId,
+        'recurring_drive_id': recurringDriveId,
       });
   }
 
@@ -69,7 +80,10 @@ class Drive extends Trip {
   Map<String, dynamic> toJsonForApi() {
     return super.toJsonForApi()
       ..addAll(<String, dynamic>{
-        'driver': driver?.toJsonForApi(),
+        ...driver == null ? <String, dynamic>{} : <String, dynamic>{'driver': driver?.toJsonForApi()},
+        ...recurringDrive == null
+            ? <String, dynamic>{}
+            : <String, dynamic>{'recurring_drive': recurringDrive?.toJsonForApi()},
         'rides': rides?.map((Ride ride) => ride.toJsonForApi()).toList() ?? <Map<String, dynamic>>[],
       });
   }

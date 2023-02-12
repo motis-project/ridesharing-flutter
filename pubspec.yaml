@@ -74,6 +74,7 @@ dependencies:
   faker: ^2.1.0
   deep_pick: ^0.10.0
   sliver_tools: ^0.2.9
+  rrule: ^0.2.10
 
 dev_dependencies:
   flutter_test:
