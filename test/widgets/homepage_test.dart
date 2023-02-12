@@ -518,29 +518,42 @@ void main() {
   });
 
   testWidgets('works with multiple events', (WidgetTester tester) async {
-    final Drive drive = DriveFactory().generateFake(
+    final Drive driveToday = DriveFactory().generateFake(
       driver: NullableParameter(profile),
-      startTime: DateTime.now().add(const Duration(hours: 1)),
+      startTime: DateTime.now(),
     );
-    final Ride ride = RideFactory().generateFake(
+    final Drive driveTomorrow = DriveFactory().generateFake(
+      driver: NullableParameter(profile),
+      startTime: DateTime.now().add(const Duration(days: 1)),
+    );
+    final Ride rideToday = RideFactory().generateFake(
       rider: NullableParameter(profile),
-      startTime: DateTime.now().add(const Duration(hours: 2)),
+      startTime: DateTime.now(),
+    );
+    final Ride rideTomorrow = RideFactory().generateFake(
+      rider: NullableParameter(profile),
+      startTime: DateTime.now().add(const Duration(days: 1)),
     );
     final Message message = MessageFactory().generateFake(createdAt: DateTime.now().subtract(const Duration(hours: 2)));
     final Message message2 = MessageFactory().generateFake(createdAt: DateTime.now());
     final RideEvent rideEvent = RideEventFactory().generateFake(
       createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-      ride: NullableParameter(ride),
+      ride: NullableParameter(rideToday),
       category: RideEventCategory.approved,
     );
 
-    whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([drive.toJsonForApi()]);
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([driveToday.toJsonForApi()]);
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([message.toJsonForApi()]);
-    whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([ride.toJsonForApi()]);
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'))
+        .thenReturnJson([rideToday.toJsonForApi(), rideTomorrow.toJsonForApi()]);
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([rideEvent.toJsonForApi()]);
 
     whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/messages.*&id=eq\.' + message2.id.toString())))
         .thenReturnJson(message2.toJsonForApi());
+    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/drives.*&id=eq\.' + driveTomorrow.id.toString())))
+        .thenReturnJson(driveTomorrow.toJsonForApi());
+    whenRequest(processor, urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + rideTomorrow.id.toString())))
+        .thenReturnJson(rideTomorrow.toJsonForApi());
 
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
@@ -548,20 +561,28 @@ void main() {
     final HomePageState homePage = tester.state(find.byType(HomePage));
 
     final Finder finder = find.byType(Dismissible, skipOffstage: false);
-    expect(finder, findsNWidgets(4));
-
-    expect(tester.widget(finder.at(0)).key, Key('drive${drive.id}'));
-    expect(tester.widget(finder.at(1)).key, Key('ride${ride.id}'));
-    expect(tester.widget(finder.at(2)).key, Key('rideEvent${rideEvent.id}'));
-    expect(tester.widget(finder.at(3)).key, Key('message${message.id}'));
-
-    homePage.insertMessage(message2.toJsonForApi());
-
-    await tester.pumpAndSettle();
-
     expect(finder, findsNWidgets(5));
 
-    expect(tester.widget(finder.at(2)).key, Key('message${message2.id}'));
+    print(rideToday.id);
+    print(rideTomorrow.id);
+    print(driveToday.id);
+    print(driveTomorrow.id);
+    print(message.id);
+    print(message2.id);
+    expect(tester.widget(finder.at(0)).key, Key('drive${driveToday.id}'));
+    expect(tester.widget(finder.at(1)).key, Key('ride${rideToday.id}'));
+    expect(tester.widget(finder.at(2)).key, Key('ride${rideTomorrow.id}'));
+    expect(tester.widget(finder.at(3)).key, Key('rideEvent${rideEvent.id}'));
+    expect(tester.widget(finder.at(4)).key, Key('message${message.id}'));
+
+    homePage.insertMessage(message2.toJsonForApi());
+    homePage.insertDrive(driveTomorrow.toJsonForApi());
+    await tester.pumpAndSettle();
+
+    expect(finder, findsNWidgets(7));
+
+    expect(tester.widget(finder.at(4)).key, Key('message${message2.id}'));
+    expect(tester.widget(finder.at(0)).key, Key('drive${driveTomorrow.id}'));
   });
 
   group('Buttons', () {

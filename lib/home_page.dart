@@ -222,43 +222,38 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 30),
             if (_fullyLoaded)
               Expanded(
-                child: Container(
-                  key: const Key('MessageContainer'),
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.primary),
-                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                  child: _items.isNotEmpty
-                      ? ListView.separated(
-                          itemCount: _items.length,
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(height: 2);
-                          },
-                          itemBuilder: (BuildContext context, int index) {
-                            return _buildWidget(_items[index]);
-                          },
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/chat_shrug.png',
-                              scale: 8,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              S.of(context).pageHomePageEmpty,
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            const SizedBox(height: 3),
-                          ],
-                        ),
-                ),
+                // child: Container(
+                //   key: const Key('MessageContainer'),
+                //   width: MediaQuery.of(context).size.width,
+                //   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: _items.isNotEmpty
+                    ? ListView.separated(
+                        itemCount: _items.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 2);
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          return _buildWidget(_items[index]);
+                        },
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset(
+                            'assets/chat_shrug.png',
+                            scale: 8,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            S.of(context).pageHomePageEmpty,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 3),
+                        ],
+                      ),
               )
             else
               const Center(
@@ -391,17 +386,17 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  Card _buildMessageWidget(Message message) {
-    return Card(
-      child: InkWell(
-        child: Dismissible(
-          key: Key('message${message.id}'),
-          onDismissed: (DismissDirection direction) async {
-            unawaited(message.markAsRead());
-            setState(() {
-              _items.remove(message);
-            });
-          },
+  Widget _buildMessageWidget(Message message) {
+    return Dismissible(
+      key: Key('message${message.id}'),
+      onDismissed: (DismissDirection direction) async {
+        unawaited(message.markAsRead());
+        setState(() {
+          _items.remove(message);
+        });
+      },
+      child: Card(
+        child: InkWell(
           child: ListTile(
             leading: Avatar(message.sender!),
             title: Text(message.sender!.username),
@@ -428,16 +423,16 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildRideEventWidget(RideEvent rideEvent) {
     final bool isForRide = rideEvent.ride!.rider!.isCurrentUser;
-    return Card(
-      child: InkWell(
-        child: Dismissible(
-          key: Key('rideEvent${rideEvent.id}'),
-          onDismissed: (DismissDirection direction) async {
-            unawaited(rideEvent.markAsRead());
-            setState(() {
-              _items.remove(rideEvent);
-            });
-          },
+    return Dismissible(
+      key: Key('rideEvent${rideEvent.id}'),
+      onDismissed: (DismissDirection direction) async {
+        unawaited(rideEvent.markAsRead());
+        setState(() {
+          _items.remove(rideEvent);
+        });
+      },
+      child: Card(
+        child: InkWell(
           child: ListTile(
             leading: isForRide ? const Icon(Icons.chair) : const Icon(Icons.drive_eta),
             title: Text(rideEvent.getTitle(context)),
@@ -462,15 +457,15 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildTripWidget(Trip trip) {
-    return Card(
-      child: InkWell(
-        child: Dismissible(
-          key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
-          onDismissed: (DismissDirection direction) async {
-            setState(() {
-              _items.remove(trip);
-            });
-          },
+    return Dismissible(
+      key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
+      onDismissed: (DismissDirection direction) async {
+        setState(() {
+          _items.remove(trip);
+        });
+      },
+      child: Card(
+        child: InkWell(
           child: ListTile(
             leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
             title: Text(

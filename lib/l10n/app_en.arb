@@ -358,8 +358,6 @@
   "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
   "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
   "pageHomePageEmpty": "No new messages",
-
   "hello": "Hello",
-
   "appName": "Motis Ride-Sharing App"
 }
