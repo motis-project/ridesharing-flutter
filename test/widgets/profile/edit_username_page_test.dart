@@ -81,7 +81,7 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('editUsername')));
+      await tester.tap(find.byKey(const Key('editUsernameIcon')));
       await tester.pumpAndSettle();
       expect(find.byType(EditUsernamePage), findsOneWidget);
 

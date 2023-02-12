@@ -296,8 +296,8 @@ void main() {
 
       await tester.scrollUntilVisible(find.byKey(const Key('features')), 100,
           scrollable: find.byType(Scrollable).first);
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('features')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('features')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditProfileFeaturesPage), findsOneWidget);
 

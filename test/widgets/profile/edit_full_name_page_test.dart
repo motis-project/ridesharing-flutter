@@ -103,8 +103,8 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
       expect(find.byType(EditFullNamePage), findsOneWidget);
 

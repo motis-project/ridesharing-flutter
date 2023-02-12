@@ -248,8 +248,11 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      expect(find.byKey(const Key('editButton')), findsNothing);
-      expect(find.byKey(const Key('editUsername')), findsNothing);
+      expect(find.byKey(const Key('editableRowIconButton')), findsNothing);
+      expect(find.byKey(const Key('editableRowTitleButton')), findsNothing);
+      expect(find.byKey(const Key('editableRowInnerButton')), findsNothing);
+      expect(find.byKey(const Key('editUsernameIcon')), findsNothing);
+      expect(find.byKey(const Key('editUsernameText')), findsNothing);
       expect(find.byKey(const Key('avatarUpload')), findsNothing);
       expect(find.byKey(const Key('signOutButton')), findsNothing);
     });
@@ -258,8 +261,11 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      expect(find.byKey(const Key('editButton')), findsNWidgets(5));
-      expect(find.byKey(const Key('editUsername')), findsOneWidget);
+      expect(find.byKey(const Key('editableRowIconButton')), findsNWidgets(5));
+      expect(find.byKey(const Key('editableRowTitleButton')), findsNWidgets(5));
+      expect(find.byKey(const Key('editableRowInnerButton')), findsNWidgets(5));
+      expect(find.byKey(const Key('editUsernameIcon')), findsOneWidget);
+      expect(find.byKey(const Key('editUsernameText')), findsOneWidget);
       expect(find.byKey(const Key('avatarUpload')), findsOneWidget);
       expect(find.byKey(const Key('signOutButton')), findsOneWidget);
       expect(find.byKey(const Key('reportButton')), findsNothing);
@@ -327,7 +333,15 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('editUsername')));
+      await tester.tap(find.byKey(const Key('editUsernameIcon')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditUsernamePage), findsOneWidget);
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('editUsernameText')));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditUsernamePage), findsOneWidget);
@@ -337,8 +351,26 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editableRowIconButton'))));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditFullNamePage), findsOneWidget);
+
+      await tester.pageBack();
+      await tester.pump();
+
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editableRowTitleButton'))));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditFullNamePage), findsOneWidget);
+
+      await tester.pageBack();
+      await tester.pump();
+
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('fullName')), matching: find.byKey(const Key('editableRowInnerButton'))));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditFullNamePage), findsOneWidget);
@@ -348,8 +380,8 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester.tap(
-          find.descendant(of: find.byKey(const Key('description')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('description')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditDescriptionPage), findsOneWidget);
@@ -359,8 +391,8 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(
+          find.descendant(of: find.byKey(const Key('age')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditBirthDatePage), findsOneWidget);
@@ -370,8 +402,8 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      await tester
-          .tap(find.descendant(of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editButton'))));
+      await tester.tap(find.descendant(
+          of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editableRowIconButton'))));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditGenderPage), findsOneWidget);
@@ -381,8 +413,8 @@ void main() {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
-      final Finder editFeaturesButton =
-          find.descendant(of: find.byKey(const Key('features')), matching: find.byKey(const Key('editButton')));
+      final Finder editFeaturesButton = find.descendant(
+          of: find.byKey(const Key('features')), matching: find.byKey(const Key('editableRowIconButton')));
       await tester.scrollUntilVisible(editFeaturesButton, 100, scrollable: find.byType(Scrollable).first);
       await tester.tap(editFeaturesButton);
       await tester.pumpAndSettle();

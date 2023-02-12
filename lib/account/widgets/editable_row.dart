@@ -17,30 +17,52 @@ class EditableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget titleWidget = Text(
+      title,
+      style: Theme.of(context).textTheme.titleLarge,
+    );
+    if (isEditable) {
+      titleWidget = Semantics(
+        tooltip: S.of(context).edit,
+        child: InkWell(
+          onTap: onPressed,
+          key: const Key('editableRowTitleButton'),
+          child: titleWidget,
+        ),
+      );
+    }
+    final Widget row = Row(
+      children: <Widget>[
+        titleWidget,
+        if (isEditable)
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: const Icon(Icons.edit),
+                key: const Key('editableRowIconButton'),
+                onPressed: onPressed,
+              ),
+            ),
+          ),
+      ],
+    );
+    Widget editableInner = innerWidget;
+    if (isEditable) {
+      editableInner = Semantics(
+        label: S.of(context).edit,
+        child: InkWell(
+          onTap: onPressed,
+          key: const Key('editableRowInnerButton'),
+          child: innerWidget,
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            if (isEditable)
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    tooltip: S.of(context).edit,
-                    icon: const Icon(Icons.edit),
-                    onPressed: onPressed,
-                    key: const Key('editButton'),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        innerWidget,
+        row,
+        editableInner,
       ],
     );
   }
