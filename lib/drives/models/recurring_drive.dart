@@ -49,14 +49,10 @@ class RecurringDrive extends TripLike {
 
   @override
   factory RecurringDrive.fromJson(Map<String, dynamic> json) {
-    final PostgresRecurrenceRule postgresRecurrenceRule =
-        PostgresRecurrenceRule.fromString(json['recurrence_rule'] as String);
-
-    final RecurrenceEndType recurrenceEndType = postgresRecurrenceRule.recurrenceRule.until == null
-        ? RecurrenceEndType.occurrence
-        : json['until_field_entered_as_date'] as bool
-            ? RecurrenceEndType.date
-            : RecurrenceEndType.interval;
+    final PostgresRecurrenceRule postgresRecurrenceRule = PostgresRecurrenceRule.fromString(
+      json['recurrence_rule'] as String,
+      untilFieldEnteredAsDate: json['until_field_entered_as_date'] as bool,
+    );
 
     return RecurringDrive(
       id: json['id'] as int,
@@ -69,8 +65,8 @@ class RecurringDrive extends TripLike {
       endTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['end_time'] as String)),
       seats: json['seats'] as int,
       startedAt: postgresRecurrenceRule.dtStart,
-      recurrenceRule: postgresRecurrenceRule.recurrenceRule,
-      recurrenceEndType: recurrenceEndType,
+      recurrenceRule: postgresRecurrenceRule.rule,
+      recurrenceEndType: postgresRecurrenceRule.endType,
       stoppedAt: json['stopped_at'] == null ? null : DateTime.parse(json['stopped_at'] as String),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
@@ -95,7 +91,7 @@ class RecurringDrive extends TripLike {
           return RecurrenceEndChoiceInterval(yearDiff * 12 + monthDiff, RecurrenceIntervalType.months);
         }
 
-        final int differenceInDays = until.difference(until).inDays;
+        final int differenceInDays = until.difference(startedAt).inDays;
         if (differenceInDays % 7 == 0) {
           return RecurrenceEndChoiceInterval(differenceInDays ~/ 7, RecurrenceIntervalType.weeks);
         } else {
@@ -108,6 +104,13 @@ class RecurringDrive extends TripLike {
   }
 
   RecurrenceInterval get recurrenceInterval => RecurrenceInterval.fromRecurrenceRule(recurrenceRule);
+
+  Future<void> setRecurrence(RecurrenceOptions options) async {
+    recurrenceEndType = options.endChoice.type;
+    recurrenceRule = options.recurrenceRule;
+
+    await supabaseManager.supabaseClient.from('recurring_drives').update(toJson()).eq('id', id);
+  }
 
   static List<RecurringDrive> fromJsonList(List<Map<String, dynamic>> jsonList) {
     return jsonList.map((Map<String, dynamic> json) => RecurringDrive.fromJson(json)).toList();
@@ -140,8 +143,14 @@ class RecurringDrive extends TripLike {
     return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
 
-  List<Drive> get upcomingDrives =>
-      drives!.where((Drive drive) => drive.startDateTime.isAfter(DateTime.now()) && !drive.hideInListView).toList();
+  List<Drive> get upcomingDrives => drives!
+      .where(
+        (Drive drive) =>
+            drive.startDateTime.isAfter(DateTime.now()) &&
+            !drive.hideInListView &&
+            !(drive.status == DriveStatus.cancelledByRecurrenceRule && drive.rides!.isEmpty),
+      )
+      .toList();
 
   Future<void> stop(DateTime stoppedAt) async {
     this.stoppedAt = stoppedAt;
@@ -158,18 +167,25 @@ extension TimeOfDayExtension on TimeOfDay {
 }
 
 class PostgresRecurrenceRule {
-  final RecurrenceRule recurrenceRule;
+  final RecurrenceRule rule;
   final DateTime dtStart;
+  final bool untilFieldEnteredAsDate;
 
-  PostgresRecurrenceRule(this.recurrenceRule, this.dtStart);
+  PostgresRecurrenceRule(this.rule, this.dtStart, {this.untilFieldEnteredAsDate = false});
 
-  PostgresRecurrenceRule.fromString(String recurrenceRuleString)
-      : recurrenceRule = RecurrenceRule.fromString(recurrenceRuleString.split('\n')[1]),
+  RecurrenceEndType get endType => rule.until == null
+      ? RecurrenceEndType.occurrence
+      : untilFieldEnteredAsDate
+          ? RecurrenceEndType.date
+          : RecurrenceEndType.interval;
+
+  PostgresRecurrenceRule.fromString(String recurrenceRuleString, {this.untilFieldEnteredAsDate = false})
+      : rule = RecurrenceRule.fromString(recurrenceRuleString.split('\n')[1]),
         dtStart = DateTime.parse(recurrenceRuleString.split('\n')[0].split(':')[1]);
 
   @override
   String toString() {
     final String dtStartString = '${DateFormat('yyyyMMdd').format(dtStart)}T${DateFormat('HHmmss').format(dtStart)}Z';
-    return 'DTSTART:$dtStartString\n$recurrenceRule';
+    return 'DTSTART:$dtStartString\n$rule';
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,7 +16,7 @@ import '../models/drive.dart';
 import '../models/recurring_drive.dart';
 import '../pages/drive_detail_page.dart';
 import '../util/recurrence.dart';
-import '../util/text_with_fields.dart';
+import '../util/recurrence_options_edit.dart';
 import '../util/week_day.dart';
 import 'recurring_drive_detail_page.dart';
 
@@ -310,9 +309,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             }),
           ),
           if (_recurrenceOptions.enabled) ...<Widget>[
-            buildWeekDayPicker(),
-            buildUntilPicker(),
-            buildIntervalPicker(),
+            const SizedBox(height: 10),
+            RecurrenceOptionsEdit(
+              predefinedRecurrenceEndChoices: predefinedRecurrenceEndChoices,
+              recurrenceOptions: _recurrenceOptions,
+              setState: setState,
+            ),
           ],
           const SizedBox(height: 10),
           Button.submit(
@@ -320,270 +322,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             onPressed: _onSubmit,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildWeekDayPicker() {
-    return WeekDayPicker(
-      weekDays: _recurrenceOptions.weekDays,
-      context: context,
-    );
-  }
-
-  Widget buildIntervalPicker() {
-    final Widget intervalSizeField = TextFormField(
-      decoration: const InputDecoration(border: OutlineInputBorder()),
-      keyboardType: TextInputType.number,
-      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-      controller: _recurrenceOptions.recurrenceIntervalSizeController,
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return S.of(context).pageCreateDriveIntervalSizeValidationEmpty;
-        }
-        return null;
-      },
-      onChanged: (String value) {
-        setState(() {
-          _recurrenceOptions.recurrenceInterval.intervalSize = int.tryParse(value);
-        });
-      },
-    );
-
-    final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
-      initialValue: _recurrenceOptions.recurrenceInterval.intervalType,
-      onSelected: (RecurrenceIntervalType value) => setState(
-        () => _recurrenceOptions.setRecurrenceIntervalType(value, context),
-      ),
-      itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
-          // Days is not a valid interval type for recurring drives, just use weekly and every week day
-          .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-          .map(
-            (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
-              value: intervalType,
-              child: Text(intervalType.getName(context)),
-            ),
-          )
-          .toList(),
-      child: AbsorbPointer(
-        child: TextFormField(
-          decoration: const InputDecoration(border: OutlineInputBorder()),
-          readOnly: true,
-          controller: _recurrenceOptions.recurrenceIntervalTypeController,
-        ),
-      ),
-    );
-
-    return TextWithFields(
-      S.of(context).pageCreateDriveEveryInterval(TextWithFields.placeholder),
-      fields: <Widget>[
-        SizedBox(width: 80, child: intervalSizeField),
-        SizedBox(width: 120, child: intervalTypeField),
-      ],
-    );
-  }
-
-  Widget buildUntilPicker() {
-    return SizedBox(
-      width: 200,
-      child: TextFormField(
-        decoration: const InputDecoration(border: OutlineInputBorder()),
-        onTap: showRecurrenceEndDialog,
-        readOnly: true,
-        controller: _recurrenceOptions.endChoiceController,
-      ),
-    );
-  }
-
-  Future<void> showRecurrenceEndDialog() async {
-    await showDialog<RecurrenceEndChoice>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (BuildContext context, void Function(VoidCallback) innerSetState) {
-          void onChanged(RecurrenceEndChoice? value) {
-            innerSetState(() {
-              _recurrenceOptions.setEndChoice(value!, context);
-            });
-          }
-
-          return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ...List<RadioListTile<RecurrenceEndChoice>>.generate(
-                  predefinedRecurrenceEndChoices.length + RecurrenceEndType.values.length,
-                  (int index) {
-                    if (index < predefinedRecurrenceEndChoices.length) {
-                      final RecurrenceEndChoice recurringEndChoice = predefinedRecurrenceEndChoices[index];
-
-                      return RadioListTile<RecurrenceEndChoice>(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(recurringEndChoice.getName(context)),
-                        value: recurringEndChoice,
-                        groupValue: _recurrenceOptions.endChoice,
-                        onChanged: onChanged,
-                      );
-                    } else {
-                      final RecurrenceEndType recurrenceEndType =
-                          RecurrenceEndType.values[index - predefinedRecurrenceEndChoices.length];
-                      final RecurrenceEndChoice recurrenceEndChoiceCustom =
-                          _recurrenceOptions.getRecurrenceEndChoice(recurrenceEndType);
-                      final bool currentlySelected = _recurrenceOptions.endChoice == recurrenceEndChoiceCustom;
-
-                      Widget content;
-
-                      switch (recurrenceEndType) {
-                        case RecurrenceEndType.date:
-                          final Widget datePicker = TextFormField(
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: S.of(context).formDate,
-                            ),
-                            readOnly: true,
-                            enabled: currentlySelected,
-                            onTap: () => showDatePicker(
-                              context: context,
-                              initialDate: _recurrenceOptions.customEndDateChoice.date ?? DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
-                            ).then((DateTime? value) {
-                              if (value != null) {
-                                innerSetState(() {
-                                  _recurrenceOptions.setCustomDate(value, context);
-                                });
-                              }
-                            }),
-                            controller: _recurrenceOptions.customEndDateController,
-                          );
-
-                          content = TextWithFields(
-                            S.of(context).pageCreateDriveRecurrenceEndUntil(TextWithFields.placeholder),
-                            fields: <Widget>[Flexible(child: datePicker)],
-                          );
-                          break;
-                        case RecurrenceEndType.interval:
-                          final Widget intervalSizeField = TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
-                              contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
-                              hintText: '5',
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                            enabled: currentlySelected,
-                            controller: _recurrenceOptions.customEndIntervalSizeController,
-                            onChanged: (String value) {
-                              innerSetState(() {
-                                _recurrenceOptions.customEndIntervalChoice.intervalSize = int.tryParse(value);
-                                _recurrenceOptions.rebuildEndChoiceController(context);
-                              });
-                            },
-                          );
-
-                          final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
-                            initialValue: _recurrenceOptions.customEndIntervalChoice.intervalType,
-                            onSelected: (RecurrenceIntervalType value) => innerSetState(
-                              () => _recurrenceOptions.setCustomEndIntervalType(value, context),
-                            ),
-                            enabled: currentlySelected,
-                            itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
-                                .map(
-                                  (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
-                                    value: intervalType,
-                                    child: Text(intervalType.getName(context)),
-                                  ),
-                                )
-                                .toList(),
-                            child: AbsorbPointer(
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
-                                  contentPadding: const EdgeInsets.fromLTRB(6, 24, 12, 6),
-                                  isDense: true,
-                                  hintText: RecurrenceIntervalType.weeks.getName(context),
-                                ),
-                                enabled: currentlySelected,
-                                readOnly: true,
-                                controller: _recurrenceOptions.customEndIntervalTypeController,
-                              ),
-                            ),
-                          );
-
-                          content = TextWithFields(
-                            S.of(context).pageCreateDriveRecurrenceEndFor(TextWithFields.placeholder),
-                            fields: <Widget>[
-                              SizedBox(width: 45, child: intervalSizeField),
-                              SizedBox(width: 80, child: intervalTypeField),
-                            ],
-                          );
-                          break;
-                        case RecurrenceEndType.occurrence:
-                          final Widget occurenceField = TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
-                              contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
-                              hintText: '20',
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                            enabled: currentlySelected,
-                            controller: _recurrenceOptions.customEndOccurrenceController,
-                            onChanged: (String value) {
-                              innerSetState(() {
-                                _recurrenceOptions.customEndOccurrenceChoice.occurrences = int.tryParse(value);
-                                _recurrenceOptions.rebuildEndChoiceController(context);
-                              });
-                            },
-                          );
-
-                          content = TextWithFields(
-                            S.of(context).pageCreateDriveRecurrenceEndAfterOccurrences(TextWithFields.placeholder),
-                            fields: <Widget>[SizedBox(width: 45, child: occurenceField)],
-                          );
-                          break;
-                      }
-
-                      return RadioListTile<RecurrenceEndChoice>(
-                        contentPadding: EdgeInsets.zero,
-                        title: content,
-                        value: recurrenceEndChoiceCustom,
-                        groupValue: _recurrenceOptions.endChoice,
-                        onChanged: onChanged,
-                      );
-                    }
-                  },
-                ),
-                const SizedBox(height: 20),
-                if (!_recurrenceOptions.validate(context, createError: false) &&
-                    _recurrenceOptions.validationError != null)
-                  Text(
-                    S.of(context).pageCreateDriveRecurrenceEndError(_recurrenceOptions.validationError!),
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                key: const Key('okButtonRecurrenceEndDialog'),
-                child: Text(S.of(context).okay),
-                onPressed: () {
-                  innerSetState(() {
-                    final bool valid = _recurrenceOptions.validate(context);
-                    if (valid) {
-                      // Update the recurrence options in the parent widget
-                      setState(() {});
-                      Navigator.of(context).pop();
-                    }
-                  });
-                },
-              ),
-            ],
-          );
-        },
       ),
     );
   }
