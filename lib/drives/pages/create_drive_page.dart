@@ -161,6 +161,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             endTime: TimeOfDay.fromDateTime(endDateTime),
             startedAt: _selectedDate,
             recurrenceRule: _recurrenceOptions.recurrenceRule,
+            recurrenceEndType: _recurrenceOptions.endChoice.type,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
               .from('recurring_drives')
@@ -304,7 +305,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
             onChanged: (bool? value) => setState(() {
               _recurrenceOptions.enabled = value!;
               if (value && _recurrenceOptions.weekDays.isEmpty) {
-                _recurrenceOptions.weekDays.add(WeekDay.values[_selectedDate.weekday - 1]);
+                _recurrenceOptions.weekDays.add(_selectedDate.toWeekDay());
               }
             }),
           ),
@@ -326,9 +327,6 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   Widget buildWeekDayPicker() {
     return WeekDayPicker(
       weekDays: _recurrenceOptions.weekDays,
-      onWeekDaysChanged: (List<WeekDay> weekDays) => setState(() {
-        _recurrenceOptions.weekDays = weekDays;
-      }),
       context: context,
     );
   }

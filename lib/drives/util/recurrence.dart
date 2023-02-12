@@ -144,6 +144,10 @@ class RecurrenceInterval {
 
   RecurrenceInterval(this.intervalSize, this.intervalType);
 
+  RecurrenceInterval.fromRecurrenceRule(RecurrenceRule recurrenceRule)
+      : intervalSize = recurrenceRule.interval,
+        intervalType = recurrenceRule.frequency.recurrenceIntervalType;
+
   String getName(BuildContext context) {
     final String? validationError = validate(context);
     if (validationError != null) return validationError;
@@ -228,7 +232,7 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   }
 
   @override
-  String getName(BuildContext context, {List<WeekDay>? weekDays}) {
+  String getName(BuildContext context) {
     final String? validationError = validate(context);
     if (validationError != null) return validationError;
 
@@ -321,5 +325,15 @@ extension RecurrenceIntervalTypeExtension on RecurrenceIntervalType {
       case RecurrenceIntervalType.years:
         return Frequency.yearly;
     }
+  }
+}
+
+extension FrequencyExtension on Frequency {
+  RecurrenceIntervalType get recurrenceIntervalType {
+    if (this == Frequency.daily) return RecurrenceIntervalType.days;
+    if (this == Frequency.weekly) return RecurrenceIntervalType.weeks;
+    if (this == Frequency.monthly) return RecurrenceIntervalType.months;
+    if (this == Frequency.yearly) return RecurrenceIntervalType.years;
+    throw Exception('Unknown frequency: $this');
   }
 }
