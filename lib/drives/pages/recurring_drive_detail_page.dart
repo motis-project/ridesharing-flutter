@@ -1,16 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../util/buttons/button.dart';
-import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/drive_card.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import '../models/recurring_drive.dart';
 import '../util/week_day.dart';
+import 'recurring_drive_edit_page.dart';
 
 class RecurringDriveDetailPage extends StatefulWidget {
   final int id;
@@ -60,6 +58,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
     setState(() {
       _recurringDrive = RecurringDrive.fromJson(data);
+      _maxShownDrives = min(_maxShownDrives, 1);
       _fullyLoaded = true;
     });
   }
@@ -73,8 +72,9 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       widgets.add(const Divider(thickness: 1));
 
       widgets.add(WeekDayPicker(context: context, enabled: false, weekDays: _recurringDrive!.weekDays));
+
       widgets.add(
-        Text('Ends ${_recurringDrive!.recurrenceEndChoice.getName(context)}'),
+        Text(_recurringDrive!.recurrenceEndChoice.getName(context)),
       );
       widgets.add(
         Text(_recurringDrive!.recurrenceInterval.getName(context)),
@@ -85,6 +85,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       final RecurringDrive recurringDrive = _recurringDrive!;
 
       final List<Drive> upcomingDrives = recurringDrive.upcomingDrives;
+      _maxShownDrives = min(_maxShownDrives, upcomingDrives.length);
       if (upcomingDrives.isNotEmpty) {
         final List<Widget> upcomingDrivesColumn = <Widget>[
           const SizedBox(height: 5.0),
@@ -135,23 +136,6 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
           ),
         );
       }
-
-      widgets.add(const SizedBox(height: 10));
-      Widget bottomButton;
-      if (recurringDrive.stoppedAt == null) {
-        bottomButton = Button.error(
-          'Stop recurring drive',
-          onPressed: _showStopDialog,
-          key: const Key('stopRecurringDriveButton'),
-        );
-      } else {
-        bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonCancel,
-          onPressed: _showStopDialog,
-          key: const Key('cancelDriveButton'),
-        );
-      }
-      widgets.add(bottomButton);
       widgets.add(const SizedBox(height: 5));
     } else {
       widgets.add(const SizedBox(height: 10));
@@ -185,44 +169,14 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
     return IconButton(
       icon: const Icon(Icons.edit),
       onPressed: () {
-        // Navigator.of(context).push(MaterialPageRoute(RecurringDriveEditPage(recurringDrive: _recurringDrive!)));
+        Navigator.of(context)
+            .push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => RecurringDriveEditPage(_recurringDrive!),
+              ),
+            )
+            .then((_) => loadRecurringDrive());
       },
-    );
-  }
-
-  Future<void> _stopRecurringDrive(DateTime date) async {
-    await _recurringDrive?.stop(date);
-    setState(() {});
-  }
-
-  void _showStopDialog() {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Stop recurring drive'),
-        content: const Text('Do you really want to stop this recurring drive?'),
-        actions: <Widget>[
-          TextButton(
-            key: const Key('stopRecurringDriveNoButton'),
-            child: Text(S.of(context).no),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            key: const Key('stopRecurringDriveYesButton'),
-            child: Text(S.of(context).yes),
-            onPressed: () {
-              _stopRecurringDrive(DateTime.now());
-
-              Navigator.of(context).pop();
-              showSnackBar(
-                context,
-                'Recurring drive stopped',
-                durationType: SnackBarDurationType.medium,
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 }
