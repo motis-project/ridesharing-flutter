@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rrule/rrule.dart';
 
 class WeekDayPicker extends FormField<List<WeekDay>> {
   final List<WeekDay> weekDays;
-  final ValueChanged<List<WeekDay>> onWeekDaysChanged;
   final BuildContext context;
 
   WeekDayPicker({
     super.key,
-    this.weekDays = const <WeekDay>[],
-    required this.onWeekDaysChanged,
+    required this.weekDays,
     required this.context,
+    super.enabled,
   }) : super(
           builder: (FormFieldState<List<WeekDay>> state) {
             return Column(
@@ -22,14 +22,16 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                         (WeekDay weekDay) => WeekDayButton(
                           weekDay: weekDay,
                           selected: weekDays.contains(weekDay),
-                          onPressed: () {
-                            if (weekDays.contains(weekDay)) {
-                              weekDays.remove(weekDay);
-                            } else {
-                              weekDays.add(weekDay);
-                            }
-                            state.didChange(weekDays);
-                          },
+                          onPressed: enabled
+                              ? () {
+                                  if (weekDays.contains(weekDay)) {
+                                    weekDays.remove(weekDay);
+                                  } else {
+                                    weekDays.add(weekDay);
+                                  }
+                                  state.didChange(weekDays);
+                                }
+                              : null,
                         ),
                       )
                       .toList(),
@@ -58,12 +60,12 @@ class WeekDayButton extends StatelessWidget {
   const WeekDayButton({
     super.key,
     required this.weekDay,
-    required this.onPressed,
+    this.onPressed,
     required this.selected,
   });
 
   final WeekDay weekDay;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool selected;
 
   @override
@@ -99,4 +101,12 @@ extension WeekDayExtension on WeekDay {
         return S.of(context).weekDaySundayAbbreviation;
     }
   }
+}
+
+extension ByWeekDayEntryExtension on ByWeekDayEntry {
+  WeekDay toWeekDay() => WeekDay.values[day - 1];
+}
+
+extension DateTimeExtension on DateTime {
+  WeekDay toWeekDay() => WeekDay.values[weekday - 1];
 }

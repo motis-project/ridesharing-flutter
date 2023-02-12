@@ -31,6 +31,7 @@ void main() {
         'end_time': '12:47:01',
         'seats': 2,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
+        'until_field_entered_as_date': true,
         'driver_id': 7,
       };
       final RecurringDrive recurringDrive = RecurringDrive.fromJson(json);
@@ -61,6 +62,7 @@ void main() {
         'seats': 2,
         'stopped_at': DateTime.now().toString(),
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
+        'until_field_entered_as_date': true,
         'driver_id': 7,
         'driver': ProfileFactory().generateFake().toJsonForApi(),
         'drives': [DriveFactory().generateFake().toJsonForApi(), DriveFactory().generateFake().toJsonForApi()],
@@ -87,6 +89,7 @@ void main() {
         'end_time': '12:47:01',
         'seats': 2,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
+        'until_field_entered_as_date': true,
         'driver_id': 7,
       };
       final List<RecurringDrive> recurringDrives = RecurringDrive.fromJsonList([json, json, json]);
@@ -109,7 +112,7 @@ void main() {
       expect(json['start_time'], recurringDrive.startTime.formatted);
       expect(json['stopped_at'], recurringDrive.stoppedAt?.toString());
       expect(json['recurrence_rule'], contains('\n${recurringDrive.recurrenceRule}'));
-      expect(json.keys.length, 12);
+      expect(json.keys.length, 13);
     });
   });
 

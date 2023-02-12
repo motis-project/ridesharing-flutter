@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -8,6 +10,7 @@ import '../../util/trip/drive_card.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import '../models/recurring_drive.dart';
+import '../util/week_day.dart';
 
 class RecurringDriveDetailPage extends StatefulWidget {
   final int id;
@@ -21,7 +24,10 @@ class RecurringDriveDetailPage extends StatefulWidget {
 }
 
 class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
+  static const int _maxShownDrivesDefault = 5;
+
   RecurringDrive? _recurringDrive;
+  int _maxShownDrives = _maxShownDrivesDefault;
   bool _fullyLoaded = false;
 
   @override
@@ -65,12 +71,18 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
     if (_recurringDrive != null) {
       widgets.add(TripOverview(_recurringDrive!));
       widgets.add(const Divider(thickness: 1));
+
+      widgets.add(WeekDayPicker(context: context, enabled: false, weekDays: _recurringDrive!.weekDays));
+      widgets.add(
+        Text('Ends ${_recurringDrive!.recurrenceEndChoice.getName(context)}'),
+      );
+      widgets.add(
+        Text(_recurringDrive!.recurrenceInterval.getName(context)),
+      );
     }
 
     if (_fullyLoaded) {
       final RecurringDrive recurringDrive = _recurringDrive!;
-
-      final List<Widget> driveWidgets = <Widget>[];
 
       final List<Drive> upcomingDrives = recurringDrive.upcomingDrives;
       if (upcomingDrives.isNotEmpty) {
@@ -79,17 +91,44 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              S.of(context).pageDriveChatRequestsHeadline,
+              'Upcoming drives',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           const SizedBox(height: 10.0),
-          ...upcomingDrives.map((Drive drive) => DriveCard(drive)),
+          ...upcomingDrives.take(_maxShownDrives).map((Drive drive) => DriveCard(drive)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              if (_maxShownDrives > 1)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _maxShownDrives = max(_maxShownDrives - _maxShownDrivesDefault, 1);
+                    });
+                  },
+                  child: const Text('Show less'),
+                )
+              else
+                const SizedBox(),
+              if (_maxShownDrives < upcomingDrives.length)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _maxShownDrives = _maxShownDrives + _maxShownDrivesDefault;
+                    });
+                  },
+                  child: const Text('Show more'),
+                )
+              else
+                const SizedBox(),
+            ],
+          ),
         ];
-        driveWidgets.addAll(upcomingDrivesColumn);
+        widgets.addAll(upcomingDrivesColumn);
       } else {
-        driveWidgets.add(const SizedBox(height: 10));
-        driveWidgets.add(
+        widgets.add(const SizedBox(height: 10));
+        widgets.add(
           Text(
             'There are no upcoming drives for this recurring drive. Try changing the recurrence rule to plan new drives.',
             style: Theme.of(context).textTheme.bodyMedium,

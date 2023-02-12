@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
+import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:rrule/rrule.dart';
 
@@ -23,6 +24,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     int? seats,
     DateTime? startedAt,
     RecurrenceRule? recurrenceRule,
+    RecurrenceEndType? recurrenceEndType,
     DateTime? stoppedAt,
     int? driverId,
     NullableParameter<Profile>? driver,
@@ -47,7 +49,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
         RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,
-          until: generatedCreatedAt.add(const Duration(days: 30)).toUtc(),
+          until: recurrenceEndType == RecurrenceEndType.occurrence
+              ? null
+              : generatedCreatedAt.add(const Duration(days: 30)).toUtc(),
+          count: recurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
           byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
               .take(random.nextInt(7))
               .map((day) => ByWeekDayEntry(day + 1))
@@ -101,6 +106,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       seats: seats ?? random.nextInt(5) + 1,
       startedAt: startedAt ?? generatedCreatedAt,
       recurrenceRule: generatedRecurrenceRule,
+      recurrenceEndType: recurrenceEndType ?? RecurrenceEndType.date,
       stoppedAt: stoppedAt,
       driverId: generatedDriverId,
       driver: generatedDriver,

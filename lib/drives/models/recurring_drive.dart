@@ -7,11 +7,15 @@ import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip_like.dart';
+import '../util/recurrence.dart';
+import '../util/week_day.dart';
 import 'drive.dart';
 
 class RecurringDrive extends TripLike {
   DateTime startedAt;
   RecurrenceRule recurrenceRule;
+  // A helper field to get display information out of the recurrence rule
+  RecurrenceEndType recurrenceEndType;
   DateTime? stoppedAt;
 
   final int driverId;
@@ -36,6 +40,7 @@ class RecurringDrive extends TripLike {
     required super.seats,
     required this.startedAt,
     required this.recurrenceRule,
+    required this.recurrenceEndType,
     this.stoppedAt,
     required this.driverId,
     this.driver,
@@ -46,6 +51,12 @@ class RecurringDrive extends TripLike {
   factory RecurringDrive.fromJson(Map<String, dynamic> json) {
     final PostgresRecurrenceRule postgresRecurrenceRule =
         PostgresRecurrenceRule.fromString(json['recurrence_rule'] as String);
+
+    final RecurrenceEndType recurrenceEndType = postgresRecurrenceRule.recurrenceRule.until == null
+        ? RecurrenceEndType.occurrence
+        : json['until_field_entered_as_date'] as bool
+            ? RecurrenceEndType.date
+            : RecurrenceEndType.interval;
 
     return RecurringDrive(
       id: json['id'] as int,
@@ -59,12 +70,44 @@ class RecurringDrive extends TripLike {
       seats: json['seats'] as int,
       startedAt: postgresRecurrenceRule.dtStart,
       recurrenceRule: postgresRecurrenceRule.recurrenceRule,
+      recurrenceEndType: recurrenceEndType,
       stoppedAt: json['stopped_at'] == null ? null : DateTime.parse(json['stopped_at'] as String),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
       drives: json.containsKey('drives') ? Drive.fromJsonList(parseHelper.parseListOfMaps(json['drives'])) : null,
     );
   }
+
+  List<WeekDay> get weekDays => recurrenceRule.byWeekDays.map((ByWeekDayEntry day) => day.toWeekDay()).toList();
+
+  RecurrenceEndChoice get recurrenceEndChoice {
+    switch (recurrenceEndType) {
+      case RecurrenceEndType.date:
+        return RecurrenceEndChoiceDate(recurrenceRule.until);
+      case RecurrenceEndType.interval:
+        final DateTime until = recurrenceRule.until!;
+        final int yearDiff = until.year - startedAt.year;
+        final int monthDiff = until.month - startedAt.month;
+        final int dayDiff = until.day - startedAt.day;
+        if (yearDiff != 0 && monthDiff == 0 && dayDiff == 0) {
+          return RecurrenceEndChoiceInterval(yearDiff, RecurrenceIntervalType.years);
+        } else if (monthDiff != 0 && dayDiff == 0) {
+          return RecurrenceEndChoiceInterval(yearDiff * 12 + monthDiff, RecurrenceIntervalType.months);
+        }
+
+        final int differenceInDays = until.difference(until).inDays;
+        if (differenceInDays % 7 == 0) {
+          return RecurrenceEndChoiceInterval(differenceInDays ~/ 7, RecurrenceIntervalType.weeks);
+        } else {
+          return RecurrenceEndChoiceInterval(differenceInDays, RecurrenceIntervalType.days);
+        }
+
+      case RecurrenceEndType.occurrence:
+        return RecurrenceEndChoiceOccurrence(recurrenceRule.count);
+    }
+  }
+
+  RecurrenceInterval get recurrenceInterval => RecurrenceInterval.fromRecurrenceRule(recurrenceRule);
 
   static List<RecurringDrive> fromJsonList(List<Map<String, dynamic>> jsonList) {
     return jsonList.map((Map<String, dynamic> json) => RecurringDrive.fromJson(json)).toList();
@@ -77,6 +120,7 @@ class RecurringDrive extends TripLike {
         'start_time': startTime.formatted,
         'end_time': endTime.formatted,
         'recurrence_rule': PostgresRecurrenceRule(recurrenceRule, startedAt).toString(),
+        'until_field_entered_as_date': recurrenceEndType == RecurrenceEndType.date,
         'stopped_at': stoppedAt?.toString(),
         'driver_id': driverId,
       });
