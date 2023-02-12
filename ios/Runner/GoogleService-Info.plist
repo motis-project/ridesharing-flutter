@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>941523862179-naqu4vhf9ivm6se6c58561ao5o52fl45.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.941523862179-naqu4vhf9ivm6se6c58561ao5o52fl45</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDxt9nvlQMM1dRN4t8mSsIxwTB3nwxMleA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>941523862179</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.flutterApp</string>
+	<key>PROJECT_ID</key>
+	<string>motis-mitfahr-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>motis-mitfahr-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:941523862179:ios:72c667ae3090a3ec35f516</string>
+</dict>
+</plist>
