@@ -41,7 +41,9 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     // This is here instead of initState
     // because the context is needed for the recurrence options
     _recurrenceOptions = RecurrenceOptions(
+      startedAt: _recurringDrive.startedAt,
       endChoice: _recurringDrive.recurrenceEndChoice,
+      predefinedEndChoices: <RecurrenceEndChoice>[],
       recurrenceInterval: _recurringDrive.recurrenceInterval,
       weekDays: _recurringDrive.weekDays,
       context: context,
@@ -59,7 +61,6 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
       Form(
         key: _formKey,
         child: RecurrenceOptionsEdit(
-          predefinedRecurrenceEndChoices: const <RecurrenceEndChoice>[],
           recurrenceOptions: _recurrenceOptions,
           setState: setState,
         ),

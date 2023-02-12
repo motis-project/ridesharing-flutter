@@ -7,13 +7,11 @@ import 'text_with_fields.dart';
 import 'week_day.dart';
 
 class RecurrenceOptionsEdit extends StatelessWidget {
-  final List<RecurrenceEndChoice> predefinedRecurrenceEndChoices;
   final RecurrenceOptions recurrenceOptions;
   final void Function(VoidCallback) setState;
 
   const RecurrenceOptionsEdit({
     super.key,
-    required this.predefinedRecurrenceEndChoices,
     required this.recurrenceOptions,
     required this.setState,
   });
@@ -117,10 +115,10 @@ class RecurrenceOptionsEdit extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ...List<RadioListTile<RecurrenceEndChoice>>.generate(
-                  predefinedRecurrenceEndChoices.length + RecurrenceEndType.values.length,
+                  recurrenceOptions.predefinedEndChoices.length + RecurrenceEndType.values.length,
                   (int index) {
-                    if (index < predefinedRecurrenceEndChoices.length) {
-                      final RecurrenceEndChoice recurringEndChoice = predefinedRecurrenceEndChoices[index];
+                    if (index < recurrenceOptions.predefinedEndChoices.length) {
+                      final RecurrenceEndChoice recurringEndChoice = recurrenceOptions.predefinedEndChoices[index];
 
                       return RadioListTile<RecurrenceEndChoice>(
                         contentPadding: EdgeInsets.zero,
@@ -131,7 +129,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                       );
                     } else {
                       final RecurrenceEndType recurrenceEndType =
-                          RecurrenceEndType.values[index - predefinedRecurrenceEndChoices.length];
+                          RecurrenceEndType.values[index - recurrenceOptions.predefinedEndChoices.length];
                       final RecurrenceEndChoice recurrenceEndChoiceCustom =
                           recurrenceOptions.getRecurrenceEndChoice(recurrenceEndType);
                       final bool currentlySelected = recurrenceOptions.endChoice == recurrenceEndChoiceCustom;
