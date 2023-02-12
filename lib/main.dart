@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'main_app.dart';
+import 'util/firebase.dart';
 import 'util/locale_manager.dart';
 import 'util/supabase_manager.dart';
 import 'util/theme_manager.dart';
@@ -19,6 +20,7 @@ void main() async {
   await supabaseManager.initialize();
   await themeManager.loadTheme();
   await localeManager.loadCurrentLocale();
+  await firebaseManager.initialize();
 
   runApp(const AppWrapper());
 }
@@ -83,6 +85,7 @@ class AuthAppState extends State<AuthApp> {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
         await supabaseManager.reloadCurrentProfile();
+        if (event == AuthChangeEvent.signedOut) await deletePushToken();
 
         setState(() {
           _isLoggedIn = session != null;
@@ -94,6 +97,7 @@ class AuthAppState extends State<AuthApp> {
               event == AuthChangeEvent.signedIn ||
               event == AuthChangeEvent.passwordRecovery) {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
+            if (event == AuthChangeEvent.signedIn) requestPermissionAndloadPushToken();
           }
         });
       },
