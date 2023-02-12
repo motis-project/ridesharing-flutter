@@ -32,7 +32,12 @@ class _IncrementFieldState extends State<IncrementField> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        //This is the default enabledColor of InputDecorator
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38)),
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
+      ),
       child: Row(
         children: <Widget>[
           Expanded(
