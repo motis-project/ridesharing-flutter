@@ -5,7 +5,6 @@ void main() {
   group('Named constructors', () {
     test('Position.fromJson', () {
       final Map<String, dynamic> json = {
-        //TODO Is is possible for this to be an int?
         'lat': 50.0,
         'lng': 8.2714,
       };
