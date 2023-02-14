@@ -77,6 +77,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                       size: CustomRatingBarSize.huge,
                       rating: _review!.rating,
                       onRatingUpdate: onRatingUpdate,
+                      key: const Key('overallRating'),
                     ),
                     const SizedBox(height: 10),
                     _buildCategoryReviews(),
@@ -94,12 +95,14 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                         textAlignVertical: TextAlignVertical.top,
                         maxLines: 5,
                         onChanged: onTextUpdate,
+                        key: const Key('reviewText'),
                       ),
                     ),
                     const SizedBox(height: 10),
                     LoadingButton(
                       onPressed: _onSubmit,
                       state: _state,
+                      key: const Key('submitButton'),
                     )
                   ],
                 ),
@@ -117,34 +120,43 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             S.of(context).reviewCategoryComfort,
             _review!.comfortRating,
             onComfortRatingUpdate,
+            'comfortRating',
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategorySafety,
             _review!.safetyRating,
             onSafetyRatingUpdate,
+            'safetyRating',
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategoryReliability,
             _review!.reliabilityRating,
             onReliabilityRatingUpdate,
+            'reliabilityRating',
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategoryHospitality,
             _review!.hospitalityRating,
             onHospitalityRatingUpdate,
+            'hospitalityRating',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate) {
+  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate, String key) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Flexible(child: SizedBox(width: 100, child: Text(category))),
         const SizedBox(width: 10),
-        CustomRatingBar(size: CustomRatingBarSize.large, rating: rating, onRatingUpdate: onRatingUpdate),
+        CustomRatingBar(
+          size: CustomRatingBarSize.large,
+          rating: rating,
+          onRatingUpdate: onRatingUpdate,
+          key: Key(key),
+        ),
       ],
     );
   }
@@ -207,9 +219,13 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       setState(() {
         _state = ButtonState.fail;
       });
-
       const SnackBarDurationType durationType = SnackBarDurationType.short;
-      showSnackBar(context, S.of(context).pageWriteReviewRatingRequired, durationType: durationType);
+      showSnackBar(
+        context,
+        S.of(context).pageWriteReviewRatingRequired,
+        durationType: durationType,
+        key: const Key('ratingRequiredSnackbar'),
+      );
       await Future<void>.delayed(durationType.duration);
 
       setState(() {
