@@ -149,9 +149,12 @@ void main() {
       expect(saveButton, findsOneWidget);
 
       await tester.tap(find.byKey(const Key('submitButton')));
-      //expect(find.byKey(const Key('ratingRequiredSnackbar')), findsOneWidget);
 
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byKey(const Key('ratingRequiredSnackbar')), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(WriteReviewPage), findsOneWidget);
     });
