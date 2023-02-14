@@ -105,7 +105,38 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
+    if (!_fullyLoaded) {
+      return const Center(
+        child: SizedBox(),
+      );
+    } else {
+      switch (_ride.status) {
+        case RideStatus.preview:
+          return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
+        case RideStatus.pending:
+          return Icon(
+            Icons.access_time_outlined,
+            color: pickStatusColor(),
+          );
+        case RideStatus.approved:
+          return Icon(
+            Icons.done_all,
+            color: pickStatusColor(),
+          );
+        case RideStatus.rejected:
+          return Icon(
+            Icons.close,
+            color: pickStatusColor(),
+          );
+        case RideStatus.cancelledByDriver:
+        case RideStatus.cancelledByRider:
+        case RideStatus.withdrawnByRider:
+          return Icon(
+            Icons.block,
+            color: pickStatusColor(),
+          );
+      }
+    }
   }
 
   @override

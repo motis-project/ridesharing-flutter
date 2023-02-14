@@ -82,6 +82,30 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   @override
+  Widget buildTopRight() {
+    if (!_fullyLoaded) {
+      return const Center(
+        child: SizedBox(),
+      );
+    } else if (_drive.cancelled) {
+      return Icon(
+        Icons.block,
+        color: pickStatusColor(),
+      );
+    } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
+      return Icon(
+        Icons.access_time_outlined,
+        color: pickStatusColor(),
+      );
+    } else {
+      return Icon(
+        Icons.done_all,
+        color: pickStatusColor(),
+      );
+    }
+  }
+
+  @override
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
