@@ -22,24 +22,32 @@ void main() {
 
   group('Ride.previewFromDrive', () {
     test('generates a ride out of a drive', () {
-      final DateTime startTime = DateTime.now();
-      final DateTime endTime = DateTime.now().add(const Duration(hours: 2));
-
-      final Drive drive = DriveFactory().generateFake(id: 34);
-      final Ride ride =
-          Ride.previewFromDrive(drive, 'start', Position(1, 1), startTime, 'end', Position(3, 3), endTime, 2, 5, 6.5);
+      final Drive drive = DriveFactory().generateFake(
+        id: 34,
+        startPosition: Position(48.8566, 2.3522),
+        endPosition: Position(50.0755, 14.4378),
+      );
+      final Ride ride = Ride.previewFromDrive(
+        drive,
+        start: 'start',
+        startPosition: Position(1, 1),
+        end: 'end',
+        endPosition: Position(3, 3),
+        seats: 2,
+        riderId: 5,
+      );
       expect(ride.start, 'start');
       expect(ride.startPosition, Position(1, 1));
-      expect(ride.startTime, startTime);
+      expect(ride.startTime, drive.startTime);
       expect(ride.end, 'end');
       expect(ride.endPosition, Position(3, 3));
-      expect(ride.endTime, endTime);
+      expect(ride.endTime, drive.endTime);
       expect(ride.seats, 2);
       expect(ride.riderId, 5);
       expect(ride.status, RideStatus.preview);
       expect(ride.driveId, drive.id);
       expect(ride.drive, drive);
-      expect(ride.price, 6.5);
+      expect(ride.price, 882.82);
     });
   });
   group('Ride.fromJson', () {
