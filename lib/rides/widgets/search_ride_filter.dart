@@ -11,7 +11,7 @@ import '../../util/snackbar.dart';
 import '../models/ride.dart';
 
 class SearchRideFilter {
-  static const List<Feature> _commonFeatures = <Feature>[
+  static const List<Feature> commonFeatures = <Feature>[
     Feature.noSmoking,
     Feature.noVaping,
     Feature.petsAllowed,
@@ -33,12 +33,12 @@ class SearchRideFilter {
   late int _minReliabilityRating;
   late int _minHospitalityRating;
   late List<Feature> _selectedFeatures;
-  late SearchRideSorting _sorting;
+  late SearchRideSorting sorting;
 
   bool _wholeDay;
 
   void setDefaultFilterValues() {
-    _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
+    _retractedAdditionalFeatures = <Feature>[...commonFeatures];
 
     _minRating = _defaultRating;
     _minComfortRating = _defaultRating;
@@ -46,7 +46,7 @@ class SearchRideFilter {
     _minReliabilityRating = _defaultRating;
     _minHospitalityRating = _defaultRating;
     _selectedFeatures = <Feature>[..._defaultFeatures];
-    _sorting = _defaultSorting;
+    sorting = _defaultSorting;
   }
 
   SearchRideFilter({required bool wholeDay}) : _wholeDay = wholeDay {
@@ -57,8 +57,8 @@ class SearchRideFilter {
 
   set wholeDay(bool wholeDay) {
     _wholeDay = wholeDay;
-    if (_wholeDay && _sorting == SearchRideSorting.timeProximity) {
-      _sorting = SearchRideFilter._defaultSorting;
+    if (_wholeDay && sorting == SearchRideSorting.timeProximity) {
+      sorting = SearchRideFilter._defaultSorting;
     }
   }
 
@@ -83,6 +83,7 @@ class SearchRideFilter {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           CustomRatingBar(
+            key: const Key('searchRideRatingBar'),
             size: CustomRatingBarSize.large,
             rating: _minRating,
             onRatingUpdate: (double newRating) => innerSetState(
@@ -92,6 +93,7 @@ class SearchRideFilter {
           if (_isRatingExpanded) ...<Widget>[
             Text(S.of(context).reviewCategoryComfort),
             CustomRatingBar(
+              key: const Key('searchRideComfortRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minComfortRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -100,6 +102,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategorySafety),
             CustomRatingBar(
+              key: const Key('searchRideSafetyRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minSafetyRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -108,6 +111,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategoryReliability),
             CustomRatingBar(
+              key: const Key('searchRideReliabilityRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minReliabilityRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -116,6 +120,7 @@ class SearchRideFilter {
             ),
             Text(S.of(context).reviewCategoryHospitality),
             CustomRatingBar(
+              key: const Key('searchRideHospitalityRatingBar'),
               size: CustomRatingBarSize.medium,
               rating: _minHospitalityRating,
               onRatingUpdate: (double newRating) => innerSetState(
@@ -124,6 +129,7 @@ class SearchRideFilter {
             ),
           ],
           TextButton(
+            key: const Key('searchRideRatingExpandButton'),
             onPressed: () => innerSetState(() => _isRatingExpanded = !_isRatingExpanded),
             child: Row(
               children: <Widget>[
@@ -159,6 +165,7 @@ class SearchRideFilter {
                 final Feature feature = shownFeatures[index];
                 final bool featureSelected = _selectedFeatures.contains(feature);
                 return FilterChip(
+                  key: Key('searchRideFeatureChip${feature.name}'),
                   avatar: feature.getIcon(context),
                   label: Text(feature.getDescription(context)),
                   selected: _selectedFeatures.contains(feature),
@@ -177,6 +184,7 @@ class SearchRideFilter {
                       if (mutuallyExclusiveFeature != null) {
                         final String description = mutuallyExclusiveFeature.getDescription(context);
                         return showSnackBar(
+                          key: const Key('searchRideFeatureMutuallyExclusiveSnackBar'),
                           context,
                           S.of(context).pageProfileEditProfileFeaturesMutuallyExclusive(description),
                         );
@@ -189,12 +197,13 @@ class SearchRideFilter {
             ),
           ),
           TextButton(
+            key: const Key('searchRideFeaturesExpandButton'),
             onPressed: () => innerSetState(() {
               _isFeatureListExpanded = !_isFeatureListExpanded;
               if (_selectedFeatures.isNotEmpty) {
                 _retractedAdditionalFeatures = <Feature>[];
               } else {
-                _retractedAdditionalFeatures = <Feature>[..._commonFeatures];
+                _retractedAdditionalFeatures = <Feature>[...commonFeatures];
               }
             }),
             child: Row(
@@ -209,25 +218,29 @@ class SearchRideFilter {
     );
   }
 
-  Widget _buildSortingFilter(BuildContext context, void Function(void Function()) innerSetState) {
-    return DropdownButton<SearchRideSorting>(
-      icon: const Icon(Icons.sort),
-      value: _sorting,
-      items: SearchRideSorting.values.map((SearchRideSorting sorting) {
-        final bool enabled = !(_wholeDay && sorting == SearchRideSorting.timeProximity);
-        return DropdownMenuItem<SearchRideSorting>(
-          enabled: enabled,
-          value: sorting,
-          child: Text(
-            sorting.getDescription(context),
-            style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
-          ),
-        );
-      }).toList(),
-      onChanged: (SearchRideSorting? value) => innerSetState(
-        () => _sorting = value!,
+  Widget _buildSortingFilter(BuildContext context, void Function(void Function()) setState) {
+    return RepaintBoundary(
+      child: DropdownButton<SearchRideSorting>(
+        key: const Key('searchRideSortingDropdownButton'),
+        icon: const Icon(Icons.sort),
+        value: sorting,
+        items: SearchRideSorting.values.map((SearchRideSorting rideSorting) {
+          final bool enabled = !(_wholeDay && rideSorting == SearchRideSorting.timeProximity);
+          return DropdownMenuItem<SearchRideSorting>(
+            key: Key('searchRideSortingDropdownItem${rideSorting.name}'),
+            enabled: enabled,
+            value: rideSorting,
+            child: Text(
+              rideSorting.getDescription(context),
+              style: enabled ? null : TextStyle(color: Theme.of(context).disabledColor),
+            ),
+          );
+        }).toList(),
+        onChanged: (SearchRideSorting? value) => setState(
+          () => sorting = value!,
+        ),
+        underline: const SizedBox(),
       ),
-      underline: const SizedBox(),
     );
   }
 
@@ -240,6 +253,7 @@ class SearchRideFilter {
             return Scaffold(
               backgroundColor: Colors.transparent,
               body: AlertDialog(
+                key: const Key('searchRideFilterDialog'),
                 content: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,10 +266,12 @@ class SearchRideFilter {
                 ),
                 actions: <Widget>[
                   TextButton(
+                    key: const Key('searchRideFilterResetToDefaultButton'),
                     child: Text(S.of(context).searchRideFilterResetToDefault),
                     onPressed: () => innerSetState(() => setDefaultFilterValues()),
                   ),
                   TextButton(
+                    key: const Key('searchRideFilterOkayButton'),
                     child: Text(S.of(context).okay),
                     onPressed: () {
                       setState(() {});
@@ -297,12 +313,6 @@ class SearchRideFilter {
       final List<Widget> ratingWidgets = <Widget>[];
       if (_minRating != _defaultRating) {
         ratingWidgets.add(_buildSmallRatingIndicator(_minRating));
-        if (_minComfortRating != _defaultRating ||
-            _minSafetyRating != _defaultRating ||
-            _minReliabilityRating != _defaultRating ||
-            _minHospitalityRating != _defaultRating) {
-          ratingWidgets.add(const SizedBox(width: 4));
-        }
       }
       if (_minComfortRating != _defaultRating) {
         ratingWidgets.add(
@@ -350,7 +360,10 @@ class SearchRideFilter {
       }
       final int numDividers = ratingWidgets.length - 1;
       for (int i = 0; i < numDividers; i++) {
-        ratingWidgets.insert(i * 2 + 1, const SizedBox(width: 10));
+        ratingWidgets.insert(i * 2 + 1, SizedBox(key: Key('ratingSizedBox$i'), width: 10));
+      }
+      if (_minRating != _defaultRating && numDividers > 0) {
+        ratingWidgets.insert(1, const SizedBox(width: 4));
       }
       final Widget ratingsRow = Row(children: ratingWidgets);
       widgets.add(ratingsRow);
@@ -374,6 +387,7 @@ class SearchRideFilter {
               child: SizedBox(
                 height: double.infinity,
                 child: InkWell(
+                  key: const Key('searchRideFilterButton'),
                   onTap: () => dialog(context, setState),
                   child: Padding(
                     padding: const EdgeInsets.all(6),
@@ -416,11 +430,10 @@ class SearchRideFilter {
                 (!driverReview.isReliabilitySet || driverReview.reliabilityRating >= _minReliabilityRating) &&
                 (!driverReview.isHospitalitySet || driverReview.hospitalityRating >= _minHospitalityRating);
             final bool featuresSatisfied = Set<Feature>.of(driver.features!).containsAll(_selectedFeatures);
-            final bool onSameDaySatisfied = date.isSameDayAs(ride.startTime) || date.isSameDayAs(ride.endTime);
-            return ratingSatisfied && featuresSatisfied && onSameDaySatisfied;
+            return ratingSatisfied && featuresSatisfied;
           },
         )
-        .sorted(_sorting.sortFunction(date, wholeDay: wholeDay))
+        .sorted(sorting.sortFunction(date, wholeDay: wholeDay))
         .toList();
   }
 }
@@ -464,11 +477,5 @@ extension SearchRideSortingExtension on SearchRideSorting {
       case SearchRideSorting.timeProximity:
         return timeProximityFunc;
     }
-  }
-}
-
-extension CustomDateTime on DateTime {
-  bool isSameDayAs(DateTime other) {
-    return day == other.day && month == other.month && year == other.year;
   }
 }

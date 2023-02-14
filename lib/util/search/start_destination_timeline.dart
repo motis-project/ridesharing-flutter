@@ -10,6 +10,7 @@ class StartDestinationTimeline extends StatelessWidget {
   final TextEditingController destinationController;
   final void Function(AddressSuggestion) onStartSelected;
   final void Function(AddressSuggestion) onDestinationSelected;
+  final VoidCallback? onSwap;
 
   const StartDestinationTimeline({
     super.key,
@@ -17,11 +18,12 @@ class StartDestinationTimeline extends StatelessWidget {
     required this.destinationController,
     required this.onStartSelected,
     required this.onDestinationSelected,
+    this.onSwap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FixedTimeline(
+    Widget timeline = FixedTimeline(
       theme: CustomTimelineTheme.of(context),
       children: <Widget>[
         TimelineTile(
@@ -46,5 +48,25 @@ class StartDestinationTimeline extends StatelessWidget {
         ),
       ],
     );
+    if (onSwap != null) {
+      timeline = Row(
+        children: <Widget>[
+          Expanded(
+            child: timeline,
+          ),
+          IconButton(
+            key: const Key('swapButton'),
+            onPressed: () {
+              final String oldStartText = startController.text;
+              startController.text = destinationController.text;
+              destinationController.text = oldStartText;
+              onSwap!();
+            },
+            icon: const Icon(Icons.swap_vert),
+          ),
+        ],
+      );
+    }
+    return timeline;
   }
 }

@@ -44,6 +44,7 @@ class _IncrementFieldState extends State<IncrementField> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
+                key: const Key('decrement'),
                 tooltip: S.of(context).remove,
                 icon: const Icon(Icons.remove_circle_outline),
                 onPressed: _value <= widget.minValue
@@ -70,6 +71,7 @@ class _IncrementFieldState extends State<IncrementField> {
             child: Align(
               alignment: Alignment.centerRight,
               child: IconButton(
+                key: const Key('increment'),
                 tooltip: S.of(context).add,
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: _value >= widget.maxValue

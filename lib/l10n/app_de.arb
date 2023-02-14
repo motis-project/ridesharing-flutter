@@ -274,6 +274,7 @@
   "pageSearchRideTitle": "Mitfahrt suchen",
   "pageSearchRideNoInput": "Gib dein Start und Ziel ein",
   "pageSearchRideEmpty": "Nichts zu sehen",
+  "pageSearchRideWrongTime": "Probiere es zu einer anderen Zeit",
   "pageSearchRideRelaxRestrictions": "Bitte lockere deine Suchbeschränkungen.",
   "pageSearchRideNoResults": "Es tut uns leid, wir konnten für diese Route keine Mitfahrgelegenheit finden.",
   "pageSearchRideTooltipFilter": "Filter",
