@@ -91,16 +91,19 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
       return Icon(
         Icons.block,
         color: pickStatusColor(),
+        key: const Key('cancelled'),
       );
     } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
       return Icon(
         Icons.access_time_outlined,
         color: pickStatusColor(),
+        key: const Key('pending'),
       );
     } else {
       return Icon(
         Icons.done_all,
         color: pickStatusColor(),
+        key: const Key('no pending'),
       );
     }
   }

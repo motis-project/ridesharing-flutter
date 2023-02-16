@@ -117,16 +117,19 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
           return Icon(
             Icons.access_time_outlined,
             color: pickStatusColor(),
+            key: const Key('pending'),
           );
         case RideStatus.approved:
           return Icon(
             Icons.done_all,
             color: pickStatusColor(),
+            key: const Key('approved'),
           );
         case RideStatus.rejected:
           return Icon(
             Icons.close,
             color: pickStatusColor(),
+            key: const Key('rejected'),
           );
         case RideStatus.cancelledByDriver:
         case RideStatus.cancelledByRider:
@@ -134,6 +137,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
           return Icon(
             Icons.block,
             color: pickStatusColor(),
+            key: const Key('cancelled'),
           );
       }
     }
