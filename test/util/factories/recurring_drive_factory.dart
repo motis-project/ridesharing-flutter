@@ -17,10 +17,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     DateTime? createdAt,
     String? start,
     Position? startPosition,
-    TimeOfDay? startDateTime,
+    TimeOfDay? startTime,
     String? end,
     Position? endPosition,
-    TimeOfDay? endDateTime,
+    TimeOfDay? endTime,
     int? seats,
     DateTime? startedAt,
     RecurrenceRule? recurrenceRule,
@@ -34,16 +34,18 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
     final Profile? generatedDriver = getNullableParameterOr(
-        driver,
-        ProfileFactory().generateFake(
-          id: driverId,
-          createDependencies: false,
-        ));
+      driver,
+      ProfileFactory().generateFake(
+        id: driverId,
+        createDependencies: false,
+      ),
+    );
     final generatedDriverId = generatedDriver?.id ?? driverId ?? randomId;
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
-    final generatedStartTime = startDateTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
-    final generatedEndTime = endDateTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedStartedAt = startedAt ?? generatedCreatedAt;
+    final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
 
     final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
         RecurrenceRule(
@@ -51,7 +53,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
           interval: 1,
           until: recurrenceEndType == RecurrenceEndType.occurrence
               ? null
-              : generatedCreatedAt.add(const Duration(days: 30)).toUtc(),
+              : generatedStartedAt.add(const Duration(days: 30)).toUtc(),
           count: recurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
           byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
               .take(random.nextInt(7))
@@ -63,7 +65,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
         (createDependencies
             ? generatedRecurrenceRule
                 .getInstances(
-                  start: generatedCreatedAt.toUtc(),
+                  start: generatedStartedAt.toUtc(),
                   includeAfter: true,
                   includeBefore: true,
                 )
@@ -89,6 +91,8 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                       seats: seats,
                       driverId: generatedDriverId,
                       driver: NullableParameter(generatedDriver),
+                      // Setting to null to avoid infinite recursion
+                      recurringDrive: NullableParameter(null),
                       createDependencies: false,
                     ))
                 .toList()
@@ -104,7 +108,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
       endTime: generatedEndTime,
       seats: seats ?? random.nextInt(5) + 1,
-      startedAt: startedAt ?? generatedCreatedAt,
+      startedAt: generatedStartedAt,
       recurrenceRule: generatedRecurrenceRule,
       recurrenceEndType: recurrenceEndType ?? RecurrenceEndType.date,
       stoppedAt: stoppedAt,

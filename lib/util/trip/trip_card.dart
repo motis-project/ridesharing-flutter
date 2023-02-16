@@ -8,7 +8,8 @@ import 'trip.dart';
 
 abstract class TripCard<T extends Trip> extends StatefulWidget {
   final T trip;
-  const TripCard(this.trip, {super.key});
+  final bool loadData;
+  const TripCard(this.trip, {super.key, this.loadData = true});
 }
 
 abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends State<U> {
