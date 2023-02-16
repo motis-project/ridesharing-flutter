@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase_manager.dart';
 import '../../util/trip/drive_card.dart';
@@ -92,7 +93,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Upcoming drives',
+              S.of(context).pageRecurringDriveDetailUpcomingDrives,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -108,7 +109,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
                       _maxShownDrives = max(_maxShownDrives - _maxShownDrivesDefault, 1);
                     });
                   },
-                  child: const Text('Show less'),
+                  child: Text(S.of(context).showLess),
                 )
               else
                 const SizedBox(),
@@ -119,7 +120,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
                       _maxShownDrives = _maxShownDrives + _maxShownDrivesDefault;
                     });
                   },
-                  child: const Text('Show more'),
+                  child: Text(S.of(context).showMore),
                 )
               else
                 const SizedBox(),
@@ -131,7 +132,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
         widgets.add(const SizedBox(height: 10));
         widgets.add(
           Text(
-            'There are no upcoming drives for this recurring drive. Try changing the recurrence rule to plan new drives.',
+            S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
@@ -144,7 +145,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recurring Drive Detail'),
+        title: Text(S.of(context).pageRecurringDriveDetailTitle),
         actions: <Widget>[buildEditButton()],
       ),
       body: _recurringDrive == null

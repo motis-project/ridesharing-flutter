@@ -71,8 +71,8 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
     widgets.add(
       Button(
-        'Save changes',
-        onPressed: _showSaveDialog,
+        S.of(context).pageRecurringDriveEditButtonSaveChanges,
+        onPressed: _showChangeDialog,
         key: const Key('saveRecurringDriveButton'),
       ),
     );
@@ -81,7 +81,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
     widgets.add(
       Button.error(
-        'Stop recurring drive',
+        S.of(context).pageRecurringDriveEditButtonStop,
         onPressed: _showStopDialog,
         key: const Key('stopRecurringDriveButton'),
       ),
@@ -89,7 +89,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recurring Drive Edit'),
+        title: Text(S.of(context).pageRecurringDriveEditTitle),
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -110,13 +110,13 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
       Navigator.of(context).pop();
       showSnackBar(
         context,
-        'Recurring drive rule changed',
+        S.of(context).pageRecurringDriveEditChangeDialogSnackBar,
         durationType: SnackBarDurationType.medium,
       );
     }
   }
 
-  void _showSaveDialog() {
+  void _showChangeDialog() {
     if (!_formKey.currentState!.validate()) return;
 
     final List<DateTime> previousInstances =
@@ -124,27 +124,25 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     final List<DateTime> newInstances =
         _recurrenceOptions.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
 
-    final int cancelledDrives = previousInstances
+    final int cancelledDrivesCount = previousInstances
         .where((DateTime instance) => instance.isAfter(DateTime.now()) && !newInstances.contains(instance))
         .length;
 
-    if (cancelledDrives == 0) return unawaited(_changeRecurringDrive());
+    if (cancelledDrivesCount == 0) return unawaited(_changeRecurringDrive());
 
     showDialog<void>(
       context: context,
       builder: (BuildContext innerContext) => AlertDialog(
-        title: const Text('Change recurring drive'),
-        content: Text(
-          'Do you really want to change the recurrence rule for this recurring drive? $cancelledDrives drives will be automatically cancelled.',
-        ),
+        title: Text(S.of(context).pageRecurringDriveEditChangeDialogTitle),
+        content: Text(S.of(context).pageRecurringDriveEditChangeDialogContent(cancelledDrivesCount)),
         actions: <Widget>[
           TextButton(
-            key: const Key('stopRecurringDriveNoButton'),
+            key: const Key('changeRecurringDriveNoButton'),
             child: Text(S.of(context).no),
             onPressed: () => Navigator.of(innerContext).pop(),
           ),
           TextButton(
-            key: const Key('stopRecurringDriveYesButton'),
+            key: const Key('changeRecurringDriveYesButton'),
             onPressed: () {
               Navigator.of(innerContext).pop();
               _changeRecurringDrive();
@@ -165,8 +163,8 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Stop recurring drive'),
-        content: const Text('Do you really want to stop this recurring drive?'),
+        title: Text(S.of(context).pageRecurringDriveEditStopDialogTitle),
+        content: Text(S.of(context).pageRecurringDriveEditStopDialogContent),
         actions: <Widget>[
           TextButton(
             key: const Key('stopRecurringDriveNoButton'),
@@ -182,7 +180,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
               Navigator.of(context).pop();
               showSnackBar(
                 context,
-                'Recurring drive stopped',
+                S.of(context).pageRecurringDriveEditStopDialogSnackBar,
                 durationType: SnackBarDurationType.medium,
               );
             },
