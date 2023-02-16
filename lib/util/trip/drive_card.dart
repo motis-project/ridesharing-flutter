@@ -9,14 +9,14 @@ import 'seat_indicator.dart';
 import 'trip_card.dart';
 
 class DriveCard extends TripCard<Drive> {
-  const DriveCard(super.trip, {super.key});
+  const DriveCard(super.trip, {super.key, super.loadData});
 
   @override
-  State<DriveCard> createState() => _DriveCardState();
+  State<DriveCard> createState() => DriveCardState();
 }
 
-class _DriveCardState extends TripCardState<Drive, DriveCard> {
-  late Drive _drive;
+class DriveCardState extends TripCardState<Drive, DriveCard> {
+  late Drive drive;
   bool _fullyLoaded = false;
 
   @override
@@ -24,10 +24,14 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     super.initState();
 
     setState(() {
-      _drive = widget.trip;
-      trip = _drive;
+      drive = widget.trip;
+      trip = drive;
+      _fullyLoaded = !widget.loadData;
     });
-    loadDrive();
+
+    if (widget.loadData) {
+      loadDrive();
+    }
   }
 
   @override
@@ -49,8 +53,8 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     ''').eq('id', widget.trip.id).single();
     if (mounted) {
       setState(() {
-        _drive = Drive.fromJson(data);
-        trip = _drive;
+        drive = Drive.fromJson(data);
+        trip = drive;
         _fullyLoaded = true;
       });
     }
@@ -61,7 +65,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     return () => Navigator.of(context)
         .push(
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => DriveDetailPage.fromDrive(_drive),
+            builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
           ),
         )
         .then((_) => loadDrive());
@@ -76,14 +80,14 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else if (_drive.endDateTime.isBefore(DateTime.now())) {
+    } else if (drive.endDateTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {
-      if (_drive.status.isCancelled()) {
+      if (drive.status.isCancelled()) {
         return Theme.of(context).colorScheme.error;
-      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
+      } else if (drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
-      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
+      } else if (drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
         return Theme.of(context).own().success;
       } else {
         return Theme.of(context).disabledColor;
@@ -93,7 +97,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_drive.status.isCancelled()) {
+    if (drive.status.isCancelled()) {
       return disabledDecoration;
     }
 

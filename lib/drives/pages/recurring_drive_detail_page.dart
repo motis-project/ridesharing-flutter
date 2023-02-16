@@ -19,14 +19,14 @@ class RecurringDriveDetailPage extends StatefulWidget {
   RecurringDriveDetailPage.fromRecurringDrive(this.recurringDrive, {super.key}) : id = recurringDrive!.id!;
 
   @override
-  State<RecurringDriveDetailPage> createState() => _RecurringDriveDetailPageState();
+  State<RecurringDriveDetailPage> createState() => RecurringDriveDetailPageState();
 }
 
-class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
-  static const int _maxShownDrivesDefault = 5;
+class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
+  static const int shownDrivesCountDefault = 5;
 
   RecurringDrive? _recurringDrive;
-  int _maxShownDrives = _maxShownDrivesDefault;
+  int _shownDrivesCount = shownDrivesCountDefault;
   bool _fullyLoaded = false;
 
   @override
@@ -59,7 +59,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
     setState(() {
       _recurringDrive = RecurringDrive.fromJson(data);
-      _maxShownDrives = min(_maxShownDrives, 1);
+      _shownDrivesCount = max(_shownDrivesCount, 1);
       _fullyLoaded = true;
     });
   }
@@ -86,7 +86,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       final RecurringDrive recurringDrive = _recurringDrive!;
 
       final List<Drive> upcomingDrives = recurringDrive.upcomingDrives;
-      _maxShownDrives = min(_maxShownDrives, upcomingDrives.length);
+      _shownDrivesCount = min(_shownDrivesCount, upcomingDrives.length);
       if (upcomingDrives.isNotEmpty) {
         final List<Widget> upcomingDrivesColumn = <Widget>[
           const SizedBox(height: 5.0),
@@ -98,28 +98,30 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
             ),
           ),
           const SizedBox(height: 10.0),
-          ...upcomingDrives.take(_maxShownDrives).map((Drive drive) => DriveCard(drive)),
+          ...upcomingDrives.take(_shownDrivesCount).map((Drive drive) => DriveCard(drive, loadData: false)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              if (_maxShownDrives > 1)
+              if (_shownDrivesCount > 1)
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _maxShownDrives = max(_maxShownDrives - _maxShownDrivesDefault, 1);
+                      _shownDrivesCount = max(_shownDrivesCount - shownDrivesCountDefault, 1);
                     });
                   },
+                  key: const Key('showLessButton'),
                   child: Text(S.of(context).showLess),
                 )
               else
                 const SizedBox(),
-              if (_maxShownDrives < upcomingDrives.length)
+              if (_shownDrivesCount < upcomingDrives.length)
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _maxShownDrives = _maxShownDrives + _maxShownDrivesDefault;
+                      _shownDrivesCount = _shownDrivesCount + shownDrivesCountDefault;
                     });
                   },
+                  key: const Key('showMoreButton'),
                   child: Text(S.of(context).showMore),
                 )
               else
@@ -133,6 +135,7 @@ class _RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
         widgets.add(
           Text(
             S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty,
+            key: const Key('noUpcomingDrives'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
