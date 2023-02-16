@@ -48,7 +48,7 @@ void main() {
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('POST'))
         .thenReturnJson(null);
 
-    whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews?id=eq.12'), methodMatcher: equals('PATCH'))
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('PATCH'))
         .thenReturnJson(null);
   });
 
@@ -161,6 +161,12 @@ void main() {
 
       expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.idle);
       expect(find.byType(WriteReviewPage), findsOneWidget);
+
+      verifyRequestNever(
+        processor,
+        urlMatcher: startsWith('/rest/v1/reviews'),
+        methodMatcher: equals('POST'),
+      );
     });
 
     testWidgets('new rating save button', (WidgetTester tester) async {
@@ -176,13 +182,18 @@ void main() {
         const Key('hospitalityRating'),
       ];
 
+      final List<int> ratingList = [];
+
       for (final Key ratingBarKey in ratingBarKeys) {
         final int rating = Random().nextInt(4);
         final Finder ratingBarStars =
             find.descendant(of: find.byKey(ratingBarKey), matching: find.byKey(const Key('ratingBarIcon')));
         await tester.tap(ratingBarStars.at(rating));
+        ratingList.add(rating + 1);
         await tester.pumpAndSettle();
       }
+
+      await tester.enterText(find.byKey(const Key('reviewText')), 'test');
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
       await tester.tap(saveButton);
@@ -197,13 +208,23 @@ void main() {
 
       verifyRequest(
         processor,
-        urlMatcher: equals('/rest/v1/reviews'),
+        urlMatcher: startsWith('/rest/v1/reviews'),
         methodMatcher: equals('POST'),
+        bodyMatcher: equals({
+          'rating': ratingList.average.round(),
+          'comfort_rating': ratingList[0],
+          'safety_rating': ratingList[1],
+          'reliability_rating': ratingList[2],
+          'hospitality_rating': ratingList[3],
+          'text': 'test',
+          'writer_id': 2,
+          'receiver_id': 1
+        }),
       ).called(1);
     });
 
     testWidgets('edit rating save button', (WidgetTester tester) async {
-      final Review review = ReviewFactory().generateFake(id: 12, writerId: 2, receiverId: 1);
+      final Review review = ReviewFactory().generateFake(writerId: 2, receiverId: 1);
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('GET'))
           .thenReturnJson(review.toJsonForApi());
@@ -226,16 +247,27 @@ void main() {
 
       expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.success);
 
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump();
 
       expect(find.byType(ReviewsPage), findsOneWidget);
 
-      expect(find.byType(ReviewsPage), findsOneWidget);
+      final int newRating =
+          [rating + 1, review.safetyRating!, review.reliabilityRating!, review.hospitalityRating!].average.round();
 
       verifyRequest(
         processor,
-        urlMatcher: equals('/rest/v1/reviews?id=eq.12'),
+        urlMatcher: startsWith('/rest/v1/reviews?id=eq.${review.id}'),
         methodMatcher: equals('PATCH'),
+        bodyMatcher: equals({
+          'rating': newRating,
+          'comfort_rating': rating + 1,
+          'safety_rating': review.safetyRating,
+          'reliability_rating': review.reliabilityRating,
+          'hospitality_rating': review.hospitalityRating,
+          'text': review.text,
+          'writer_id': 2,
+          'receiver_id': 1
+        }),
       ).called(1);
     });
   });

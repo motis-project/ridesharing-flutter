@@ -120,32 +120,32 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             S.of(context).reviewCategoryComfort,
             _review!.comfortRating,
             onComfortRatingUpdate,
-            'comfortRating',
+            const Key('comfortRating'),
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategorySafety,
             _review!.safetyRating,
             onSafetyRatingUpdate,
-            'safetyRating',
+            const Key('safetyRating'),
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategoryReliability,
             _review!.reliabilityRating,
             onReliabilityRatingUpdate,
-            'reliabilityRating',
+            const Key('reliabilityRating'),
           ),
           _buildCategoryReviewRow(
             S.of(context).reviewCategoryHospitality,
             _review!.hospitalityRating,
             onHospitalityRatingUpdate,
-            'hospitalityRating',
+            const Key('hospitalityRating'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate, String key) {
+  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate, Key key) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -155,7 +155,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           size: CustomRatingBarSize.large,
           rating: rating,
           onRatingUpdate: onRatingUpdate,
-          key: Key(key),
+          key: key,
         ),
       ],
     );
