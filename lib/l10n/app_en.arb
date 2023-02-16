@@ -27,6 +27,8 @@
   "openChat": "Open Chat",
   "openDetails": "Open Details",
   "seeProfile": "See profile",
+  "showLess": "Show less",
+  "showMore": "Show more",
 
   "ratingBarSemantics": "{rating} stars",
 
@@ -304,9 +306,23 @@
   "pageDriveDetailCancelDialogToast": "Drive cancelled.",
   "pageDriveDetailBannerCancelledByDriver": "You have cancelled this drive.",
   "pageDriveDetailBannerCancelledByRecurrenceRule": "This drive has been cancelled because you have changed your recurrence settings.",
-
   "pageDriveDetailButtonHide": "Delete Drive",
   "pageDriveDetailHideDialog": "Are you sure you want to delete this drive?",
+
+  "pageRecurringDriveDetailTitle": "Recurring Drive Detail",
+  "pageRecurringDriveDetailUpcomingDrives": "Upcoming Drives",
+  "pageRecurringDriveDetailUpcomingDrivesEmpty": "There are no upcoming drives for this recurring drive. Try changing the recurrence rule to plan new drives.",
+
+  "pageRecurringDriveEditTitle": "Edit Recurring Drive",
+  "pageRecurringDriveEditButtonSaveChanges": "Save changes",
+  "pageRecurringDriveEditButtonStop": "Stop recurring drive",
+  "pageRecurringDriveEditChangeDialogTitle": "Change recurring drive",
+  "pageRecurringDriveEditChangeDialogContent": "Do you really want to change the recurrence rule for this recurring drive? {cancelledDrivesCount} drives will be automatically cancelled.",
+  "pageRecurringDriveEditChangeDialogSnackBar": "Recurring drive rule changed.",
+  "pageRecurringDriveEditStopDialogTitle": "Stop recurring drive",
+  "pageRecurringDriveEditStopDialogContent": "Do you really want to stop this recurring drive?",
+  "pageRecurringDriveEditStopDialogSnackBar": "Recurring drive stopped.",
+
 
   "pageDrivesTitle": "Drives",
   "pageDrivesTooltipOfferRide": "Offer ride",

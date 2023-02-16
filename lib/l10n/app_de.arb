@@ -27,6 +27,8 @@
   "openChat": "Chat öffnen",
   "openDetails": "Details öffnen",
   "seeProfile": "Profil ansehen",
+  "showLess": "Weniger anzeigen",
+  "showMore": "Mehr anzeigen",
 
   "ratingBarSemantics": "{rating} Sterne",
 
@@ -306,6 +308,20 @@
   "pageDriveDetailBannerCancelledByRecurrenceRule": "Diese Fahrt wurde abgesagt, weil du deine Wiederholungsregeln geändert hast.",
   "pageDriveDetailButtonHide": "Fahrt löschen",
   "pageDriveDetailHideDialog": "Bist du sicher, dass du die Fahrt löschen möchtest?",
+
+  "pageRecurringDriveDetailTitle": "Wiederkehrende Fahrt",
+  "pageRecurringDriveDetailUpcomingDrives": "Zukünftige Fahrten",
+  "pageRecurringDriveDetailUpcomingDrivesEmpty": "Es gibt keine zukünftigen Fahrten für diese wiederkehrende Fahrt. Versuche, die Wiederholungsregeln zu ändern.",
+
+  "pageRecurringDriveEditTitle": "Wiederkehrende Fahrt bearbeiten",
+  "pageRecurringDriveEditButtonSaveChanges": "Änderungen speichern",
+  "pageRecurringDriveEditButtonStop": "Wiederkehrende Fahrt stoppen",
+  "pageRecurringDriveEditChangeDialogTitle": "Wiederkehrende Fahrt ändern",
+  "pageRecurringDriveEditChangeDialogContent": "Bist du sicher, dass du die Wiederholungsregeln ändern möchtest? {cancelledDrivesCount} Fahrten werden automatisch abgesagt.",
+  "pageRecurringDriveEditChangeDialogSnackBar": "Widerholungsregeln geändert.",
+  "pageRecurringDriveEditStopDialogTitle": "Wiederkehrende Fahrt stoppen",
+  "pageRecurringDriveEditStopDialogContent": "Bist du sicher, dass du diese wiederkehrende Fahrt stoppen willst.",
+  "pageRecurringDriveEditStopDialogSnackBar": "Wiederkehrende Fahrt gestoppt.",
 
 
   "pageDrivesTitle": "Fahrten",
