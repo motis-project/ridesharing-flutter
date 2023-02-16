@@ -11,12 +11,12 @@ import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
-import '../util/factories/profile_factory.dart';
-import '../util/factories/ride_factory.dart';
-import '../util/mocks/mock_server.dart';
-import '../util/mocks/request_processor.dart';
-import '../util/mocks/request_processor.mocks.dart';
-import '../util/pump_material.dart';
+import '../../util/factories/profile_factory.dart';
+import '../../util/factories/ride_factory.dart';
+import '../../util/mocks/mock_server.dart';
+import '../../util/mocks/request_processor.dart';
+import '../../util/mocks/request_processor.mocks.dart';
+import '../../util/pump_material.dart';
 
 void main() {
   late Profile profile;

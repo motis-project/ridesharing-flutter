@@ -8,16 +8,18 @@ import 'package:motis_mitfahr_app/account/models/review.dart';
 import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
+import 'package:motis_mitfahr_app/util/buttons/loading_button.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/custom_rating_bar.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
+import 'package:progress_state_button/progress_button.dart';
 
-import '../util/factories/profile_factory.dart';
-import '../util/factories/review_factory.dart';
-import '../util/factories/ride_factory.dart';
-import '../util/mocks/mock_server.dart';
-import '../util/mocks/request_processor.dart';
-import '../util/mocks/request_processor.mocks.dart';
-import '../util/pump_material.dart';
+import '../../util/factories/profile_factory.dart';
+import '../../util/factories/review_factory.dart';
+import '../../util/factories/ride_factory.dart';
+import '../../util/mocks/mock_server.dart';
+import '../../util/mocks/request_processor.dart';
+import '../../util/mocks/request_processor.mocks.dart';
+import '../../util/pump_material.dart';
 
 void main() {
   late Profile profile;
@@ -150,12 +152,14 @@ void main() {
 
       await tester.tap(find.byKey(const Key('submitButton')));
 
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 400));
 
+      expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.fail);
       expect(find.byKey(const Key('ratingRequiredSnackbar')), findsOneWidget);
 
       await tester.pump(const Duration(seconds: 1));
 
+      expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.idle);
       expect(find.byType(WriteReviewPage), findsOneWidget);
     });
 
@@ -180,8 +184,14 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      await tester.tap(find.byKey(const Key('submitButton')));
-      await tester.pumpAndSettle();
+      final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.tap(saveButton);
+
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.success);
+
+      await tester.pump(const Duration(milliseconds: 400));
 
       expect(find.byType(ReviewsPage), findsOneWidget);
 
@@ -209,8 +219,16 @@ void main() {
       await tester.tap(ratingBarStars.at(rating));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('submitButton')));
-      await tester.pumpAndSettle();
+      final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.tap(saveButton);
+
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.success);
+
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.byType(ReviewsPage), findsOneWidget);
 
       expect(find.byType(ReviewsPage), findsOneWidget);
 
