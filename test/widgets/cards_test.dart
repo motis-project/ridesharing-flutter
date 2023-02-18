@@ -305,7 +305,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.pending, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('pending')), findsOneWidget);
+        expect(find.byKey(const Key('pendingIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().warning);
@@ -315,7 +315,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.approved, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('approved')), findsOneWidget);
+        expect(find.byKey(const Key('approvedIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
@@ -325,7 +325,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.rejected, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('rejected')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledOrRejectedIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
@@ -335,7 +335,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.cancelledByDriver, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('cancelled')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledOrRejectedIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
@@ -345,7 +345,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.cancelledByRider, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('cancelled')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledOrRejectedIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
@@ -355,7 +355,7 @@ void main() {
         await loadRideCard(tester,
             status: RideStatus.cancelledByRider, endTime: DateTime.now().add(const Duration(minutes: 10)));
 
-        expect(find.byKey(const Key('cancelled')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledOrRejectedIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
@@ -439,13 +439,13 @@ void main() {
         );
         await loadDriveCard(tester, drive);
 
-        expect(find.byKey(const Key('cancelled')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.error);
       });
 
-      testWidgets('waring status for drive with ride requests', (WidgetTester tester) async {
+      testWidgets('warning status for drive with ride requests', (WidgetTester tester) async {
         //drive in the future with ride requests
         drive = DriveFactory().generateFake(
           endDateTime: DateTime.now().add(const Duration(hours: 1)),
@@ -453,7 +453,7 @@ void main() {
         );
         await loadDriveCard(tester, drive);
 
-        expect(find.byKey(const Key('pending')), findsOneWidget);
+        expect(find.byKey(const Key('pendingIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().warning);
@@ -467,7 +467,7 @@ void main() {
         );
         await loadDriveCard(tester, drive);
 
-        expect(find.byKey(const Key('no pending')), findsOneWidget);
+        expect(find.byKey(const Key('noPendingIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
@@ -481,7 +481,7 @@ void main() {
         );
         await loadDriveCard(tester, drive);
 
-        expect(find.byKey(const Key('no pending')), findsOneWidget);
+        expect(find.byKey(const Key('noPendingIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
