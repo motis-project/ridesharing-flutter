@@ -30,8 +30,8 @@ void main() {
   });
 
   setUp(() async {
-    profile = ProfileFactory().generateFake(id: 1);
-    supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
+    profile = ProfileFactory().generateFake();
+    supabaseManager.currentProfile = ProfileFactory().generateFake(id: profile.id! + 1);
 
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('GET'))
         .thenReturnJson(null);
@@ -109,7 +109,7 @@ void main() {
     });
 
     testWidgets('load review', (WidgetTester tester) async {
-      final Review review = ReviewFactory().generateFake(writerId: 2, receiverId: 1);
+      final Review review = ReviewFactory().generateFake(writerId: profile.id! + 1, receiverId: profile.id);
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('GET'))
           .thenReturnJson(review.toJsonForApi());
@@ -217,14 +217,14 @@ void main() {
           'reliability_rating': ratingList[2],
           'hospitality_rating': ratingList[3],
           'text': 'test',
-          'writer_id': 2,
-          'receiver_id': 1
+          'writer_id': profile.id! + 1,
+          'receiver_id': profile.id
         }),
       ).called(1);
     });
 
     testWidgets('edit rating save button', (WidgetTester tester) async {
-      final Review review = ReviewFactory().generateFake(writerId: 2, receiverId: 1);
+      final Review review = ReviewFactory().generateFake(writerId: profile.id! + 1, receiverId: profile.id);
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('GET'))
           .thenReturnJson(review.toJsonForApi());
@@ -265,8 +265,8 @@ void main() {
           'reliability_rating': review.reliabilityRating,
           'hospitality_rating': review.hospitalityRating,
           'text': review.text,
-          'writer_id': 2,
-          'receiver_id': 1
+          'writer_id': profile.id! + 1,
+          'receiver_id': profile.id
         }),
       ).called(1);
     });

@@ -27,8 +27,8 @@ void main() {
   });
 
   setUp(() async {
-    profile = ProfileFactory().generateFake(id: 1);
-    supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
+    profile = ProfileFactory().generateFake();
+    supabaseManager.currentProfile = ProfileFactory().generateFake(id: profile.id! + 1);
 
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
         .thenReturnJson(profile.toJsonForApi());
@@ -111,7 +111,7 @@ void main() {
     });
 
     testWidgets('no reviews', (WidgetTester tester) async {
-      profile = ProfileFactory().generateFake(id: 1, reviewsReceived: []);
+      profile = ProfileFactory().generateFake(id: profile.id, reviewsReceived: []);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
           .thenReturnJson(profile.toJsonForApi());
 
