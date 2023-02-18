@@ -141,14 +141,14 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
     }
 
     final List<ProfileFeature> profileFeatures = _driver.profileFeatures!;
-    final List<Icon> featureicons = <Icon>[];
+    final List<Icon> featureIcons = <Icon>[];
     for (int i = 0; i < min(profileFeatures.length, 3); i++) {
-      featureicons.add(profileFeatures[i].feature.getIcon(context));
+      featureIcons.add(profileFeatures[i].feature.getIcon(context));
     }
     return Row(
       key: const Key('profileFeatures'),
       mainAxisAlignment: MainAxisAlignment.end,
-      children: featureicons,
+      children: featureIcons,
     );
   }
 

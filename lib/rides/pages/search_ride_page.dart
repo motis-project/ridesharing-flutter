@@ -119,6 +119,22 @@ class SearchRidePageState extends State<SearchRidePage> {
           )
         ''').eq('start', startController.text).eq('cancelled', false);
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
+    if (supabaseManager.currentProfile?.id != null) {
+      drives.removeWhere((Drive drive) => drive.driverId == supabaseManager.currentProfile?.id);
+      final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient
+          .from('rides')
+          .select<List<Map<String, dynamic>>>()
+          .eq('rider_id', supabaseManager.currentProfile?.id)
+          .filter('status', 'in', <int>[1, 2, 3]).filter(
+        'drive_id',
+        'in',
+        drives.map((Drive drive) => drive.id).toList(),
+      );
+      final List<Ride> existingRides = data.map((Map<String, dynamic> ride) => Ride.fromJson(ride)).toList();
+      for (final Ride ride in existingRides) {
+        drives.removeWhere((Drive drive) => drive.id == ride.driveId);
+      }
+    }
     final List<Ride> rides = drives
         .map(
           (Drive drive) => Ride.previewFromDrive(
