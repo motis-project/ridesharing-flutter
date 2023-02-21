@@ -18,9 +18,9 @@ class MockServer {
       httpClient: MockClient(
         (request) {
           // Uncomment this to see the requests
-          // print('Request: ${request.url}');
-          // print('Body: ${request.body}');
-          // print('Method: ${request.method}');
+          print('Request: ${request.url}');
+          print('Body: ${request.body}');
+          print('Method: ${request.method}');
 
           final ProcessorResult result = processor.process(
             request.url.toString(),

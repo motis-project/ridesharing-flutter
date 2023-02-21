@@ -76,6 +76,7 @@ class WeekDayButton extends StatelessWidget {
       shape: const CircleBorder(),
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       child: Text(weekDay.getAbbreviation(context), style: const TextStyle(color: Colors.white)),
+      key: Key('weekDayButton${weekDay.name}'),
     );
   }
 }

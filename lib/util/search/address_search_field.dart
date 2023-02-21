@@ -76,6 +76,7 @@ class AddressSearchField extends StatelessWidget {
 
           FocusManager.instance.primaryFocus?.unfocus();
         },
+        key: Key('addressField${addressType == AddressType.start ? 'Start' : 'Destination'}'),
       ),
     );
   }
