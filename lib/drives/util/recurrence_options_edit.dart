@@ -57,7 +57,6 @@ class RecurrenceOptionsEdit extends StatelessWidget {
     final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
       initialValue: recurrenceOptions.recurrenceInterval.intervalType,
       onSelected: (RecurrenceIntervalType value) {
-        print('Hello Wordle');
         setState(
           () => recurrenceOptions.setRecurrenceIntervalType(value, context),
         );
@@ -254,7 +253,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                                   recurrenceOptions.rebuildEndChoiceController(context);
                                 });
                               },
-                              key: const Key('customEndOccurrenceField'),
+                              key: const Key('customEndOccurenceField'),
                             );
 
                             content = TextWithFields(
