@@ -563,12 +563,6 @@ void main() {
     final Finder finder = find.byType(Dismissible, skipOffstage: false);
     expect(finder, findsNWidgets(5));
 
-    print(rideToday.id);
-    print(rideTomorrow.id);
-    print(driveToday.id);
-    print(driveTomorrow.id);
-    print(message.id);
-    print(message2.id);
     expect(tester.widget(finder.at(0)).key, Key('drive${driveToday.id}'));
     expect(tester.widget(finder.at(1)).key, Key('ride${rideToday.id}'));
     expect(tester.widget(finder.at(2)).key, Key('ride${rideTomorrow.id}'));

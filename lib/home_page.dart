@@ -226,7 +226,7 @@ class HomePageState extends State<HomePage> {
             if (_fullyLoaded)
               Expanded(
                 // child: Container(
-                //   key: const Key('MessageContainer'),
+                key: const Key('MessageContainer'),
                 //   width: MediaQuery.of(context).size.width,
                 //   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: _items.isNotEmpty
