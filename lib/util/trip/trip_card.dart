@@ -14,6 +14,7 @@ abstract class TripCard<T extends TripLike> extends StatefulWidget {
 
 abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends State<U> {
   late T trip;
+  Color statusColor = Colors.transparent;
 
   BorderRadius cardBorder = const BorderRadius.only(
     bottomRight: Radius.circular(10),
@@ -23,7 +24,7 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickStatusColor(),
+      color: statusColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -103,6 +104,7 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
                       const SizedBox(width: 4),
                       Text(
                         localeManager.formatDuration(trip.duration),
+                        key: const Key('duration'),
                       ),
                     ],
                   ),

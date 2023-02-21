@@ -23,7 +23,6 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   @override
   void initState() {
     super.initState();
-
     setState(() {
       drive = widget.trip;
       trip = drive;
@@ -56,6 +55,7 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
     if (mounted) {
       setState(() {
         _fullyLoaded = true;
+        statusColor = pickStatusColor();
       });
     }
   }
@@ -90,19 +90,19 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
     } else if (_drive.cancelled) {
       return Icon(
         Icons.block,
-        color: pickStatusColor(),
+        color: statusColor,
         key: const Key('cancelledIcon'),
       );
     } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
       return Icon(
         Icons.access_time_outlined,
-        color: pickStatusColor(),
+        color: statusColor,
         key: const Key('pendingIcon'),
       );
     } else {
       return Icon(
         Icons.done_all,
-        color: pickStatusColor(),
+        color: statusColor,
         key: const Key('noPendingIcon'),
       );
     }

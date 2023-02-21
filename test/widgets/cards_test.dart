@@ -53,7 +53,7 @@ void main() {
     expect(find.text(localeManager.formatDate(ride.startDateTime)), findsOneWidget);
 
     //duration is shown
-    expect(find.byIcon(Icons.access_time_outlined), findsOneWidget);
+    expect(find.byKey(const Key('duration')), findsOneWidget);
 
     //start location is shown
     expect(find.byKey(const Key('start')), findsOneWidget);
