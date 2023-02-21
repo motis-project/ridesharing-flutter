@@ -38,7 +38,7 @@ class SearchRidePageState extends State<SearchRidePage> {
 
   late final SearchRideFilter filter;
 
-  List<Ride>? rideSuggestions;
+  List<Ride>? possibleRides;
 
   bool _loading = false;
 
@@ -117,26 +117,23 @@ class SearchRidePageState extends State<SearchRidePage> {
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
           )
-        ''').eq('start', startController.text).eq('cancelled', false);
+        ''').eq('start', startController.text).eq('cancelled', false).gt('start_time', DateTime.now());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         .map(
           (Drive drive) => Ride.previewFromDrive(
             drive,
-            _startSuggestion!.name,
-            _startSuggestion!.position,
-            drive.startTime,
-            _destinationSuggestion!.name,
-            _destinationSuggestion!.position,
-            drive.endTime,
-            seats,
-            supabaseManager.currentProfile?.id ?? -1,
-            double.parse(drive.startPosition.distanceTo(drive.endPosition).toStringAsFixed(2)),
+            start: _startSuggestion!.name,
+            startPosition: _startSuggestion!.position,
+            end: _destinationSuggestion!.name,
+            endPosition: _destinationSuggestion!.position,
+            seats: seats,
+            riderId: supabaseManager.currentProfile?.id ?? -1,
           ),
         )
         .toList();
     setState(() {
-      rideSuggestions = rides;
+      possibleRides = rides;
       _loading = false;
     });
   }
@@ -215,18 +212,23 @@ class SearchRidePageState extends State<SearchRidePage> {
               tooltip: S.of(context).before,
               onPressed: selectedDate.isSameDayAs(widget.clock.now())
                   ? null
-                  : () => setState(() => selectedDate = selectedDate.subtract(const Duration(days: 1))),
+                  : () => setState(() {
+                        selectedDate = selectedDate.subtract(const Duration(days: 1));
+                        loadRides();
+                      }),
               icon: const Icon(Icons.chevron_left),
             ),
             Expanded(child: buildDatePicker()),
             IconButton(
               key: const Key('searchRideAfterButton'),
               tooltip: S.of(context).after,
-              onPressed: () => setState(() => selectedDate = selectedDate.add(const Duration(days: 1))),
+              onPressed: () => setState(() {
+                selectedDate = selectedDate.add(const Duration(days: 1));
+                loadRides();
+              }),
               icon: const Icon(Icons.chevron_right),
             ),
-          ],
-          if (!_wholeDay) ...<Widget>[
+          ] else ...<Widget>[
             Expanded(child: buildDatePicker()),
             const SizedBox(width: 10),
             Expanded(child: buildTimePicker()),
@@ -288,7 +290,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   }
 
   Widget buildMainContentSliver() {
-    if (rideSuggestions == null || _loading) {
+    if (possibleRides == null || _loading) {
       if (_startSuggestion == null || _destinationSuggestion == null) {
         return buildEmptyRideSuggestions(
           key: const Key('searchRideNoInput'),
@@ -305,8 +307,10 @@ class SearchRidePageState extends State<SearchRidePage> {
         ),
       );
     }
-    final List<Ride> filterApplied = filter.apply(rideSuggestions!, selectedDate);
+
+    final List<Ride> filterApplied = filter.apply(possibleRides!, selectedDate);
     final List<Ride> filteredSuggestions = applyTimeConstraints(filterApplied);
+
     if (filteredSuggestions.isEmpty) {
       return buildEmptyRideSuggestions(
         'assets/shrug.png',
@@ -332,7 +336,7 @@ class SearchRidePageState extends State<SearchRidePage> {
                   ),
                 ),
               )
-            : rideSuggestions!.isNotEmpty
+            : possibleRides!.isNotEmpty
                 ? Semantics(
                     button: true,
                     tooltip: S.of(context).pageSearchRideTooltipFilter,

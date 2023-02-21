@@ -44,30 +44,27 @@ class Ride extends Trip {
   });
 
   factory Ride.previewFromDrive(
-    Drive drive,
-    String start,
-    Position startPosition,
-    DateTime startTime,
-    String end,
-    Position endPosition,
-    DateTime endTime,
-    int seats,
-    int riderId,
-    double price,
-  ) {
+    Drive drive, {
+    required String start,
+    required Position startPosition,
+    required String end,
+    required Position endPosition,
+    required int seats,
+    required int riderId,
+  }) {
     return Ride(
       start: start,
       startPosition: startPosition,
-      startTime: startTime,
+      startTime: drive.startTime,
       end: end,
       endPosition: endPosition,
-      endTime: endTime,
+      endTime: drive.endTime,
       seats: seats,
       riderId: riderId,
       status: RideStatus.preview,
       driveId: drive.id!,
       drive: drive,
-      price: price,
+      price: double.parse(drive.startPosition.distanceTo(drive.endPosition).toStringAsFixed(2)),
     );
   }
 

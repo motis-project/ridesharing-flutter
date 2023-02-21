@@ -66,7 +66,7 @@ void main() {
       final Position paris = Position(48.8566, 2.3522);
       final Position prague = Position(50.0755, 14.4378);
       final double distance = paris.distanceTo(prague);
-      expect(distance.toInt(), 882);
+      expect(distance.round(), 883);
     });
   });
 }

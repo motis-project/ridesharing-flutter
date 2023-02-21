@@ -718,7 +718,7 @@ void main() {
           hospitalityRating: minRating,
         );
 
-        List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+        List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
         expect(filteredRides, hasLength(3));
         expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
         expect(filteredRides[1].driveId, drives[noRatings]!.id);
@@ -726,7 +726,7 @@ void main() {
 
         await enterFilter(tester, features: requiredFeatures);
 
-        filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+        filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
         expect(filteredRides, hasLength(4));
         expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
         expect(filteredRides[1].driveId, drives[notEnoughCategoryRating]!.id);
@@ -743,7 +743,7 @@ void main() {
           features: requiredFeatures,
         );
 
-        filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+        filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
         expect(filteredRides, hasLength(2));
         expect(filteredRides[0].driveId, drives[satisfiesEverything]!.id);
         expect(filteredRides[1].driveId, drives[noRatings]!.id);
@@ -794,7 +794,7 @@ void main() {
 
           await enterSorting(tester, SearchRideSorting.relevance);
 
-          final List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+          final List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
           expect(filteredRides, hasLength(3));
           expect(filteredRides[0].driveId, drives[1].id);
           expect(filteredRides[1].driveId, drives[2].id);
@@ -835,7 +835,7 @@ void main() {
 
           await enterSorting(tester, SearchRideSorting.relevance);
 
-          final List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+          final List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
           expect(filteredRides, hasLength(2));
           expect(filteredRides[0].driveId, drives[0].id);
           expect(filteredRides[1].driveId, drives[1].id);
@@ -865,7 +865,7 @@ void main() {
 
           await enterSorting(tester, SearchRideSorting.travelDuration);
 
-          final List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+          final List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
           expect(filteredRides, hasLength(3));
           expect(filteredRides[0].driveId, drives[2].id);
           expect(filteredRides[1].driveId, drives[0].id);
@@ -894,7 +894,7 @@ void main() {
 
           await enterSorting(tester, SearchRideSorting.price);
 
-          final List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+          final List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
           expect(filteredRides, hasLength(3));
           expect(filteredRides[0].driveId, drives[1].id);
           expect(filteredRides[1].driveId, drives[2].id);
@@ -926,7 +926,7 @@ void main() {
 
           await enterSorting(tester, SearchRideSorting.timeProximity);
 
-          final List<Ride> filteredRides = pageState.filter.apply(pageState.rideSuggestions!, pageState.selectedDate);
+          final List<Ride> filteredRides = pageState.filter.apply(pageState.possibleRides!, pageState.selectedDate);
           expect(filteredRides, hasLength(3));
           expect(filteredRides[0].driveId, drives[2].id);
           expect(filteredRides[1].driveId, drives[1].id);

@@ -64,6 +64,14 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   }
 
   Future<void> loadRide() async {
+    if (_ride.status == RideStatus.preview) {
+      setState(() {
+        _fullyLoaded = true;
+        _driver = _ride.drive!.driver!;
+      });
+      return;
+    }
+
     Ride trip = widget.trip;
     final Map<String, dynamic> data = await supabaseManager.supabaseClient
         .from('drives')
