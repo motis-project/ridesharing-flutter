@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,7 +22,9 @@ import '../util/week_day.dart';
 import 'recurring_drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
-  const CreateDrivePage({super.key});
+  // This is needed in order to mock the time in tests
+  final Clock clock;
+  const CreateDrivePage({super.key, this.clock = const Clock()});
 
   @override
   State<CreateDrivePage> createState() => _CreateDrivePageState();
@@ -34,36 +37,39 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
       appBar: AppBar(
         title: Text(S.of(context).pageCreateDriveTitle),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: SingleChildScrollView(child: CreateDriveForm()),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: SingleChildScrollView(child: CreateDriveForm(clock: widget.clock)),
+        ),
       ),
     );
   }
 }
 
 class CreateDriveForm extends StatefulWidget {
-  const CreateDriveForm({super.key});
+  final Clock clock;
+  const CreateDriveForm({super.key, this.clock = const Clock()});
 
   @override
-  State<CreateDriveForm> createState() => _CreateDriveFormState();
+  State<CreateDriveForm> createState() => CreateDriveFormState();
 }
 
-class _CreateDriveFormState extends State<CreateDriveForm> {
+class CreateDriveFormState extends State<CreateDriveForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _startController = TextEditingController();
-  late AddressSuggestion _startSuggestion;
-  final TextEditingController _destinationController = TextEditingController();
-  late AddressSuggestion _destinationSuggestion;
+  final TextEditingController startController = TextEditingController();
+  late AddressSuggestion startSuggestion;
+  final TextEditingController destinationController = TextEditingController();
+  late AddressSuggestion destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  late DateTime _selectedDate;
-  late int _seats;
+  late DateTime selectedDate;
+  late int seats;
 
-  late RecurrenceOptions _recurrenceOptions;
+  late RecurrenceOptions recurrenceOptions;
 
-  static List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
+  static final List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
     RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
     RecurrenceEndChoiceInterval(3, RecurrenceIntervalType.months),
     RecurrenceEndChoiceInterval(6, RecurrenceIntervalType.months),
@@ -73,8 +79,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now();
-    _seats = 1;
+    selectedDate = widget.clock.now();
+    seats = 1;
   }
 
   @override
@@ -83,9 +89,9 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
 
     // This is here instead of initState
     // because the context is needed for the recurrence options
-    _recurrenceOptions = RecurrenceOptions(
+    recurrenceOptions = RecurrenceOptions(
       predefinedEndChoices: predefinedRecurrenceEndChoices,
-      startedAt: _selectedDate,
+      startedAt: selectedDate,
       endChoice: predefinedRecurrenceEndChoices.last,
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
       context: context,
@@ -96,44 +102,43 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   void dispose() {
     _dateController.dispose();
     _timeController.dispose();
-    _startController.dispose();
-    _destinationController.dispose();
-    _recurrenceOptions.dispose();
+    startController.dispose();
+    destinationController.dispose();
+    recurrenceOptions.dispose();
     super.dispose();
   }
 
   void _showTimePicker() {
     showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
+      initialTime: TimeOfDay(hour: selectedDate.hour, minute: selectedDate.minute),
       builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
     ).then((TimeOfDay? value) {
       setState(() {
         if (value != null) {
-          _selectedDate =
-              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = localeManager.formatTime(_selectedDate);
+          selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, value.hour, value.minute);
+          _timeController.text = localeManager.formatTime(selectedDate);
         }
       });
     });
   }
 
   void _showDatePicker() {
-    final DateTime firstDate = DateTime.now();
+    final DateTime firstDate = widget.clock.now();
 
     showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: selectedDate,
       firstDate: firstDate,
       lastDate: firstDate.add(const Duration(days: 30)),
     ).then((DateTime? value) {
       setState(() {
         if (value != null) {
-          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _recurrenceOptions.startedAt = _selectedDate;
-          _dateController.text = localeManager.formatDate(_selectedDate);
+          selectedDate = DateTime(value.year, value.month, value.day, selectedDate.hour, selectedDate.minute);
+          recurrenceOptions.startedAt = selectedDate;
+          _dateController.text = localeManager.formatDate(selectedDate);
         }
       });
     });
@@ -143,27 +148,27 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     if (_formKey.currentState!.validate()) {
       try {
         final DateTime endDateTime = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          _selectedDate.hour + 2,
-          _selectedDate.minute,
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedDate.hour + 2,
+          selectedDate.minute,
         );
         final Profile driver = supabaseManager.currentProfile!;
 
-        if (_recurrenceOptions.enabled) {
+        if (recurrenceOptions.enabled) {
           final RecurringDrive recurringDrive = RecurringDrive(
             driverId: driver.id!,
-            start: _startSuggestion.name,
-            startPosition: _startSuggestion.position,
-            end: _destinationSuggestion.name,
-            endPosition: _destinationSuggestion.position,
-            seats: _seats,
-            startTime: TimeOfDay.fromDateTime(_selectedDate),
+            start: startSuggestion.name,
+            startPosition: startSuggestion.position,
+            end: destinationSuggestion.name,
+            endPosition: destinationSuggestion.position,
+            seats: seats,
+            startTime: TimeOfDay.fromDateTime(selectedDate),
             endTime: TimeOfDay.fromDateTime(endDateTime),
-            startedAt: _recurrenceOptions.startedAt,
-            recurrenceRule: _recurrenceOptions.recurrenceRule,
-            recurrenceEndType: _recurrenceOptions.endChoice.type,
+            startedAt: recurrenceOptions.startedAt,
+            recurrenceRule: recurrenceOptions.recurrenceRule,
+            recurrenceEndType: recurrenceOptions.endChoice.type,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
               .from('recurring_drives')
@@ -184,12 +189,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
         } else {
           final Drive drive = Drive(
             driverId: driver.id!,
-            start: _startSuggestion.name,
-            startPosition: _startSuggestion.position,
-            end: _destinationSuggestion.name,
-            endPosition: _destinationSuggestion.position,
-            seats: _seats,
-            startDateTime: _selectedDate,
+            start: startSuggestion.name,
+            startPosition: startSuggestion.position,
+            end: destinationSuggestion.name,
+            endPosition: destinationSuggestion.position,
+            seats: seats,
+            startDateTime: selectedDate,
             endDateTime: endDateTime,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
@@ -221,7 +226,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now())) {
+    // 1 minute is added because the selected date's seconds are always 0
+    if (selectedDate.add(const Duration(minutes: 1)).isBefore(widget.clock.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -230,8 +236,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   @override
   Widget build(BuildContext context) {
     // This needs to happen on rebuild to make sure we pick up locale changes
-    _dateController.text = localeManager.formatDate(_selectedDate);
-    _timeController.text = localeManager.formatTime(_selectedDate);
+    _dateController.text = localeManager.formatDate(selectedDate);
+    _timeController.text = localeManager.formatTime(selectedDate);
 
     return Form(
       key: _formKey,
@@ -240,11 +246,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: StartDestinationTimeline(
-              startController: _startController,
-              destinationController: _destinationController,
-              onStartSelected: (AddressSuggestion suggestion) => setState(() => _startSuggestion = suggestion),
+              startController: startController,
+              destinationController: destinationController,
+              onStartSelected: (AddressSuggestion suggestion) => setState(() => startSuggestion = suggestion),
               onDestinationSelected: (AddressSuggestion suggestion) =>
-                  setState(() => _destinationSuggestion = suggestion),
+                  setState(() => destinationSuggestion = suggestion),
             ),
           ),
           const SizedBox(height: 10),
@@ -262,6 +268,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                     readOnly: true,
                     onTap: _showDatePicker,
                     controller: _dateController,
+                    key: const Key('createDriveDatePicker'),
                   ),
                 ),
               ),
@@ -278,6 +285,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                     onTap: _showTimePicker,
                     controller: _timeController,
                     validator: _timeValidator,
+                    key: const Key('createDriveTimePicker'),
                   ),
                 ),
               ),
@@ -287,7 +295,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           SizedBox(
             width: 150,
             child: IncrementField(
-              initialValue: _seats,
+              initialValue: seats,
               maxValue: Trip.maxSelectableSeats,
               icon: Icon(
                 Icons.chair,
@@ -296,25 +304,26 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               ),
               onChanged: (int? value) {
                 setState(() {
-                  _seats = value!;
+                  seats = value!;
                 });
               },
             ),
           ),
           LabeledCheckbox(
             label: S.of(context).pageCreateDriveRecurringCheckbox,
-            value: _recurrenceOptions.enabled,
+            value: recurrenceOptions.enabled,
             onChanged: (bool? value) => setState(() {
-              _recurrenceOptions.enabled = value!;
-              if (value && _recurrenceOptions.weekDays.isEmpty) {
-                _recurrenceOptions.weekDays.add(_selectedDate.toWeekDay());
+              recurrenceOptions.enabled = value!;
+              if (value && recurrenceOptions.weekDays.isEmpty) {
+                recurrenceOptions.weekDays.add(selectedDate.toWeekDay());
               }
             }),
+            key: const Key('createDriveRecurringCheckbox'),
           ),
-          if (_recurrenceOptions.enabled) ...<Widget>[
+          if (recurrenceOptions.enabled) ...<Widget>[
             const SizedBox(height: 10),
             RecurrenceOptionsEdit(
-              recurrenceOptions: _recurrenceOptions,
+              recurrenceOptions: recurrenceOptions,
               setState: setState,
             ),
           ],
@@ -322,6 +331,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           Button.submit(
             S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
+            key: const Key('createDriveButton'),
           ),
         ],
       ),
