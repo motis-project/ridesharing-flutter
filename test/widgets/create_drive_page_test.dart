@@ -39,9 +39,8 @@ void main() {
 
   Future<void> scrollAndTap(WidgetTester tester, Finder finder, {Finder? scrollable}) async {
     scrollable ??= find.byType(Scrollable).hitTestable().first;
-    print(scrollable);
-    await tester.scrollUntilVisible(finder.hitTestable(), 50, scrollable: scrollable);
-    await tester.tap(finder.hitTestable());
+    await tester.scrollUntilVisible(finder, 50, scrollable: scrollable);
+    await tester.tap(finder);
     await tester.pump();
   }
 
@@ -122,9 +121,9 @@ void main() {
     await tester.enterText(find.byKey(const Key('intervalSizeField')), size.toString());
 
     await scrollAndTap(tester, find.byKey(const Key('intervalTypeField')));
-    await tester.pump();
-    await scrollAndTap(tester, find.byKey(Key('intervalType${type.name}')), scrollable: find.byType(Scrollable).first);
-    await tester.pump();
+    await tester.pumpAndSettle();
+    await scrollAndTap(tester, find.byKey(Key('intervalType${type.name}')), scrollable: find.byType(Scrollable).last);
+    await tester.pumpAndSettle();
   }
 
   Future<void> enterUntil(WidgetTester tester, DateTime dateTime) async {
@@ -134,7 +133,7 @@ void main() {
 
     await enterDate(tester, dateTime, finder: find.byKey(const Key('customEndDateField')));
     await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-    await tester.pump();
+    await tester.pumpAndSettle();
   }
 
   group('CreateDrivePage', () {
@@ -225,10 +224,11 @@ void main() {
           expect(timeField.hasError, isTrue);
         });
       });
+
       testWidgets('Recurring', (WidgetTester tester) async {
         final List<WeekDay> weekdays = [...WeekDay.values]
           ..shuffle()
-          ..sublist(random.integer(WeekDay.values.length, min: 1));
+          ..take(random.integer(WeekDay.values.length, min: 1));
         final int intervalSize = random.integer(10, min: 1);
         final RecurrenceIntervalType intervalType =
             RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)];
@@ -248,25 +248,16 @@ void main() {
         expect(formState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
         expect(formState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
 
-        //for (int i = 0; i < 4; i++) {
-        //  print(find.byKey(Key('predefinedEndChoice$i')));
-        //}
         await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
             scrollable: find.byType(Scrollable).hitTestable().first);
-        final Finder scrollable =
-            find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable).hitTestable());
+        final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
         for (int i = 0; i < 4; i++) {
-          print(i);
           await tester.tap(find.byKey(const Key('untilField')));
-          print(find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable).hitTestable()));
+          await tester.pumpAndSettle();
 
-          print('A');
-
-          await scrollAndTap(tester, find.byKey(Key('predefinedEndChoice$i')), scrollable: scrollable);
-
-          print('B');
+          await scrollAndTap(tester, find.byKey(Key('predefinedEndChoice$i')), scrollable: scrollable.first);
           await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-          await tester.pump();
+          await tester.pumpAndSettle();
           expect(formState.recurrenceOptions.endChoice.isCustom, isFalse);
           expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
           expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize,
@@ -277,25 +268,28 @@ void main() {
 
         final DateTime dateTime =
             faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
-        enterUntil(tester, dateTime);
+        await enterUntil(tester, dateTime);
         expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
         expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
-        expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceDate).date, dateTime);
+        expect(
+          (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceDate).date,
+          DateTime(dateTime.year, dateTime.month, dateTime.day),
+        );
 
         final int endIntervalSize = random.integer(16, min: 1);
         final RecurrenceIntervalType endIntervalType =
             RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)];
         await tester.tap(find.byKey(const Key('untilField')));
-        await tester.pump();
-        await tester.tap(find.byKey(const Key('recurrenceEndChoice5')));
+        await tester.pumpAndSettle();
+        await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice5')), scrollable: scrollable.first);
         await tester.pump();
         await tester.enterText(find.byKey(const Key('customEndIntervalSizeField')), endIntervalSize.toString());
         await tester.tap(find.byKey(const Key('customEndIntervalTypeField')));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.tap(find.byKey(Key('customEndIntervalType${endIntervalType.name}')));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-        await tester.pump();
+        await tester.pumpAndSettle();
         expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
         expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
         expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize, endIntervalSize);
@@ -303,12 +297,12 @@ void main() {
 
         final int occurenceCount = random.integer(16, min: 1);
         await tester.tap(find.byKey(const Key('untilField')));
-        await tester.pump();
-        await tester.tap(find.byKey(const Key('recurrenceEndChoice6')));
+        await tester.pumpAndSettle();
+        await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice6')), scrollable: scrollable.first);
         await tester.pump();
         await tester.enterText(find.byKey(const Key('customEndOccurenceField')), occurenceCount.toString());
         await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-        await tester.pump();
+        await tester.pumpAndSettle();
         expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
         expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.occurrence);
         expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceOccurrence).occurrences, occurenceCount);
@@ -354,32 +348,6 @@ void main() {
         await tester.tap(find.byKey(const Key('createDriveButton')));
         await tester.pumpAndSettle();
 
-        /*print({
-          'start': startName,
-          'start_lat': startPosition.lat,
-          'start_lng': startPosition.lng,
-          'end': destinationName,
-          'end_lat': destinationPosition.lat,
-          'end_lng': destinationPosition.lng,
-          'seats': seats,
-          'start_time': dateTime,
-          'end_time': DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 2, dateTime.minute),
-          'hide_in_list_view': false,
-          'status': 0,
-          'driver_id': driver.id,
-          'recurring_drive_id': null,
-        });*/
-
-        /*{start: Lowellfurt, start_lat: -80.80548618832307, start_lng: 74.95284689119251, end: 
-Lavernshire, end_lat: 50.23839973894488, end_lng: -47.14285526053624, seats: 7, start_time: 
-2023-02-19 22:22:00.000, end_time: 2023-02-20 00:22:00.000, hide_in_list_view: false, status: 0, 
-driver_id: 550822, recurring_drive_id: null}
-
-        {start: Lowellfurt, start_lat: -80.80548618832307, start_lng: 74.95284689119251, end:
-Lavernshire, end_lat: 50.23839973894488, end_lng: -47.14285526053624, seats: 7, start_time:
-2023-02-19 22:22:00.000, end_time: 2023-02-20 00:22:00.000, hide_in_list_view: false, status: 0,
-driver_id: 550822, recurring_drive_id: null}*/
-
         verifyRequest(
           processor,
           urlMatcher: equals('/rest/v1/drives?select=%2A'),
@@ -392,8 +360,9 @@ driver_id: 550822, recurring_drive_id: null}*/
             'end_lat': destinationPosition.lat,
             'end_lng': destinationPosition.lng,
             'seats': seats,
-            'start_time': dateTime,
-            'end_time': DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 2, dateTime.minute),
+            'start_time': dateTime.toString(),
+            'end_time':
+                DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 2, dateTime.minute).toString(),
             'hide_in_list_view': false,
             'status': 0,
             'driver_id': driver.id,
