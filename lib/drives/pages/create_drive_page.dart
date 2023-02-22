@@ -157,6 +157,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
         final Profile driver = supabaseManager.currentProfile!;
 
         if (recurrenceOptions.enabled) {
+          print(recurrenceOptions.weekDays);
           final RecurringDrive recurringDrive = RecurringDrive(
             driverId: driver.id!,
             start: startSuggestion.name,
@@ -178,7 +179,6 @@ class CreateDriveFormState extends State<CreateDriveForm> {
           final RecurringDrive insertedRecurringDrive = RecurringDrive.fromJson(data);
 
           if (mounted) {
-            Navigator.pop(context, insertedRecurringDrive);
             await Navigator.pushReplacement(
               context,
               MaterialPageRoute<void>(
@@ -226,8 +226,8 @@ class CreateDriveFormState extends State<CreateDriveForm> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    // 1 minute is added because the selected date's seconds are always 0
-    if (selectedDate.add(const Duration(minutes: 1)).isBefore(widget.clock.now())) {
+    // 59 seconds are added because the selected date's seconds are always 0
+    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now())) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;

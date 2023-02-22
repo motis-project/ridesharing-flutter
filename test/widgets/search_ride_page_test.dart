@@ -157,7 +157,7 @@ void main() {
         find.byKey(Key('searchRideSortingDropdownItem${sorting.name}'), skipOffstage: false).last;
     await tester.scrollUntilVisible(dropdownItemFinder, 100, scrollable: find.byType(Scrollable).first);
     await tester.tap(dropdownItemFinder);
-    await tester.pump();
+    await tester.pumpAndSettle();
   }
 
   group('SearchRidePage', () {
@@ -902,7 +902,7 @@ void main() {
           expect(filteredRides[0].driveId, drives[1].id);
           expect(filteredRides[1].driveId, drives[2].id);
           expect(filteredRides[2].driveId, drives[0].id);
-        }, skip: true);
+        });
 
         testWidgets('Time proximity', (WidgetTester tester) async {
           final DateTime startDateTime = DateTime.now();
