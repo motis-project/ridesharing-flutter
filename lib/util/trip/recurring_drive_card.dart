@@ -35,14 +35,6 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
     loadRecurringDrive();
   }
 
-  /*@override
-  void didUpdateWidget(RecurringDriveCard oldWidget) {
-    if (const DeepCollectionEquality().equals(_drives, widget.drives)) {
-      loadRecurringDrive();
-    }
-    super.didUpdateWidget(oldWidget);
-  }*/
-
   Future<void> loadRecurringDrive() async {
     final Map<String, dynamic> data =
         await supabaseManager.supabaseClient.from('recurring_drives').select<Map<String, dynamic>>('''

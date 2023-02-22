@@ -226,7 +226,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
       return S.of(context).formTimeValidateEmpty;
     }
     // 59 seconds are added because the selected date's seconds are always 0
-    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now())) {
+    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now()) && !recurrenceOptions.enabled) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -262,7 +262,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: S.of(context).formDate,
+                      labelText: recurrenceOptions.enabled ? S.of(context).formSinceDate : S.of(context).formDate,
                     ),
                     readOnly: true,
                     onTap: _showDatePicker,
@@ -278,7 +278,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: S.of(context).formTime,
+                      labelText: S.of(context).formStartTime,
                     ),
                     readOnly: true,
                     onTap: _showTimePicker,

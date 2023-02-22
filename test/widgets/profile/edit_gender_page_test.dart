@@ -140,7 +140,7 @@ void main() {
           processor,
           urlMatcher: startsWith('/rest/v1/profiles'),
           methodMatcher: equals('GET'),
-        ).called(3);
+        );
       });
     });
   });

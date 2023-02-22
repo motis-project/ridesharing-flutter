@@ -94,8 +94,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           time: drive.endDateTime,
         ),
       );
-      final List<Ride> approvedRides = drive.approvedRides!;
-      for (final Ride ride in approvedRides) {
+      final List<Ride> visibleRides = drive.status == DriveStatus.plannedOrFinished
+          ? drive.approvedRides
+          : drive.rides!.where((Ride ride) => ride.status == RideStatus.cancelledByDriver).toList();
+      for (final Ride ride in visibleRides) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -181,13 +183,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       );
       widgets.add(timeline);
 
-      if (approvedRides.isNotEmpty) {
+      if (visibleRides.isNotEmpty) {
         widgets.add(const Divider(thickness: 1));
-        final Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
+        final Set<Profile> riders = visibleRides.map((Ride ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
       }
 
-      final List<Ride> pendingRides = _drive!.pendingRides!.toList();
+      final List<Ride> pendingRides = _drive!.pendingRides.toList();
       if (pendingRides.isNotEmpty) {
         final List<Widget> pendingRidesColumn = <Widget>[
           const SizedBox(height: 5.0),
