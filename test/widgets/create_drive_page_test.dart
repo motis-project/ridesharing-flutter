@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/drives/util/week_day.dart';
@@ -11,10 +12,12 @@ import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:motis_mitfahr_app/util/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/trip/trip.dart';
+import 'package:rrule/rrule.dart';
 
 import '../util/factories/address_suggestion_factory.dart';
 import '../util/factories/drive_factory.dart';
 import '../util/factories/profile_factory.dart';
+import '../util/factories/recurring_drive_factory.dart';
 import '../util/mocks/mock_server.dart';
 import '../util/mocks/request_processor.dart';
 import '../util/mocks/request_processor.mocks.dart';
@@ -109,8 +112,8 @@ void main() {
     await tester.pump();
   }
 
-  Future<void> selectWeekdays(WidgetTester tester, List<WeekDay> weekdays) async {
-    await tester.tap(find.byKey(Key('weekDayButton${DateTime.now().toWeekDay().name}')));
+  Future<void> selectWeekdays(WidgetTester tester, List<WeekDay> weekdays, {DateTime? selectedDate}) async {
+    if (selectedDate != null) await tester.tap(find.byKey(Key('weekDayButton${selectedDate.toWeekDay().name}')));
     for (final WeekDay weekday in weekdays) {
       await tester.tap(find.byKey(Key('weekDayButton${weekday.name}')));
       await tester.pump();
@@ -230,8 +233,9 @@ void main() {
           ..shuffle()
           ..take(random.integer(WeekDay.values.length, min: 1));
         final int intervalSize = random.integer(10, min: 1);
-        final RecurrenceIntervalType intervalType =
-            RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)];
+        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
+            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
+            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
 
         await pumpMaterial(tester, const CreateDrivePage());
         await tester.pump();
@@ -240,7 +244,7 @@ void main() {
 
         await tapRecurring(tester);
 
-        await selectWeekdays(tester, weekdays);
+        await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
         await enterInterval(tester, intervalSize, intervalType);
 
         expect(formState.recurrenceOptions.weekDays, weekdays);
@@ -371,7 +375,88 @@ void main() {
         );
       });
 
-      group('Recurring', () {});
+      testWidgets('Recurring', (WidgetTester tester) async {
+        final String startName = faker.address.city();
+        final Position startPosition = Position(faker.geo.latitude(), faker.geo.longitude());
+        final String destinationName = faker.address.city();
+        final Position destinationPosition = Position(faker.geo.latitude(), faker.geo.longitude());
+        final DateTime now = DateTime.now();
+        final DateTime dateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats, min: 1);
+
+        final List<WeekDay> weekdays = [...WeekDay.values]
+          ..shuffle()
+          ..take(random.integer(WeekDay.values.length, min: 1));
+        final int intervalSize = random.integer(10, min: 1);
+        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
+            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
+            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
+        final DateTime untilDate =
+            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+        final DateTime untilTime = DateTime(untilDate.year, untilDate.month, untilDate.day, 23, 59).toUtc();
+
+        final RecurrenceRule recurrenceRule = RecurrenceRule(
+            frequency: intervalType.frequency,
+            interval: intervalSize,
+            byWeekDays: weekdays.map((WeekDay weekDay) => ByWeekDayEntry(weekDay.index + 1)).toSet(),
+            until: untilTime);
+
+        whenRequest(processor).thenReturnJson(RecurringDriveFactory()
+            .generateFake(
+                driverId: driver.id,
+                start: startName,
+                startPosition: startPosition,
+                end: destinationName,
+                endPosition: destinationPosition,
+                seats: seats,
+                startedAt: dateTime,
+                startTime: TimeOfDay.fromDateTime(dateTime),
+                endTime: TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))),
+                recurrenceRule: recurrenceRule,
+                recurrenceEndType: RecurrenceEndType.date)
+            .toJsonForApi());
+
+        await pumpMaterial(tester, const CreateDrivePage());
+        await tester.pump();
+
+        await enterStartAndDestination(
+          tester,
+          startName: startName,
+          startPosition: startPosition,
+          destinationName: destinationName,
+          destinationPosition: destinationPosition,
+        );
+        await enterDateAndTime(tester, dateTime);
+        await enterSeats(tester, seats);
+
+        await tapRecurring(tester);
+
+        await selectWeekdays(tester, weekdays, selectedDate: dateTime);
+        await enterInterval(tester, intervalSize, intervalType);
+        await enterUntil(tester, untilTime);
+
+        await tester.tap(find.byKey(const Key('createDriveButton')));
+        await tester.pump();
+
+        verifyRequest(processor,
+            urlMatcher: equals('/rest/v1/recurring_drives?select=%2A'),
+            methodMatcher: equals('POST'),
+            bodyMatcher: equals({
+              'start': startName,
+              'start_lat': startPosition.lat,
+              'start_lng': startPosition.lng,
+              'end': destinationName,
+              'end_lat': destinationPosition.lat,
+              'end_lng': destinationPosition.lng,
+              'seats': seats,
+              'start_time': TimeOfDay.fromDateTime(dateTime).formatted,
+              'end_time': TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))).formatted,
+              'recurrence_rule': PostgresRecurrenceRule(recurrenceRule, dateTime).toString(),
+              'until_field_entered_as_date': true,
+              'stopped_at': null,
+              'driver_id': driver.id,
+            }));
+      });
     });
   });
 }

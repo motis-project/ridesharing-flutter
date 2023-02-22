@@ -157,7 +157,7 @@ void main() {
         find.byKey(Key('searchRideSortingDropdownItem${sorting.name}'), skipOffstage: false).last;
     await tester.scrollUntilVisible(dropdownItemFinder, 100, scrollable: find.byType(Scrollable).first);
     await tester.tap(dropdownItemFinder, warnIfMissed: false);
-    await tester.pump();
+    await tester.pumpAndSettle();
   }
 
   group('SearchRidePage', () {
