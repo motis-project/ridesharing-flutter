@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:rrule/rrule.dart';
 
 import '../../account/models/profile.dart';
+import '../../util/extensions/time_of_day_extension.dart';
 import '../../util/parse_helper.dart';
 import '../../util/search/position.dart';
 import '../../util/supabase_manager.dart';
@@ -74,6 +75,9 @@ class RecurringDrive extends TripLike {
     );
   }
 
+  @override
+  Duration get duration => startTime.getDurationUntil(endTime);
+
   List<WeekDay> get weekDays => recurrenceRule.byWeekDays.map((ByWeekDayEntry day) => day.toWeekDay()).toList();
 
   RecurrenceEndChoice get recurrenceEndChoice {
@@ -143,26 +147,13 @@ class RecurringDrive extends TripLike {
     return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
 
-  List<Drive> get upcomingDrives => drives!
-      .where(
-        (Drive drive) =>
-            drive.startDateTime.isAfter(DateTime.now()) &&
-            !drive.hideInListView &&
-            !(drive.status == DriveStatus.cancelledByRecurrenceRule && drive.rides!.isEmpty),
-      )
-      .toList();
+  List<Drive> get upcomingDrives => drives!.where((Drive drive) => drive.isUpcomingRecurringDriveInstance).toList();
 
   Future<void> stop(DateTime stoppedAt) async {
     this.stoppedAt = stoppedAt;
     await supabaseManager.supabaseClient
         .from('recurring_drives')
         .update(<String, dynamic>{'stopped_at': stoppedAt.toString()}).eq('id', id);
-  }
-}
-
-extension TimeOfDayExtension on TimeOfDay {
-  String get formatted {
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00';
   }
 }
 

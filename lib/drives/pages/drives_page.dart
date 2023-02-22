@@ -29,8 +29,7 @@ class _DrivesPageState extends State<DrivesPage> {
         .eq('driver_id', userId)
         .order('start_time', ascending: true)
         .map(
-          (List<Map<String, dynamic>> drive) =>
-              Drive.fromJsonList(drive).where((Drive drive) => drive.recurringDriveId == null).toList(),
+          (List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive),
         );
     _recurringDriveIds = supabaseManager.supabaseClient
         .from('drives')
@@ -39,7 +38,7 @@ class _DrivesPageState extends State<DrivesPage> {
         .order('start_time', ascending: true)
         .map(
           (List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive)
-              .where((Drive drive) => drive.recurringDriveId != null)
+              .where((Drive drive) => drive.isUpcomingRecurringDriveInstance)
               .map((Drive drive) => drive.recurringDriveId!)
               .toSet()
               .toList(),

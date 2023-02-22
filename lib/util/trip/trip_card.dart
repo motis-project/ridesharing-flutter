@@ -4,16 +4,16 @@ import 'package:timelines/timelines.dart';
 
 import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
-import 'trip.dart';
+import 'trip_like.dart';
 
-abstract class TripCard<T extends Trip> extends StatefulWidget {
+abstract class TripCard<T extends TripLike> extends StatefulWidget {
   final T trip;
   final bool loadData;
   const TripCard(this.trip, {super.key, this.loadData = true});
 }
 
-abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends State<U> {
-  late Trip trip;
+abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends State<U> {
+  late T trip;
 
   BorderRadius cardBorder = const BorderRadius.only(
     bottomRight: Radius.circular(10),
@@ -71,7 +71,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.startDateTime),
+                  localeManager.formatTimeOfDay(trip.startTime),
                   style: mainTextStyle,
                 ),
                 const SizedBox(width: 10),
@@ -122,7 +122,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(trip.endDateTime),
+                  localeManager.formatTimeOfDay(trip.endTime),
                   style: mainTextStyle,
                 ),
                 const SizedBox(width: 10),
@@ -182,7 +182,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
   }
 
   Widget buildTopLeft() {
-    return Text(localeManager.formatDate(trip.startDateTime));
+    return const SizedBox();
   }
 
   Widget buildTopRight() {

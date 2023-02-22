@@ -8,6 +8,7 @@ import '../../account/models/review.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../../rides/pages/ride_detail_page.dart';
+import '../locale_manager.dart';
 import '../own_theme_fields.dart';
 import '../profiles/profile_widget.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
@@ -96,6 +97,11 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
             builder: (BuildContext context) => RideDetailPage.fromRide(_ride),
           ),
         );
+  }
+
+  @override
+  Widget buildTopLeft() {
+    return Text(localeManager.formatDate(trip.startDateTime));
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import '../../rides/models/ride.dart';
+import '../locale_manager.dart';
 import '../own_theme_fields.dart';
 import '../supabase_manager.dart';
 import 'seat_indicator.dart';
@@ -69,6 +70,11 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
           ),
         )
         .then((_) => loadDrive());
+  }
+
+  @override
+  Widget buildTopLeft() {
+    return Text(localeManager.formatDate(trip.startDateTime));
   }
 
   @override

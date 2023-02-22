@@ -26,6 +26,7 @@ abstract class TripLike extends Model {
 
   TimeOfDay get startTime;
   TimeOfDay get endTime;
+  Duration get duration;
 
   @override
   Map<String, dynamic> toJson() {
