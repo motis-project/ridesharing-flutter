@@ -67,7 +67,7 @@ void main() {
   });
 
   group('tabs', () {
-    testWidgets('finds both Tabs(before and after Drives are loaded)', (WidgetTester tester) async {
+    testWidgets('finds all Tabs(before and after Drives are loaded)', (WidgetTester tester) async {
       whenRequest(
         processor,
         urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
@@ -76,12 +76,12 @@ void main() {
       await pumpMaterial(tester, const DrivesPage());
       final Finder tabBar = find.byType(TabBar);
       expect(tabBar, findsOneWidget);
-      expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(2));
+      expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(3));
 
       await tester.pump();
 
       expect(tabBar, findsOneWidget);
-      expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(2));
+      expect(find.descendant(of: tabBar, matching: find.byType(Tab)), findsNWidgets(3));
     });
 
     testWidgets('shows upcoming Trips at beginning', (WidgetTester tester) async {

@@ -88,9 +88,9 @@ class Drive extends Trip {
       });
   }
 
-  List<Ride>? get approvedRides => rides?.where((Ride ride) => ride.status == RideStatus.approved).toList();
-  List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
-  List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.activeChat()).toList();
+  List<Ride> get approvedRides => rides!.where((Ride ride) => ride.status == RideStatus.approved).toList();
+  List<Ride> get pendingRides => rides!.where((Ride ride) => ride.status == RideStatus.pending).toList();
+  List<Ride> get ridesWithChat => rides!.where((Ride ride) => ride.status.activeChat()).toList();
 
   // TODO Tests
   bool get isUpcomingRecurringDriveInstance =>
@@ -119,7 +119,7 @@ class Drive extends Trip {
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
-    final Set<DateTime> times = approvedRides!
+    final Set<DateTime> times = approvedRides
         .map((Ride ride) => <DateTime>[ride.startDateTime, ride.endDateTime])
         .expand((List<DateTime> x) => x)
         .toSet();
@@ -127,7 +127,7 @@ class Drive extends Trip {
     int maxUsedSeats = 0;
     for (final DateTime time in times) {
       int usedSeats = 0;
-      for (final Ride ride in approvedRides!) {
+      for (final Ride ride in approvedRides) {
         final bool startTimeBeforeOrEqual =
             ride.startDateTime.isBefore(time) || ride.startDateTime.isAtSameMomentAs(time);
         final bool endTimeAfter = ride.endDateTime.isAfter(time);
@@ -144,7 +144,7 @@ class Drive extends Trip {
   }
 
   bool isRidePossible(Ride ride) {
-    final List<Ride> consideredRides = approvedRides!..add(ride);
+    final List<Ride> consideredRides = approvedRides..add(ride);
     final Set<DateTime> times = consideredRides
         .map((Ride consideredRide) => <DateTime>[consideredRide.startDateTime, consideredRide.endDateTime])
         .expand((List<DateTime> x) => x)
@@ -174,7 +174,7 @@ class Drive extends Trip {
   }
 
   int getUnreadMessagesCount() {
-    return ridesWithChat!.where((Ride ride) => ride.chat!.getUnreadMessagesCount() > 0).length;
+    return ridesWithChat.where((Ride ride) => ride.chat!.getUnreadMessagesCount() > 0).length;
   }
 
   @override

@@ -120,7 +120,7 @@ class SearchRidePageState extends State<SearchRidePage> {
           )
         ''')
         .eq('start', startController.text)
-        .eq('status', DriveStatus.plannedOrFinished)
+        .eq('status', DriveStatus.plannedOrFinished.index)
         .gt('start_time', DateTime.now());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives

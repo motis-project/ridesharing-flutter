@@ -145,12 +145,6 @@ void main() {
     });
   });
   group('Drive.approvedRides', () {
-    test('can handle null', () async {
-      final Drive drive = DriveFactory().generateFake(
-        createDependencies: false,
-      );
-      expect(drive.approvedRides, null);
-    });
     test('has no approved rides', () async {
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
@@ -175,12 +169,6 @@ void main() {
     });
   });
   group('Drive.pendingRides', () {
-    test('can handle null', () async {
-      final Drive drive = DriveFactory().generateFake(
-        createDependencies: false,
-      );
-      expect(drive.pendingRides, null);
-    });
     test('has no pending rides', () async {
       final Drive drive = DriveFactory().generateFake(
         rides: List.generate(
