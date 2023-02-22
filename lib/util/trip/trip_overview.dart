@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
 import '../../drives/models/recurring_drive.dart';
@@ -51,13 +52,10 @@ class TripOverview extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Row(
-                    children: const <Widget>[
-                      Icon(Icons.access_time_outlined),
-                      SizedBox(width: 4),
-                      Text(
-                        'PLACEHOLDER',
-                        //TODO: localeManager.formatDurationOfDay(trip.duration),
-                      ),
+                    children: <Widget>[
+                      const Icon(Icons.access_time_outlined),
+                      const SizedBox(width: 4),
+                      Text(localeManager.formatDuration(trip.duration)),
                     ],
                   ),
                 ),
@@ -98,7 +96,7 @@ class TripOverview extends StatelessWidget {
 
     final String dateText = (trip is Trip)
         ? localeManager.formatDate((trip as Trip).startDateTime)
-        : 'Seit ${localeManager.formatDate((trip as RecurringDrive).startedAt)}';
+        : S.of(context).widgetTripOverviewSinceDate(localeManager.formatDate((trip as RecurringDrive).startedAt));
     final Widget date = Text(
       dateText,
       style: Theme.of(context).textTheme.titleMedium,

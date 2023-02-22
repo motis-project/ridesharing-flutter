@@ -80,7 +80,7 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> cards = fullyLoaded
-        ? _drives.isEmpty
+        ? _drives.isEmpty || !_drives.any((Drive drive) => drive.status != DriveStatus.cancelledByRecurrenceRule)
             ? <Widget>[RecurringDriveEmptyCard(_recurringDrive)]
             : _drives
                 .map(

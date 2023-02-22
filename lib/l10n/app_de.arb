@@ -439,5 +439,7 @@
   "pageHomePageCompleteProfile": "Du bist sehr mysteriös!",
   "pageHomePageCompleteProfileButton": "Profil vervollständigen",
 
+  "widgetTripOverviewSinceDate": "Seit {date}",
+
   "appName": "Motis Mitfahr-App"
 }

@@ -437,5 +437,8 @@
   "pageHomePageCompleteProfile": "You're very mysterious!",
   "pageHomePageCompleteProfileButton": "Complete Profile",
 
+
+  "widgetTripOverviewSinceDate": "Since {date}",
+
   "appName": "Motis Ride-Sharing App"
   }

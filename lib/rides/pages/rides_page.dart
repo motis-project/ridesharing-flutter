@@ -39,14 +39,16 @@ class _RidesPageState extends State<RidesPage> {
           key: const Key('upcomingTrips'),
           stream: _rides,
           emptyMessage: S.of(context).widgetTripBuilderNoUpcomingRides,
-          filterTrips: getFilterTrips(past: false),
+          filterTrips: (List<Ride> rides) =>
+              rides.where((Ride ride) => ride.shouldShowInListView(past: false)).toList(),
           itemBuilder: (Ride trip) => RideCard(trip),
         ),
         S.of(context).widgetTripBuilderTabPast: TripStreamBuilder<Ride>(
           key: const Key('pastTrips'),
           stream: _rides,
           emptyMessage: S.of(context).widgetTripBuilderNoPastRides,
-          filterTrips: getFilterTrips(past: true),
+          filterTrips: (List<Ride> rides) =>
+              rides.reversed.where((Ride ride) => ride.shouldShowInListView(past: true)).toList(),
           itemBuilder: (Ride trip) => RideCard(trip),
         )
       },
@@ -66,9 +68,4 @@ class _RidesPageState extends State<RidesPage> {
       MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
     );
   }
-
-  List<Ride> Function(List<Ride>) getFilterTrips({required bool past}) => (List<Ride> rides) {
-        if (past) rides = rides.reversed.toList();
-        return rides.where((Ride ride) => ride.shouldShowInListView(past: past)).toList();
-      };
 }
