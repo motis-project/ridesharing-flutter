@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shimmer/shimmer.dart';
@@ -19,9 +17,10 @@ class RecurringDriveCard extends StatefulWidget {
 }
 
 class _RecurringDriveCardState extends State<RecurringDriveCard> {
-  static const int _maxShownDrivesDefault = 3;
+  static const int _maxShownDrivesDefault = 4;
 
   late int _id;
+  late RecurringDrive _recurringDrive;
   late List<Drive> _drives;
   bool fullyLoaded = false;
 
@@ -57,9 +56,12 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
     ''').eq('id', _id).single();
     if (mounted) {
       setState(() {
-        _drives = RecurringDrive.fromJson(data)
-            .drives!
-            .where((Drive drive) => drive.endDateTime.isAfter(DateTime.now()))
+        _recurringDrive = RecurringDrive.fromJson(data);
+        _drives = _recurringDrive.drives!
+            // .where(
+            //   (Drive drive) =>
+            //       drive.endDateTime.isAfter(DateTime.now()) && drive.status != DriveStatus.cancelledByRecurrenceRule,
+            // )
             .toList()
             .take(_maxShownDrivesDefault)
             .toList();
@@ -72,7 +74,7 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
     return () => Navigator.of(context)
         .push(
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => RecurringDriveDetailPage(id: _drives[0].recurringDriveId!),
+            builder: (BuildContext context) => RecurringDriveDetailPage.fromRecurringDrive(_recurringDrive),
           ),
         )
         .then((_) => loadRecurringDrive());
@@ -81,7 +83,23 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> cards = fullyLoaded
-        ? _drives.map((Drive drive) => DriveCard(drive)).toList()
+        ? _drives
+            .map(
+              (Drive drive) => Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      blurRadius: 8,
+                      spreadRadius: -10,
+                      offset: const Offset(2, -4),
+                    ),
+                  ],
+                ),
+                child: DriveCard(drive),
+              ),
+            )
+            .toList()
         : List<Widget>.generate(
             _maxShownDrivesDefault,
             (int index) => Shimmer.fromColors(
@@ -90,48 +108,36 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
               child: const SizedBox(height: 200),
             ),
           );
-    return SizedBox(
-      height: 400,
-      width: 50,
-      child: Stack(
-        children: <Widget>[
-          for (int index = 0; index < cards.length; index++)
-            Positioned(
-              top: (pow(index, 1.2)) * 36,
-              child: Transform.scale(
-                scale: 1 - (cards.length - index - 1) * 0.1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        blurRadius: 8,
-                        spreadRadius: -10,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                  child: cards[cards.length - index - 1],
-                ),
-              ),
-            ),
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: Semantics(
-                button: true,
-                tooltip: S.of(context).openDetails,
-                child: InkWell(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (BuildContext context) => RecurringDriveDetailPage(id: _id)),
-                  ),
-                  key: const Key('avatarTappable'),
-                ),
+    return Stack(
+      children: <Widget>[
+        for (int index = cards.length - 1; index > 0; index--)
+          Positioned(
+            left: (index - 1) * 20,
+            top: (cards.length - index - 1) * 36,
+            child: cards[index],
+          ),
+        if (cards.isNotEmpty)
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: (cards.length - 2) * 36),
+              cards[0],
+            ],
+          ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: Semantics(
+              button: true,
+              tooltip: S.of(context).openDetails,
+              child: InkWell(
+                onTap: onTap,
+                key: const Key('avatarTappable'),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
