@@ -157,7 +157,6 @@ class CreateDriveFormState extends State<CreateDriveForm> {
         final Profile driver = supabaseManager.currentProfile!;
 
         if (recurrenceOptions.enabled) {
-          print(recurrenceOptions.weekDays);
           final RecurringDrive recurringDrive = RecurringDrive(
             driverId: driver.id!,
             start: startSuggestion.name,
