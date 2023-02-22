@@ -17,7 +17,7 @@ class RecurringDriveCard extends StatefulWidget {
 }
 
 class _RecurringDriveCardState extends State<RecurringDriveCard> {
-  static const int _maxShownDrivesDefault = 4;
+  static const int _maxShownDrivesDefault = 3;
 
   late int _id;
   late RecurringDrive _recurringDrive;
@@ -92,7 +92,7 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
                       color: Theme.of(context).colorScheme.onSurface,
                       blurRadius: 8,
                       spreadRadius: -10,
-                      offset: const Offset(2, -4),
+                      offset: const Offset(0, -4),
                     ),
                   ],
                 ),
@@ -112,15 +112,21 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
       children: <Widget>[
         for (int index = cards.length - 1; index > 0; index--)
           Positioned(
-            left: (index - 1) * 20,
-            top: (cards.length - index - 1) * 36,
+            left: index * 20,
+            top: 10 + (cards.length - index - 1) * 36,
             child: cards[index],
+            /*left: -10,
+            top: (cards.length - index - 1) * 36,
+            child: Transform.scale(
+              scale: 1 - index * 0.1,
+              child: cards[index],
+            ),*/
           ),
         if (cards.isNotEmpty)
           Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: (cards.length - 2) * 36),
+            children: <Widget>[
+              SizedBox(height: (cards.length - 1) * 36 + 10),
               cards[0],
             ],
           ),
