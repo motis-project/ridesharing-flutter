@@ -424,5 +424,8 @@
   "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
   "pageHomePageEmpty": "No new messages",
   "hello": "Hello",
+
+  "widgetTripOverviewSinceDate": "Since {date}",
+
   "appName": "Motis Ride-Sharing App"
   }

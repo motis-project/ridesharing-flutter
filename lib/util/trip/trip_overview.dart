@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../drives/models/recurring_drive.dart';
 import '../locale_manager.dart';
@@ -50,7 +51,7 @@ class TripOverview extends StatelessWidget {
 
     final String dateText = trip is Trip
         ? localeManager.formatDate((trip as Trip).startDateTime)
-        : 'Seit ${localeManager.formatDate((trip as RecurringDrive).startedAt)}';
+        : S.of(context).widgetTripOverviewSinceDate(localeManager.formatDate((trip as RecurringDrive).startedAt));
 
     final Widget dateWidget = Text(
       dateText,

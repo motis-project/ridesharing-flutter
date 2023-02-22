@@ -97,7 +97,7 @@ class Drive extends Trip {
       recurringDriveId != null &&
       startDateTime.isAfter(DateTime.now()) &&
       !hideInListView &&
-      !(status == DriveStatus.cancelledByRecurrenceRule && rides!.isEmpty);
+      !(status == DriveStatus.cancelledByRecurrenceRule && (rides?.isEmpty ?? false));
 
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient

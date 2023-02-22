@@ -428,7 +428,7 @@
   "pageHomePageEmpty": "Keine neuen Nachrichten",
 
   "hello": "Hallo",
-
+  "widgetTripOverviewSinceDate": "Seit {date}",
 
   "appName": "Motis Mitfahr-App"
 }

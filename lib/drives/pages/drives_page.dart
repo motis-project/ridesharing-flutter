@@ -18,7 +18,6 @@ class DrivesPage extends StatefulWidget {
 
 class _DrivesPageState extends State<DrivesPage> {
   late final Stream<List<Drive>> _drives;
-  late final Stream<List<int>> _recurringDriveIds;
 
   @override
   void initState() {
@@ -30,18 +29,6 @@ class _DrivesPageState extends State<DrivesPage> {
         .order('start_time', ascending: true)
         .map(
           (List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive),
-        );
-    _recurringDriveIds = supabaseManager.supabaseClient
-        .from('drives')
-        .stream(primaryKey: <String>['id'])
-        .eq('driver_id', userId)
-        .order('start_time', ascending: true)
-        .map(
-          (List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive)
-              .where((Drive drive) => drive.isUpcomingRecurringDriveInstance)
-              .map((Drive drive) => drive.recurringDriveId!)
-              .toSet()
-              .toList(),
         );
     super.initState();
   }
@@ -55,21 +42,34 @@ class _DrivesPageState extends State<DrivesPage> {
           key: const Key('upcomingTrips'),
           stream: _drives,
           emptyMessage: S.of(context).widgetTripBuilderNoUpcomingDrives,
-          filterTrips: getFilterTrips(past: false),
+          filterTrips: (List<Drive> drives) =>
+              drives.where((Drive drive) => drive.shouldShowInListView(past: false)).toList(),
           itemBuilder: (Drive trip) => DriveCard(trip),
         ),
         S.of(context).widgetTripBuilderTabPast: TripStreamBuilder<Drive>(
           key: const Key('pastTrips'),
           stream: _drives,
           emptyMessage: S.of(context).widgetTripBuilderNoPastDrives,
-          filterTrips: getFilterTrips(past: true),
+          filterTrips: (List<Drive> drives) =>
+              drives.reversed.where((Drive drive) => drive.shouldShowInListView(past: true)).toList(),
           itemBuilder: (Drive trip) => DriveCard(trip),
         ),
-        S.of(context).widgetTripBuilderTabRecurring: TripStreamBuilder<int>(
+        S.of(context).widgetTripBuilderTabRecurring: TripStreamBuilder<Drive>(
           key: const Key('recurringDrives'),
-          stream: _recurringDriveIds,
+          stream: _drives,
           emptyMessage: S.of(context).widgetTripBuilderNoPastDrives,
-          itemBuilder: (int recurringDriveId) => RecurringDriveCard(recurringDriveId),
+          filterTrips: (List<Drive> drives) {
+            final Set<int> seen = <int>{};
+
+            return drives
+                .where((Drive drive) => drive.isUpcomingRecurringDriveInstance && seen.add(drive.recurringDriveId!))
+                .toList()
+              ..sort(
+                (Drive a, Drive b) =>
+                    a.status == DriveStatus.cancelledByRecurrenceRule ? 1 : a.startDateTime.compareTo(b.startDateTime),
+              );
+          },
+          itemBuilder: (Drive drive) => RecurringDriveCard(drive.recurringDriveId!),
         )
       },
       floatingActionButton: FloatingActionButton(
@@ -88,9 +88,4 @@ class _DrivesPageState extends State<DrivesPage> {
       MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
     );
   }
-
-  List<Drive> Function(List<Drive>) getFilterTrips({required bool past}) => (List<Drive> drives) {
-        if (past) drives = drives.reversed.toList();
-        return drives.where((Drive drive) => drive.shouldShowInListView(past: past)).toList();
-      };
 }
