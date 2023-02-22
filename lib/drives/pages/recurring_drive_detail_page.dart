@@ -85,7 +85,8 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
     if (_fullyLoaded) {
       final RecurringDrive recurringDrive = _recurringDrive!;
 
-      final List<Drive> upcomingDrives = recurringDrive.upcomingDrives;
+      final List<Drive> upcomingDrives = recurringDrive.upcomingDrives
+        ..sort((Drive a, Drive b) => a.startDateTime.compareTo(b.startDateTime));
       _shownDrivesCount = min(_shownDrivesCount, upcomingDrives.length);
       if (upcomingDrives.isNotEmpty) {
         final List<Widget> upcomingDrivesColumn = <Widget>[

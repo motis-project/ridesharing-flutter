@@ -3,6 +3,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
+import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 import 'package:rrule/rrule.dart';
 
@@ -116,19 +117,5 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       driver: generatedDriver,
       drives: generatedDrives,
     );
-  }
-}
-
-extension TimeOfDayComparison on TimeOfDay {
-  bool isBefore(TimeOfDay other) {
-    return hour < other.hour || (hour == other.hour && minute < other.minute);
-  }
-
-  bool isAfter(TimeOfDay other) {
-    return hour > other.hour || (hour == other.hour && minute > other.minute);
-  }
-
-  bool isAtSameMomentAs(TimeOfDay other) {
-    return hour == other.hour && minute == other.minute;
   }
 }

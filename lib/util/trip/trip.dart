@@ -32,6 +32,7 @@ class Trip extends TripLike {
       });
   }
 
+  @override
   Duration get duration => endDateTime.difference(startDateTime);
   bool get isFinished => endDateTime.isBefore(DateTime.now());
   bool get isOngoing => startDateTime.isBefore(DateTime.now()) && endDateTime.isAfter(DateTime.now());

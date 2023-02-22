@@ -92,6 +92,13 @@ class Drive extends Trip {
   List<Ride>? get pendingRides => rides?.where((Ride ride) => ride.status == RideStatus.pending).toList();
   List<Ride>? get ridesWithChat => rides?.where((Ride ride) => ride.status.activeChat()).toList();
 
+  // TODO Tests
+  bool get isUpcomingRecurringDriveInstance =>
+      recurringDriveId != null &&
+      startDateTime.isAfter(DateTime.now()) &&
+      !hideInListView &&
+      !(status == DriveStatus.cancelledByRecurrenceRule && rides!.isEmpty);
+
   static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient
         .from('drives')
