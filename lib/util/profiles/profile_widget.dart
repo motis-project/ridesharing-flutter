@@ -27,7 +27,7 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget usernameText = Text(profile.username, style: TextStyle(fontSize: size));
+    Widget usernameText = Text(profile.username, style: TextStyle(fontSize: size), overflow: TextOverflow.ellipsis);
     if (withHero) usernameText = Hero(tag: 'Username-${profile.id}', child: usernameText);
     Widget profileRow = Semantics(
       label: profile.username,
@@ -37,8 +37,9 @@ class ProfileWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Avatar(profile, size: size, withHero: withHero),
-          const SizedBox(width: 5),
-          usernameText,
+          const SizedBox(width: 10),
+          Flexible(child: usernameText),
+          if (actionWidget != null) const SizedBox(width: 40),
         ],
       ),
     );
@@ -46,7 +47,7 @@ class ProfileWidget extends StatelessWidget {
       profileRow = Stack(
         children: <Widget>[
           profileRow,
-          Positioned.fill(child: Align(alignment: Alignment.centerRight, child: actionWidget))
+          Positioned.fill(right: 5, child: Align(alignment: Alignment.centerRight, child: actionWidget))
         ],
       );
     }

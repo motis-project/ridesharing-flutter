@@ -42,7 +42,7 @@ class _AccountPageState extends State<AccountPage> {
             child: ProfileWidget(
               supabaseManager.currentProfile!,
               size: 25,
-              actionWidget: const Icon(Icons.chevron_right),
+              actionWidget: const Icon(Icons.chevron_right, size: 40),
               onPop: (_) => setState(() {}),
               withHero: true,
             ),

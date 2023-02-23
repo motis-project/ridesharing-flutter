@@ -35,7 +35,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
 
   @override
   Widget buildTopLeft() {
-    return ProfileWidget(_ride.rider!);
+    return Flexible(child: ProfileWidget(_ride.rider!));
   }
 
   @override
@@ -55,7 +55,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   Widget buildBottomRight() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(key: const Key('price'), '${_ride.price}€'),
+      child: Text(key: const Key('price'), '${_ride.price?.toStringAsFixed(2)}€'),
     );
   }
 

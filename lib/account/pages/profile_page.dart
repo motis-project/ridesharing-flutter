@@ -78,35 +78,34 @@ class _ProfilePageState extends State<ProfilePage> {
       tag: 'Username-${_profile!.id}',
       child: Text(
         _profile!.username,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
-    if (_profile!.isCurrentUser) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(child: Container()),
-          InkWell(
-            onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
-            key: const Key('editUsernameText'),
-            child: username,
-          ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                tooltip: S.of(context).edit,
-                icon: const Icon(Icons.edit),
-                onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
-                key: const Key('editUsernameIcon'),
-              ),
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const SizedBox(width: 30),
+        if (_profile!.isCurrentUser) ...[
+          Flexible(
+            child: InkWell(
+              onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
+              key: const Key('editUsernameText'),
+              child: username,
             ),
           ),
-        ],
-      );
-    } else {
-      return username;
-    }
+          IconButton(
+            tooltip: S.of(context).edit,
+            icon: const Icon(Icons.edit),
+            onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
+            key: const Key('editUsernameIcon'),
+          ),
+        ] else
+          Flexible(child: username),
+        const SizedBox(width: 30),
+      ],
+    );
   }
 
   Widget buildEmail() {
