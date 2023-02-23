@@ -18,7 +18,7 @@ class RecurrenceOptions {
       endChoice.isCustom = true;
     }
 
-    setEndChoice(endChoice, context, initializeControllers: true);
+    setEndChoice(endChoice, context);
 
     recurrenceIntervalSizeController.text = recurrenceInterval.intervalSize.toString();
     recurrenceIntervalTypeController.text = recurrenceInterval.intervalType.getName(context);
@@ -34,26 +34,20 @@ class RecurrenceOptions {
 
   RecurrenceEndChoice get endChoice => _endChoice;
 
-  void setEndChoice(RecurrenceEndChoice value, BuildContext context, {bool initializeControllers = false}) {
+  void setEndChoice(RecurrenceEndChoice value, BuildContext context) {
     _endChoice = value;
     rebuildEndChoiceController(context);
     if (value.isCustom) {
       if (value is RecurrenceEndChoiceDate) {
         customEndDateChoice = value;
-        if (initializeControllers) {
-          customEndDateController.text = localeManager.formatDate(value.date!);
-        }
+        if (value.date != null) customEndDateController.text = localeManager.formatDate(value.date!);
       } else if (value is RecurrenceEndChoiceInterval) {
         customEndIntervalChoice = value;
-        if (initializeControllers) {
-          customEndIntervalSizeController.text = value.intervalSize.toString();
-          customEndIntervalTypeController.text = value.intervalType!.getName(context);
-        }
+        if (value.intervalSize != null) customEndIntervalSizeController.text = value.intervalSize.toString();
+        if (value.intervalType != null) customEndIntervalTypeController.text = value.intervalType!.getName(context);
       } else if (value is RecurrenceEndChoiceOccurrence) {
         customEndOccurrenceChoice = value;
-        if (initializeControllers) {
-          customEndOccurrenceController.text = value.occurrences.toString();
-        }
+        if (value.occurrences != null) customEndOccurrenceController.text = value.occurrences.toString();
       }
     }
   }
