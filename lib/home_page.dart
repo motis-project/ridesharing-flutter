@@ -189,7 +189,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${S.of(context).hello} ${supabaseManager.currentProfile!.username} :)'),
+        title: Text('${S.of(context).hello} ${supabaseManager.currentProfile!.username} \u{1F44B}'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(

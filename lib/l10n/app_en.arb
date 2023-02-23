@@ -353,11 +353,11 @@
   "rideEventPendingMessage": "{username} has requested a ride",
   "rideEventApprovedMessage": "{username} has approved your ride",
   "rideEventRejectedMessage": "{username} has rejected your ride",
-  "rideEventWithdrawnMessage": "{username} has withdrawn his ride",
+  "rideEventWithdrawnMessage": "{username} has withdrawn his request",
   "rideEventCancelledByDriverMessage": "{username} has cancelled his drive",
   "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
-  "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
+  "pageHomeUpcomingTripMessage": "from {1start} to {end} at {startTime}",
   "pageHomePageEmpty": "No new messages",
   "hello": "Hello",
   "appName": "Motis Ride-Sharing App"
-}
+  }
