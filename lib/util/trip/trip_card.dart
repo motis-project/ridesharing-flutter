@@ -68,15 +68,19 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
           contents: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                Text(
+                  localeManager.formatTime(trip.startTime),
+                  style: mainTextStyle,
+                ),
+                const SizedBox(width: 10),
                 Flexible(
                   child: Text(
                     key: const Key('start'),
-                    '${localeManager.formatTime(trip.startTime)}  ${trip.start}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    trip.start,
+                    style: mainTextStyle,
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -118,14 +122,14 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
               children: <Widget>[
                 Text(
                   localeManager.formatTime(trip.endTime),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: mainTextStyle,
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
                     key: const Key('end'),
                     trip.end,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: mainTextStyle,
                   ),
                 )
               ],
@@ -205,6 +209,8 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
       borderRadius: cardBorder,
     );
   }
+
+  static const TextStyle mainTextStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
 
   BoxDecoration get disabledDecoration => BoxDecoration(
         color: Colors.grey,

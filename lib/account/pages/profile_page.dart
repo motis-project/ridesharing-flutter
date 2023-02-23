@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const SizedBox(width: 30),
-        if (_profile!.isCurrentUser) ...[
+        if (_profile!.isCurrentUser) ...<Widget>[
           Flexible(
             child: InkWell(
               onTap: () => _pushEditPage(EditUsernamePage(_profile!)),

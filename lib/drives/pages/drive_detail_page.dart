@@ -311,8 +311,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               ),
               const SizedBox(width: 4.0),
               Text(waypoint.place),
-              if (waypoint.place == _drive!.start) Semantics(label: S.of(context).pageDriveDetailLabelStartDrive),
-              if (waypoint.place == _drive!.end) Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
+              if (waypoint.place == _drive!.start)
+                Semantics(label: S.of(context).pageDriveDetailLabelStartDrive)
+              else if (waypoint.place == _drive!.end)
+                Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
             ],
           ),
         ),
@@ -354,29 +356,21 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconWidget(icon: icon, count: action.ride.seats),
+                    IconWidget(icon: icon, count: action.ride.seats),
+                    const SizedBox(width: 20),
+                    // TODO: Center this again
+                    Expanded(child: ProfileWidget(profile, size: 15, isTappable: false)),
+                    const SizedBox(width: 20),
+                    badges.Badge(
+                      badgeContent: Text(
+                        action.ride.chat!.getUnreadMessagesCount().toString(),
+                        style: const TextStyle(color: Colors.white),
+                        textScaleFactor: 1.0,
                       ),
-                    ),
-                    ProfileWidget(profile, size: 15, isTappable: false),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: badges.Badge(
-                          badgeContent: Text(
-                            action.ride.chat!.getUnreadMessagesCount().toString(),
-                            style: const TextStyle(color: Colors.white),
-                            textScaleFactor: 1.0,
-                          ),
-                          showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
-                          position: badges.BadgePosition.topEnd(top: -12),
-                          child: const Icon(Icons.chat),
-                        ),
-                      ),
+                      showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
+                      position: badges.BadgePosition.topEnd(top: -12),
+                      child: const Icon(Icons.chat),
                     ),
                   ],
                 ),
