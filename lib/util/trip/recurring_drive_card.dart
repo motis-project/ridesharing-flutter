@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shimmer/shimmer.dart';
@@ -19,6 +21,8 @@ class RecurringDriveCard extends StatefulWidget {
 
 class _RecurringDriveCardState extends State<RecurringDriveCard> {
   static const int _maxShownDrivesDefault = 3;
+  // TODO: Make a decision on the design
+  static const RecurringDriveCardDesign _design = RecurringDriveCardDesign.right2d;
 
   late int _id;
   late RecurringDrive _recurringDrive;
@@ -102,17 +106,21 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
     return Stack(
       children: <Widget>[
         for (int index = cards.length - 1; index > 0; index--)
-          Positioned(
-            left: index * 20,
-            top: 4 + (cards.length - index - 1) * 36,
-            child: cards[index],
-            /*left: -10,
-            top: (cards.length - index - 1) * 36,
-            child: Transform.scale(
-              scale: 1 - index * 0.1,
-              child: cards[index],
-            ),*/
-          ),
+          _design == RecurringDriveCardDesign.center3d
+              ? Positioned(
+                  left: -10,
+                  top: 4 + (cards.length - index - 1) * 36,
+                  child: Transform.scale(
+                    scale: 1 - pow(index, 1.2) * 0.1,
+                    child: cards[index],
+                  ),
+                )
+              : Positioned(
+                  left: index * 20,
+                  right: 0,
+                  top: 4 + (cards.length - index - 1) * 36,
+                  child: cards[index],
+                ),
         // This column determines the size of the stack. The Positioned widgets can only be placed on top of the stack,
         // the size of which has to be calculated beforehand.
         Column(
@@ -138,4 +146,9 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
       ],
     );
   }
+}
+
+enum RecurringDriveCardDesign {
+  center3d,
+  right2d,
 }
