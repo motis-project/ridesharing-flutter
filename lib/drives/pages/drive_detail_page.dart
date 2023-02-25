@@ -310,7 +310,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(width: 4.0),
-              Text(waypoint.place),
+              Flexible(child: Text(waypoint.place)),
               if (waypoint.place == _drive!.start)
                 Semantics(label: S.of(context).pageDriveDetailLabelStartDrive)
               else if (waypoint.place == _drive!.end)
