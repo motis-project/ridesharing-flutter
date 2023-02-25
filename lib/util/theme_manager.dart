@@ -37,7 +37,7 @@ class ThemeManager with ChangeNotifier {
           color: Colors.grey.withOpacity(0.5),
         ),
     inputDecorationTheme: InputDecorationTheme(
-      hintStyle: TextStyle(color: ThemeData.light().hintColor),
+      hintStyle: TextStyle(color: ThemeData.dark().hintColor),
     ),
   )..addOwn(const OwnThemeFields(onSuccess: Colors.black, onWarning: Colors.black));
 
