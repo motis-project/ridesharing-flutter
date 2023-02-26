@@ -12,6 +12,7 @@ void main() {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
+        'updated_at': '2021-01-01T00:00:00.000Z',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 5,
@@ -20,6 +21,7 @@ void main() {
       final Review review = Review.fromJson(json);
       expect(review.id, 1);
       expect(review.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(review.updatedAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
       expect(review.writerId, 1);
       expect(review.receiverId, 1);
       expect(review.rating, 5);
@@ -31,6 +33,7 @@ void main() {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
+        'updated_at': '2021-01-01T00:00:00.000Z',
         'writer_id': writer.id,
         'receiver_id': writer.id,
         'rating': 5,
@@ -47,6 +50,7 @@ void main() {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
+        'updated_at': '2021-01-01T00:00:00.000Z',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 1,
@@ -70,6 +74,7 @@ void main() {
       final Map<String, dynamic> json = {
         'id': 1,
         'created_at': '2021-01-01T00:00:00.000Z',
+        'updated_at': '2021-01-01T00:00:00.000Z',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 5,
@@ -94,6 +99,7 @@ void main() {
     test('returns a json representation of the review', () {
       final Review review = ReviewFactory().generateFake();
       final Map<String, dynamic> json = review.toJson();
+      expect(json['updated_at'], review.updatedAt.toIso8601String());
       expect(json['writer_id'], review.writerId);
       expect(json['receiver_id'], review.receiverId);
       expect(json['rating'], review.rating);
@@ -102,7 +108,7 @@ void main() {
       expect(json['reliability_rating'], review.reliabilityRating);
       expect(json['hospitality_rating'], review.hospitalityRating);
       expect(json['text'], review.text);
-      expect(json.keys.length, 8);
+      expect(json.keys.length, 9);
     });
     test('can handle null vlaues', () {
       final Review review = ReviewFactory().generateFake(
@@ -118,7 +124,58 @@ void main() {
       expect(json['safety_rating'], null);
       expect(json['reliability_rating'], null);
       expect(json['hospitality_rating'], null);
-      expect(json.keys.length, 8);
+      expect(json.keys.length, 9);
+    });
+  });
+
+  group('Review.isChangedFrom', () {
+    test('returns true if the rating has changed', () {
+      final Review review = ReviewFactory().generateFake(rating: 3);
+      final Review review2 = review.copyWith()..rating = 4;
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns true if the comfort rating has changed', () {
+      final Review review = ReviewFactory().generateFake(comfortRating: NullableParameter(3));
+      final Review review2 = review.copyWith()..comfortRating = 4;
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns true if the safety rating has changed', () {
+      final Review review = ReviewFactory().generateFake(safetyRating: NullableParameter(3));
+      final Review review2 = review.copyWith()..safetyRating = 4;
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns true if the reliability rating has changed', () {
+      final Review review = ReviewFactory().generateFake(reliabilityRating: NullableParameter(3));
+      final Review review2 = review.copyWith()..reliabilityRating = 4;
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns true if the hospitality rating has changed', () {
+      final Review review = ReviewFactory().generateFake(hospitalityRating: NullableParameter(3));
+      final Review review2 = review.copyWith()..hospitalityRating = 4;
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns true if the text has changed', () {
+      final Review review = ReviewFactory().generateFake(text: NullableParameter('old text'));
+      final Review review2 = review.copyWith()..text = 'new text';
+      expect(review.isChangedFrom(review2), true);
+    });
+
+    test('returns false if nothing important changed', () {
+      final Review review = ReviewFactory().generateFake();
+      expect(review.isChangedFrom(review), false);
+    });
+  });
+
+  group('Review.copyWith', () {
+    test('returns a copy of the review', () {
+      final Review review = ReviewFactory().generateFake();
+      final Review review2 = review.copyWith();
+      expect(review2, review);
     });
   });
 
@@ -146,7 +203,7 @@ void main() {
       expect(review2.compareTo(review), -1);
     });
 
-    test('text is prioiritized over created at', () {
+    test('text is prioritized over created at', () {
       final Review review = ReviewFactory().generateFake(
         createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
         text: NullableParameter('text'),
@@ -165,8 +222,10 @@ void main() {
       final Review review = ReviewFactory().generateFake(
         text: NullableParameter('text'),
       );
-      expect(review.toString(),
-          'Review{id: ${review.id}, rating: ${review.rating}, text: ${review.text}, writerId: ${review.writerId}, receiverId: ${review.receiverId}, createdAt: ${review.createdAt}}');
+      expect(
+        review.toString(),
+        'Review{id: ${review.id}, rating: ${review.rating}, text: ${review.text}, writerId: ${review.writerId}, receiverId: ${review.receiverId}, updatedAt: ${review.updatedAt}}',
+      );
     });
   });
 
