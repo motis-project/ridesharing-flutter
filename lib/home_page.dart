@@ -225,10 +225,7 @@ class HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             if (_fullyLoaded)
               Expanded(
-                // child: Container(
                 key: const Key('MessageContainer'),
-                //   width: MediaQuery.of(context).size.width,
-                //   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: _items.isNotEmpty
                     ? ListView.separated(
                         itemCount: _items.length,
@@ -478,7 +475,7 @@ class HomePageState extends State<HomePage> {
                       : S.of(context).pageHomeUpcomingRideTomorrow,
             ),
             subtitle: Text(
-              S.of(context).pageHomeUpcomingTripMessage(trip.start, trip.end, localeManager.formatTime(trip.startTime)),
+              S.of(context).pageHomeUpcomingTripMessage(trip.end, trip.start, localeManager.formatTime(trip.startTime)),
             ),
             onTap: () {
               Navigator.of(context).push(
