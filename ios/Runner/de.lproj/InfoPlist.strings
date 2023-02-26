@@ -1,0 +1,8 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Fynn Starke on 26.02.23.
+  
+*/
+"NSPhotoLibraryUsageDescription" = "Diese App benötigt Zugriff auf Ihre Fotos, um Bilder hochzuladen.";

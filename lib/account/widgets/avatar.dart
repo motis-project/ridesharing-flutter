@@ -68,16 +68,23 @@ class AvatarState extends State<Avatar> {
           Positioned(
             right: 0,
             bottom: 0,
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Theme.of(context).cardColor,
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              child: IconButton(
-                tooltip: S.of(context).widgetAvatarUploadTooltip,
-                iconSize: 20,
-                onPressed: widget.onAction,
-                icon: const Icon(Icons.photo_library),
-                key: const Key('avatarUpload'),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                shape: BoxShape.circle,
+                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 4, spreadRadius: 2)],
+              ),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Theme.of(context).cardColor,
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                child: IconButton(
+                  tooltip: S.of(context).widgetAvatarUploadTooltip,
+                  iconSize: 20,
+                  onPressed: widget.onAction,
+                  icon: const Icon(Icons.photo_library),
+                  key: const Key('avatarUpload'),
+                ),
               ),
             ),
           ),

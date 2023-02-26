@@ -122,6 +122,9 @@
 
   "pageProfileUpdateProfilePictureTitle": "Profilbild aktualisieren",
   "pageProfileUpdateProfilePictureFromGallery": "Bild auswählen",
+  "pageProfileUpdateProfilePicturePermissionTitle": "Berechtigung erforderlich",
+  "pageProfileUpdateProfilePicturePermissionMessage": "Um ein Profilbild auszuwählen, benötigen wir Zugriff auf deine Fotos.",
+  "pageProfileUpdateProfilePicturePermissionToSettings": "Zu den Einstellungen",
   "pageProfileUpdateProfilePictureDelete": "Löschen",
   "pageProfileDescriptionTitle": "Beschreibung",
   "pageProfileDescriptionEmpty": "Keine Beschreibung",
