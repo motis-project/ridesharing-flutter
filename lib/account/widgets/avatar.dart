@@ -72,7 +72,7 @@ class AvatarState extends State<Avatar> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 shape: BoxShape.circle,
-                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 4, spreadRadius: 2)],
+                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 4)],
               ),
               child: CircleAvatar(
                 radius: 20,
