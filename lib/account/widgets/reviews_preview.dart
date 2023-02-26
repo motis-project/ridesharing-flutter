@@ -49,7 +49,7 @@ class ReviewsPreview extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: List<ReviewDetail>.generate(
                                   min(reviews.length, 2),
-                                  (int index) => ReviewDetail(review: reviews[index]),
+                                  (int index) => ReviewDetail(review: reviews[index], isExpandable: false),
                                 ),
                               ),
                             ),
