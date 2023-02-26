@@ -86,24 +86,34 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(width: 30),
         if (_profile!.isCurrentUser) ...<Widget>[
+          Expanded(child: Container()),
           Flexible(
+            flex: 5,
             child: InkWell(
               onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
               key: const Key('editUsernameText'),
               child: username,
             ),
           ),
-          IconButton(
-            tooltip: S.of(context).edit,
-            icon: const Icon(Icons.edit),
-            onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
-            key: const Key('editUsernameIcon'),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                tooltip: S.of(context).edit,
+                icon: const Icon(Icons.edit),
+                onPressed: () => _pushEditPage(EditUsernamePage(_profile!)),
+                key: const Key('editUsernameIcon'),
+              ),
+            ),
           ),
         ] else
-          Flexible(child: username),
-        const SizedBox(width: 30),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: username,
+            ),
+          ),
       ],
     );
   }

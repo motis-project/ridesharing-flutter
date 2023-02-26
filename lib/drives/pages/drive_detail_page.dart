@@ -358,10 +358,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 child: Row(
                   children: <Widget>[
                     IconWidget(icon: icon, count: action.ride.seats),
-                    const SizedBox(width: 20),
-                    // TODO: Center this again
-                    Expanded(child: ProfileWidget(profile, size: 15, isTappable: false)),
-                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ProfileWidget(profile, size: 15, isTappable: false),
+                      ),
+                    ),
                     badges.Badge(
                       badgeContent: Text(
                         action.ride.chat!.getUnreadMessagesCount().toString(),
