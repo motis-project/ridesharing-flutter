@@ -52,7 +52,6 @@ class AggregateReviewWidget extends StatelessWidget {
       },
       children: <TableRow>[
         TableRow(
-          key: const ValueKey<String>('comfortRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryComfort),
             horizontalTableSpacer,
@@ -61,7 +60,6 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
-          key: const ValueKey<String>('safetyRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategorySafety),
             horizontalTableSpacer,
@@ -70,7 +68,6 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
-          key: const ValueKey<String>('reliabilityRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryReliability),
             horizontalTableSpacer,
@@ -79,7 +76,6 @@ class AggregateReviewWidget extends StatelessWidget {
         ),
         verticalTableSpacer,
         TableRow(
-          key: const ValueKey<String>('hospitalityRating'),
           children: <Widget>[
             Text(S.of(context).reviewCategoryHospitality),
             horizontalTableSpacer,

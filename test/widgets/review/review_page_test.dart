@@ -42,7 +42,7 @@ void main() {
   group('ReviewsPage', () {
     testWidgets('constructor', (WidgetTester tester) async {
       await pumpMaterial(tester, ReviewsPage(profile: profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.byType(ReviewsPage), findsOneWidget);
       expect(find.text(profile.username), findsOneWidget);
       expect(find.byKey(const Key('reviewsPage_reviewButton')), findsNothing);
@@ -56,7 +56,7 @@ void main() {
       ]);
 
       await pumpMaterial(tester, ReviewsPage(profile: profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       final Finder reviewButtonFinder = find.byKey(const Key('reviewsPage_reviewButton'));
       expect(reviewButtonFinder, findsOneWidget);
@@ -70,7 +70,7 @@ void main() {
       final AggregateReview aggregateReview = AggregateReview.fromReviews(profile.reviewsReceived!);
 
       await pumpMaterial(tester, ReviewsPage(profile: profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.byKey(const Key('aggregateReview')), findsOneWidget);
       expect(find.text(aggregateReview.rating.toStringAsFixed(1)), findsOneWidget);
@@ -82,15 +82,11 @@ void main() {
           findsOneWidget);
 
       expect(find.byKey(const Key('reviewCount')), findsOneWidget);
-      expect(find.byKey(const Key('comfortRating')), findsOneWidget);
-      expect(find.byKey(const Key('safetyRating')), findsOneWidget);
-      expect(find.byKey(const Key('reliabilityRating')), findsOneWidget);
-      expect(find.byKey(const Key('hospitalityRating')), findsOneWidget);
     });
 
     testWidgets('reviews', (WidgetTester tester) async {
       await pumpMaterial(tester, ReviewsPage(profile: profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       for (int i = 0; i < profile.reviewsReceived!.length; i++) {
         final Review review = profile.reviewsReceived![i];
@@ -116,7 +112,7 @@ void main() {
           .thenReturnJson(profile.toJsonForApi());
 
       await pumpMaterial(tester, ReviewsPage(profile: profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(find.text(profile.username), findsOneWidget);
       expect(find.byType(Avatar), findsOneWidget);

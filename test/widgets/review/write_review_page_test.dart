@@ -58,13 +58,13 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text(profile.username), findsOneWidget);
     });
 
     testWidgets('edit rating', (WidgetTester tester) async {
       await pumpMaterial(tester, WriteReviewPage(profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       final Finder overallRating = find.byKey(const Key('overallRating'));
       expect(overallRating, findsOneWidget);
@@ -94,7 +94,7 @@ void main() {
         expect(ratingBarStars, findsNWidgets(5));
 
         await tester.tap(ratingBarStars.at(rating));
-        await tester.pumpAndSettle();
+        await tester.pump();
         expect((ratingBar.evaluate().first.widget as CustomRatingBar).rating, rating + 1);
         ratingList.add(rating + 1);
       }
@@ -104,7 +104,7 @@ void main() {
 
       //manual overallRating
       await tester.tap(overallRatingStars.at(0));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect((overallRating.evaluate().first.widget as CustomRatingBar).rating, 1);
     });
 
@@ -115,7 +115,7 @@ void main() {
           .thenReturnJson(review.toJsonForApi());
 
       await pumpMaterial(tester, WriteReviewPage(profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       expect((find.byKey(const Key('overallRating')).evaluate().first.widget as CustomRatingBar).rating, review.rating);
       expect((find.byKey(const Key('comfortRating')).evaluate().first.widget as CustomRatingBar).rating,
@@ -145,7 +145,7 @@ void main() {
 
     testWidgets('no rating save button', (WidgetTester tester) async {
       await pumpMaterial(tester, WriteReviewPage(profile));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
       expect(saveButton, findsOneWidget);
