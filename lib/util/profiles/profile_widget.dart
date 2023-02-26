@@ -37,7 +37,7 @@ class ProfileWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Avatar(profile, size: size, withHero: withHero),
-          const SizedBox(width: 10),
+          SizedBox(width: size / 2),
           Flexible(child: usernameText),
           if (actionWidget != null) const SizedBox(width: 40),
         ],
