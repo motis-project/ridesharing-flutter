@@ -9,7 +9,7 @@ class ReviewFactory extends ModelFactory<Review> {
   Review generateFake({
     int? id,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    NullableParameter<DateTime>? updatedAt,
     int? rating,
     NullableParameter<int>? comfortRating,
     NullableParameter<int>? safetyRating,
@@ -35,7 +35,7 @@ class ReviewFactory extends ModelFactory<Review> {
     return Review(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
-      updatedAt: updatedAt ?? generatedCreatedAt,
+      updatedAt: getNullableParameterOr(updatedAt, generatedCreatedAt),
       rating: rating ?? random.nextInt(Review.maxRating),
       comfortRating: getNullableParameterOr(comfortRating, random.nextInt(Review.maxRating)),
       safetyRating: getNullableParameterOr(safetyRating, random.nextInt(Review.maxRating)),

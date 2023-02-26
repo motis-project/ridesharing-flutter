@@ -53,7 +53,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       _previousReview = data != null
           ? Review.fromJson(data)
           : Review(
-              updatedAt: DateTime.now(),
               rating: 0,
               writerId: supabaseManager.currentProfile!.id!,
               receiverId: widget.profile.id!,
@@ -242,11 +241,10 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     });
 
     if (_review!.isChangedFrom(_previousReview)) {
-      _review!.updatedAt = DateTime.now();
-
       if (_review!.id == null) {
         await supabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
       } else {
+        _review!.updatedAt = DateTime.now();
         await supabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
       }
     }

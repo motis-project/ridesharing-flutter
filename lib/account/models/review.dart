@@ -4,7 +4,7 @@ import 'profile.dart';
 class Review extends Model implements Comparable<Review> {
   static const int maxRating = 5;
 
-  DateTime updatedAt;
+  DateTime? updatedAt;
 
   int rating;
   int? comfortRating;
@@ -22,7 +22,7 @@ class Review extends Model implements Comparable<Review> {
   Review({
     super.id,
     super.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
     required this.rating,
     this.comfortRating,
     this.safetyRating,
@@ -40,7 +40,7 @@ class Review extends Model implements Comparable<Review> {
     return Review(
       id: json['id'] as int,
       createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String),
       rating: json['rating'] as int,
       comfortRating: json['comfort_rating'] as int?,
       safetyRating: json['safety_rating'] as int?,
@@ -61,7 +61,7 @@ class Review extends Model implements Comparable<Review> {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'updated_at': updatedAt.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
       'rating': rating,
       'comfort_rating': comfortRating,
       'safety_rating': safetyRating,

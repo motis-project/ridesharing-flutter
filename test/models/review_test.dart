@@ -99,7 +99,7 @@ void main() {
     test('returns a json representation of the review', () {
       final Review review = ReviewFactory().generateFake();
       final Map<String, dynamic> json = review.toJson();
-      expect(json['updated_at'], review.updatedAt.toIso8601String());
+      expect(json['updated_at'], review.updatedAt!.toIso8601String());
       expect(json['writer_id'], review.writerId);
       expect(json['receiver_id'], review.receiverId);
       expect(json['rating'], review.rating);

@@ -33,7 +33,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
             children: <Widget>[
               Flexible(child: ProfileChip(widget.review.writer!, withHero: widget.withHero)),
               Text(
-                localeManager.formatDate(widget.review.updatedAt),
+                localeManager.formatDate(widget.review.updatedAt ?? widget.review.createdAt!),
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
               ),
             ],
