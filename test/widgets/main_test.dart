@@ -27,7 +27,7 @@ void main() {
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
-    await firebaseManager.initialize();
+    await firebaseManager.initialize(name: 'test');
   });
 
   group('AppWrapper', () {

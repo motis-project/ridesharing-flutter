@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
+import '../firebase_options.dart';
 import 'supabase_manager.dart';
 
 FirebaseManager firebaseManager = FirebaseManager();
@@ -10,19 +11,13 @@ class FirebaseManager {
   FirebaseMessaging? messaging;
   NotificationSettings? settings;
 
-  Future<void> initialize() async {
+  Future<void> initialize({String? name}) async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(name: name, options: DefaultFirebaseOptions.currentPlatform);
       messaging = FirebaseMessaging.instance;
-      // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      //   print('A new onMessageOpenedApp event was published!');
-      // });
-      // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     }
   }
 }
-
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 
 Future<void> requestPermissionAndLoadPushToken() async {
   // at the moment Push Notifications are only supported on Android

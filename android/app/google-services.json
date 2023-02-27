@@ -1,46 +1,46 @@
 {
-    "project_info": {
-      "project_number": "941523862179",
-      "project_id": "motis-mitfahr-app",
-      "storage_bucket": "motis-mitfahr-app.appspot.com"
-    },
-    "client": [
-      {
-        "client_info": {
-          "mobilesdk_app_id": "1:941523862179:android:d08a48ce35a8951635f516",
-          "android_client_info": {
-            "package_name": "com.motis.mitfahr_app"
-          }
-        },
-        "oauth_client": [
-          {
-            "client_id": "941523862179-bh0345hnh9tesuvss753vqdgmu6mtt40.apps.googleusercontent.com",
-            "client_type": 3
-          }
-        ],
-        "api_key": [
-          {
-            "current_key": "AIzaSyCMTorAtyZpIT1ZplzDCCyvbaBsJBDfPQw"
-          }
-        ],
-        "services": {
-          "appinvite_service": {
-            "other_platform_oauth_client": [
-              {
-                "client_id": "941523862179-bh0345hnh9tesuvss753vqdgmu6mtt40.apps.googleusercontent.com",
-                "client_type": 3
-              },
-              {
-                "client_id": "941523862179-naqu4vhf9ivm6se6c58561ao5o52fl45.apps.googleusercontent.com",
-                "client_type": 2,
-                "ios_info": {
-                  "bundle_id": "com.example.flutterApp"
-                }
+  "project_info": {
+    "project_number": "941523862179",
+    "project_id": "motis-mitfahr-app",
+    "storage_bucket": "motis-mitfahr-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941523862179:android:d08a48ce35a8951635f516",
+        "android_client_info": {
+          "package_name": "com.motis.mitfahr_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941523862179-bh0345hnh9tesuvss753vqdgmu6mtt40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMTorAtyZpIT1ZplzDCCyvbaBsJBDfPQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941523862179-bh0345hnh9tesuvss753vqdgmu6mtt40.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "941523862179-naqu4vhf9ivm6se6c58561ao5o52fl45.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApp"
               }
-            ]
-          }
+            }
+          ]
         }
       }
-    ],
-    "configuration_version": "1"
-  }
+    }
+  ],
+  "configuration_version": "1"
+}
