@@ -77,7 +77,6 @@ class _ReviewDetailState extends State<ReviewDetail> {
                       children: <Widget>[
                         Text.rich(
                           span,
-                          overflow: TextOverflow.ellipsis,
                           maxLines: maxLines,
                         ),
                         if (widget.isExpandable && (exceeded || isExpanded)) ...<Widget>[
