@@ -27,7 +27,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
-Future<void> requestPermissionAndloadPushToken() async {
+Future<void> requestPermissionAndLoadPushToken() async {
   // at the moment Push Notifications are only supported on Android
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     firebaseManager.settings = await firebaseManager.messaging!.requestPermission();
@@ -38,6 +38,7 @@ Future<void> requestPermissionAndloadPushToken() async {
         <String, dynamic>{
           'token': fcmToken,
           'user_id': supabaseManager.currentProfile?.id,
+          'disabled': false,
         },
         onConflict: 'token',
       );
@@ -49,6 +50,8 @@ Future<void> deletePushToken() async {
   // at the moment Push Notifications are only supported on Android
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     final String? fcmToken = await firebaseManager.messaging!.getToken();
-    await supabaseManager.supabaseClient.from('push_tokens').delete().eq('token', fcmToken);
+    await supabaseManager.supabaseClient
+        .from('push_tokens')
+        .update(<String, dynamic>{'disabled': true}).eq('token', fcmToken);
   }
 }

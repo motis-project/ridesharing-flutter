@@ -97,7 +97,7 @@ class AuthAppState extends State<AuthApp> {
               event == AuthChangeEvent.signedIn ||
               event == AuthChangeEvent.passwordRecovery) {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
-            if (event == AuthChangeEvent.signedIn) requestPermissionAndloadPushToken();
+            if (event == AuthChangeEvent.signedIn) requestPermissionAndLoadPushToken();
           }
         });
       },
