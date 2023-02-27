@@ -18,10 +18,10 @@ class ReviewDetail extends StatefulWidget {
   });
 
   @override
-  State<ReviewDetail> createState() => _ReviewDetailState();
+  State<ReviewDetail> createState() => ReviewDetailState();
 }
 
-class _ReviewDetailState extends State<ReviewDetail> {
+class ReviewDetailState extends State<ReviewDetail> {
   bool isExpanded = false;
 
   @override
@@ -49,7 +49,6 @@ class _ReviewDetailState extends State<ReviewDetail> {
     );
 
     return Card(
-      key: Key('reviewCard ${widget.review.writerId}'),
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(
@@ -75,8 +74,9 @@ class _ReviewDetailState extends State<ReviewDetail> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text.rich(
-                          span,
+                        Text(
+                          key: const Key('reviewText'),
+                          widget.review.text!,
                           maxLines: maxLines,
                         ),
                         if (widget.isExpandable && (exceeded || isExpanded)) ...<Widget>[
@@ -84,6 +84,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: RichText(
+                              key: const Key('expandReviewButton'),
                               text: TextSpan(
                                 text: isExpanded ? S.of(context).showLess : S.of(context).showMore,
                                 style: TextStyle(color: Theme.of(context).colorScheme.primary),

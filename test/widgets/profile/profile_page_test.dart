@@ -9,9 +9,9 @@ import 'package:motis_mitfahr_app/account/pages/edit_account/edit_gender_page.da
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_profile_features_page.dart';
 import 'package:motis_mitfahr_app/account/pages/edit_account/edit_username_page.dart';
 import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
-import 'package:motis_mitfahr_app/account/pages/reviews_page.dart';
 import 'package:motis_mitfahr_app/account/pages/write_report_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/avatar.dart';
+import 'package:motis_mitfahr_app/account/widgets/reviews_preview.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -61,8 +61,6 @@ void main() {
 
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
         .thenReturnJson(profile.toJsonForApi());
-
-    whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'), methodMatcher: equals('GET')).thenReturnJson([]);
 
     whenRequest(processor, urlMatcher: equals('/auth/v1/logout?')).thenReturnJson('');
   });
@@ -163,11 +161,11 @@ void main() {
             findsNWidgets(profile.features!.length));
       });
 
-      testWidgets('review$i', (WidgetTester tester) async {
+      testWidgets('ReviewsPreview $i', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
 
-        expect(find.byKey(const Key('reviewsPreview')), findsOneWidget);
+        expect(find.byType(ReviewsPreview), findsOneWidget);
       });
     }
 
@@ -305,27 +303,6 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(AvatarPicturePage), findsOneWidget);
-      });
-
-      testWidgets('Reviews button $i', (WidgetTester tester) async {
-        whenRequest(
-          processor,
-          urlMatcher: startsWith('/rest/v1/profiles'),
-        ).thenReturnJson(profile.toJsonForApi());
-        whenRequest(
-          processor,
-          urlMatcher: startsWith('/rest/v1/rides'),
-        ).thenReturnJson([]);
-
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        final reviewFinder = find.byKey(const Key('reviewsPreview'));
-        await tester.scrollUntilVisible(reviewFinder, 100, scrollable: find.byType(Scrollable).first);
-        await tester.tap(reviewFinder);
-        await tester.pumpAndSettle();
-
-        expect(find.byType(ReviewsPage), findsOneWidget);
       });
     }
 
