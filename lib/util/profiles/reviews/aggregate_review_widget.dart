@@ -14,6 +14,7 @@ class AggregateReviewWidget extends StatelessWidget {
     return Column(
       children: <Widget>[
         Row(
+          key: const Key('aggregateReview'),
           children: <Widget>[
             ExcludeSemantics(
               child: Text(_aggregateReview.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 20)),
@@ -25,6 +26,7 @@ class AggregateReviewWidget extends StatelessWidget {
                 S.of(context).pageReviewCount(_aggregateReview.numberOfReviews),
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                 textAlign: TextAlign.right,
+                key: const Key('reviewCount'),
               ),
             ),
           ],

@@ -78,7 +78,7 @@ class ReviewsPreview extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => ReviewsPage.fromProfile(profile)),
+                    MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
                   );
                 },
                 key: const Key('reviewsPreview'),

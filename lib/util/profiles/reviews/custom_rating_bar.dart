@@ -21,6 +21,7 @@ class CustomRatingBar extends StatelessWidget {
     return RatingBar.builder(
       minRating: 1,
       itemBuilder: (BuildContext context, _) => const Icon(
+        key: Key('ratingBarIcon'),
         Icons.star,
         color: Colors.amber,
       ),

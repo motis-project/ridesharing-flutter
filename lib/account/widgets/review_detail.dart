@@ -26,6 +26,7 @@ class ReviewDetail extends StatelessWidget {
             child: CustomRatingBarIndicator(
               rating: review.rating.toDouble(),
               size: CustomRatingBarSize.medium,
+              key: const Key('reviewRating'),
             ),
           ),
         ),
@@ -33,6 +34,7 @@ class ReviewDetail extends StatelessWidget {
     );
 
     return Card(
+      key: Key('reviewCard ${review.writerId}'),
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Column(

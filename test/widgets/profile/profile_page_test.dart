@@ -155,7 +155,7 @@ void main() {
         for (int h = 0; h < profile.features!.length; h++) {
           final feature = profile.features![h];
           final featureFinder = find.byKey(Key('feature_${feature.name}'));
-          await tester.scrollUntilVisible(featureFinder, 100, scrollable: scrollableFinder);
+          await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
           expect(featureFinder, findsOneWidget);
         }
 
