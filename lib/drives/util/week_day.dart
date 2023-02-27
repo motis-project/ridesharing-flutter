@@ -102,6 +102,8 @@ extension WeekDayExtension on WeekDay {
         return S.of(context).weekDaySundayAbbreviation;
     }
   }
+
+  ByWeekDayEntry toByWeekDayEntry() => ByWeekDayEntry(index + 1);
 }
 
 extension ByWeekDayEntryExtension on ByWeekDayEntry {

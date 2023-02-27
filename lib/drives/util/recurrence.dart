@@ -124,7 +124,7 @@ class RecurrenceOptions {
   RecurrenceRule get recurrenceRule {
     final Frequency frequency = recurrenceInterval.intervalType.frequency;
     final int interval = recurrenceInterval.intervalSize!;
-    final Set<ByWeekDayEntry> byWeekDays = weekDays.map((WeekDay weekDay) => ByWeekDayEntry(weekDay.index + 1)).toSet();
+    final Set<ByWeekDayEntry> byWeekDays = weekDays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet();
 
     DateTime? until;
 
