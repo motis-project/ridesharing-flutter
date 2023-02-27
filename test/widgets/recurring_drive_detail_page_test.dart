@@ -32,7 +32,7 @@ void main() {
       recurrenceRule: RecurrenceRule(
         frequency: Frequency.weekly,
         interval: 1,
-        byWeekDays: {ByWeekDayEntry(WeekDay.monday.index + 1), ByWeekDayEntry(WeekDay.tuesday.index + 1)},
+        byWeekDays: {WeekDay.monday.toByWeekDayEntry(), WeekDay.wednesday.toByWeekDayEntry()},
         // Generate 28 days of recurring drives (30 days in the backend, but that makes calculation for tests harder)
         until: DateTime.now().add(const Duration(days: 28)).toUtc(),
       ),

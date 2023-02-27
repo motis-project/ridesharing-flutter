@@ -399,7 +399,7 @@ void main() {
         final RecurrenceRule recurrenceRule = RecurrenceRule(
             frequency: intervalType.frequency,
             interval: intervalSize,
-            byWeekDays: weekdays.map((WeekDay weekDay) => ByWeekDayEntry(weekDay.index + 1)).toSet(),
+            byWeekDays: weekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
             until: untilTime);
 
         whenRequest(processor).thenReturnJson(RecurringDriveFactory()
