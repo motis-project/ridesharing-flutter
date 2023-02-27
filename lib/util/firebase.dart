@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import 'supabase_manager.dart';
 
-FirebaseMessaging messaging = FirebaseMessaging.instance;
 FirebaseManager firebaseManager = FirebaseManager();
 
 class FirebaseManager {
@@ -18,14 +17,12 @@ class FirebaseManager {
       // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       //   print('A new onMessageOpenedApp event was published!');
       // });
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     }
   }
 }
 
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-}
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
 
 Future<void> requestPermissionAndLoadPushToken() async {
   // at the moment Push Notifications are only supported on Android
@@ -46,7 +43,7 @@ Future<void> requestPermissionAndLoadPushToken() async {
   }
 }
 
-Future<void> deletePushToken() async {
+Future<void> disablePushToken() async {
   // at the moment Push Notifications are only supported on Android
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     final String? fcmToken = await firebaseManager.messaging!.getToken();

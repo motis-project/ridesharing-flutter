@@ -78,6 +78,7 @@ dependencies:
   rrule: ^0.2.10
   firebase_messaging: ^14.2.2
   firebase_core: ^2.5.0
+  firebase_core_platform_interface: ^4.5.3
   clock: ^1.1.1
 
 dev_dependencies:

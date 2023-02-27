@@ -85,7 +85,7 @@ class AuthAppState extends State<AuthApp> {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
         await supabaseManager.reloadCurrentProfile();
-        if (event == AuthChangeEvent.signedOut) await deletePushToken();
+        if (event == AuthChangeEvent.signedOut) unawaited(disablePushToken());
 
         setState(() {
           _isLoggedIn = session != null;
