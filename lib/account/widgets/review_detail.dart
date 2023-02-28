@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../util/fade_out.dart';
 import '../../util/locale_manager.dart';
 import '../../util/profiles/profile_chip.dart';
 import '../../util/profiles/reviews/custom_rating_bar_indicator.dart';
@@ -60,7 +61,7 @@ class ReviewDetailState extends State<ReviewDetail> {
                 alignment: Alignment.centerLeft,
                 child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints size) {
-                    final int? maxLines = isExpanded ? null : 2;
+                    final int? maxLines = isExpanded ? null : 3;
 
                     final TextSpan span = TextSpan(text: widget.review.text);
                     final TextPainter tp = TextPainter(
@@ -71,30 +72,29 @@ class ReviewDetailState extends State<ReviewDetail> {
                     )..layout();
                     final bool exceeded = tp.didExceedMaxLines;
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          key: const Key('reviewText'),
-                          widget.review.text!,
-                          maxLines: maxLines,
+                    final Widget text = Text(
+                      key: const Key('reviewText'),
+                      widget.review.text!,
+                      maxLines: maxLines,
+                    );
+                    if (!widget.isExpandable || !exceeded && !isExpanded) {
+                      return text;
+                    }
+
+                    if (isExpanded) {
+                      return InkWell(
+                        onTap: () => setState(() => isExpanded = !isExpanded),
+                        child: Column(
+                          children: <Widget>[text, const Icon(Icons.expand_less)],
                         ),
-                        if (widget.isExpandable && (exceeded || isExpanded)) ...<Widget>[
-                          const SizedBox(height: 5),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: RichText(
-                              key: const Key('expandReviewButton'),
-                              text: TextSpan(
-                                text: isExpanded ? S.of(context).showLess : S.of(context).showMore,
-                                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => setState(() => isExpanded = !isExpanded),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+                      );
+                    }
+                    return FadeOut(
+                      onTap: () => setState(() => isExpanded = !isExpanded),
+                      indicator: const Icon(Icons.expand_more),
+                      child: Column(
+                        children: <Widget>[text, const SizedBox(height: 22)],
+                      ),
                     );
                   },
                 ),
