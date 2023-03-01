@@ -14,7 +14,7 @@ class ProfileChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget usernameText = Text(profile.username);
+    Widget usernameText = Text(profile.username, overflow: TextOverflow.ellipsis);
     if (withHero) usernameText = Hero(tag: 'Username-${profile.id}', child: usernameText);
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),

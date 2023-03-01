@@ -14,34 +14,24 @@ class TripOverview extends StatelessWidget {
     final Widget startDest = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Expanded(
-          child: MergeSemantics(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(trip.start),
-                Text(
-                  localeManager.formatTime(trip.startTime),
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
-                )
-              ],
-            ),
-          ),
-        ),
+        Expanded(child: Text(trip.start)),
+        const SizedBox(width: 10.0),
         const Icon(Icons.arrow_forward_rounded),
-        Expanded(
-          child: MergeSemantics(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(trip.end),
-                Text(
-                  localeManager.formatTime(trip.endTime),
-                  style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
-                )
-              ],
-            ),
-          ),
+        const SizedBox(width: 10.0),
+        Expanded(child: Text(trip.end, textAlign: TextAlign.right)),
+      ],
+    );
+
+    final Widget timeWidget = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          localeManager.formatTime(trip.startTime),
+          style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
+        ),
+        Text(
+          localeManager.formatTime(trip.endTime),
+          style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.w700),
         ),
       ],
     );
@@ -63,7 +53,7 @@ class TripOverview extends StatelessWidget {
     );
 
     final Widget overview = Column(
-      children: <Widget>[startDest, const SizedBox(height: 10.0), infoRow],
+      children: <Widget>[startDest, timeWidget, const SizedBox(height: 10.0), infoRow],
     );
 
     return overview;

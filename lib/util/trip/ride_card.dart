@@ -100,7 +100,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(key: const Key('price'), ' ${_ride.price}€');
+    return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
   }
 
   @override
@@ -112,12 +112,14 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
               width: 72,
             ),
           )
-        : Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 0, 16),
-            child: ProfileWidget(
-              _driver,
-              size: 16,
-              isTappable: false,
+        : Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 0, 16),
+              child: ProfileWidget(
+                _driver,
+                size: 16,
+                isTappable: false,
+              ),
             ),
           );
   }

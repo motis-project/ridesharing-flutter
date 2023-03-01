@@ -38,11 +38,11 @@ class _AccountPageState extends State<AccountPage> {
       body: ListView(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             child: ProfileWidget(
               supabaseManager.currentProfile!,
               size: 25,
-              actionWidget: const Icon(Icons.chevron_right),
+              actionWidget: const Icon(Icons.chevron_right, size: 40),
               onPop: (_) => setState(() {}),
               withHero: true,
             ),

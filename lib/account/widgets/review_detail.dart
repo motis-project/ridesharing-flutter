@@ -15,20 +15,22 @@ class ReviewDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget header = Row(
       children: <Widget>[
-        ProfileChip(review.writer!, withHero: withHero),
-        Text(
-          localeManager.formatDate(review.createdAt!),
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-        ),
         Expanded(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: CustomRatingBarIndicator(
-              rating: review.rating.toDouble(),
-              size: CustomRatingBarSize.medium,
-              key: const Key('reviewRating'),
-            ),
+          child: Row(
+            children: <Widget>[
+              Flexible(child: ProfileChip(review.writer!, withHero: withHero)),
+              Text(
+                localeManager.formatDate(review.createdAt!),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+              ),
+            ],
           ),
+        ),
+        const SizedBox(width: 10),
+        CustomRatingBarIndicator(
+          rating: review.rating.toDouble(),
+          size: CustomRatingBarSize.medium,
+          key: const Key('reviewRating'),
         ),
       ],
     );
@@ -41,9 +43,7 @@ class ReviewDetail extends StatelessWidget {
           children: <Widget>[
             header,
             if (review.text?.isNotEmpty ?? false) ...<Widget>[
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               SizedBox(
                 width: double.infinity,
                 child: Text(review.text!),

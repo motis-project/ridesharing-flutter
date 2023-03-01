@@ -78,18 +78,23 @@ class _ProfilePageState extends State<ProfilePage> {
       tag: 'Username-${_profile!.id}',
       child: Text(
         _profile!.username,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
-    if (_profile!.isCurrentUser) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        if (_profile!.isCurrentUser) ...<Widget>[
           Expanded(child: Container()),
-          InkWell(
-            onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
-            key: const Key('editUsernameText'),
-            child: username,
+          Flexible(
+            flex: 5,
+            child: InkWell(
+              onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
+              key: const Key('editUsernameText'),
+              child: username,
+            ),
           ),
           Expanded(
             child: Align(
@@ -102,11 +107,15 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-        ],
-      );
-    } else {
-      return username;
-    }
+        ] else
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: username,
+            ),
+          ),
+      ],
+    );
   }
 
   Widget buildEmail() {

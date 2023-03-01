@@ -310,9 +310,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(width: 4.0),
-              Text(waypoint.place),
-              if (waypoint.place == _drive!.start) Semantics(label: S.of(context).pageDriveDetailLabelStartDrive),
-              if (waypoint.place == _drive!.end) Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
+              Flexible(child: Text(waypoint.place)),
+              if (waypoint.place == _drive!.start)
+                Semantics(label: S.of(context).pageDriveDetailLabelStartDrive)
+              else if (waypoint.place == _drive!.end)
+                Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
             ],
           ),
         ),
@@ -354,29 +356,23 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
+                    IconWidget(icon: icon, count: action.ride.seats),
                     Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconWidget(icon: icon, count: action.ride.seats),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ProfileWidget(profile, size: 15, isTappable: false),
                       ),
                     ),
-                    ProfileWidget(profile, size: 15, isTappable: false),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: badges.Badge(
-                          badgeContent: Text(
-                            action.ride.chat!.getUnreadMessagesCount().toString(),
-                            style: const TextStyle(color: Colors.white),
-                            textScaleFactor: 1.0,
-                          ),
-                          showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
-                          position: badges.BadgePosition.topEnd(top: -12),
-                          child: const Icon(Icons.chat),
-                        ),
+                    badges.Badge(
+                      badgeContent: Text(
+                        action.ride.chat!.getUnreadMessagesCount().toString(),
+                        style: const TextStyle(color: Colors.white),
+                        textScaleFactor: 1.0,
                       ),
+                      showBadge: action.ride.chat!.getUnreadMessagesCount() != 0,
+                      position: badges.BadgePosition.topEnd(top: -12),
+                      child: const Icon(Icons.chat),
                     ),
                   ],
                 ),

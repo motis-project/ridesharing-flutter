@@ -92,19 +92,13 @@ class _ReviewsPageState extends State<ReviewsPage> {
                   child: Column(
                     children: <Widget>[
                       ProfileWidget(_profile!, withHero: true),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       if (_reviewable) ...<Widget>[
                         reviewButton,
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                       ],
                       aggregated,
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       reviewColumn,
                     ],
                   ),
