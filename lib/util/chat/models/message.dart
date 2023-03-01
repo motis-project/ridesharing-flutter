@@ -53,6 +53,15 @@ class Message extends Model {
     };
   }
 
+  @override
+  Map<String, dynamic> toJsonForApi() {
+    return super.toJsonForApi()
+      ..addAll(<String, dynamic>{
+        ...chat == null ? <String, dynamic>{} : <String, dynamic>{'chat': chat?.toJsonForApi()},
+        ...sender == null ? <String, dynamic>{} : <String, dynamic>{'sender': sender?.toJsonForApi()},
+      });
+  }
+
   bool get isFromCurrentUser => senderId == supabaseManager.currentProfile?.id;
 
   Future<void> markAsRead() async {

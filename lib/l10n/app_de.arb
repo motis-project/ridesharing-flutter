@@ -341,6 +341,32 @@
   "pageChatNoChatMessage": "Du kannst mit deiner*m Fahrer*in chatten, sobald deine Fahrt angenommen wird.",
   "pageChatMessageBarHint": "Schreibe eine Nachricht",
 
+  "pageHomeTitle": "Home",
+  "pageHomeSearchButton": "Mitfahrt suchen",
+  "pageHomeCreateButton": "Fahrt erstellen",
+
+  "rideEventPendingTitle": "Mitfahrt angefragt!",
+  "rideEventApprovedTitle": "Mitfahrt bestätigt!",
+  "rideEventRejectedTitle": "Anfrage abgelehnt!",
+  "rideEventWithdrawnTitle": "Anfrage zurückgenommen!",
+  "rideEventCancelledByDriverTitle": "Fahrt abgesagt!",
+  "rideEventCancelledByRiderTitle": "Mitfahrt abgesagt!",
+  "pageHomeUpcomingDriveToday": "Anstehende Fahrt heute!",
+  "pageHomeUpcomingDriveTomorrow": "Anstehende Fahrt morgen!",
+  "pageHomeUpcomingRideToday": "Anstehende Mitfahrt heute!",
+  "pageHomeUpcomingRideTomorrow": "Anstehende Mitfahrt morgen!",
+
+  "rideEventPendingMessage": "{username} hat eine Mitfahrt angefragt",
+  "rideEventApprovedMessage": "{username} hat deine Mitfahrt bestätigt",
+  "rideEventRejectedMessage": "{username} hat deine Mitfahrt abgelehnt",
+  "rideEventWithdrawnMessage": "{username} hat die Mitfahrt verworfen",
+  "rideEventCancelledByDriverMessage": "{username} hat die Fahrt abgesagt",
+  "rideEventCancelledByRiderMessage": "{username} hat die Mitfahrt abgesagt",
+  "pageHomeUpcomingTripMessage": "von {start} nach {end} um {startTime}",
+
+  "pageHomePageEmpty": "Keine neuen Nachrichten",
+
+  "hello": "Hallo",
 
 
   "appName": "Motis Mitfahr-App"

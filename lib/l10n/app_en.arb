@@ -102,23 +102,8 @@
   "pageAboutTitle": "About",
   "pageAboutLogoSemantics": "MOTIS Logo",
   "pageAboutVersion": "Version {version}",
-  "@pageAboutVersion": {
-    "placeholders": {
-      "version": {}
-    }
-  },
   "pageAboutBuildNumber": "Build number: {number}",
-  "@pageAboutBuildNumber": {
-    "placeholders": {
-      "number": {}
-    }
-  },
   "pageAboutBuildSignature": "Build signature: {signature}",
-  "@pageAboutBuildSignature": {
-    "placeholders": {
-      "signature": {}
-    }
-  },
   "pageAboutText": "This app was coded by a group of students at TU Darmstadt.\nLicensed under the MIT License.",
   "pageAboutGithub": "GitHub",
   "pageAboutWebsite": "Website",
@@ -354,5 +339,28 @@
   "pageChatNoChatMessage": "You can chat with your driver as soon as your ride has been accepted",
   "pageChatMessageBarHint": "Write a Message",
 
+  "pageHomeTitle": "Home",
+  "pageHomeSearchButton": "Search Ride",
+  "pageHomeCreateButton": "Create Drive",
+
+  "rideEventPendingTitle": "Ride requested!",
+  "rideEventApprovedTitle": "Ride approved!",
+  "rideEventRejectedTitle": "Request rejected!",
+  "rideEventWithdrawnTitle": "Request withdrawn!",
+  "rideEventCancelledByDriverTitle": "Drive cancelled!",
+  "rideEventCancelledByRiderTitle": "Ride cancelled!",
+  "pageHomeUpcomingDriveToday": "Upcoming Drive today!",
+  "pageHomeUpcomingDriveTomorrow": "Upcoming Drive tomorrow!",
+  "pageHomeUpcomingRideToday": "Upcoming Ride today!",
+  "pageHomeUpcomingRideTomorrow": "Upcoming Ride tomorrow!",
+  "rideEventPendingMessage": "{username} has requested a ride",
+  "rideEventApprovedMessage": "{username} has approved your ride",
+  "rideEventRejectedMessage": "{username} has rejected your ride",
+  "rideEventWithdrawnMessage": "{username} has withdrawn his request",
+  "rideEventCancelledByDriverMessage": "{username} has cancelled his drive",
+  "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
+  "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
+  "pageHomePageEmpty": "No new messages",
+  "hello": "Hello",
   "appName": "Motis Ride-Sharing App"
-}
+  }
