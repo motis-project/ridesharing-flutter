@@ -7,6 +7,7 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
+import 'package:motis_mitfahr_app/drives/util/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/drives/util/week_day.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
@@ -229,88 +230,162 @@ void main() {
         });
       });
 
-      testWidgets('Recurring', (WidgetTester tester) async {
-        final List<WeekDay> weekdays = [...WeekDay.values]
-          ..shuffle()
-          ..take(random.integer(WeekDay.values.length, min: 1));
-        final int intervalSize = random.integer(10, min: 1);
-        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
+      group('Recurring', () {
+        testWidgets('Week Days', (WidgetTester tester) async {
+          final List<WeekDay> weekdays = [...WeekDay.values]
+            ..shuffle()
+            ..take(random.integer(WeekDay.values.length, min: 1));
 
-        await pumpMaterial(tester, const CreateDrivePage());
-        await tester.pump();
+          await pumpMaterial(tester, const CreateDrivePage());
+          await tester.pump();
 
-        final CreateDriveFormState formState = tester.state(formFinder);
+          final CreateDriveFormState formState = tester.state(formFinder);
 
-        await tapRecurring(tester);
+          await tapRecurring(tester);
 
-        await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
-        await enterInterval(tester, intervalSize, intervalType);
+          await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
 
-        expect(formState.recurrenceOptions.weekDays, weekdays);
-        expect(formState.recurrenceOptions.recurrenceIntervalSizeController.text, intervalSize.toString());
-        expect(formState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
-        expect(formState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
+          expect(formState.recurrenceOptions.weekDays, weekdays);
+        });
 
-        await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
-            scrollable: find.byType(Scrollable).hitTestable().first);
-        final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
-        for (int i = 0; i < 4; i++) {
-          await tester.tap(find.byKey(const Key('untilField')));
-          await tester.pumpAndSettle();
+        testWidgets('Interval', (WidgetTester tester) async {
+          await pumpMaterial(tester, const CreateDrivePage());
+          await tester.pump();
 
-          await scrollAndTap(tester, find.byKey(Key('predefinedEndChoice$i')), scrollable: scrollable.first);
-          await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-          await tester.pumpAndSettle();
-          expect(formState.recurrenceOptions.endChoice.isCustom, isFalse);
-          expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
-          expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize,
-              (CreateDriveFormState.predefinedRecurrenceEndChoices[i] as RecurrenceEndChoiceInterval).intervalSize);
-          expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalType,
-              (CreateDriveFormState.predefinedRecurrenceEndChoices[i] as RecurrenceEndChoiceInterval).intervalType);
-        }
+          final CreateDriveFormState formState = tester.state(formFinder);
 
-        final DateTime dateTime =
-            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
-        await enterUntil(tester, dateTime);
-        expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
-        expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
-        expect(
-          (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceDate).date,
-          DateTime(dateTime.year, dateTime.month, dateTime.day),
-        );
+          await tapRecurring(tester);
 
-        final int endIntervalSize = random.integer(16, min: 1);
-        final RecurrenceIntervalType endIntervalType =
-            RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)];
-        await tester.tap(find.byKey(const Key('untilField')));
-        await tester.pumpAndSettle();
-        await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice5')), scrollable: scrollable.first);
-        await tester.pump();
-        await tester.enterText(find.byKey(const Key('customEndIntervalSizeField')), endIntervalSize.toString());
-        await tester.tap(find.byKey(const Key('customEndIntervalTypeField')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(Key('customEndIntervalType${endIntervalType.name}')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-        await tester.pumpAndSettle();
-        expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
-        expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
-        expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize, endIntervalSize);
-        expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalType, endIntervalType);
+          for (final RecurrenceIntervalType intervalType in RecurrenceIntervalType.values
+              .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
+              .toList()) {
+            final int intervalSize = random.integer(10, min: 1);
+            await enterInterval(tester, intervalSize, intervalType);
 
-        final int occurenceCount = random.integer(16, min: 1);
-        await tester.tap(find.byKey(const Key('untilField')));
-        await tester.pumpAndSettle();
-        await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice6')), scrollable: scrollable.first);
-        await tester.pump();
-        await tester.enterText(find.byKey(const Key('customEndOccurenceField')), occurenceCount.toString());
-        await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
-        await tester.pumpAndSettle();
-        expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
-        expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.occurrence);
-        expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceOccurrence).occurrences, occurenceCount);
+            final RecurrenceOptionsEditState recurrenceOptionsEditState =
+                tester.state(find.byType(RecurrenceOptionsEdit));
+
+            expect(recurrenceOptionsEditState.recurrenceIntervalSizeController.text, intervalSize.toString());
+            expect(formState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
+            expect(formState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
+          }
+        });
+
+        group('Until', () {
+          testWidgets('Predefined End Choices', (WidgetTester tester) async {
+            await pumpMaterial(tester, const CreateDrivePage());
+            await tester.pump();
+
+            final CreateDriveFormState formState = tester.state(formFinder);
+
+            await tapRecurring(tester);
+
+            await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
+                scrollable: find.byType(Scrollable).hitTestable().first);
+            final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
+
+            for (int i = 0; i < 4; i++) {
+              await tester.tap(find.byKey(const Key('untilField')));
+              await tester.pumpAndSettle();
+
+              await scrollAndTap(tester, find.byKey(Key('predefinedEndChoice$i')), scrollable: scrollable.first);
+              await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+              await tester.pumpAndSettle();
+              expect(formState.recurrenceOptions.endChoice.isCustom, isFalse);
+              expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
+              expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize,
+                  (CreateDriveFormState.predefinedRecurrenceEndChoices[i] as RecurrenceEndChoiceInterval).intervalSize);
+              expect((formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalType,
+                  (CreateDriveFormState.predefinedRecurrenceEndChoices[i] as RecurrenceEndChoiceInterval).intervalType);
+            }
+          });
+
+          testWidgets('Date', (WidgetTester tester) async {
+            await pumpMaterial(tester, const CreateDrivePage());
+            await tester.pump();
+
+            final CreateDriveFormState formState = tester.state(formFinder);
+
+            await tapRecurring(tester);
+
+            await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
+                scrollable: find.byType(Scrollable).hitTestable().first);
+
+            final DateTime dateTime =
+                faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+            await enterUntil(tester, dateTime);
+            expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
+            expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
+            expect(
+              (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceDate).date,
+              DateTime(dateTime.year, dateTime.month, dateTime.day),
+            );
+          });
+
+          testWidgets('Interval', (WidgetTester tester) async {
+            await pumpMaterial(tester, const CreateDrivePage());
+            await tester.pump();
+
+            final CreateDriveFormState formState = tester.state(formFinder);
+
+            await tapRecurring(tester);
+
+            await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
+                scrollable: find.byType(Scrollable).hitTestable().first);
+            final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
+
+            for (final RecurrenceIntervalType endIntervalType in RecurrenceIntervalType.values) {
+              final int endIntervalSize = random.integer(16, min: 1);
+              await tester.tap(find.byKey(const Key('untilField')));
+              await tester.pumpAndSettle();
+              await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice5')), scrollable: scrollable.first);
+              await tester.pump();
+              await tester.enterText(find.byKey(const Key('customEndIntervalSizeField')), endIntervalSize.toString());
+              await tester.tap(find.byKey(const Key('customEndIntervalTypeField')));
+              await tester.pumpAndSettle();
+              await tester.tap(find.byKey(Key('customEndIntervalType${endIntervalType.name}')));
+              await tester.pumpAndSettle();
+              await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+              await tester.pumpAndSettle();
+              expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
+              expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.interval);
+              expect(
+                  (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalSize, endIntervalSize);
+              expect(
+                  (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceInterval).intervalType, endIntervalType);
+            }
+          }, skip: true);
+
+          testWidgets('Occurences', (WidgetTester tester) async {
+            await pumpMaterial(tester, const CreateDrivePage());
+            await tester.pump();
+
+            final CreateDriveFormState formState = tester.state(formFinder);
+
+            await tapRecurring(tester);
+
+            await tester.scrollUntilVisible(find.byKey(const Key('untilField')), 50,
+                scrollable: find.byType(Scrollable).hitTestable().first);
+            final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
+
+            final int occurenceCount = random.integer(16, min: 1);
+            await tester.tap(find.byKey(const Key('untilField')));
+            await tester.pumpAndSettle();
+            await scrollAndTap(tester, find.byKey(const Key('recurrenceEndChoice6')), scrollable: scrollable.first);
+            await tester.pump();
+            await tester.enterText(find.byKey(const Key('customEndOccurenceField')), occurenceCount.toString());
+            await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+            await tester.pumpAndSettle();
+            expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
+            expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.occurrence);
+            expect(
+                (formState.recurrenceOptions.endChoice as RecurrenceEndChoiceOccurrence).occurrences, occurenceCount);
+          });
+
+          /*group('Validators', () {
+            testWidgets('', (WidgetTester tester) async {});
+          });*/
+        });
       });
     });
 

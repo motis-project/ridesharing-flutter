@@ -42,11 +42,9 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     // because the context is needed for the recurrence options
     _recurrenceOptions = RecurrenceOptions(
       startedAt: _recurringDrive.startedAt,
-      endChoice: _recurringDrive.recurrenceEndChoice,
-      predefinedEndChoices: <RecurrenceEndChoice>[],
       recurrenceInterval: _recurringDrive.recurrenceInterval,
       weekDays: _recurringDrive.weekDays,
-      context: context,
+      endChoice: _recurringDrive.recurrenceEndChoice.copyWith(isCustom: true),
     );
   }
 
@@ -62,7 +60,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
         key: _formKey,
         child: RecurrenceOptionsEdit(
           recurrenceOptions: _recurrenceOptions,
-          setState: setState,
+          predefinedEndChoices: const <RecurrenceEndChoice>[],
         ),
       ),
     );
