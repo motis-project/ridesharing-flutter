@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/button.dart';
@@ -66,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Avatar(
       _profile!,
       size: 64,
-      onAction: _isLoadingProfilePicture ? null : _updateProfilePictureDialog,
+      onAction: _updateProfilePictureDialog,
       isTappable: true,
       withHero: true,
     );
@@ -329,13 +330,21 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _updateProfilePictureDialog() async {
+    if (_isLoadingProfilePicture) return;
+
     setState(() => _isLoadingProfilePicture = true);
+
     if (_profile!.avatarUrl == null) {
       await _uploadProfilePicture();
-      setState(() => _isLoadingProfilePicture = false);
-      return;
+    } else {
+      await _chooseProfilePictureUpdateMethodDialog();
     }
-    switch (await showDialog<ProfilePictureUpdateMethod>(
+
+    setState(() => _isLoadingProfilePicture = false);
+  }
+
+  Future<void> _chooseProfilePictureUpdateMethodDialog() async {
+    final ProfilePictureUpdateMethod? method = await showDialog<ProfilePictureUpdateMethod>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
@@ -356,29 +365,37 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         );
       },
-    )) {
+    );
+
+    switch (method) {
       case ProfilePictureUpdateMethod.fromGallery:
         await _uploadProfilePicture();
         break;
       case ProfilePictureUpdateMethod.delete:
         await _deleteProfilePicture();
         break;
-      case null:
+      default:
         break;
     }
-    setState(() => _isLoadingProfilePicture = false);
   }
 
   Future<void> _uploadProfilePicture() async {
+    final PermissionStatus photosPermissionStatus = await Permission.photos.request();
+    if (photosPermissionStatus.isPermanentlyDenied) {
+      // wait a half second to let the request dialog close
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      return _requestPhotosPermissionDialog();
+    }
+
     final ImagePicker picker = ImagePicker();
     final XFile? imageFile = await picker.pickImage(
       source: ImageSource.gallery,
       maxWidth: 300,
       maxHeight: 300,
     );
-    if (imageFile == null) {
-      return;
-    }
+
+    if (imageFile == null) return;
+
     try {
       final Uint8List bytes = await imageFile.readAsBytes();
       final String fileExt = imageFile.path.split('.').last;
@@ -417,6 +434,33 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await supabaseManager.reloadCurrentProfile();
     await loadProfile();
+  }
+
+  Future<void> _requestPhotosPermissionDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(S.of(context).pageProfileUpdateProfilePicturePermissionTitle),
+          content: Text(S.of(context).pageProfileUpdateProfilePicturePermissionMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(S.of(context).cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                openAppSettings();
+                Navigator.pop(context);
+              },
+              child: Text(S.of(context).pageProfileUpdateProfilePicturePermissionToSettings),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void signOut() {
