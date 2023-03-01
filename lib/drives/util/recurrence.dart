@@ -8,118 +8,18 @@ import 'week_day.dart';
 class RecurrenceOptions {
   RecurrenceOptions({
     required this.startedAt,
-    required RecurrenceEndChoice endChoice,
-    required this.predefinedEndChoices,
     required this.recurrenceInterval,
-    List<WeekDay>? weekDays,
-    required BuildContext context,
-  }) {
-    if (!predefinedEndChoices.contains(endChoice)) {
-      endChoice.isCustom = true;
-    }
+    required this.endChoice,
+    this.weekDays = const <WeekDay>[],
+  });
 
-    setEndChoice(endChoice, context);
-
-    recurrenceIntervalSizeController.text = recurrenceInterval.intervalSize.toString();
-    recurrenceIntervalTypeController.text = recurrenceInterval.intervalType.getName(context);
-    this.weekDays = weekDays ?? <WeekDay>[];
-  }
-
-  bool enabled = false;
   DateTime startedAt;
 
-  late RecurrenceEndChoice _endChoice;
-  final TextEditingController endChoiceController = TextEditingController();
-  void rebuildEndChoiceController(BuildContext context) => endChoiceController.text = _endChoice.getName(context);
+  RecurrenceEndChoice endChoice;
 
-  RecurrenceEndChoice get endChoice => _endChoice;
+  List<WeekDay> weekDays;
 
-  void setEndChoice(RecurrenceEndChoice value, BuildContext context) {
-    _endChoice = value;
-    rebuildEndChoiceController(context);
-    if (value.isCustom) {
-      if (value is RecurrenceEndChoiceDate) {
-        customEndDateChoice = value;
-        if (value.date != null) customEndDateController.text = localeManager.formatDate(value.date!);
-      } else if (value is RecurrenceEndChoiceInterval) {
-        customEndIntervalChoice = value;
-        if (value.intervalSize != null) customEndIntervalSizeController.text = value.intervalSize.toString();
-        if (value.intervalType != null) customEndIntervalTypeController.text = value.intervalType!.getName(context);
-      } else if (value is RecurrenceEndChoiceOccurrence) {
-        customEndOccurrenceChoice = value;
-        if (value.occurrences != null) customEndOccurrenceController.text = value.occurrences.toString();
-      }
-    }
-  }
-
-  List<RecurrenceEndChoice> predefinedEndChoices;
-
-  late final List<WeekDay> weekDays;
-
-  late RecurrenceInterval recurrenceInterval;
-  final TextEditingController recurrenceIntervalSizeController = TextEditingController();
-  final TextEditingController recurrenceIntervalTypeController = TextEditingController();
-
-  void setRecurrenceIntervalType(RecurrenceIntervalType type, BuildContext context) {
-    recurrenceInterval.intervalType = type;
-    recurrenceIntervalTypeController.text = type.getName(context);
-    rebuildEndChoiceController(context);
-  }
-
-  RecurrenceEndChoiceDate customEndDateChoice = RecurrenceEndChoiceDate(null, isCustom: true);
-  final TextEditingController customEndDateController = TextEditingController();
-
-  void setCustomDate(DateTime date, BuildContext context) {
-    customEndDateChoice.date = date;
-    customEndDateController.text = localeManager.formatDate(date);
-    rebuildEndChoiceController(context);
-  }
-
-  RecurrenceEndChoiceInterval customEndIntervalChoice = RecurrenceEndChoiceInterval(null, null, isCustom: true);
-  final TextEditingController customEndIntervalSizeController = TextEditingController();
-  final TextEditingController customEndIntervalTypeController = TextEditingController();
-
-  void setCustomEndIntervalType(RecurrenceIntervalType type, BuildContext context) {
-    customEndIntervalChoice.intervalType = type;
-    customEndIntervalTypeController.text = type.getName(context);
-    rebuildEndChoiceController(context);
-  }
-
-  RecurrenceEndChoiceOccurrence customEndOccurrenceChoice = RecurrenceEndChoiceOccurrence(null, isCustom: true);
-  final TextEditingController customEndOccurrenceController = TextEditingController();
-
-  String? validationError;
-
-  RecurrenceEndChoice getRecurrenceEndChoice(RecurrenceEndType type) {
-    switch (type) {
-      case RecurrenceEndType.date:
-        return customEndDateChoice;
-      case RecurrenceEndType.interval:
-        return customEndIntervalChoice;
-      case RecurrenceEndType.occurrence:
-        return customEndOccurrenceChoice;
-    }
-  }
-
-  String getEndChoiceName(BuildContext context) => endChoice.getName(context);
-
-  void dispose() {
-    endChoiceController.dispose();
-    recurrenceIntervalSizeController.dispose();
-    recurrenceIntervalTypeController.dispose();
-    customEndDateController.dispose();
-    customEndIntervalSizeController.dispose();
-    customEndIntervalTypeController.dispose();
-    customEndOccurrenceController.dispose();
-  }
-
-  bool validate(BuildContext context, {bool createError = true}) {
-    final String? error = endChoice.validate(context);
-    if (createError || error == null) {
-      validationError = error;
-    }
-    return error == null;
-  }
+  RecurrenceInterval recurrenceInterval;
 
   RecurrenceRule get recurrenceRule {
     final Frequency frequency = recurrenceInterval.intervalType.frequency;
@@ -128,11 +28,11 @@ class RecurrenceOptions {
 
     DateTime? until;
 
-    if (_endChoice.type == RecurrenceEndType.date) {
+    if (endChoice.type == RecurrenceEndType.date) {
       until = (endChoice as RecurrenceEndChoiceDate).date;
-    } else if (_endChoice.type == RecurrenceEndType.interval) {
+    } else if (endChoice.type == RecurrenceEndType.interval) {
       until = (endChoice as RecurrenceEndChoiceInterval).getDate(startedAt);
-    } else if (_endChoice.type == RecurrenceEndType.occurrence) {
+    } else if (endChoice.type == RecurrenceEndType.occurrence) {
       return RecurrenceRule(
         frequency: frequency,
         interval: interval,
@@ -182,16 +82,18 @@ class RecurrenceInterval {
 }
 
 abstract class RecurrenceEndChoice {
-  RecurrenceEndType type;
-  bool isCustom;
+  final RecurrenceEndType type;
+  final bool isCustom;
 
-  RecurrenceEndChoice({this.type = RecurrenceEndType.occurrence, this.isCustom = false});
+  const RecurrenceEndChoice({this.type = RecurrenceEndType.occurrence, this.isCustom = false});
 
   String getName(BuildContext context);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is RecurrenceEndChoice && type == other.type && isCustom == other.isCustom;
+
+  RecurrenceEndChoice copyWith({bool? isCustom});
 
   @override
   int get hashCode => type.hashCode ^ isCustom.hashCode;
@@ -207,12 +109,14 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.date);
 
   @override
-  String getName(BuildContext context) =>
-      validate(context) ?? S.of(context).recurrenceEndUntilDate(localeManager.formatDate(date!));
+  String getName(BuildContext context) => S.of(context).recurrenceEndUntilDate(localeManager.formatDate(date!));
 
   @override
   bool operator ==(Object other) =>
       other is RecurrenceEndChoiceDate && isCustom == other.isCustom && date == other.date;
+
+  @override
+  RecurrenceEndChoice copyWith({bool? isCustom}) => RecurrenceEndChoiceDate(date, isCustom: isCustom ?? this.isCustom);
 
   @override
   int get hashCode => isCustom.hashCode ^ date.hashCode;
@@ -245,9 +149,6 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
 
   @override
   String getName(BuildContext context) {
-    final String? validationError = validate(context);
-    if (validationError != null) return validationError;
-
     switch (intervalType!) {
       case RecurrenceIntervalType.days:
         return S.of(context).recurrenceEndForDays(intervalSize!);
@@ -278,6 +179,10 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
       intervalType == other.intervalType;
 
   @override
+  RecurrenceEndChoice copyWith({bool? isCustom}) =>
+      RecurrenceEndChoiceInterval(intervalSize, intervalType, isCustom: isCustom ?? this.isCustom);
+
+  @override
   int get hashCode => isCustom.hashCode ^ intervalSize.hashCode ^ intervalType.hashCode;
 }
 
@@ -289,8 +194,7 @@ class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.occurrence);
 
   @override
-  String getName(BuildContext context) =>
-      validate(context) ?? S.of(context).recurrenceEndAfterOccurrences(occurrences!);
+  String getName(BuildContext context) => S.of(context).recurrenceEndAfterOccurrences(occurrences!);
 
   @override
   String? validate(BuildContext context) => occurrences == null
@@ -302,6 +206,10 @@ class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
   @override
   bool operator ==(Object other) =>
       other is RecurrenceEndChoiceOccurrence && isCustom == other.isCustom && occurrences == other.occurrences;
+
+  @override
+  RecurrenceEndChoice copyWith({bool? isCustom}) =>
+      RecurrenceEndChoiceOccurrence(occurrences, isCustom: isCustom ?? this.isCustom);
 
   @override
   int get hashCode => isCustom.hashCode ^ occurrences.hashCode;

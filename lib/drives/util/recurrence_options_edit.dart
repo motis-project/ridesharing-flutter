@@ -2,44 +2,151 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/locale_manager.dart';
 import 'recurrence.dart';
 import 'text_with_fields.dart';
 import 'week_day.dart';
 
-class RecurrenceOptionsEdit extends StatelessWidget {
+class RecurrenceOptionsEdit extends StatefulWidget {
   final RecurrenceOptions recurrenceOptions;
-  final void Function(VoidCallback) setState;
+  final List<RecurrenceEndChoice> predefinedEndChoices;
 
-  const RecurrenceOptionsEdit({
-    super.key,
-    required this.recurrenceOptions,
-    required this.setState,
-  });
+  const RecurrenceOptionsEdit({super.key, required this.recurrenceOptions, required this.predefinedEndChoices});
+
+  @override
+  State<RecurrenceOptionsEdit> createState() => RecurrenceOptionsEditState();
+}
+
+class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
+  late final RecurrenceOptions recurrenceOptions;
+  late List<RecurrenceEndChoice> predefinedEndChoices;
+
+  final TextEditingController recurrenceIntervalSizeController = TextEditingController();
+  final TextEditingController recurrenceIntervalTypeController = TextEditingController();
+  void setRecurrenceIntervalType(RecurrenceIntervalType type) {
+    recurrenceOptions.recurrenceInterval.intervalType = type;
+    recurrenceIntervalTypeController.text = type.getName(context);
+  }
+
+  late RecurrenceEndChoice _endChoice;
+
+  RecurrenceEndChoiceDate customEndDateChoice = RecurrenceEndChoiceDate(null, isCustom: true);
+  final TextEditingController customEndDateController = TextEditingController();
+  void setCustomDate(DateTime date) {
+    customEndDateChoice.date = date;
+    customEndDateController.text = localeManager.formatDate(date);
+  }
+
+  RecurrenceEndChoiceInterval customEndIntervalChoice = RecurrenceEndChoiceInterval(null, null, isCustom: true);
+  final TextEditingController customEndIntervalSizeController = TextEditingController();
+  final TextEditingController customEndIntervalTypeController = TextEditingController();
+  void setCustomEndIntervalType(RecurrenceIntervalType type) {
+    customEndIntervalChoice.intervalType = type;
+    customEndIntervalTypeController.text = type.getName(context);
+  }
+
+  RecurrenceEndChoiceOccurrence customEndOccurrenceChoice = RecurrenceEndChoiceOccurrence(null, isCustom: true);
+  final TextEditingController customEndOccurrenceController = TextEditingController();
+
+  final TextEditingController endChoiceController = TextEditingController();
+  void rebuildEndChoiceController() => endChoiceController.text = _endChoice.getName(context);
+
+  String? validationError;
+
+  @override
+  void initState() {
+    super.initState();
+
+    recurrenceOptions = widget.recurrenceOptions;
+    predefinedEndChoices = widget.predefinedEndChoices;
+
+    _endChoice = recurrenceOptions.endChoice;
+  }
+
+  @override
+  void didChangeDependencies() {
+    // This is here instead of initState because of the context
+    recurrenceIntervalSizeController.text = recurrenceOptions.recurrenceInterval.intervalSize.toString();
+    recurrenceIntervalTypeController.text = recurrenceOptions.recurrenceInterval.intervalType.getName(context);
+    setEndChoice(_endChoice);
+    rebuildEndChoiceController();
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    endChoiceController.dispose();
+    recurrenceIntervalSizeController.dispose();
+    recurrenceIntervalTypeController.dispose();
+    customEndDateController.dispose();
+    customEndIntervalSizeController.dispose();
+    customEndIntervalTypeController.dispose();
+    customEndOccurrenceController.dispose();
+  }
+
+  bool validate({bool createError = true}) {
+    final String? error = _endChoice.validate(context);
+    if (createError || error == null) {
+      validationError = error;
+    }
+    return validationError == null;
+  }
+
+  void setEndChoice(RecurrenceEndChoice value) {
+    _endChoice = value;
+    if (value.isCustom) {
+      if (value is RecurrenceEndChoiceDate) {
+        customEndDateChoice = value;
+        if (value.date != null) customEndDateController.text = localeManager.formatDate(value.date!);
+      } else if (value is RecurrenceEndChoiceInterval) {
+        customEndIntervalChoice = value;
+        if (value.intervalSize != null) customEndIntervalSizeController.text = value.intervalSize.toString();
+        if (value.intervalType != null) customEndIntervalTypeController.text = value.intervalType!.getName(context);
+      } else if (value is RecurrenceEndChoiceOccurrence) {
+        customEndOccurrenceChoice = value;
+        if (value.occurrences != null) customEndOccurrenceController.text = value.occurrences.toString();
+      }
+    }
+  }
+
+  RecurrenceEndChoice getRecurrenceEndChoice(RecurrenceEndType type) {
+    switch (type) {
+      case RecurrenceEndType.date:
+        return customEndDateChoice;
+      case RecurrenceEndType.interval:
+        return customEndIntervalChoice;
+      case RecurrenceEndType.occurrence:
+        return customEndOccurrenceChoice;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        buildWeekDayPicker(context),
-        buildIntervalPicker(context),
-        buildUntilPicker(context),
+        buildWeekDayPicker(),
+        buildIntervalPicker(),
+        buildUntilPicker(),
       ],
     );
   }
 
-  Widget buildWeekDayPicker(BuildContext context) {
+  Widget buildWeekDayPicker() {
     return WeekDayPicker(
       weekDays: recurrenceOptions.weekDays,
       context: context,
     );
   }
 
-  Widget buildIntervalPicker(BuildContext context) {
+  Widget buildIntervalPicker() {
     final Widget intervalSizeField = TextFormField(
       decoration: const InputDecoration(border: OutlineInputBorder()),
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-      controller: recurrenceOptions.recurrenceIntervalSizeController,
+      controller: recurrenceIntervalSizeController,
       validator: (String? value) {
         if (value == null || value.isEmpty) {
           return S.of(context).pageCreateDriveIntervalSizeValidationEmpty;
@@ -58,7 +165,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
       initialValue: recurrenceOptions.recurrenceInterval.intervalType,
       onSelected: (RecurrenceIntervalType value) {
         setState(
-          () => recurrenceOptions.setRecurrenceIntervalType(value, context),
+          () => setRecurrenceIntervalType(value),
         );
       },
       itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
@@ -77,7 +184,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
         child: TextFormField(
           decoration: const InputDecoration(border: OutlineInputBorder()),
           readOnly: true,
-          controller: recurrenceOptions.recurrenceIntervalTypeController,
+          controller: recurrenceIntervalTypeController,
         ),
       ),
     );
@@ -91,28 +198,27 @@ class RecurrenceOptionsEdit extends StatelessWidget {
     );
   }
 
-  Widget buildUntilPicker(BuildContext context) {
+  Widget buildUntilPicker() {
     return SizedBox(
       width: 200,
       child: TextFormField(
         decoration: const InputDecoration(border: OutlineInputBorder()),
-        onTap: () => showRecurrenceEndDialog(context),
+        onTap: () => showRecurrenceEndDialog(),
         readOnly: true,
-        controller: recurrenceOptions.endChoiceController,
+        controller: endChoiceController,
         key: const Key('untilField'),
       ),
     );
   }
 
-  Future<void> showRecurrenceEndDialog(BuildContext context) async {
+  Future<void> showRecurrenceEndDialog() async {
     await showDialog<RecurrenceEndChoice>(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) => StatefulBuilder(
         builder: (BuildContext context, void Function(VoidCallback) innerSetState) {
           void onChanged(RecurrenceEndChoice? value) {
             innerSetState(() {
-              recurrenceOptions.setEndChoice(value!, context);
+              setEndChoice(value!);
             });
           }
 
@@ -122,25 +228,24 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ...List<RadioListTile<RecurrenceEndChoice>>.generate(
-                    recurrenceOptions.predefinedEndChoices.length + RecurrenceEndType.values.length,
+                    predefinedEndChoices.length + RecurrenceEndType.values.length,
                     (int index) {
-                      if (index < recurrenceOptions.predefinedEndChoices.length) {
-                        final RecurrenceEndChoice recurringEndChoice = recurrenceOptions.predefinedEndChoices[index];
+                      if (index < predefinedEndChoices.length) {
+                        final RecurrenceEndChoice recurringEndChoice = predefinedEndChoices[index];
 
                         return RadioListTile<RecurrenceEndChoice>(
                           contentPadding: EdgeInsets.zero,
                           title: Text(recurringEndChoice.getName(context)),
                           value: recurringEndChoice,
-                          groupValue: recurrenceOptions.endChoice,
+                          groupValue: _endChoice,
                           onChanged: onChanged,
                           key: Key('predefinedEndChoice$index'),
                         );
                       } else {
                         final RecurrenceEndType recurrenceEndType =
-                            RecurrenceEndType.values[index - recurrenceOptions.predefinedEndChoices.length];
-                        final RecurrenceEndChoice recurrenceEndChoiceCustom =
-                            recurrenceOptions.getRecurrenceEndChoice(recurrenceEndType);
-                        final bool currentlySelected = recurrenceOptions.endChoice == recurrenceEndChoiceCustom;
+                            RecurrenceEndType.values[index - predefinedEndChoices.length];
+                        final RecurrenceEndChoice recurrenceEndChoiceCustom = getRecurrenceEndChoice(recurrenceEndType);
+                        final bool currentlySelected = _endChoice == recurrenceEndChoiceCustom;
 
                         Widget content;
 
@@ -149,23 +254,23 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                             final Widget datePicker = TextFormField(
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
-                                labelText: S.of(context).formDate,
+                                hintText: S.of(context).formDate,
                               ),
                               readOnly: true,
                               enabled: currentlySelected,
                               onTap: () => showDatePicker(
                                 context: context,
-                                initialDate: recurrenceOptions.customEndDateChoice.date ?? DateTime.now(),
+                                initialDate: customEndDateChoice.date ?? DateTime.now(),
                                 firstDate: DateTime.now(),
                                 lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
                               ).then((DateTime? value) {
                                 if (value != null) {
                                   innerSetState(() {
-                                    recurrenceOptions.setCustomDate(value, context);
+                                    setCustomDate(value);
                                   });
                                 }
                               }),
-                              controller: recurrenceOptions.customEndDateController,
+                              controller: customEndDateController,
                               key: const Key('customEndDateField'),
                             );
 
@@ -185,20 +290,19 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                               enabled: currentlySelected,
-                              controller: recurrenceOptions.customEndIntervalSizeController,
+                              controller: customEndIntervalSizeController,
                               onChanged: (String value) {
                                 innerSetState(() {
-                                  recurrenceOptions.customEndIntervalChoice.intervalSize = int.tryParse(value);
-                                  recurrenceOptions.rebuildEndChoiceController(context);
+                                  customEndIntervalChoice.intervalSize = int.tryParse(value);
                                 });
                               },
                               key: const Key('customEndIntervalSizeField'),
                             );
 
                             final Widget intervalTypeField = PopupMenuButton<RecurrenceIntervalType>(
-                              initialValue: recurrenceOptions.customEndIntervalChoice.intervalType,
+                              initialValue: customEndIntervalChoice.intervalType,
                               onSelected: (RecurrenceIntervalType value) => innerSetState(
-                                () => recurrenceOptions.setCustomEndIntervalType(value, context),
+                                () => setCustomEndIntervalType(value),
                               ),
                               enabled: currentlySelected,
                               itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
@@ -222,7 +326,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                                   ),
                                   enabled: currentlySelected,
                                   readOnly: true,
-                                  controller: recurrenceOptions.customEndIntervalTypeController,
+                                  controller: customEndIntervalTypeController,
                                 ),
                               ),
                             );
@@ -246,11 +350,10 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                               enabled: currentlySelected,
-                              controller: recurrenceOptions.customEndOccurrenceController,
+                              controller: customEndOccurrenceController,
                               onChanged: (String value) {
                                 innerSetState(() {
-                                  recurrenceOptions.customEndOccurrenceChoice.occurrences = int.tryParse(value);
-                                  recurrenceOptions.rebuildEndChoiceController(context);
+                                  customEndOccurrenceChoice.occurrences = int.tryParse(value);
                                 });
                               },
                               key: const Key('customEndOccurenceField'),
@@ -267,7 +370,7 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                           contentPadding: EdgeInsets.zero,
                           title: content,
                           value: recurrenceEndChoiceCustom,
-                          groupValue: recurrenceOptions.endChoice,
+                          groupValue: _endChoice,
                           onChanged: onChanged,
                           key: Key('recurrenceEndChoice$index'),
                         );
@@ -275,11 +378,10 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-                  if (!recurrenceOptions.validate(context, createError: false) &&
-                      recurrenceOptions.validationError != null)
+                  if (!validate(createError: false))
                     Text(
-                      S.of(context).pageCreateDriveRecurrenceEndError(recurrenceOptions.validationError!),
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                      S.of(context).pageCreateDriveRecurrenceEndError(validationError!),
+                      style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
                     ),
                 ],
               ),
@@ -290,10 +392,13 @@ class RecurrenceOptionsEdit extends StatelessWidget {
                 child: Text(S.of(context).okay),
                 onPressed: () {
                   innerSetState(() {
-                    final bool valid = recurrenceOptions.validate(context);
+                    final bool valid = validate();
                     if (valid) {
                       // Update the recurrence options in the parent widget
-                      setState(() {});
+                      setState(() {
+                        rebuildEndChoiceController();
+                        recurrenceOptions.endChoice = _endChoice;
+                      });
                       Navigator.of(context).pop();
                     }
                   });

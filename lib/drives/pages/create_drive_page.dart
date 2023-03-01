@@ -68,6 +68,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
   late int seats;
 
   late RecurrenceOptions recurrenceOptions;
+  bool recurringEnabled = false;
 
   static final List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
     RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
@@ -81,20 +82,10 @@ class CreateDriveFormState extends State<CreateDriveForm> {
     super.initState();
     selectedDate = widget.clock.now();
     seats = 1;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // This is here instead of initState
-    // because the context is needed for the recurrence options
     recurrenceOptions = RecurrenceOptions(
-      predefinedEndChoices: predefinedRecurrenceEndChoices,
       startedAt: selectedDate,
-      endChoice: predefinedRecurrenceEndChoices.last,
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
-      context: context,
+      endChoice: predefinedRecurrenceEndChoices.last,
     );
   }
 
@@ -104,7 +95,6 @@ class CreateDriveFormState extends State<CreateDriveForm> {
     _timeController.dispose();
     startController.dispose();
     destinationController.dispose();
-    recurrenceOptions.dispose();
     super.dispose();
   }
 
@@ -156,7 +146,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
         );
         final Profile driver = supabaseManager.currentProfile!;
 
-        if (recurrenceOptions.enabled) {
+        if (recurringEnabled) {
           final RecurringDrive recurringDrive = RecurringDrive(
             driverId: driver.id!,
             start: startSuggestion.name,
@@ -226,7 +216,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
       return S.of(context).formTimeValidateEmpty;
     }
     // 59 seconds are added because the selected date's seconds are always 0
-    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now()) && !recurrenceOptions.enabled) {
+    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now()) && !recurringEnabled) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -262,7 +252,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: recurrenceOptions.enabled ? S.of(context).formSinceDate : S.of(context).formDate,
+                      labelText: recurringEnabled ? S.of(context).formSinceDate : S.of(context).formDate,
                     ),
                     readOnly: true,
                     onTap: _showDatePicker,
@@ -310,20 +300,20 @@ class CreateDriveFormState extends State<CreateDriveForm> {
           ),
           LabeledCheckbox(
             label: S.of(context).pageCreateDriveRecurringCheckbox,
-            value: recurrenceOptions.enabled,
+            value: recurringEnabled,
             onChanged: (bool? value) => setState(() {
-              recurrenceOptions.enabled = value!;
+              recurringEnabled = value!;
               if (value && recurrenceOptions.weekDays.isEmpty) {
-                recurrenceOptions.weekDays.add(selectedDate.toWeekDay());
+                recurrenceOptions.weekDays = <WeekDay>[selectedDate.toWeekDay()];
               }
             }),
             key: const Key('createDriveRecurringCheckbox'),
           ),
-          if (recurrenceOptions.enabled) ...<Widget>[
+          if (recurringEnabled) ...<Widget>[
             const SizedBox(height: 10),
             RecurrenceOptionsEdit(
               recurrenceOptions: recurrenceOptions,
-              setState: setState,
+              predefinedEndChoices: predefinedRecurrenceEndChoices,
             ),
           ],
           const SizedBox(height: 10),
