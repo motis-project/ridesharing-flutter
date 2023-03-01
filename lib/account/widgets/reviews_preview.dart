@@ -20,52 +20,56 @@ class ReviewsPreview extends StatelessWidget {
     final List<Review> reviews = profile.reviewsReceived!..sort((Review a, Review b) => a.compareTo(b));
     final AggregateReview aggregateReview = AggregateReview.fromReviews(reviews);
 
-    return Column(
-      children: <Widget>[
-        Semantics(
-          label: S.of(context).reviewsPreviewReviews,
-          button: true,
-          tooltip: S.of(context).reviewsPreviewShowReviews,
-          child: InkWell(
-            onTap: onTap(context),
-            child: AggregateReviewWidget(aggregateReview),
-          ),
-        ),
-        if (reviews.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 10),
-          ExcludeSemantics(
-            child: FadeOut(
-              onTap: onTap(context),
-              label: S.of(context).reviewsPreviewReviews,
-              tooltip: S.of(context).reviewsPreviewShowReviews,
-              indicator: Text(
-                S.of(context).more,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              indicatorAlignment: Alignment.bottomRight,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 200),
-                child: ClipRect(
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List<ReviewDetail>.generate(
-                        min(reviews.length, 2),
-                        (int index) => ReviewDetail(review: reviews[index], isExpandable: false),
+    return Semantics(
+      label: S.of(context).reviewsPreviewReviews,
+      button: true,
+      tooltip: S.of(context).reviewsPreviewShowReviews,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              AggregateReviewWidget(aggregateReview),
+              if (reviews.isNotEmpty) ...<Widget>[
+                const SizedBox(height: 10),
+                ExcludeSemantics(
+                  child: FadeOut(
+                    indicator: Text(
+                      S.of(context).more,
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    ),
+                    indicatorAlignment: Alignment.bottomRight,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ClipRect(
+                        child: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List<ReviewDetail>.generate(
+                              min(reviews.length, 2),
+                              (int index) => ReviewDetail(review: reviews[index], isExpandable: false),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
+                ),
+              ],
+            ],
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
                 ),
               ),
             ),
           ),
         ],
-      ],
+      ),
     );
   }
-
-  VoidCallback onTap(BuildContext context) => () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
-      );
 }
