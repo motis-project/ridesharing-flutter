@@ -36,10 +36,6 @@ class LocaleManager with ChangeNotifier {
     return DateFormat.yMd(currentLocale.languageCode).format(date);
   }
 
-  String formatDateMonthDay(DateTime date) {
-    return DateFormat.Md(currentLocale.languageCode).format(date);
-  }
-
   String formatTime(DateTime time) {
     return DateFormat.Hm(currentLocale.languageCode).format(time);
   }
