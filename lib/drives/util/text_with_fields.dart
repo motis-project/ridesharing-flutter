@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 class TextWithFields extends StatelessWidget {
   final String text;
   final List<Widget> fields;
+  final Widget? separator;
 
   static const String placeholder = 'XYZ';
 
-  const TextWithFields(this.text, {required this.fields, super.key});
+  const TextWithFields(this.text, {super.key, required this.fields, this.separator});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,11 @@ class TextWithFields extends StatelessWidget {
 
       if (i < fields.length) {
         children.add(fields[i]);
+      }
+    }
+    if (separator != null) {
+      for (int i = 1; i < children.length; i += 2) {
+        children.insert(i, separator!);
       }
     }
     return Row(mainAxisSize: MainAxisSize.min, children: children);
