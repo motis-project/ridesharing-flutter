@@ -48,10 +48,10 @@ void main() {
 
     final List<RealtimeChannel> subscriptions = supabaseManager.supabaseClient.getChannels();
     expect(subscriptions.length, 4);
-    expect(subscriptions[0].topic, 'realtime:public:messages');
-    expect(subscriptions[1].topic, 'realtime:public:ride_events');
-    expect(subscriptions[2].topic, 'realtime:public:rides');
-    expect(subscriptions[3].topic, 'realtime:public:drives');
+    expect(subscriptions[0].topic, 'realtime:public:rides');
+    expect(subscriptions[1].topic, 'realtime:public:drives');
+    expect(subscriptions[2].topic, 'realtime:public:ride_events');
+    expect(subscriptions[3].topic, 'realtime:public:messages');
   });
 
   testWidgets('Message container', (WidgetTester tester) async {
@@ -59,7 +59,9 @@ void main() {
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.byKey(const Key('MessageContainer')), findsOneWidget);
+    expect(find.byKey(const Key('messagesColumn')), findsOneWidget);
+    expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('tripsColumn')), findsOneWidget);
   });
 
   group('RideEvent', () {
@@ -346,6 +348,7 @@ void main() {
 
       expect(find.byType(RideDetailPage), findsOneWidget);
     });
+
     testWidgets('updateRide inserts ride if status is approved and it starts today or tomorrow',
         (WidgetTester tester) async {
       final Ride ride = RideFactory().generateFake(
@@ -444,7 +447,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
-      //the folowing request is for the drive in the insertDrive function
+      //the following request is for the drive in the insertDrive function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/drives.*&id=eq\.' + drive.id.toString())),
@@ -575,8 +578,8 @@ void main() {
 
     expect(finder, findsNWidgets(7));
 
-    expect(tester.widget(finder.at(4)).key, Key('message${message2.id}'));
-    expect(tester.widget(finder.at(0)).key, Key('drive${driveTomorrow.id}'));
+    expect(tester.widget(finder.at(5)).key, Key('message${message2.id}'));
+    expect(tester.widget(finder.at(2)).key, Key('drive${driveTomorrow.id}'));
   });
 
   group('Buttons', () {

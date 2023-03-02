@@ -31,9 +31,9 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   //needs to be initialized in case the subscription gets something new before load is done
-  List<Message> _messages = <Message>[];
-  List<RideEvent> _rideEvents = <RideEvent>[];
   final List<Trip> _trips = <Trip>[];
+  List<RideEvent> _rideEvents = <RideEvent>[];
+  List<Message> _messages = <Message>[];
 
   bool _fullyLoaded = false;
   late RealtimeChannel _messagesSubscriptions;
@@ -45,34 +45,6 @@ class HomePageState extends State<HomePage> {
   void initState() {
     load();
     final int profileId = supabaseManager.currentProfile!.id!;
-
-    _messagesSubscriptions = supabaseManager.supabaseClient.channel('public:messages').on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
-      (dynamic payload, [dynamic ref]) {
-        insertMessage(pick(payload, 'new').asMapOrEmpty());
-      },
-    ).on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
-      (dynamic payload, [dynamic ref]) {
-        updateMessage(pick(payload, 'new').asMapOrEmpty());
-      },
-    );
-
-    _rideEventsSubscriptions = supabaseManager.supabaseClient.channel('public:ride_events').on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
-      (dynamic payload, [dynamic ref]) {
-        insertRideEvent(pick(payload, 'new').asMapOrEmpty());
-      },
-    ).on(
-      RealtimeListenTypes.postgresChanges,
-      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'),
-      (dynamic payload, [dynamic ref]) {
-        updateRideEvent(pick(payload, 'new').asMapOrEmpty());
-      },
-    );
 
     _ridesSubscriptions = supabaseManager.supabaseClient.channel('public:rides').on(
       RealtimeListenTypes.postgresChanges,
@@ -106,46 +78,53 @@ class HomePageState extends State<HomePage> {
       },
     );
 
-    _messagesSubscriptions.subscribe();
-    _rideEventsSubscriptions.subscribe();
+    _rideEventsSubscriptions = supabaseManager.supabaseClient.channel('public:ride_events').on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'INSERT', schema: 'public', table: 'ride_events'),
+      (dynamic payload, [dynamic ref]) {
+        insertRideEvent(pick(payload, 'new').asMapOrEmpty());
+      },
+    ).on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'ride_events'),
+      (dynamic payload, [dynamic ref]) {
+        updateRideEvent(pick(payload, 'new').asMapOrEmpty());
+      },
+    );
+
+    _messagesSubscriptions = supabaseManager.supabaseClient.channel('public:messages').on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'INSERT', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
+      (dynamic payload, [dynamic ref]) {
+        insertMessage(pick(payload, 'new').asMapOrEmpty());
+      },
+    ).on(
+      RealtimeListenTypes.postgresChanges,
+      ChannelFilter(event: 'UPDATE', schema: 'public', table: 'messages', filter: 'sender_id=neq.$profileId'),
+      (dynamic payload, [dynamic ref]) {
+        updateMessage(pick(payload, 'new').asMapOrEmpty());
+      },
+    );
     _ridesSubscriptions.subscribe();
     _drivesSubscriptions.subscribe();
+    _rideEventsSubscriptions.subscribe();
+    _messagesSubscriptions.subscribe();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    supabaseManager.supabaseClient.removeChannel(_messagesSubscriptions);
-    supabaseManager.supabaseClient.removeChannel(_rideEventsSubscriptions);
     supabaseManager.supabaseClient.removeChannel(_ridesSubscriptions);
     supabaseManager.supabaseClient.removeChannel(_drivesSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_rideEventsSubscriptions);
+    supabaseManager.supabaseClient.removeChannel(_messagesSubscriptions);
     super.dispose();
   }
 
   Future<void> load() async {
     final int profileId = supabaseManager.currentProfile!.id!;
-    final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('messages').select<List<Map<String, dynamic>>>('''
-      *,
-      sender: sender_id(*)
-      )
-    ''').eq('read', false).neq('sender_id', profileId).order('created_at'),
-    );
-    _messages = Message.fromJsonList(messagesData);
-    final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
-      await supabaseManager.supabaseClient.from('ride_events').select<List<Map<String, dynamic>>>('''
-      *,
-      ride: ride_id(*,
-        rider: rider_id(*),
-        drive: drive_id(*,
-          driver: driver_id(*)
-          )
-      )
-      ''').eq('read', false).order('created_at'),
-    );
-    _rideEvents =
-        RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()).toList();
+
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime tomorrow = today.add(const Duration(days: 2));
@@ -177,6 +156,29 @@ class HomePageState extends State<HomePage> {
     );
     _trips.sort((Trip a, Trip b) => a.startTime.compareTo(b.startTime));
 
+    final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
+      await supabaseManager.supabaseClient.from('ride_events').select<List<Map<String, dynamic>>>('''
+      *,
+      ride: ride_id(*,
+        rider: rider_id(*),
+        drive: drive_id(*,
+          driver: driver_id(*)
+          )
+      )
+      ''').eq('read', false).order('created_at'),
+    );
+    _rideEvents =
+        RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()).toList();
+
+    final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
+      await supabaseManager.supabaseClient.from('messages').select<List<Map<String, dynamic>>>('''
+      *,
+      sender: sender_id(*)
+      )
+    ''').eq('read', false).neq('sender_id', profileId).order('created_at'),
+    );
+    _messages = Message.fromJsonList(messagesData);
+
     setState(() {
       _fullyLoaded = true;
     });
@@ -206,24 +208,26 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    late final Widget messagesColumn;
-    late final Widget rideEventsColumn;
     late final Widget tripsColumn;
+    late final Widget rideEventsColumn;
+    late final Widget messagesColumn;
     if (_fullyLoaded) {
-      messagesColumn = Column(
+      tripsColumn = Column(
+        key: const Key('tripsColumn'),
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
-            child: Text(S.of(context).pageHomePageMessages, style: Theme.of(context).textTheme.titleLarge),
+            child: Text(S.of(context).pageHomePageTrips, style: Theme.of(context).textTheme.titleLarge),
           ),
           const SizedBox(height: 10),
-          if (_messages.isNotEmpty)
-            ..._messages.map(_buildMessageWidget)
+          if (_trips.isNotEmpty)
+            ..._trips.map(_buildTripWidget)
           else
-            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyMessages)
+            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyTrips)
         ],
       );
       rideEventsColumn = Column(
+        key: const Key('rideEventsColumn'),
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
@@ -236,17 +240,18 @@ class HomePageState extends State<HomePage> {
             ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyRideEvents)
         ],
       );
-      tripsColumn = Column(
+      messagesColumn = Column(
+        key: const Key('messagesColumn'),
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
-            child: Text(S.of(context).pageHomePageTrips, style: Theme.of(context).textTheme.titleLarge),
+            child: Text(S.of(context).pageHomePageMessages, style: Theme.of(context).textTheme.titleLarge),
           ),
           const SizedBox(height: 10),
-          if (_trips.isNotEmpty)
-            ..._trips.map(_buildTripWidget)
+          if (_messages.isNotEmpty)
+            ..._messages.map(_buildMessageWidget)
           else
-            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyTrips)
+            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyMessages)
         ],
       );
     }
@@ -267,12 +272,12 @@ class HomePageState extends State<HomePage> {
               const SizedBox(height: 15),
               createButton,
               const SizedBox(height: 30),
-              if (_fullyLoaded) ...[
-                messagesColumn,
+              if (_fullyLoaded) ...<Widget>[
+                tripsColumn,
                 const SizedBox(height: 30),
                 rideEventsColumn,
                 const SizedBox(height: 30),
-                tripsColumn,
+                messagesColumn,
               ] else
                 const Center(
                   child: CircularProgressIndicator(),
@@ -282,6 +287,74 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void updateRide(Map<String, dynamic> rideData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(rideData['start_time'] as String);
+    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      if (rideData['status'] == RideStatus.approved.index) {
+        setState(() {
+          bool inserted = false;
+          for (int i = 0; i < _trips.length; i++) {
+            if (_trips[i].startTime.isAfter(startTime)) {
+              _trips.insert(i, Ride.fromJson(rideData));
+              inserted = true;
+              break;
+            }
+          }
+          if (!inserted) _trips.add(Ride.fromJson(rideData));
+        });
+      } else {
+        setState(() {
+          final List<Model> ride = _trips
+              .where(
+                (Trip element) => element is Ride && element.id == rideData['id'],
+              )
+              .toList();
+          if (ride.isNotEmpty) {
+            _trips.remove(ride.first);
+          }
+        });
+      }
+    }
+  }
+
+  void insertDrive(Map<String, dynamic> driveData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
+    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      setState(() {
+        bool inserted = false;
+        for (int i = 0; i < _trips.length; i++) {
+          if (_trips[i].startTime.isAfter(startTime)) {
+            _trips.insert(i, Drive.fromJson(driveData));
+            inserted = true;
+            break;
+          }
+        }
+        if (!inserted) _trips.add(Drive.fromJson(driveData));
+      });
+    }
+  }
+
+  void updateDrive(Map<String, dynamic> driveData) {
+    final DateTime now = DateTime.now();
+    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
+    if (driveData['cancelled'] == true &&
+        startTime.isAfter(now) &&
+        startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+      setState(() {
+        final List<Trip> drive = _trips
+            .where(
+              (Trip element) => element is Drive && element.id == driveData['id'],
+            )
+            .toList();
+        if (drive.isNotEmpty) {
+          _trips.remove(drive.first);
+        }
+      });
+    }
   }
 
   Future<void> insertRideEvent(Map<String, dynamic> rideEventData) async {
@@ -338,94 +411,35 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  void updateRide(Map<String, dynamic> rideData) {
-    final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(rideData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-      if (rideData['status'] == RideStatus.approved.index) {
-        setState(() {
-          for (int i = 0; i <= _trips.length; i++) {
-            if (_trips[i].startTime.isAfter(startTime)) {
-              _trips.insert(i, Ride.fromJson(rideData));
-              break;
-            }
-          }
-        });
-      } else {
-        setState(() {
-          final List<Model> ride = _trips
-              .where(
-                (Trip element) => element is Ride && element.id == rideData['id'],
-              )
-              .toList();
-          if (ride.isNotEmpty) {
-            _trips.remove(ride.first);
-          }
-        });
-      }
-    }
-  }
-
-  void insertDrive(Map<String, dynamic> driveData) {
-    final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-      setState(() {
-        for (int i = 0; i <= _trips.length; i++) {
-          if (_trips[i].startTime.isAfter(startTime)) {
-            _trips.insert(i, Drive.fromJson(driveData));
-            break;
-          }
-        }
-      });
-    }
-  }
-
-  void updateDrive(Map<String, dynamic> driveData) {
-    final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (driveData['cancelled'] == true &&
-        startTime.isAfter(now) &&
-        startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
-      setState(() {
-        final List<Trip> drive = _trips
-            .where(
-              (Trip element) => element is Drive && element.id == driveData['id'],
-            )
-            .toList();
-        if (drive.isNotEmpty) {
-          _trips.remove(drive.first);
-        }
-      });
-    }
-  }
-
-  Widget _buildMessageWidget(Message message) {
+  Widget _buildTripWidget(Trip trip) {
     return Dismissible(
-      key: Key('message${message.id}'),
+      key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
       onDismissed: (DismissDirection direction) async {
-        unawaited(message.markAsRead());
         setState(() {
-          _messages.remove(message);
+          _trips.remove(trip);
         });
       },
       child: Card(
         child: InkWell(
           child: ListTile(
-            leading: Avatar(message.sender!),
-            title: Text(message.sender!.username),
-            subtitle: Text(message.content, maxLines: 1),
-            trailing: Text(
-              localeManager.formatTime(message.createdAt!),
-              style: Theme.of(context).textTheme.bodySmall,
+            leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
+            title: Text(
+              trip is Drive
+                  ? trip.startTime.day == DateTime.now().day
+                      ? S.of(context).pageHomeUpcomingDriveToday
+                      : S.of(context).pageHomeUpcomingDriveTomorrow
+                  : trip.startTime.day == DateTime.now().day
+                      ? S.of(context).pageHomeUpcomingRideToday
+                      : S.of(context).pageHomeUpcomingRideTomorrow,
+            ),
+            subtitle: Text(
+              S.of(context).pageHomeUpcomingTripMessage(trip.end, trip.start, localeManager.formatTime(trip.startTime)),
             ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => ChatPage(
-                    chatId: message.chatId,
-                    profile: message.sender!,
-                  ),
+                  builder: (BuildContext context) =>
+                      trip is Drive ? DriveDetailPage(id: trip.id!) : RideDetailPage(id: trip.id),
                 ),
               );
             },
@@ -470,35 +484,32 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTripWidget(Trip trip) {
+  Widget _buildMessageWidget(Message message) {
     return Dismissible(
-      key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
+      key: Key('message${message.id}'),
       onDismissed: (DismissDirection direction) async {
+        unawaited(message.markAsRead());
         setState(() {
-          _trips.remove(trip);
+          _messages.remove(message);
         });
       },
       child: Card(
         child: InkWell(
           child: ListTile(
-            leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
-            title: Text(
-              trip is Drive
-                  ? trip.startTime.day == DateTime.now().day
-                      ? S.of(context).pageHomeUpcomingDriveToday
-                      : S.of(context).pageHomeUpcomingDriveTomorrow
-                  : trip.startTime.day == DateTime.now().day
-                      ? S.of(context).pageHomeUpcomingRideToday
-                      : S.of(context).pageHomeUpcomingRideTomorrow,
-            ),
-            subtitle: Text(
-              S.of(context).pageHomeUpcomingTripMessage(trip.end, trip.start, localeManager.formatTime(trip.startTime)),
+            leading: Avatar(message.sender!),
+            title: Text(message.sender!.username),
+            subtitle: Text(message.content, maxLines: 1),
+            trailing: Text(
+              localeManager.formatTime(message.createdAt!),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) =>
-                      trip is Drive ? DriveDetailPage(id: trip.id!) : RideDetailPage(id: trip.id),
+                  builder: (BuildContext context) => ChatPage(
+                    chatId: message.chatId,
+                    profile: message.sender!,
+                  ),
                 ),
               );
             },
