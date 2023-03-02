@@ -31,9 +31,11 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   //needs to be initialized in case the subscription gets something new before load is done
-  List<Model> _items = <Model>[];
+  List<Message> _messages = <Message>[];
+  List<RideEvent> _rideEvents = <RideEvent>[];
+  final List<Trip> _trips = <Trip>[];
+
   bool _fullyLoaded = false;
-  int _upcomingTripsCount = 0;
   late RealtimeChannel _messagesSubscriptions;
   late RealtimeChannel _rideEventsSubscriptions;
   late RealtimeChannel _ridesSubscriptions;
@@ -122,7 +124,6 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> load() async {
-    final List<Model> items = <Model>[];
     final int profileId = supabaseManager.currentProfile!.id!;
     final List<Map<String, dynamic>> messagesData = parseHelper.parseListOfMaps(
       await supabaseManager.supabaseClient.from('messages').select<List<Map<String, dynamic>>>('''
@@ -131,7 +132,7 @@ class HomePageState extends State<HomePage> {
       )
     ''').eq('read', false).neq('sender_id', profileId).order('created_at'),
     );
-    items.addAll(Message.fromJsonList(messagesData));
+    _messages = Message.fromJsonList(messagesData);
     final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
       await supabaseManager.supabaseClient.from('ride_events').select<List<Map<String, dynamic>>>('''
       *,
@@ -143,13 +144,12 @@ class HomePageState extends State<HomePage> {
       )
       ''').eq('read', false).order('created_at'),
     );
-    items.addAll(RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()));
-    items.sort((Model a, Model b) => b.createdAt!.compareTo(a.createdAt!));
+    _rideEvents =
+        RideEvent.fromJsonList(rideEventsData).where((RideEvent rideEvent) => rideEvent.isForCurrentUser()).toList();
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime tomorrow = today.add(const Duration(days: 2));
-    final List<Trip> trips = <Trip>[];
-    trips.addAll(
+    _trips.addAll(
       Ride.fromJsonList(
         parseHelper.parseListOfMaps(
           await supabaseManager.supabaseClient
@@ -162,7 +162,7 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    trips.addAll(
+    _trips.addAll(
       Drive.fromJsonList(
         parseHelper.parseListOfMaps(
           await supabaseManager.supabaseClient
@@ -175,89 +175,110 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    trips.sort((Trip a, Trip b) => a.startTime.compareTo(b.startTime));
-    _upcomingTripsCount = trips.length;
-    items.insertAll(0, trips);
+    _trips.sort((Trip a, Trip b) => a.startTime.compareTo(b.startTime));
 
     setState(() {
-      _items = items;
       _fullyLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final Widget searchButton = Hero(
+      tag: 'SearchButton',
+      transitionOnUserGestures: true,
+      child: Button(
+        S.of(context).pageHomeSearchButton,
+        key: const Key('SearchButton'),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+        ),
+      ),
+    );
+    final Widget createButton = Hero(
+      tag: 'CreateButton',
+      transitionOnUserGestures: true,
+      child: Button(
+        S.of(context).pageHomeCreateButton,
+        key: const Key('CreateButton'),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
+        ),
+      ),
+    );
+    late final Widget messagesColumn;
+    late final Widget rideEventsColumn;
+    late final Widget tripsColumn;
+    if (_fullyLoaded) {
+      messagesColumn = Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(S.of(context).pageHomePageMessages, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const SizedBox(height: 10),
+          if (_messages.isNotEmpty)
+            ..._messages.map(_buildMessageWidget)
+          else
+            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyMessages)
+        ],
+      );
+      rideEventsColumn = Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(S.of(context).pageHomePageRideEvents, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const SizedBox(height: 10),
+          if (_rideEvents.isNotEmpty)
+            ..._rideEvents.map(_buildRideEventWidget)
+          else
+            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyRideEvents)
+        ],
+      );
+      tripsColumn = Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(S.of(context).pageHomePageTrips, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const SizedBox(height: 10),
+          if (_trips.isNotEmpty)
+            ..._trips.map(_buildTripWidget)
+          else
+            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyTrips)
+        ],
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text('${S.of(context).hello} ${supabaseManager.currentProfile!.username} \u{1F44B}'),
+        title: Text(S.of(context).pageHomePageHello(supabaseManager.currentProfile!.username)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
           vertical: 10,
         ),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 30),
-            Hero(
-              tag: 'SearchButton',
-              transitionOnUserGestures: true,
-              child: Button(
-                S.of(context).pageHomeSearchButton,
-                key: const Key('SearchButton'),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 10),
+              searchButton,
+              const SizedBox(height: 15),
+              createButton,
+              const SizedBox(height: 30),
+              if (_fullyLoaded) ...[
+                messagesColumn,
+                const SizedBox(height: 30),
+                rideEventsColumn,
+                const SizedBox(height: 30),
+                tripsColumn,
+              ] else
+                const Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Hero(
-              tag: 'CreateButton',
-              transitionOnUserGestures: true,
-              child: Button(
-                S.of(context).pageHomeCreateButton,
-                key: const Key('CreateButton'),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            if (_fullyLoaded)
-              Expanded(
-                key: const Key('MessageContainer'),
-                child: _items.isNotEmpty
-                    ? ListView.separated(
-                        itemCount: _items.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 2);
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          return _buildWidget(_items[index]);
-                        },
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset(
-                            'assets/chat_shrug.png',
-                            scale: 8,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            S.of(context).pageHomePageEmpty,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 3),
-                        ],
-                      ),
-              )
-            else
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-            const SizedBox(height: 35),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -277,7 +298,7 @@ class HomePageState extends State<HomePage> {
     final RideEvent rideEvent = RideEvent.fromJson(data);
     if (rideEvent.isForCurrentUser()) {
       setState(() {
-        _items.insert(_upcomingTripsCount, rideEvent);
+        _rideEvents.insert(0, rideEvent);
       });
     }
   }
@@ -285,8 +306,8 @@ class HomePageState extends State<HomePage> {
   void updateRideEvent(Map<String, dynamic> rideEventData) {
     if (rideEventData['read'] as bool) {
       setState(() {
-        _items.removeWhere(
-          (Model element) => element is RideEvent && element.id == rideEventData['id'],
+        _rideEvents.removeWhere(
+          (RideEvent element) => element.id == rideEventData['id'],
         );
       });
     }
@@ -302,7 +323,7 @@ class HomePageState extends State<HomePage> {
     ''').eq('id', messageData['id']).single();
       final Message message = Message.fromJson(data);
       setState(() {
-        _items.insert(_upcomingTripsCount, message);
+        _messages.insert(0, message);
       });
     }
   }
@@ -310,8 +331,8 @@ class HomePageState extends State<HomePage> {
   void updateMessage(Map<String, dynamic> messageData) {
     if (messageData['read'] == true) {
       setState(() {
-        _items.removeWhere(
-          (Model element) => element is Message && element.id == messageData['id'],
+        _messages.removeWhere(
+          (Message element) => element.id == messageData['id'],
         );
       });
     }
@@ -323,24 +344,22 @@ class HomePageState extends State<HomePage> {
     if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       if (rideData['status'] == RideStatus.approved.index) {
         setState(() {
-          for (int i = 0; i <= _upcomingTripsCount; i++) {
-            if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
-              _items.insert(i, Ride.fromJson(rideData));
+          for (int i = 0; i <= _trips.length; i++) {
+            if (_trips[i].startTime.isAfter(startTime)) {
+              _trips.insert(i, Ride.fromJson(rideData));
               break;
             }
           }
-          _upcomingTripsCount++;
         });
       } else {
         setState(() {
-          final List<Model> ride = _items
+          final List<Model> ride = _trips
               .where(
-                (Model element) => element is Ride && element.id == rideData['id'],
+                (Trip element) => element is Ride && element.id == rideData['id'],
               )
               .toList();
           if (ride.isNotEmpty) {
-            _items.remove(ride.first);
-            _upcomingTripsCount--;
+            _trips.remove(ride.first);
           }
         });
       }
@@ -352,13 +371,12 @@ class HomePageState extends State<HomePage> {
     final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
     if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
-        for (int i = 0; i <= _upcomingTripsCount; i++) {
-          if (_items is! Trip || (_items[i] as Trip).startTime.isAfter(startTime)) {
-            _items.insert(i, Drive.fromJson(driveData));
+        for (int i = 0; i <= _trips.length; i++) {
+          if (_trips[i].startTime.isAfter(startTime)) {
+            _trips.insert(i, Drive.fromJson(driveData));
             break;
           }
         }
-        _upcomingTripsCount++;
       });
     }
   }
@@ -370,14 +388,13 @@ class HomePageState extends State<HomePage> {
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
-        final List<Model> drive = _items
+        final List<Trip> drive = _trips
             .where(
-              (Model element) => element is Drive && element.id == driveData['id'],
+              (Trip element) => element is Drive && element.id == driveData['id'],
             )
             .toList();
         if (drive.isNotEmpty) {
-          _items.remove(drive.first);
-          _upcomingTripsCount--;
+          _trips.remove(drive.first);
         }
       });
     }
@@ -389,7 +406,7 @@ class HomePageState extends State<HomePage> {
       onDismissed: (DismissDirection direction) async {
         unawaited(message.markAsRead());
         setState(() {
-          _items.remove(message);
+          _messages.remove(message);
         });
       },
       child: Card(
@@ -425,7 +442,7 @@ class HomePageState extends State<HomePage> {
       onDismissed: (DismissDirection direction) async {
         unawaited(rideEvent.markAsRead());
         setState(() {
-          _items.remove(rideEvent);
+          _rideEvents.remove(rideEvent);
         });
       },
       child: Card(
@@ -458,7 +475,7 @@ class HomePageState extends State<HomePage> {
       key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
       onDismissed: (DismissDirection direction) async {
         setState(() {
-          _items.remove(trip);
+          _trips.remove(trip);
         });
       },
       child: Card(
@@ -491,13 +508,16 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildWidget(Model model) {
-    if (model is Message) {
-      return _buildMessageWidget(model);
-    } else if (model is RideEvent) {
-      return _buildRideEventWidget(model);
-    } else {
-      return _buildTripWidget(model as Trip);
-    }
+  List<Widget> buildEmptyRideSuggestions(String asset, String title) {
+    return <Widget>[
+      const SizedBox(height: 10),
+      Image.asset(asset, scale: 8),
+      const SizedBox(height: 10),
+      Text(
+        title,
+        style: Theme.of(context).textTheme.labelLarge,
+        textAlign: TextAlign.center,
+      ),
+    ];
   }
 }

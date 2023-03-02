@@ -364,10 +364,13 @@
   "rideEventCancelledByRiderMessage": "{username} hat die Mitfahrt abgesagt",
   "pageHomeUpcomingTripMessage": "von {start} nach {end} um {startTime}",
 
-  "pageHomePageEmpty": "Keine neuen Nachrichten",
-
-  "hello": "Hallo",
-
+  "pageHomePageHello": "Hallo {username}! \u270C",
+  "pageHomePageMessages": "Neue Nachrichten",
+  "pageHomePageRideEvents": "Jüngste Ereignisse",
+  "pageHomePageTrips": "Anstehende Fahrten",
+  "pageHomePageEmptyMessages": "Keine neuen Nachrichten",
+  "pageHomePageEmptyRideEvents": "Keine erwähnenswerte Ereignisse",
+  "pageHomePageEmptyTrips": "Keine anstehenden Fahrten",
 
   "appName": "Motis Mitfahr-App"
 }
