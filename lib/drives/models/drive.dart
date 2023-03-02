@@ -92,7 +92,6 @@ class Drive extends Trip {
   List<Ride> get pendingRides => rides!.where((Ride ride) => ride.status == RideStatus.pending).toList();
   List<Ride> get ridesWithChat => rides!.where((Ride ride) => ride.status.activeChat()).toList();
 
-  // TODO Tests
   bool get isUpcomingRecurringDriveInstance =>
       recurringDriveId != null &&
       startDateTime.isAfter(DateTime.now()) &&

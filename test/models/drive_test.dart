@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
@@ -5,6 +6,7 @@ import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
 
 import '../util/factories/drive_factory.dart';
+import '../util/factories/model_factory.dart';
 import '../util/factories/profile_factory.dart';
 import '../util/factories/recurring_drive_factory.dart';
 import '../util/factories/ride_factory.dart';
@@ -192,6 +194,79 @@ void main() {
       expect(drive.pendingRides, [ride1, ride2]);
     });
   });
+
+  group('Drive.isUpcomingRecurringDriveInstance', () {
+    test('is upcoming recurring drive instance', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDriveId: NullableParameter(random.integer(1000)),
+        hideInListView: false,
+        status: [
+          DriveStatus.cancelledByDriver,
+          DriveStatus.plannedOrFinished
+        ][random.integer(DriveStatus.values.length - 1)],
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isTrue);
+    });
+
+    test('No recurring drive', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDrive: NullableParameter(null),
+        recurringDriveId: NullableParameter(null),
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isFalse);
+    });
+
+    test('Hidden in list view', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDriveId: NullableParameter(random.integer(1000)),
+        hideInListView: true,
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isFalse);
+    });
+
+    test('Cancelled by RRule and no rides', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDriveId: NullableParameter(random.integer(1000)),
+        hideInListView: false,
+        status: DriveStatus.cancelledByRecurrenceRule,
+        rides: List.empty(),
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isFalse);
+    });
+
+    test('Cancelled by RRule and rides not loaded', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDriveId: NullableParameter(random.integer(1000)),
+        hideInListView: false,
+        status: DriveStatus.cancelledByRecurrenceRule,
+        createDependencies: false,
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isTrue);
+    });
+
+    test('Cancelled by RRule and rides', () async {
+      final Drive drive = DriveFactory().generateFake(
+        startDateTime: DateTime.now().add(const Duration(hours: 2)),
+        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        recurringDriveId: NullableParameter(random.integer(1000)),
+        hideInListView: false,
+        status: DriveStatus.cancelledByRecurrenceRule,
+        rides: RideFactory().generateFakeList(),
+      );
+      expect(drive.isUpcomingRecurringDriveInstance, isTrue);
+    });
+  });
+
   group('Drive.userHasDriveAtTimeRange', () {
     test('has drive in time range', () async {
       whenRequest(driveProcessor).thenReturnJson([

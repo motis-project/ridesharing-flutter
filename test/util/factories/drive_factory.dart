@@ -74,7 +74,7 @@ class DriveFactory extends TripFactory<Drive> {
       hideInListView: hideInListView ?? false,
       driverId: generatedDriver?.id ?? driverId ?? randomId,
       driver: generatedDriver,
-      recurringDriveId: generatedRecurringDrive?.id ?? recurringDriveId?.value ?? randomId,
+      recurringDriveId: generatedRecurringDrive?.id ?? getNullableParameterOr(recurringDriveId, randomId),
       recurringDrive: generatedRecurringDrive,
       rides: generatedRides,
     );
