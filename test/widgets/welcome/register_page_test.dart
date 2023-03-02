@@ -116,7 +116,7 @@ void main() {
         whenSignupRequest().thenReturnJson({
           'id': authId,
           'app_metadata': {},
-          'user_metadata': {},
+          'user_metadata': {'username': username},
           'aud': 'public',
           'created_at': DateTime.now().toIso8601String(),
           'email': email,
@@ -174,52 +174,12 @@ void main() {
         await expectSupabaseFailBehavior(tester);
       });
 
-      testWidgets('Fails if register is successful, but user already exists in table', (WidgetTester tester) async {
-        await pumpMaterial(tester, const RegisterPage());
-
-        await fillForm(tester);
-
-        respondToSignupRequestCorrectly();
-        whenRequest(
-          processor,
-          urlMatcher: equals('/rest/v1/profiles'),
-          bodyMatcher: equals({
-            'auth_id': authId,
-            'email': email,
-            'username': username,
-          }),
-          methodMatcher: equals('POST'),
-        ).thenReturnJson(
-          {
-            'error': 'An error occurred',
-          },
-          statusCode: 400,
-        );
-
-        await expectSupabaseFailBehavior(tester);
-      });
-
       testWidgets('Is successful if everything worked', (WidgetTester tester) async {
         await pumpMaterial(tester, const RegisterPage());
 
         await fillForm(tester);
 
         respondToSignupRequestCorrectly();
-        whenRequest(
-          processor,
-          urlMatcher: equals('/rest/v1/profiles'),
-          bodyMatcher: equals({
-            'auth_id': authId,
-            'email': email,
-            'username': username,
-          }),
-          methodMatcher: equals('POST'),
-        ).thenReturnJson(
-          {
-            'data': "{'id': '123'}",
-            'status': 200,
-          },
-        );
 
         await tester.tap(registerButtonFinder);
 

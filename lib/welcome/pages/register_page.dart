@@ -66,24 +66,15 @@ class RegisterFormState extends State<RegisterForm> {
         password: passwordController.text,
         email: emailController.text,
         emailRedirectTo: 'io.supabase.flutter://login-callback/',
+        data: <String, dynamic>{
+          'username': usernameController.text,
+        },
       );
     } on AuthException {
       return fail();
     }
 
-    final User? user = res.user;
-
-    if (user == null) {
-      return fail();
-    }
-
-    try {
-      await supabaseManager.supabaseClient.from('profiles').insert(<String, dynamic>{
-        'auth_id': user.id,
-        'email': user.email,
-        'username': usernameController.text,
-      });
-    } on PostgrestException {
+    if (res.user == null) {
       return fail();
     }
 
