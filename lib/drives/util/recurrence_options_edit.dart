@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rrule/rrule.dart';
 
 import '../../util/locale_manager.dart';
 import 'recurrence.dart';
+import 'recurrence_options_indicator.dart';
 import 'text_with_fields.dart';
 import 'week_day.dart';
 
 class RecurrenceOptionsEdit extends StatefulWidget {
   final RecurrenceOptions recurrenceOptions;
   final List<RecurrenceEndChoice> predefinedEndChoices;
+  final RecurrenceRule? originalRecurrenceRule;
 
-  const RecurrenceOptionsEdit({super.key, required this.recurrenceOptions, required this.predefinedEndChoices});
+  const RecurrenceOptionsEdit({
+    super.key,
+    required this.recurrenceOptions,
+    required this.predefinedEndChoices,
+    this.originalRecurrenceRule,
+  });
 
   @override
   State<RecurrenceOptionsEdit> createState() => RecurrenceOptionsEditState();
@@ -19,6 +27,7 @@ class RecurrenceOptionsEdit extends StatefulWidget {
 
 class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
   late final RecurrenceOptions recurrenceOptions;
+  late final RecurrenceRule originalRecurrenceRule;
   late List<RecurrenceEndChoice> predefinedEndChoices;
 
   final TextEditingController recurrenceIntervalSizeController = TextEditingController();
@@ -58,6 +67,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
     super.initState();
 
     recurrenceOptions = widget.recurrenceOptions;
+    originalRecurrenceRule = widget.originalRecurrenceRule ?? recurrenceOptions.recurrenceRule;
     predefinedEndChoices = widget.predefinedEndChoices;
 
     _endChoice = recurrenceOptions.endChoice;
@@ -128,8 +138,14 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
     return Column(
       children: <Widget>[
         buildWeekDayPicker(),
+        const SizedBox(height: 10),
         buildIntervalPicker(),
+        const SizedBox(height: 10),
         buildUntilPicker(),
+        if (recurrenceOptions.weekDays.isNotEmpty) ...<Widget>[
+          const SizedBox(height: 10),
+          buildIndicator(),
+        ]
       ],
     );
   }
@@ -138,6 +154,9 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
     return WeekDayPicker(
       weekDays: recurrenceOptions.weekDays,
       context: context,
+      onChanged: (List<WeekDay> weekDays) => setState(() {
+        recurrenceOptions.weekDays = weekDays;
+      }),
     );
   }
 
@@ -155,7 +174,8 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
       },
       onChanged: (String value) {
         setState(() {
-          recurrenceOptions.recurrenceInterval.intervalSize = int.tryParse(value);
+          recurrenceOptions.recurrenceInterval.intervalSize =
+              int.tryParse(value) ?? recurrenceOptions.recurrenceInterval.intervalSize;
         });
       },
       key: const Key('intervalSizeField'),
@@ -195,6 +215,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
         SizedBox(width: 80, child: intervalSizeField),
         SizedBox(width: 120, child: intervalTypeField),
       ],
+      separator: const SizedBox(width: 10),
     );
   }
 
@@ -208,6 +229,14 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
         controller: endChoiceController,
         key: const Key('untilField'),
       ),
+    );
+  }
+
+  Widget buildIndicator() {
+    return RecurrenceOptionsIndicator(
+      before: originalRecurrenceRule,
+      after: recurrenceOptions.recurrenceRule,
+      start: recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now(),
     );
   }
 

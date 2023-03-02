@@ -5,11 +5,13 @@ import 'package:rrule/rrule.dart';
 class WeekDayPicker extends FormField<List<WeekDay>> {
   final List<WeekDay> weekDays;
   final BuildContext context;
+  final void Function(List<WeekDay>)? onChanged;
 
   WeekDayPicker({
     super.key,
     required this.weekDays,
     required this.context,
+    this.onChanged,
     super.enabled,
   }) : super(
           builder: (FormFieldState<List<WeekDay>> state) {
@@ -30,6 +32,7 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                                     weekDays.add(weekDay);
                                   }
                                   state.didChange(weekDays);
+                                  onChanged?.call(weekDays);
                                 }
                               : null,
                         ),
@@ -41,7 +44,7 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
                       state.errorText!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                      style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
                     ),
                   ),
               ],

@@ -1,6 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rrule/rrule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../account/models/profile.dart';
@@ -314,6 +315,8 @@ class CreateDriveFormState extends State<CreateDriveForm> {
             RecurrenceOptionsEdit(
               recurrenceOptions: recurrenceOptions,
               predefinedEndChoices: predefinedRecurrenceEndChoices,
+              // Empty RecurrenceRule so that every day in the indicator is "new"
+              originalRecurrenceRule: RecurrenceRule(frequency: Frequency.yearly, until: DateTime.now().toUtc()),
             ),
           ],
           const SizedBox(height: 10),
