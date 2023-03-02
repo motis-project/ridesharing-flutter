@@ -24,6 +24,8 @@
   "delete": "Löschen",
   "preview": "Vorschau",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
+  "blockedSnackBar": "Dein Account wurde geblockt, bitte kontaktiere uns für mehr information",
+
 
   "riders": "Mitfahrer*innen",
   "seats": "Plätze",
