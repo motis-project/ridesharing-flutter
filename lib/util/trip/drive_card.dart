@@ -100,10 +100,8 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
         key: const Key('pendingIcon'),
       );
     } else {
-      return Icon(
-        Icons.done_all,
-        color: statusColor,
-        key: const Key('noPendingIcon'),
+      return const Center(
+        child: SizedBox(),
       );
     }
   }

@@ -467,8 +467,6 @@ void main() {
         );
         await loadDriveCard(tester, drive);
 
-        expect(find.byKey(const Key('noPendingIcon')), findsOneWidget);
-
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
       });
@@ -480,8 +478,6 @@ void main() {
           rides: [],
         );
         await loadDriveCard(tester, drive);
-
-        expect(find.byKey(const Key('noPendingIcon')), findsOneWidget);
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
