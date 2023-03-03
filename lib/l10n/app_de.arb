@@ -370,6 +370,8 @@
   "pageHomePageTrips": "Anstehende Fahrten",
   "pageHomePageEmpty": "Keine Aktivitäten",
   "pageHomePageEmptySubtitle": "Du kannst jetzt eine Fahrt erstellen oder eine Mitfahrt suchen!",
+  "pageHomePageCompleteProfile": "Du bist sehr mysteriös!",
+  "pageHomePageCompleteProfileButton": "Profil vervollständigen",
 
   "appName": "Motis Mitfahr-App"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
@@ -63,9 +64,37 @@ void main() {
     expect(find.byKey(const Key('rideEventsColumn')), findsNothing);
     expect(find.byKey(const Key('tripsColumn')), findsNothing);
     expect(find.byKey(const Key('emptyColumn')), findsOneWidget);
+    expect(find.byKey(const Key('completeProfileColumn')), findsNothing);
   });
 
-  testWidgets('Full page', (WidgetTester tester) async {});
+  testWidgets('Empty page with incomplete profile', (WidgetTester tester) async {
+    supabaseManager.currentProfile = ProfileFactory().generateFake(
+      id: 1,
+      description: NullableParameter(null),
+      birthDate: NullableParameter(null),
+      surname: NullableParameter(null),
+      name: NullableParameter(null),
+      gender: NullableParameter(null),
+      avatarUrl: NullableParameter(null),
+    );
+    whenRequest(processor).thenReturnJson([]);
+    await pumpMaterial(tester, const HomePage());
+    await tester.pump();
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byKey(const Key('messagesColumn')), findsNothing);
+    expect(find.byKey(const Key('rideEventsColumn')), findsNothing);
+    expect(find.byKey(const Key('tripsColumn')), findsNothing);
+    expect(find.byKey(const Key('emptyColumn')), findsNothing);
+    expect(find.byKey(const Key('completeProfileColumn')), findsOneWidget);
+
+    final Finder completeProfileButton = find.byKey(const Key('completeProfileButton'));
+    expect(completeProfileButton, findsOneWidget);
+
+    await tester.tap(completeProfileButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfilePage), findsOneWidget);
+  });
 
   group('RideEvent', () {
     testWidgets('can navigate to rideDetail if rideEvent is for ride', (WidgetTester tester) async {
@@ -570,6 +599,7 @@ void main() {
     expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
     expect(find.byKey(const Key('tripsColumn')), findsOneWidget);
     expect(find.byKey(const Key('emptyColumn')), findsNothing);
+    expect(find.byKey(const Key('completeProfileColumn')), findsNothing);
 
     final Finder finder = find.byType(Dismissible, skipOffstage: false);
     expect(finder, findsNWidgets(5));

@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/buttons/button.dart';
+import 'account/pages/profile_page.dart';
 import 'account/widgets/avatar.dart';
 import 'drives/models/drive.dart';
 import 'drives/pages/create_drive_page.dart';
@@ -256,26 +257,61 @@ class HomePageState extends State<HomePage> {
         );
       }
       if (notifications.isEmpty) {
-        notifications = <Widget>[
-          Column(
-            key: const Key('emptyColumn'),
-            children: <Widget>[
-              const SizedBox(height: 10),
-              Image.asset('assets/pointing_up.png'),
-              const SizedBox(height: 10),
-              Text(
-                S.of(context).pageHomePageEmpty,
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                S.of(context).pageHomePageEmptySubtitle,
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ];
+        if (supabaseManager.currentProfile!.description == null &&
+            supabaseManager.currentProfile!.birthDate == null &&
+            supabaseManager.currentProfile!.surname == null &&
+            supabaseManager.currentProfile!.name == null &&
+            supabaseManager.currentProfile!.gender == null &&
+            supabaseManager.currentProfile!.avatarUrl == null) {
+          notifications = <Widget>[
+            Column(
+              key: const Key('completeProfileColumn'),
+              children: <Widget>[
+                const SizedBox(height: 10),
+                Image.asset('assets/ninja.png', scale: 2),
+                const SizedBox(height: 10),
+                Text(
+                  S.of(context).pageHomePageCompleteProfile,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Button(
+                  key: const Key('completeProfileButton'),
+                  S.of(context).pageHomePageCompleteProfileButton,
+                  onPressed: () => Navigator.of(context)
+                      .push(
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => ProfilePage.fromProfile(supabaseManager.currentProfile),
+                        ),
+                      )
+                      .then((_) => setState(() {})),
+                ),
+              ],
+            ),
+          ];
+        } else {
+          notifications = <Widget>[
+            Column(
+              key: const Key('emptyColumn'),
+              children: <Widget>[
+                const SizedBox(height: 10),
+                Image.asset('assets/pointing_up.png'),
+                const SizedBox(height: 10),
+                Text(
+                  S.of(context).pageHomePageEmpty,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  S.of(context).pageHomePageEmptySubtitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ];
+        }
       }
     }
     return Scaffold(

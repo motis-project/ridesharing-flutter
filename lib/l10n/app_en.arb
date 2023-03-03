@@ -367,6 +367,8 @@
   "pageHomePageTrips": "Upcoming trips",
   "pageHomePageEmpty": "No activities",
   "pageHomePageEmptySubtitle": "You can create a drive or book a ride now!",
+  "pageHomePageCompleteProfile": "You're very mysterious!",
+  "pageHomePageCompleteProfileButton": "Complete Profile",
 
   "appName": "Motis Ride-Sharing App"
   }
