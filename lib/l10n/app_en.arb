@@ -365,9 +365,8 @@
   "pageHomePageMessages": "New messages",
   "pageHomePageRideEvents": "Recent events",
   "pageHomePageTrips": "Upcoming trips",
-  "pageHomePageEmptyMessages": "No new messages",
-  "pageHomePageEmptyRideEvents": "No recent events",
-  "pageHomePageEmptyTrips": "No upcoming trips",
+  "pageHomePageEmpty": "No activities",
+  "pageHomePageEmptySubtitle": "You can create a drive or book a ride now!",
 
   "appName": "Motis Ride-Sharing App"
   }

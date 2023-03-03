@@ -54,15 +54,18 @@ void main() {
     expect(subscriptions[3].topic, 'realtime:public:messages');
   });
 
-  testWidgets('Message container', (WidgetTester tester) async {
+  testWidgets('Empty page', (WidgetTester tester) async {
     whenRequest(processor).thenReturnJson([]);
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.byKey(const Key('messagesColumn')), findsOneWidget);
-    expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
-    expect(find.byKey(const Key('tripsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('messagesColumn')), findsNothing);
+    expect(find.byKey(const Key('rideEventsColumn')), findsNothing);
+    expect(find.byKey(const Key('tripsColumn')), findsNothing);
+    expect(find.byKey(const Key('emptyColumn')), findsOneWidget);
   });
+
+  testWidgets('Full page', (WidgetTester tester) async {});
 
   group('RideEvent', () {
     testWidgets('can navigate to rideDetail if rideEvent is for ride', (WidgetTester tester) async {
@@ -562,6 +565,11 @@ void main() {
     await tester.pump();
 
     final HomePageState homePage = tester.state(find.byType(HomePage));
+
+    expect(find.byKey(const Key('messagesColumn')), findsOneWidget);
+    expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('tripsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('emptyColumn')), findsNothing);
 
     final Finder finder = find.byType(Dismissible, skipOffstage: false);
     expect(finder, findsNWidgets(5));

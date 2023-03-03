@@ -208,52 +208,75 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    late final Widget tripsColumn;
-    late final Widget rideEventsColumn;
-    late final Widget messagesColumn;
+    List<Widget> notifications = <Widget>[];
     if (_fullyLoaded) {
-      tripsColumn = Column(
-        key: const Key('tripsColumn'),
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(S.of(context).pageHomePageTrips, style: Theme.of(context).textTheme.titleLarge),
+      if (_trips.isNotEmpty) {
+        notifications.add(
+          Column(
+            key: const Key('tripsColumn'),
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(S.of(context).pageHomePageTrips, style: Theme.of(context).textTheme.titleLarge),
+              ),
+              const SizedBox(height: 10),
+              ..._trips.map(_buildTripWidget)
+            ],
           ),
-          const SizedBox(height: 10),
-          if (_trips.isNotEmpty)
-            ..._trips.map(_buildTripWidget)
-          else
-            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyTrips)
-        ],
-      );
-      rideEventsColumn = Column(
-        key: const Key('rideEventsColumn'),
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(S.of(context).pageHomePageRideEvents, style: Theme.of(context).textTheme.titleLarge),
+        );
+      }
+      if (_rideEvents.isNotEmpty) {
+        notifications.add(
+          Column(
+            key: const Key('rideEventsColumn'),
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(S.of(context).pageHomePageRideEvents, style: Theme.of(context).textTheme.titleLarge),
+              ),
+              const SizedBox(height: 10),
+              ..._rideEvents.map(_buildRideEventWidget)
+            ],
           ),
-          const SizedBox(height: 10),
-          if (_rideEvents.isNotEmpty)
-            ..._rideEvents.map(_buildRideEventWidget)
-          else
-            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyRideEvents)
-        ],
-      );
-      messagesColumn = Column(
-        key: const Key('messagesColumn'),
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(S.of(context).pageHomePageMessages, style: Theme.of(context).textTheme.titleLarge),
+        );
+      }
+      if (_messages.isNotEmpty) {
+        notifications.add(
+          Column(
+            key: const Key('messagesColumn'),
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(S.of(context).pageHomePageMessages, style: Theme.of(context).textTheme.titleLarge),
+              ),
+              const SizedBox(height: 10),
+              ..._messages.map(_buildMessageWidget)
+            ],
           ),
-          const SizedBox(height: 10),
-          if (_messages.isNotEmpty)
-            ..._messages.map(_buildMessageWidget)
-          else
-            ...buildEmptyRideSuggestions('assets/shrug.png', S.of(context).pageHomePageEmptyMessages)
-        ],
-      );
+        );
+      }
+      if (notifications.isEmpty) {
+        notifications = <Widget>[
+          Column(
+            key: const Key('emptyColumn'),
+            children: <Widget>[
+              const SizedBox(height: 10),
+              Image.asset('assets/pointing_up.png'),
+              const SizedBox(height: 10),
+              Text(
+                S.of(context).pageHomePageEmpty,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                S.of(context).pageHomePageEmptySubtitle,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ];
+      }
     }
     return Scaffold(
       appBar: AppBar(
@@ -272,13 +295,9 @@ class HomePageState extends State<HomePage> {
               const SizedBox(height: 15),
               createButton,
               const SizedBox(height: 30),
-              if (_fullyLoaded) ...<Widget>[
-                tripsColumn,
-                const SizedBox(height: 30),
-                rideEventsColumn,
-                const SizedBox(height: 30),
-                messagesColumn,
-              ] else
+              if (_fullyLoaded)
+                ...notifications
+              else
                 const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -517,18 +536,5 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  List<Widget> buildEmptyRideSuggestions(String asset, String title) {
-    return <Widget>[
-      const SizedBox(height: 10),
-      Image.asset(asset, scale: 8),
-      const SizedBox(height: 10),
-      Text(
-        title,
-        style: Theme.of(context).textTheme.labelLarge,
-        textAlign: TextAlign.center,
-      ),
-    ];
   }
 }

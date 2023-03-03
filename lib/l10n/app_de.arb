@@ -368,9 +368,8 @@
   "pageHomePageMessages": "Neue Nachrichten",
   "pageHomePageRideEvents": "Jüngste Ereignisse",
   "pageHomePageTrips": "Anstehende Fahrten",
-  "pageHomePageEmptyMessages": "Keine neuen Nachrichten",
-  "pageHomePageEmptyRideEvents": "Keine erwähnenswerte Ereignisse",
-  "pageHomePageEmptyTrips": "Keine anstehenden Fahrten",
+  "pageHomePageEmpty": "Keine Aktivitäten",
+  "pageHomePageEmptySubtitle": "Du kannst jetzt eine Fahrt erstellen oder eine Mitfahrt suchen!",
 
   "appName": "Motis Mitfahr-App"
 }
