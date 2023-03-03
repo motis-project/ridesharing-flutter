@@ -14,7 +14,7 @@ import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
-import '../../util/trip/trip_overview.dart';
+import '../../util/trip/ride_overview.dart';
 import '../../welcome/pages/login_page.dart';
 import '../../welcome/pages/register_page.dart';
 import '../models/ride.dart';
@@ -105,7 +105,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
     final List<Widget> widgets = <Widget>[];
 
     if (_ride != null) {
-      widgets.add(TripOverview(_ride!));
+      widgets.add(RideOverview(_ride!));
       widgets.add(const Divider(thickness: 1));
     }
 

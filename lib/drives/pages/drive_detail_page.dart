@@ -16,8 +16,8 @@ import '../../util/profiles/profile_widget.dart';
 import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
+import '../../util/trip/drive_overview.dart';
 import '../../util/trip/pending_ride_card.dart';
-import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import 'drive_chat_page.dart';
 
@@ -72,7 +72,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     final List<Widget> widgets = <Widget>[];
 
     if (_drive != null) {
-      widgets.add(TripOverview(_drive!));
+      widgets.add(DriveOverview(_drive!));
       widgets.add(const Divider(thickness: 1));
     }
 

@@ -14,7 +14,7 @@ import 'package:motis_mitfahr_app/util/profiles/profile_chip.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_wrap_list.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
-import 'package:motis_mitfahr_app/util/trip/trip_overview.dart';
+import 'package:motis_mitfahr_app/util/trip/ride_overview.dart';
 import 'package:motis_mitfahr_app/welcome/pages/login_page.dart';
 import 'package:motis_mitfahr_app/welcome/pages/register_page.dart';
 
@@ -67,20 +67,20 @@ void main() {
       testWidgets('Works with id parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, RideDetailPage(id: ride.id));
 
-        expect(find.byType(TripOverview), findsNothing);
+        expect(find.byType(RideOverview), findsNothing);
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         // Wait for the ride to be fully loaded
         await tester.pump();
 
-        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.byType(RideOverview), findsOneWidget);
         expect(find.text(driver.username), findsOneWidget);
       });
 
       testWidgets('Works with object parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, RideDetailPage.fromRide(ride));
 
-        expect(find.byType(TripOverview), findsOneWidget);
+        expect(find.byType(RideOverview), findsOneWidget);
         expect(find.text(driver.username), findsNothing);
 
         // Wait for the ride to be fully loaded
