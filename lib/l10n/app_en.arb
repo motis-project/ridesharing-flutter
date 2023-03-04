@@ -304,6 +304,7 @@
   "pageRidesTooltipSearchRide": "Search ride",
 
   "pageRideDetailTitle": "Ride Detail",
+  "pageRideDetailDriver": "Driver",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
   "pageRideDetailButtonWithdraw": "Withdraw request",

@@ -113,13 +113,30 @@ class _RideDetailPageState extends State<RideDetailPage> {
       final Ride ride = _ride!;
 
       final Profile driver = ride.drive!.driver!;
-      widgets.add(ProfileWidget(driver, showDescription: true, withHero: true));
-      widgets.add(const Divider(thickness: 1));
-
-      widgets.add(ReviewsPreview(driver));
-
-      if (driver.profileFeatures!.isNotEmpty) widgets.add(const Divider(thickness: 1));
-      widgets.add(FeaturesColumn(driver.profileFeatures!));
+      widgets.addAll(<Widget>[
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(S.of(context).pageRideDetailDriver, style: Theme.of(context).textTheme.titleLarge),
+        ),
+        const SizedBox(height: 10),
+        ProfileWidget(driver, showDescription: true, withHero: true),
+        const SizedBox(height: 24),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(S.of(context).pageProfileReviewsTitle, style: Theme.of(context).textTheme.titleLarge),
+        ),
+        const SizedBox(height: 10),
+        ReviewsPreview(driver),
+        if (driver.profileFeatures!.isNotEmpty) ...<Widget>[
+          const SizedBox(height: 24),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(S.of(context).pageProfileFeaturesTitle, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const SizedBox(height: 10),
+          FeaturesColumn(driver.profileFeatures!),
+        ],
+      ]);
 
       if (ride.status.isRealRider()) {
         widgets.add(const Divider(thickness: 1));

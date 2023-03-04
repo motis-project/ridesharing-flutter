@@ -305,6 +305,7 @@
   "pageRidesTooltipSearchRide": "Fahrt suchen",
 
   "pageRideDetailTitle": "Mitfahrt Info",
+  "pageRideDetailDriver": "Fahrer*in",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",
   "pageRideDetailButtonCancel": "Mitfahrt absagen",
   "pageRideDetailButtonWithdraw": "Anfrage zurücknehmen",
