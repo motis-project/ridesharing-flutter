@@ -78,6 +78,8 @@ void main() {
       avatarUrl: NullableParameter(null),
     );
     whenRequest(processor).thenReturnJson([]);
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
+        .thenReturnJson(supabaseManager.currentProfile!.toJsonForApi());
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
     expect(find.byType(HomePage), findsOneWidget);
@@ -91,7 +93,8 @@ void main() {
     expect(completeProfileButton, findsOneWidget);
 
     await tester.tap(completeProfileButton);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
     expect(find.byType(ProfilePage), findsOneWidget);
   });
