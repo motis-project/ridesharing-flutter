@@ -105,6 +105,7 @@ class RideOverview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        const SizedBox(height: 10),
         date,
         const SizedBox(height: 20.0),
         startDest,
