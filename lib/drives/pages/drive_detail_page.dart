@@ -179,12 +179,13 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           itemCount: stops.length,
         ),
       );
-      widgets.add(timeline);
-
       if (approvedRides.isNotEmpty) {
+        widgets.add(timeline);
+
         widgets.add(const Divider(thickness: 1));
         final Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
         widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
+        widgets.add(const Divider(thickness: 1));
       }
 
       final List<Ride> pendingRides = _drive!.pendingRides!.toList();
