@@ -254,6 +254,7 @@
   "pageCreateDriveButtonCreate": "Erstellen",
 
   "pageDriveDetailTitle": "Fahrt Info",
+  "pageDriveDetailRoute": "Fahrtverlauf",
   "pageDriveDetailLabelStartDrive": "Start der Fahrt",
   "pageDriveDetailLabelEndDrive": "Ende der Fahrt",
   "pageDriveDetailLabelPickup": "{seats, plural, one{{user} abholen} other{{seats} Personen abholen, die mit {user} fahren}}",

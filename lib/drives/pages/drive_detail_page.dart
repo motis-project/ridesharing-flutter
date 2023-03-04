@@ -155,24 +155,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             return Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Column(
-                children: <Widget>[
-                  const SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    width: double.infinity,
-                    child: Column(
-                      key: const Key('waypointCard'),
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: buildCard(stop),
-                    ),
-                  ),
-                  const SizedBox(height: 10.0)
-                ],
+                children: <Widget>[const SizedBox(height: 5), buildCard(stop), const SizedBox(height: 5)],
               ),
             );
           },
@@ -180,12 +163,19 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ),
       );
       if (approvedRides.isNotEmpty) {
-        widgets.add(timeline);
-
-        widgets.add(const Divider(thickness: 1));
         final Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
-        widgets.add(ProfileWrapList(riders, title: S.of(context).riders));
-        widgets.add(const Divider(thickness: 1));
+        widgets.addAll(<Widget>[
+          const SizedBox(height: 5),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(S.of(context).pageDriveDetailRoute, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          const SizedBox(height: 10),
+          timeline,
+          const Divider(),
+          ProfileWrapList(riders, title: S.of(context).riders),
+          const Divider(),
+        ]);
       }
 
       final List<Ride> pendingRides = _drive!.pendingRides!.toList();
@@ -297,9 +287,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  List<Widget> buildCard(Waypoint waypoint) {
-    final List<Widget> list = <Widget>[];
-    list.add(
+  Widget buildCard(Waypoint waypoint) {
+    final List<Widget> cardWidgets = <Widget>[];
+    cardWidgets.add(
       MergeSemantics(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
@@ -308,10 +298,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             children: <Widget>[
               Text(
                 localeManager.formatTime(waypoint.time),
-                style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.normal),
               ),
-              const SizedBox(width: 4.0),
-              Flexible(child: Text(waypoint.place)),
+              const SizedBox(width: 6),
+              Flexible(child: Text(waypoint.place, style: Theme.of(context).textTheme.titleMedium)),
               if (waypoint.place == _drive!.start)
                 Semantics(label: S.of(context).pageDriveDetailLabelStartDrive)
               else if (waypoint.place == _drive!.end)
@@ -339,7 +329,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
           ),
           child: Material(
             color: Colors.transparent,
@@ -355,7 +345,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
                 ),
               ).then((_) => loadDrive()),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                padding: const EdgeInsets.all(10),
                 child: Row(
                   children: <Widget>[
                     IconWidget(icon: icon, count: action.ride.seats),
@@ -382,14 +372,19 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           ),
         ),
       );
-      list.add(container);
-
-      if (index < actionsLength - 1) {
-        list.add(const SizedBox(height: 6.0));
+      if (index < actionsLength) {
+        cardWidgets.add(const SizedBox(height: 6.0));
       }
+
+      cardWidgets.add(container);
     }
 
-    return list;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: SizedBox(width: double.infinity, child: Column(children: cardWidgets)),
+      ),
+    );
   }
 
   Future<void> hideDrive() async {
