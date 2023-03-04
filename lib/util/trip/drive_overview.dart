@@ -44,7 +44,7 @@ class DriveOverview extends StatelessWidget {
       children: <Widget>[
         Expanded(child: Text(drive.start, style: Theme.of(context).textTheme.titleLarge)),
         const SizedBox(width: 10.0),
-        const Icon(Icons.arrow_forward_rounded),
+        const Icon(Icons.east),
         const SizedBox(width: 10.0),
         Expanded(child: Text(drive.end, textAlign: TextAlign.right, style: Theme.of(context).textTheme.titleLarge)),
       ],
