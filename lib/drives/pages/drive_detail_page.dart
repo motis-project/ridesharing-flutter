@@ -174,7 +174,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           timeline,
           const Divider(),
           ProfileWrapList(riders, title: S.of(context).riders),
-          const Divider(),
         ]);
       }
 

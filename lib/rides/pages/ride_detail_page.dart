@@ -114,6 +114,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       final Profile driver = ride.drive!.driver!;
       widgets.addAll(<Widget>[
+        const SizedBox(height: 5),
         Align(
           alignment: Alignment.centerLeft,
           child: Text(S.of(context).pageRideDetailDriver, style: Theme.of(context).textTheme.titleLarge),
