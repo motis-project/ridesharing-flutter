@@ -45,10 +45,18 @@ void main() {
         // Wait for the drive to be fully loaded
         await tester.pump();
 
-        expect(find.text(drive.start), findsNWidgets(2));
+        expect(find.text(drive.start), findsOneWidget);
       });
 
       testWidgets('Works with object parameter', (WidgetTester tester) async {
+        drive = DriveFactory().generateFake(
+          start: 'Start',
+          end: 'End',
+          endTime: DateTime.now().add(const Duration(hours: 1)),
+          rides: [RideFactory().generateFake(status: RideStatus.approved)],
+        );
+        whenRequest(processor).thenReturnJson(drive.toJsonForApi());
+
         await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
 
         expect(find.byType(TripOverview), findsOneWidget);

@@ -380,6 +380,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     }
 
     return Card(
+      key: const Key('waypointCard'),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: SizedBox(width: double.infinity, child: Column(children: cardWidgets)),
