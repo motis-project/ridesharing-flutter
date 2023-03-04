@@ -58,6 +58,8 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
 
   void Function()? get onTap;
 
+  EdgeInsets get middlePadding => const EdgeInsets.fromLTRB(10, 24, 0, 24);
+
   FixedTimeline buildRoute() {
     return FixedTimeline(
       theme: CustomTimelineTheme.of(context),
@@ -89,7 +91,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 24, 0, 24),
+            padding: middlePadding,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

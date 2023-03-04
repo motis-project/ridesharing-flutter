@@ -5,6 +5,7 @@ import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../icon_widget.dart';
 import '../locale_manager.dart';
+import '../own_theme_fields.dart';
 import '../profiles/profile_widget.dart';
 import '../snackbar.dart';
 import '../supabase_manager.dart';
@@ -66,13 +67,13 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
         IconButton(
           key: const Key('approveButton'),
           onPressed: () => showApproveDialog(context),
-          icon: const Icon(Icons.check_circle_outline, color: Colors.green, size: 50.0),
+          icon: Icon(Icons.check_circle_outline, color: Theme.of(context).own().success, size: 42.0),
           tooltip: S.of(context).approve,
         ),
         IconButton(
           key: const Key('rejectButton'),
           onPressed: () => showRejectDialog(context),
-          icon: const Icon(Icons.cancel_outlined, color: Colors.red, size: 50.0),
+          icon: Icon(Icons.cancel_outlined, color: Theme.of(context).colorScheme.error, size: 42.0),
           tooltip: S.of(context).reject,
         ),
       ],
@@ -182,7 +183,7 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
   }
 
   @override
-  EdgeInsets get middlePadding => const EdgeInsets.only(left: 16);
+  EdgeInsets get middlePadding => const EdgeInsets.only(left: 10);
 
   @override
   void Function()? get onTap {
