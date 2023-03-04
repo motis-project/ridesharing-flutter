@@ -225,6 +225,7 @@ class HomePageState extends State<HomePage> {
             ],
           ),
         );
+        notifications.add(const SizedBox(height: 10));
       }
       if (_rideEvents.isNotEmpty) {
         notifications.add(
@@ -240,6 +241,7 @@ class HomePageState extends State<HomePage> {
             ],
           ),
         );
+        notifications.add(const SizedBox(height: 10));
       }
       if (_messages.isNotEmpty) {
         notifications.add(
@@ -255,14 +257,10 @@ class HomePageState extends State<HomePage> {
             ],
           ),
         );
+        notifications.add(const SizedBox(height: 10));
       }
       if (notifications.isEmpty) {
-        if (supabaseManager.currentProfile!.description == null &&
-            supabaseManager.currentProfile!.birthDate == null &&
-            supabaseManager.currentProfile!.surname == null &&
-            supabaseManager.currentProfile!.name == null &&
-            supabaseManager.currentProfile!.gender == null &&
-            supabaseManager.currentProfile!.avatarUrl == null) {
+        if (supabaseManager.currentProfile!.hasNoPersonalInformation) {
           notifications = <Widget>[
             Column(
               key: const Key('completeProfileColumn'),
