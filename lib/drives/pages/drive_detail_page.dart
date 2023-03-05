@@ -155,7 +155,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             return Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Column(
-                children: <Widget>[const SizedBox(height: 5), buildCard(stop), const SizedBox(height: 5)],
+                children: <Widget>[Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: buildCard(stop))],
               ),
             );
           },
