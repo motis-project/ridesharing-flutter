@@ -14,10 +14,10 @@ class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
-  State<MainApp> createState() => _MainAppState();
+  State<MainApp> createState() => MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class MainAppState extends State<MainApp> {
   TabItem _currentTab = TabItem.home;
   final Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = <TabItem, GlobalKey<NavigatorState>>{
     TabItem.home: GlobalKey<NavigatorState>(),
@@ -39,6 +39,13 @@ class _MainAppState extends State<MainApp> {
     } else {
       setState(() => _currentTab = tabItem);
     }
+  }
+
+  Future<void> selectTabAndPush(TabItem tabItem, Widget page) {
+    _selectTab(tabItem);
+    return _navigatorKeys[tabItem]!
+        .currentState!
+        .push<void>(MaterialPageRoute<void>(builder: (BuildContext context) => page));
   }
 
   @override

@@ -11,6 +11,8 @@ import 'account/widgets/avatar.dart';
 import 'drives/models/drive.dart';
 import 'drives/pages/create_drive_page.dart';
 import 'drives/pages/drive_detail_page.dart';
+import 'main.dart';
+import 'main_app.dart';
 import 'rides/models/ride.dart';
 import 'rides/pages/ride_detail_page.dart';
 import 'rides/pages/search_ride_page.dart';
@@ -193,9 +195,7 @@ class HomePageState extends State<HomePage> {
       child: Button(
         S.of(context).pageHomeSearchButton,
         key: const Key('SearchButton'),
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (BuildContext context) => const SearchRidePage()),
-        ),
+        onPressed: () => mainAppKey.currentState!.selectTabAndPush(TabItem.rides, const SearchRidePage()),
       ),
     );
     final Widget createButton = Hero(
@@ -204,9 +204,7 @@ class HomePageState extends State<HomePage> {
       child: Button(
         S.of(context).pageHomeCreateButton,
         key: const Key('CreateButton'),
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (BuildContext context) => const CreateDrivePage()),
-        ),
+        onPressed: () => mainAppKey.currentState!.selectTabAndPush(TabItem.drives, const CreateDrivePage()),
       ),
     );
     List<Widget> notifications = <Widget>[];
@@ -277,12 +275,8 @@ class HomePageState extends State<HomePage> {
                 Button(
                   key: const Key('completeProfileButton'),
                   S.of(context).pageHomePageCompleteProfileButton,
-                  onPressed: () => Navigator.of(context)
-                      .push(
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => ProfilePage.fromProfile(supabaseManager.currentProfile),
-                        ),
-                      )
+                  onPressed: () => mainAppKey.currentState!
+                      .selectTabAndPush(TabItem.account, ProfilePage.fromProfile(supabaseManager.currentProfile))
                       .then((_) => setState(() {})),
                 ),
               ],
