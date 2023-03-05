@@ -124,6 +124,8 @@ class RegisterFormState extends State<RegisterForm> {
                 border: const OutlineInputBorder(),
                 labelText: S.of(context).pageRegisterUsername,
                 hintText: S.of(context).pageRegisterUsernameHint,
+                helperText: S.of(context).pageRegisterUsernameHelper,
+                helperMaxLines: 2,
               ),
               key: const Key('registerUsernameField'),
               controller: usernameController,
@@ -134,7 +136,7 @@ class RegisterFormState extends State<RegisterForm> {
                 return null;
               },
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 25),
             PasswordField(
               controller: passwordController,
               validateSecurity: true,

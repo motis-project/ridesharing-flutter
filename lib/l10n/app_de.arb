@@ -72,7 +72,8 @@
 
   "pageRegisterTitle": "Registrieren",
   "pageRegisterUsername": "Nutzername",
-  "pageRegisterUsernameHint": "Wir empfehlen deinen Vornamen",
+  "pageRegisterUsernameHint": "Gib deinen Nutzernamen ein",
+  "pageRegisterUsernameHelper": "Wir empfehlen deinen Vornamen",
   "pageRegisterUsernameValidateEmpty": "Bitte gib deinen Nutzernamen ein",
   "pageRegisterButtonCreate": "Account erstellen",
   "pageRegisterButtonCreated": "Account erstellt",
