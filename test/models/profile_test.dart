@@ -59,6 +59,32 @@ void main() {
     });
   });
 
+  group('hasNoPersonalInformation', () {
+    test('returns true if user has no personal information', () async {
+      final profile = ProfileFactory().generateFake(
+        description: NullableParameter(null),
+        birthDate: NullableParameter(null),
+        surname: NullableParameter(null),
+        name: NullableParameter(null),
+        gender: NullableParameter(null),
+        avatarUrl: NullableParameter(null),
+      );
+      expect(profile.hasNoPersonalInformation, true);
+    });
+
+    test('returns false if one piece of personal information is not null', () async {
+      final profile = ProfileFactory().generateFake(
+        description: NullableParameter(null),
+        birthDate: NullableParameter(null),
+        surname: NullableParameter(null),
+        name: NullableParameter(null),
+        gender: NullableParameter(null),
+        avatarUrl: NullableParameter('https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
+      );
+      expect(profile.hasNoPersonalInformation, false);
+    });
+  });
+
   group('Profile.fromJson', () {
     test('parses a profile from json', () async {
       final Map<String, dynamic> json = {
