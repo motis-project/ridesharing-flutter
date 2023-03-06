@@ -67,13 +67,13 @@ class _PendingRideCardState extends TripCardState<Ride, PendingRideCard> {
         IconButton(
           key: const Key('approveButton'),
           onPressed: () => showApproveDialog(context),
-          icon: Icon(Icons.check_circle_outline, color: Theme.of(context).own().success, size: 42.0),
+          icon: Icon(Icons.check_circle_outline, color: Theme.of(context).own().success, size: 50.0),
           tooltip: S.of(context).approve,
         ),
         IconButton(
           key: const Key('rejectButton'),
           onPressed: () => showRejectDialog(context),
-          icon: Icon(Icons.cancel_outlined, color: Theme.of(context).colorScheme.error, size: 42.0),
+          icon: Icon(Icons.cancel_outlined, color: Theme.of(context).colorScheme.error, size: 50.0),
           tooltip: S.of(context).reject,
         ),
       ],
