@@ -154,7 +154,9 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
   Future<void> _stopRecurringDrive(DateTime date) async {
     await _recurringDrive.stop(date);
-    setState(() {});
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   void _showStopDialog() {

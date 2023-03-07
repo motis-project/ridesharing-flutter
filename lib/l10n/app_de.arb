@@ -317,6 +317,7 @@
 
   "pageRecurringDriveDetailTitle": "Wiederkehrende Fahrt",
   "pageRecurringDriveDetailUpcomingDrives": "Zukünftige Fahrten",
+  "pageRecurringDriveDetailUpcomingDrivesStopped": "Du hast diese wiederkehrende Fahrt gestoppt. Es gibt also keine zukünftigen Fahrten.",
   "pageRecurringDriveDetailUpcomingDrivesEmpty": "Es gibt keine zukünftigen Fahrten für diese wiederkehrende Fahrt. Versuche, die Wiederholungsregeln zu ändern.",
 
   "pageRecurringDriveEditTitle": "Wiederkehrende Fahrt bearbeiten",
@@ -326,7 +327,7 @@
   "pageRecurringDriveEditChangeDialogContent": "Bist du sicher, dass du die Wiederholungsregeln ändern möchtest? {cancelledDrivesCount} Fahrten werden automatisch abgesagt.",
   "pageRecurringDriveEditChangeDialogSnackBar": "Widerholungsregeln geändert.",
   "pageRecurringDriveEditStopDialogTitle": "Wiederkehrende Fahrt stoppen",
-  "pageRecurringDriveEditStopDialogContent": "Bist du sicher, dass du diese wiederkehrende Fahrt stoppen willst.",
+  "pageRecurringDriveEditStopDialogContent": "Bist du sicher, dass du diese wiederkehrende Fahrt stoppen willst?",
   "pageRecurringDriveEditStopDialogSnackBar": "Wiederkehrende Fahrt gestoppt.",
 
 

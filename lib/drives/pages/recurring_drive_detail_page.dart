@@ -135,7 +135,9 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
         widgets.add(const SizedBox(height: 10));
         widgets.add(
           Text(
-            S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty,
+            _recurringDrive!.stoppedAt == null
+                ? S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty
+                : S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped,
             key: const Key('noUpcomingDrives'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -150,7 +152,7 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageRecurringDriveDetailTitle),
-        actions: <Widget>[buildEditButton()],
+        actions: _recurringDrive?.stoppedAt == null ? <Widget>[buildEditButton()] : null,
       ),
       body: _recurringDrive == null
           ? const Center(child: CircularProgressIndicator())
