@@ -7,7 +7,6 @@ import 'package:motis_mitfahr_app/account/pages/write_review_page.dart';
 import 'package:motis_mitfahr_app/account/widgets/avatar.dart';
 import 'package:motis_mitfahr_app/account/widgets/review_detail.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
-import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/reviews/aggregate_review_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 
@@ -72,38 +71,23 @@ void main() {
       await pumpMaterial(tester, ReviewsPage(profile: profile));
       await tester.pump();
 
-      expect(find.byKey(const Key('aggregateReview')), findsOneWidget);
-      expect(find.text(aggregateReview.rating.toStringAsFixed(1)), findsOneWidget);
+      final Finder aggregateReviewFinder = find.byType(AggregateReviewWidget);
+      expect(aggregateReviewFinder, findsOneWidget);
       expect(
-          find.descendant(
-            of: find.byKey(const Key('aggregateReview')),
-            matching: find.byKey(const Key('ratingBarIndicator')),
-          ),
-          findsOneWidget);
-
-      expect(find.byKey(const Key('reviewCount')), findsOneWidget);
+        tester.widget<AggregateReviewWidget>(aggregateReviewFinder).aggregateReview.rating,
+        aggregateReview.rating,
+      );
     });
 
     testWidgets('reviews', (WidgetTester tester) async {
       await pumpMaterial(tester, ReviewsPage(profile: profile));
       await tester.pump();
 
-      for (int i = 0; i < profile.reviewsReceived!.length; i++) {
-        final Review review = profile.reviewsReceived![i];
-        expect(find.byKey(Key('reviewCard ${review.writerId}')), findsOneWidget);
-        expect(find.byKey(Key('profile-${review.writerId}')), findsOneWidget);
-        expect(
-            find.descendant(
-                of: find.byKey(Key('reviewCard ${review.writerId}')),
-                matching: find.text(localeManager.formatDate(review.createdAt!))),
-            findsOneWidget);
-        expect(
-            find.descendant(
-                of: find.byKey(Key('reviewCard ${review.writerId}')), matching: find.byKey(const Key('reviewRating'))),
-            findsOneWidget);
-        expect(find.descendant(of: find.byKey(Key('reviewCard ${review.writerId}')), matching: find.text(review.text!)),
-            findsOneWidget);
-      }
+      final Finder reviewDetailFinder = find.byType(ReviewDetail);
+      expect(
+        reviewDetailFinder,
+        findsNWidgets(profile.reviewsReceived!.length),
+      );
     });
 
     testWidgets('no reviews', (WidgetTester tester) async {

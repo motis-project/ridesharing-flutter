@@ -9,6 +9,7 @@ class ReviewFactory extends ModelFactory<Review> {
   Review generateFake({
     int? id,
     DateTime? createdAt,
+    NullableParameter<DateTime>? updatedAt,
     int? rating,
     NullableParameter<int>? comfortRating,
     NullableParameter<int>? safetyRating,
@@ -24,6 +25,8 @@ class ReviewFactory extends ModelFactory<Review> {
     assert(writerId == null || writer?.value == null || writer!.value?.id == writerId);
     assert(receiverId == null || receiver?.value == null || receiver!.value?.id == receiverId);
 
+    final DateTime generatedCreatedAt = createdAt ?? DateTime.now();
+
     final Profile? generatedWriter =
         getNullableParameterOr(writer, ProfileFactory().generateFake(id: writerId, createDependencies: false));
     final Profile? generatedReceiver =
@@ -32,6 +35,7 @@ class ReviewFactory extends ModelFactory<Review> {
     return Review(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
+      updatedAt: getNullableParameterOr(updatedAt, generatedCreatedAt),
       rating: rating ?? random.nextInt(Review.maxRating),
       comfortRating: getNullableParameterOr(comfortRating, random.nextInt(Review.maxRating)),
       safetyRating: getNullableParameterOr(safetyRating, random.nextInt(Review.maxRating)),

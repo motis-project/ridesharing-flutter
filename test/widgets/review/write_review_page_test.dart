@@ -217,8 +217,9 @@ void main() {
           'reliability_rating': ratingList[2],
           'hospitality_rating': ratingList[3],
           'text': 'test',
+          'updated_at': null,
           'writer_id': profile.id! + 1,
-          'receiver_id': profile.id
+          'receiver_id': profile.id,
         }),
       ).called(1);
     });
@@ -265,6 +266,7 @@ void main() {
           'reliability_rating': review.reliabilityRating,
           'hospitality_rating': review.hospitalityRating,
           'text': review.text,
+          'updated_at': isA<String>(),
           'writer_id': profile.id! + 1,
           'receiver_id': profile.id
         }),

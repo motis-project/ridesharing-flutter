@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../util/fade_out.dart';
 import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import '../models/profile.dart';
 import '../models/review.dart';
@@ -28,60 +29,42 @@ class ReviewsPreview extends StatelessWidget {
           Column(
             children: <Widget>[
               AggregateReviewWidget(aggregateReview),
-              if (reviews.isNotEmpty)
+              if (reviews.isNotEmpty) ...<Widget>[
+                const SizedBox(height: 10),
                 ExcludeSemantics(
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(height: 10),
-                      ShaderMask(
-                        shaderCallback: (Rect rect) => const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: <Color>[Colors.black, Colors.transparent],
-                        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
-                        blendMode: BlendMode.dstIn,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 200),
-                          child: ClipRect(
-                            child: SingleChildScrollView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: List<ReviewDetail>.generate(
-                                  min(reviews.length, 2),
-                                  (int index) => ReviewDetail(review: reviews[index]),
-                                ),
-                              ),
+                  child: FadeOut(
+                    indicator: Text(
+                      S.of(context).more,
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    ),
+                    indicatorAlignment: Alignment.bottomRight,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: ClipRect(
+                        child: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List<ReviewDetail>.generate(
+                              min(reviews.length, 2),
+                              (int index) => ReviewDetail(review: reviews[index], isExpandable: false),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                )
+                ),
+              ],
             ],
           ),
-          if (reviews.isNotEmpty)
-            Positioned(
-              bottom: 2,
-              right: 2,
-              child: ExcludeSemantics(
-                child: Text(
-                  S.of(context).more,
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-            ),
           Positioned.fill(
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
-                  );
-                },
-                key: const Key('reviewsPreview'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
+                ),
               ),
             ),
           ),

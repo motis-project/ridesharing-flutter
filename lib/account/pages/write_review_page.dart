@@ -23,6 +23,7 @@ class WriteReviewPage extends StatefulWidget {
 
 class _WriteReviewPageState extends State<WriteReviewPage> {
   bool ratingChangedManually = false;
+  late Review _previousReview;
   Review? _review;
   late TextEditingController _textController;
   ButtonState _state = ButtonState.idle;
@@ -49,13 +50,14 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         .limit(1)
         .maybeSingle();
     setState(() {
-      _review = data != null
+      _previousReview = data != null
           ? Review.fromJson(data)
           : Review(
               rating: 0,
               writerId: supabaseManager.currentProfile!.id!,
               receiverId: widget.profile.id!,
             );
+      _review = _previousReview.copyWith();
       if (_review!.text != null) _textController.text = _review!.text!;
     });
   }
@@ -237,11 +239,16 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     setState(() {
       _state = ButtonState.loading;
     });
-    if (_review!.id == null) {
-      await supabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
-    } else {
-      await supabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
+
+    if (_review!.isChangedFrom(_previousReview)) {
+      if (_review!.id == null) {
+        await supabaseManager.supabaseClient.from('reviews').insert(_review!.toJson());
+      } else {
+        _review!.updatedAt = DateTime.now();
+        await supabaseManager.supabaseClient.from('reviews').update(_review!.toJson()).eq('id', _review!.id);
+      }
     }
+
     setState(() {
       _state = ButtonState.success;
     });
