@@ -18,6 +18,7 @@
   "remove": "Remove",
   "before": "Before",
   "after": "After",
+  "preview": "Preview",
   "failureSnackBar": "Something went wrong.",
 
   "riders": "Riders",

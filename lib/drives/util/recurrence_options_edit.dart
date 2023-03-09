@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rrule/rrule.dart';
 
+import '../../util/expandable_section.dart';
 import '../../util/locale_manager.dart';
 import 'recurrence.dart';
 import 'recurrence_options_indicator.dart';
@@ -233,10 +234,13 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
   }
 
   Widget buildIndicator() {
-    return RecurrenceOptionsIndicator(
-      before: originalRecurrenceRule,
-      after: recurrenceOptions.recurrenceRule,
-      start: recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now(),
+    return ExpandableSection(
+      title: S.of(context).preview,
+      child: RecurrenceOptionsIndicator(
+        before: originalRecurrenceRule,
+        after: recurrenceOptions.recurrenceRule,
+        start: recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now(),
+      ),
     );
   }
 
