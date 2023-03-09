@@ -27,17 +27,6 @@ class RecurrenceOptionsIndicator extends StatelessWidget {
       return Text(S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty);
     }
 
-    final int maxDaysFront =
-        max(4, allDays.where((DateTime elem) => elem.difference(start) < const Duration(days: 14)).length);
-    final int maxDaysBack = maxDaysFront ~/ 2;
-
-    bool hasRemoved = false;
-    // + 1 because the ... makes up the space of one day anyway
-    if (maxDaysFront + maxDaysBack + 1 < allDays.length) {
-      allDays.removeRange(maxDaysFront, allDays.length - maxDaysBack);
-      hasRemoved = true;
-    }
-
     final List<Widget> days = allDays
         .map<Widget>(
           (DateTime elem) => RecurrenceOptionsIndicatorDay(
@@ -51,17 +40,26 @@ class RecurrenceOptionsIndicator extends StatelessWidget {
         )
         .toList();
 
-    if (hasRemoved) {
-      days.insert(
-        maxDaysFront,
-        Text(
-          '...',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-      );
+    final int maxDaysFront =
+        max(4, allDays.where((DateTime elem) => elem.difference(start) < const Duration(days: 14)).length);
+    final int maxDaysBack = maxDaysFront ~/ 2;
+
+    final List<Widget> daysFront = days.sublist(0, min(maxDaysFront, days.length));
+
+    List<Widget> daysBack = <Widget>[];
+    if (maxDaysFront + maxDaysBack < days.length) {
+      daysBack = days.sublist(days.length - maxDaysBack);
     }
 
-    return Wrap(spacing: 4, runSpacing: 4, children: days);
+    return Column(
+      children: <Widget>[
+        Wrap(spacing: 4, runSpacing: 4, children: daysFront),
+        if (daysBack.isNotEmpty) ...<Widget>[
+          const Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Icon(Icons.more_vert, size: 42)),
+          Wrap(spacing: 4, runSpacing: 4, children: daysBack),
+        ]
+      ],
+    );
   }
 }
 
