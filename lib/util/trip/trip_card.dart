@@ -58,7 +58,7 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
 
   void Function()? get onTap;
 
-  EdgeInsets get middlePadding => const EdgeInsets.all(16);
+  EdgeInsets get middlePadding => const EdgeInsets.fromLTRB(10, 24, 0, 24);
 
   FixedTimeline buildRoute() {
     return FixedTimeline(
@@ -66,19 +66,19 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
       children: <Widget>[
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(left: 10),
             child: Row(
               children: <Widget>[
                 Text(
                   localeManager.formatTime(trip.startTime),
-                  style: mainTextStyle,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
                     key: const Key('start'),
                     trip.start,
-                    style: mainTextStyle,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )
               ],
@@ -117,19 +117,19 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
         ),
         TimelineTile(
           contents: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 10),
             child: Row(
               children: <Widget>[
                 Text(
                   localeManager.formatTime(trip.endTime),
-                  style: mainTextStyle,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
                     key: const Key('end'),
                     trip.end,
-                    style: mainTextStyle,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )
               ],
@@ -174,14 +174,17 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         buildTop(),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), child: buildRoute()),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24), child: buildRoute()),
         buildBottom(),
       ],
     );
   }
 
   Widget buildTopLeft() {
-    return Text(localeManager.formatDate(trip.startTime));
+    return Text(
+      localeManager.formatDate(trip.startTime),
+      style: Theme.of(context).textTheme.titleMedium,
+    );
   }
 
   Widget buildTopRight() {
@@ -209,8 +212,6 @@ abstract class TripCardState<T extends Trip, U extends TripCard<T>> extends Stat
       borderRadius: cardBorder,
     );
   }
-
-  static const TextStyle mainTextStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
 
   BoxDecoration get disabledDecoration => BoxDecoration(
         color: Colors.grey,
