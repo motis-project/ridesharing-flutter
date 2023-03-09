@@ -55,7 +55,6 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
     if (mounted) {
       setState(() {
         _fullyLoaded = true;
-        statusColor = pickStatusColor();
       });
     }
   }
@@ -83,20 +82,20 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
 
   @override
   Widget buildTopRight() {
-    if (!_fullyLoaded) {
+    if (!_fullyLoaded || _drive.isFinished) {
       return const Center(
         child: SizedBox(),
       );
     } else if (_drive.cancelled) {
       return Icon(
         Icons.block,
-        color: statusColor,
+        color: getStatusColor,
         key: const Key('cancelledIcon'),
       );
     } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
       return Icon(
         Icons.access_time_outlined,
-        color: statusColor,
+        color: getStatusColor,
         key: const Key('pendingIcon'),
       );
     } else {
@@ -107,12 +106,10 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   @override
-  Color pickStatusColor() {
+  Color get getStatusColor {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else if (drive.status == DriveStatus.preview) {
-      return Theme.of(context).colorScheme.primary;
-    } else if (drive.endDateTime.isBefore(DateTime.now())) {
+    } else if (_drive.isFinished) {
       return Theme.of(context).disabledColor;
     } else {
       if (drive.status.isCancelled()) {

@@ -371,19 +371,11 @@ void main() {
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).colorScheme.primary);
       });
 
-      testWidgets('disabled for past Ride that is not approved', (WidgetTester tester) async {
-        await loadRideCard(tester,
-            status: RideStatus.pending, endTime: DateTime.now().subtract(const Duration(minutes: 10)));
+      testWidgets('disabled for past Ride', (WidgetTester tester) async {
+        await loadRideCard(tester, endTime: DateTime.now().subtract(const Duration(minutes: 10)));
 
         final BuildContext context = tester.element(find.byType(Container).first);
         expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).disabledColor);
-      });
-      testWidgets('success for past Ride that is approved', (WidgetTester tester) async {
-        await loadRideCard(tester,
-            status: RideStatus.approved, endTime: DateTime.now().subtract(const Duration(minutes: 10)));
-
-        final BuildContext context = tester.element(find.byType(Container).first);
-        expect(tester.widget<Card>(find.byType(Card)).color, Theme.of(context).own().success);
       });
     });
 
