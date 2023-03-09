@@ -24,13 +24,13 @@ void main() {
 
   group('Main app', () {
     testWidgets('It shows the home page as default', (tester) async {
-      await pumpMaterial(tester, const MainApp());
+      await pumpMaterial(tester, MainApp());
 
       expect(find.byType(HomePage).hitTestable(), findsOneWidget);
     });
 
     testWidgets('Can navigate via the bottom bar', (tester) async {
-      await pumpMaterial(tester, const MainApp());
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('drivesIcon')));
       await tester.pump();
@@ -50,7 +50,7 @@ void main() {
     });
 
     testWidgets('Navigator saves state between the tabs', (tester) async {
-      await pumpMaterial(tester, const MainApp());
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('accountIcon')));
       await tester.pump();
@@ -70,7 +70,7 @@ void main() {
     });
 
     testWidgets('Tapping on current tab goes to first page of tab', (tester) async {
-      await pumpMaterial(tester, const MainApp());
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('accountIcon')));
       await tester.pump();
@@ -87,7 +87,7 @@ void main() {
     });
 
     testWidgets('The back button goes to Home when on other tab', (tester) async {
-      await pumpMaterial(tester, const MainApp());
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('accountIcon')));
       await tester.pump();

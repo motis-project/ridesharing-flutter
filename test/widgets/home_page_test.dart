@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
+import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/home_page.dart';
+import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
@@ -48,18 +50,55 @@ void main() {
 
     final List<RealtimeChannel> subscriptions = supabaseManager.supabaseClient.getChannels();
     expect(subscriptions.length, 4);
-    expect(subscriptions[0].topic, 'realtime:public:messages');
-    expect(subscriptions[1].topic, 'realtime:public:ride_events');
-    expect(subscriptions[2].topic, 'realtime:public:rides');
-    expect(subscriptions[3].topic, 'realtime:public:drives');
+    expect(subscriptions[0].topic, 'realtime:public:rides');
+    expect(subscriptions[1].topic, 'realtime:public:drives');
+    expect(subscriptions[2].topic, 'realtime:public:ride_events');
+    expect(subscriptions[3].topic, 'realtime:public:messages');
   });
 
-  testWidgets('Message container', (WidgetTester tester) async {
+  testWidgets('Empty page', (WidgetTester tester) async {
     whenRequest(processor).thenReturnJson([]);
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.byKey(const Key('MessageContainer')), findsOneWidget);
+    expect(find.byKey(const Key('messagesColumn')), findsNothing);
+    expect(find.byKey(const Key('rideEventsColumn')), findsNothing);
+    expect(find.byKey(const Key('tripsColumn')), findsNothing);
+    expect(find.byKey(const Key('emptyColumn')), findsOneWidget);
+    expect(find.byKey(const Key('completeProfileColumn')), findsNothing);
+  });
+
+  testWidgets('Empty page with incomplete profile', (WidgetTester tester) async {
+    supabaseManager.currentProfile = ProfileFactory().generateFake(
+      id: 1,
+      description: NullableParameter(null),
+      birthDate: NullableParameter(null),
+      surname: NullableParameter(null),
+      name: NullableParameter(null),
+      gender: NullableParameter(null),
+      avatarUrl: NullableParameter(null),
+    );
+    whenRequest(processor).thenReturnJson([]);
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
+        .thenReturnJson(supabaseManager.currentProfile!.toJsonForApi());
+    //We need a MainApp because we need to navigate to another tab
+    await pumpMaterial(tester, MainApp());
+    await tester.pump();
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byKey(const Key('messagesColumn')), findsNothing);
+    expect(find.byKey(const Key('rideEventsColumn')), findsNothing);
+    expect(find.byKey(const Key('tripsColumn')), findsNothing);
+    expect(find.byKey(const Key('emptyColumn')), findsNothing);
+    expect(find.byKey(const Key('completeProfileColumn')), findsOneWidget);
+
+    final Finder completeProfileButton = find.byKey(const Key('completeProfileButton'));
+    expect(completeProfileButton, findsOneWidget);
+
+    await tester.tap(completeProfileButton);
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byType(ProfilePage), findsOneWidget);
   });
 
   group('RideEvent', () {
@@ -346,6 +385,7 @@ void main() {
 
       expect(find.byType(RideDetailPage), findsOneWidget);
     });
+
     testWidgets('updateRide inserts ride if status is approved and it starts today or tomorrow',
         (WidgetTester tester) async {
       final Ride ride = RideFactory().generateFake(
@@ -444,7 +484,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
-      //the folowing request is for the drive in the insertDrive function
+      //the following request is for the drive in the insertDrive function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/drives.*&id=eq\.' + drive.id.toString())),
@@ -560,6 +600,12 @@ void main() {
 
     final HomePageState homePage = tester.state(find.byType(HomePage));
 
+    expect(find.byKey(const Key('messagesColumn')), findsOneWidget);
+    expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('tripsColumn')), findsOneWidget);
+    expect(find.byKey(const Key('emptyColumn')), findsNothing);
+    expect(find.byKey(const Key('completeProfileColumn')), findsNothing);
+
     final Finder finder = find.byType(Dismissible, skipOffstage: false);
     expect(finder, findsNWidgets(5));
 
@@ -575,14 +621,15 @@ void main() {
 
     expect(finder, findsNWidgets(7));
 
-    expect(tester.widget(finder.at(4)).key, Key('message${message2.id}'));
-    expect(tester.widget(finder.at(0)).key, Key('drive${driveTomorrow.id}'));
+    expect(tester.widget(finder.at(5)).key, Key('message${message2.id}'));
+    expect(tester.widget(finder.at(2)).key, Key('drive${driveTomorrow.id}'));
   });
 
   group('Buttons', () {
     setUp(() => whenRequest(processor).thenReturnJson([]));
     testWidgets('checks SearchRideButton Button', (WidgetTester tester) async {
-      await pumpMaterial(tester, const HomePage());
+      //We need a MainApp because we need to navigate to another tab
+      await pumpMaterial(tester, MainApp());
       await tester.pump();
 
       await tester.tap(find.byKey(const Key('SearchButton')));
@@ -591,7 +638,8 @@ void main() {
     });
 
     testWidgets('checks CreateDrive Button', (WidgetTester tester) async {
-      await pumpMaterial(tester, const HomePage());
+      //We need a MainApp because we need to navigate to another tab
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('CreateButton')));
       await tester.pumpAndSettle();

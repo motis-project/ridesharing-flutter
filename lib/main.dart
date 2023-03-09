@@ -111,7 +111,7 @@ class AuthAppState extends State<AuthApp> {
     if (_resettingPassword) {
       return ResetPasswordPage(onPasswordReset: () => setState(() => _resettingPassword = false));
     } else if (_isLoggedIn) {
-      return const MainApp();
+      return MainApp();
     } else {
       return const WelcomePage();
     }

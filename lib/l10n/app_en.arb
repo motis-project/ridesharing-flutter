@@ -361,7 +361,15 @@
   "rideEventCancelledByDriverMessage": "{username} has cancelled his drive",
   "rideEventCancelledByRiderMessage": "{username} has cancelled his ride",
   "pageHomeUpcomingTripMessage": "from {start} to {end} at {startTime}",
-  "pageHomePageEmpty": "No new messages",
-  "hello": "Hello",
+
+  "pageHomePageHello": "Hello {username}! \u270C",
+  "pageHomePageMessages": "New messages",
+  "pageHomePageRideEvents": "Recent events",
+  "pageHomePageTrips": "Upcoming trips",
+  "pageHomePageEmpty": "No activities",
+  "pageHomePageEmptySubtitle": "You can create a drive or book a ride now!",
+  "pageHomePageCompleteProfile": "You're very mysterious!",
+  "pageHomePageCompleteProfileButton": "Complete Profile",
+
   "appName": "Motis Ride-Sharing App"
   }

@@ -51,6 +51,14 @@ class Profile extends Model {
 
   bool get isCurrentUser => id == supabaseManager.currentProfile?.id;
 
+  bool get hasNoPersonalInformation =>
+      description == null &&
+      birthDate == null &&
+      surname == null &&
+      name == null &&
+      gender == null &&
+      avatarUrl == null;
+
   static const Duration maxAge = Duration(days: 365 * 120);
   static const Duration minAge = Duration(days: 365 * 12);
 
