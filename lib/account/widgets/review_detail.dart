@@ -25,6 +25,8 @@ class ReviewDetail extends StatefulWidget {
 class ReviewDetailState extends State<ReviewDetail> {
   bool isExpanded = false;
 
+  static const int defaultLinesShown = 2;
+
   @override
   Widget build(BuildContext context) {
     final Widget header = Row(
@@ -61,21 +63,20 @@ class ReviewDetailState extends State<ReviewDetail> {
                 alignment: Alignment.centerLeft,
                 child: LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints size) {
-                    final int? maxLines = isExpanded ? null : 3;
+                    final int? maxLinesShown = isExpanded ? null : defaultLinesShown;
 
                     final TextSpan span = TextSpan(text: widget.review.text);
                     final TextPainter tp = TextPainter(
-                      maxLines: maxLines,
+                      maxLines: maxLinesShown,
                       textAlign: TextAlign.left,
                       textDirection: TextDirection.ltr,
                       text: span,
-                    )..layout();
+                    )..layout(maxWidth: size.maxWidth);
                     final bool exceeded = tp.didExceedMaxLines;
 
                     final Widget text = Text(
-                      key: const Key('reviewText'),
                       widget.review.text!,
-                      maxLines: maxLines,
+                      maxLines: maxLinesShown,
                     );
                     if (!widget.isExpandable || !exceeded && !isExpanded) {
                       return text;
@@ -85,13 +86,13 @@ class ReviewDetailState extends State<ReviewDetail> {
                       return InkWell(
                         onTap: () => setState(() => isExpanded = !isExpanded),
                         child: Column(
-                          children: <Widget>[text, const Icon(Icons.expand_less)],
+                          children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
                         ),
                       );
                     }
                     return FadeOut(
                       onTap: () => setState(() => isExpanded = !isExpanded),
-                      indicator: const Icon(Icons.expand_more),
+                      indicator: const Icon(Icons.expand_more, key: Key('expandReviewButton')),
                       child: Column(
                         children: <Widget>[text, const SizedBox(height: 22)],
                       ),

@@ -26,6 +26,7 @@ void main() {
   group('ReviewDetail', () {
     final Finder reviewDetailFinder = find.byType(ReviewDetail);
     final Finder expandReviewButtonFinder = find.byKey(const Key('expandReviewButton'));
+    final Finder retractReviewButtonFinder = find.byKey(const Key('retractReviewButton'));
     final Review review = ReviewFactory().generateFake(text: NullableParameter('This is a review'));
 
     testWidgets('Shows review detail', (WidgetTester tester) async {
@@ -45,28 +46,20 @@ void main() {
       expect(expandReviewButtonFinder, findsNothing);
     });
 
-    testWidgets('Can expand and retract when text is long', skip: true, (WidgetTester tester) async {
+    testWidgets('Can expand and retract when text is long', (WidgetTester tester) async {
       final Review review = ReviewFactory().generateFake(text: NullableParameter('This is a review' * 100));
-      final Finder reviewTextFinder = find.byKey(const Key('reviewText'));
 
       await pumpReviewDetail(tester, review);
 
-      Text reviewTextWidget = tester.widget<Text>(reviewTextFinder);
-      expect(reviewTextWidget.data!.length, lessThan(review.text!.length));
-
       expect(expandReviewButtonFinder, findsOneWidget);
-
-      await tester.tap(expandReviewButtonFinder);
+      await tester.tap(expandReviewButtonFinder, warnIfMissed: false);
       await tester.pumpAndSettle();
 
-      expect(expandReviewButtonFinder, findsOneWidget);
-      expect(reviewTextWidget.data!.length, review.text!.length);
+      expect(retractReviewButtonFinder, findsOneWidget);
+      await tester.scrollUntilVisible(retractReviewButtonFinder, 100, scrollable: find.byType(Scrollable).first);
 
-      await tester.tap(expandReviewButtonFinder);
+      await tester.tap(retractReviewButtonFinder);
       await tester.pumpAndSettle();
-
-      reviewTextWidget = tester.widget<Text>(reviewTextFinder);
-      expect(reviewTextWidget.data!.length, lessThan(review.text!.length));
 
       expect(expandReviewButtonFinder, findsOneWidget);
     });
