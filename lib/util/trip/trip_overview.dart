@@ -5,16 +5,17 @@ import '../../rides/models/ride.dart';
 import '../custom_timeline_theme.dart';
 import '../locale_manager.dart';
 import 'seat_indicator.dart';
+import 'trip.dart';
 
-class RideOverview extends StatelessWidget {
-  final Ride ride;
+class TripOverview extends StatelessWidget {
+  final Trip trip;
 
-  const RideOverview(this.ride, {super.key});
+  const TripOverview(this.trip, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final Widget date = Text(
-      localeManager.formatDate(ride.startTime),
+      localeManager.formatDate(trip.startTime),
       style: Theme.of(context).textTheme.titleMedium,
     );
 
@@ -27,13 +28,13 @@ class RideOverview extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(ride.startTime),
+                  localeManager.formatTime(trip.startTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
-                    ride.start,
+                    trip.start,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )
@@ -57,7 +58,7 @@ class RideOverview extends StatelessWidget {
                       const Icon(Icons.access_time_outlined),
                       const SizedBox(width: 4),
                       Text(
-                        localeManager.formatDuration(ride.duration),
+                        localeManager.formatDuration(trip.duration),
                       ),
                     ],
                   ),
@@ -76,13 +77,13 @@ class RideOverview extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTime(ride.endTime),
+                  localeManager.formatTime(trip.endTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
-                    ride.end,
+                    trip.end,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )
@@ -97,10 +98,12 @@ class RideOverview extends StatelessWidget {
       ],
     );
 
-    final Widget seatIndicator = SeatIndicator(ride);
+    final Widget seatIndicator = SeatIndicator(trip);
 
     late final Widget price;
-    price = Text(key: const Key('price'), '${ride.price?.toStringAsFixed(2)}€');
+    if (trip is Ride) {
+      price = Text(key: const Key('price'), '${(trip as Ride).price?.toStringAsFixed(2)}€');
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +115,7 @@ class RideOverview extends StatelessWidget {
         const SizedBox(height: 20.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[seatIndicator, price],
+          children: <Widget>[seatIndicator, if (trip is Ride) price],
         )
       ],
     );
