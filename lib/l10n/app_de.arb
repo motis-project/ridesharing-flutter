@@ -259,7 +259,7 @@
   "pageCreateDriveEveryInterval": "Alle {placeholder}{placeholder}",
   "pageCreateDriveRecurrenceEndUntil": "Bis {placeholder}",
   "pageCreateDriveRecurrenceEndFor": "Für {placeholder} {placeholder}",
-  "pageCreateDriveRecurrenceEndAfterOccurrences": "Nach {placholder} Vorkommen",
+  "pageCreateDriveRecurrenceEndAfterOccurrences": "Nach {placholder} Fahrten",
   "pageCreateDriveRecurrenceEndError": "Bitte wähle eine valide Option für das Wiederholungsende: {errorText}",
 
   "weekDayMonday": "Montag",
@@ -297,8 +297,8 @@
   "recurrenceEndUntilDate": "Endet am {date}",
   "recurrenceEndUntilDateValidationNull": "Datum benötigt",
   "recurrenceEndAfterOccurrences": "Endet nach {count} {count, plural, one{Fahrt} other{Fahrten}}",
-  "recurrenceEndOccurrencesValidationNull": "Vorkommen benötigt",
-  "recurrenceEndValidationOccurrencesTooMany": "Zu viele Vorkommen",
+  "recurrenceEndOccurrencesValidationNull": "Fahrten-Anzahl benötigt",
+  "recurrenceEndValidationOccurrencesTooMany": "Zu große Fahrten-Anzahl",
 
   "pageDriveDetailTitle": "Fahrt Info",
   "pageDriveDetailRoute": "Fahrtverlauf",

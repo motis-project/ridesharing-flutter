@@ -259,7 +259,7 @@
   "pageCreateDriveEveryInterval": "Every {placeholder}{placeholder}",
   "pageCreateDriveRecurrenceEndUntil": "Until {placeholder}",
   "pageCreateDriveRecurrenceEndFor": "For {placeholder} {placeholder}",
-  "pageCreateDriveRecurrenceEndAfterOccurrences": "After {placholder} occurrences",
+  "pageCreateDriveRecurrenceEndAfterOccurrences": "After {placholder} drives",
   "pageCreateDriveRecurrenceEndError": "Please select a valid recurrence end option: {errorText}",
 
   "weekDayMonday": "Monday",
@@ -296,9 +296,9 @@
   "recurrenceEndForValidationIntervalTooLarge": "Interval too large",
   "recurrenceEndUntilDate": "Ends on {date}",
   "recurrenceEndUntilDateValidationNull": "Date needed",
-  "recurrenceEndAfterOccurrences": "Ends after {count} {count, plural, one{occurrence} other{occurrences}}",
-  "recurrenceEndOccurrencesValidationNull": "Occurrences needed",
-  "recurrenceEndValidationOccurrencesTooMany": "Too many occurrences",
+  "recurrenceEndAfterOccurrences": "Ends after {count} {count, plural, one{drive} other{drives}}",
+  "recurrenceEndOccurrencesValidationNull": "Number of drives needed",
+  "recurrenceEndValidationOccurrencesTooMany": "Number of drives too large",
 
   "pageDriveDetailTitle": "Drive Detail",
   "pageDriveDetailRoute": "Route",
