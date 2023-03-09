@@ -12,8 +12,6 @@ import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
 import 'welcome/pages/welcome_page.dart';
 
-GlobalKey<MainAppState> mainAppKey = GlobalKey<MainAppState>();
-
 void main() async {
   await dotenv.load();
 
@@ -113,7 +111,7 @@ class AuthAppState extends State<AuthApp> {
     if (_resettingPassword) {
       return ResetPasswordPage(onPasswordReset: () => setState(() => _resettingPassword = false));
     } else if (_isLoggedIn) {
-      return MainApp(key: mainAppKey);
+      return MainApp();
     } else {
       return const WelcomePage();
     }

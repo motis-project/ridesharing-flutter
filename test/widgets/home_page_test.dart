@@ -7,6 +7,7 @@ import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/drive_detail_page.dart';
 import 'package:motis_mitfahr_app/home_page.dart';
+import 'package:motis_mitfahr_app/main_app.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
 import 'package:motis_mitfahr_app/rides/pages/ride_detail_page.dart';
 import 'package:motis_mitfahr_app/rides/pages/search_ride_page.dart';
@@ -80,7 +81,8 @@ void main() {
     whenRequest(processor).thenReturnJson([]);
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
         .thenReturnJson(supabaseManager.currentProfile!.toJsonForApi());
-    await pumpMaterial(tester, const HomePage());
+    //We need a MainApp because we need to navigate to another tab
+    await pumpMaterial(tester, MainApp());
     await tester.pump();
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.byKey(const Key('messagesColumn')), findsNothing);
@@ -626,7 +628,8 @@ void main() {
   group('Buttons', () {
     setUp(() => whenRequest(processor).thenReturnJson([]));
     testWidgets('checks SearchRideButton Button', (WidgetTester tester) async {
-      await pumpMaterial(tester, const HomePage());
+      //We need a MainApp because we need to navigate to another tab
+      await pumpMaterial(tester, MainApp());
       await tester.pump();
 
       await tester.tap(find.byKey(const Key('SearchButton')));
@@ -635,7 +638,8 @@ void main() {
     });
 
     testWidgets('checks CreateDrive Button', (WidgetTester tester) async {
-      await pumpMaterial(tester, const HomePage());
+      //We need a MainApp because we need to navigate to another tab
+      await pumpMaterial(tester, MainApp());
 
       await tester.tap(find.byKey(const Key('CreateButton')));
       await tester.pumpAndSettle();

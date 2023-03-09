@@ -11,7 +11,6 @@ import 'account/widgets/avatar.dart';
 import 'drives/models/drive.dart';
 import 'drives/pages/create_drive_page.dart';
 import 'drives/pages/drive_detail_page.dart';
-import 'main.dart';
 import 'main_app.dart';
 import 'rides/models/ride.dart';
 import 'rides/pages/ride_detail_page.dart';

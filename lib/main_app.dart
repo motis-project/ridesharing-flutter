@@ -10,8 +10,10 @@ import 'rides/pages/rides_page.dart';
 
 enum TabItem { home, drives, rides, account }
 
+GlobalKey<MainAppState> mainAppKey = GlobalKey<MainAppState>();
+
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  MainApp() : super(key: mainAppKey);
 
   @override
   State<MainApp> createState() => MainAppState();
