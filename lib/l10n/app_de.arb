@@ -20,7 +20,7 @@
   "after": "Nachher",
   "failureSnackBar": "Es ist ein Fehler aufgetreten.",
 
-  "riders": "Mitfahrer",
+  "riders": "Mitfahrer*innen",
   "seats": "Plätze",
   "seatsCount": "{count, plural, one{1 Platz} other{{count} Plätze}}",
   "labelXOfYseats": "{seats} von {maxSeats} Plätzen",
@@ -177,7 +177,7 @@
   "pageHelpAnswer2": "Wir haben den Zahlungsprozess so konzipiert, dass er sich vollständig auf Benutzer*innenvereinbarungen stützt. Sowohl die Kosten als auch die Zahlungsmethode einer Fahrt können persönlich oder in unserem In-App-Chat ausgehandelt werden. Als Ausgangspunkt siehst du für die meisten Fahrten einen Preisvorschlag.",
   "pageHelpQuestion3": "Wir haben uns auf einen Preis geeinigt, aber jetzt zahlt mein*e Fahrer*in ihn nicht. Was kann ich machen?",
   "pageHelpAnswer3": "Wir entschuldigen uns für die Unannehmlichkeiten. Leider können wir dir in diesem Fall nur die Möglichkeit bieten, Benutzer*innen zu melden. Tippe in seinem*ihrem Profil auf die Schaltfläche \"{reportButtonText}\" und stelle sicher, dass du den Grund \"{didNotPayReasonText}\" auswählst.",
-  "pageHelpQuestion4": "Ein Fahrer/Mitfahrer ist nicht aufgetaucht. Was kann ich machen?",
+  "pageHelpQuestion4": "Ein*e Fahrer*in/Mitfahrer*in ist nicht aufgetaucht. Was kann ich machen?",
   "pageHelpAnswer4": "Wir entschuldigen uns für die Unannehmlichkeiten. Leider können wir dir in diesem Fall nur die Möglichkeit bieten, Benutzer*innen zu melden. Tippe in seinem*ihrem Profil auf die Schaltfläche \"{reportButtonText}\" und achte darauf, den Grund \"{didNotShowUpReasonText}\" auszuwählen.",
   "pageHelpQuestion5": "Meine Mitfahrt wurde abgesagt. Was kann ich machen?",
   "pageHelpAnswer5": "Wir entschuldigen uns für die Unannehmlichkeiten. Leider musst du dich nach einer anderen Fahrt umsehen. Wenn die*der Fahrer*in die Fahrt kurz vor der Fahrt abgesagt hat, kannst du sie*ihn über die Schaltfläche \"{reportButtonText}\" in ihrem*seinem Profil melden. Stelle sicher, dass du den Grund \"{differentReasonText}\" auswählst und die Situation erklärst.",
@@ -254,6 +254,7 @@
   "pageCreateDriveButtonCreate": "Erstellen",
 
   "pageDriveDetailTitle": "Fahrt Info",
+  "pageDriveDetailRoute": "Fahrtverlauf",
   "pageDriveDetailLabelStartDrive": "Start der Fahrt",
   "pageDriveDetailLabelEndDrive": "Ende der Fahrt",
   "pageDriveDetailLabelPickup": "{seats, plural, one{{user} abholen} other{{seats} Personen abholen, die mit {user} fahren}}",
@@ -304,6 +305,7 @@
   "pageRidesTooltipSearchRide": "Fahrt suchen",
 
   "pageRideDetailTitle": "Mitfahrt Info",
+  "pageRideDetailDriver": "Fahrer*in",
   "pageRideDetailButtonRequest": "Mitfahrt anfragen",
   "pageRideDetailButtonCancel": "Mitfahrt absagen",
   "pageRideDetailButtonWithdraw": "Anfrage zurücknehmen",
@@ -327,8 +329,8 @@
   "pageRideDetailHideDialog": "Bist du sicher, dass du die Mitfahrt löschen möchtest?",
 
   "pageDriveChatTitle": "Chats",
-  "pageDriveChatEmptyMessage": "Du kannst mit deinen Mitfahrern chatten, sobald du ihre Anfragen annimmst.",
-  "pageDriveChatRiderHeadline": "Mitfahrer",
+  "pageDriveChatEmptyMessage": "Du kannst mit deinen Mitfahrer*innen chatten, sobald du ihre Anfragen annimmst.",
+  "pageDriveChatRiderHeadline": "Mitfahrer*innen",
   "pageDriveChatRequestsHeadline": "Mitfahrtanfragen",
 
   "cardPendingRideApproveDialogTitle": "Mitfahrt annehmen",

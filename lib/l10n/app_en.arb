@@ -254,6 +254,7 @@
   "pageCreateDriveButtonCreate": "Create",
 
   "pageDriveDetailTitle": "Drive Detail",
+  "pageDriveDetailRoute": "Route",
   "pageDriveDetailLabelStartDrive": "Start of drive",
   "pageDriveDetailLabelEndDrive": "End of drive",
   "pageDriveDetailLabelPickup": "{seats, plural, one{Pick up {user}} other{Pick up {seats} people associated with {user}}}",
@@ -303,6 +304,7 @@
   "pageRidesTooltipSearchRide": "Search ride",
 
   "pageRideDetailTitle": "Ride Detail",
+  "pageRideDetailDriver": "Driver",
   "pageRideDetailButtonRequest": "Request Ride",
   "pageRideDetailButtonCancel": "Cancel Ride",
   "pageRideDetailButtonWithdraw": "Withdraw request",
