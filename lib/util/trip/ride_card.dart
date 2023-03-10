@@ -221,7 +221,9 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_ride.status.isCancelled() || _ride.status == RideStatus.rejected) {
+    if (_ride.status.isCancelled() ||
+        _ride.status == RideStatus.rejected ||
+        (_ride.isFinished && _ride.status != RideStatus.approved)) {
       return disabledDecoration;
     }
     return super.pickDecoration();
