@@ -421,6 +421,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                     Text(
                       S.of(context).pageCreateDriveRecurrenceEndError(validationError!),
                       style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                      key: const Key('recurrenceEndError'),
                     ),
                 ],
               ),

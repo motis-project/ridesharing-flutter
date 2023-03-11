@@ -216,9 +216,88 @@ void main() {
           expect((pageState.recurrenceOptions.endChoice as RecurrenceEndChoiceOccurrence).occurrences, occurenceCount);
         });
 
-        /*group('Validators', () {
-            testWidgets('', (WidgetTester tester) async {});
-          });*/
+        group('Until Validators', () {
+          testWidgets('Nothing entered', (WidgetTester tester) async {
+            await pumpScaffold(
+                tester,
+                RecurrenceOptionsEdit(
+                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+            await tester.pump();
+
+            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+
+            await tester.tap(find.byKey(const Key('untilField')));
+            await tester.pumpAndSettle();
+
+            for (int i = 0; i < 3; i++) {
+              await tester.tap(find.byKey(Key('recurrenceEndChoice$i')));
+              await tester.pump();
+              await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+              await tester.pump();
+              expect(find.byKey(const Key('recurrenceEndError')), findsOneWidget);
+              expect(pageState.recurrenceOptions.endChoice, recurrenceOptions.endChoice);
+            }
+
+            // For Interval, an error is thrown if either the interval size OR interval type is not set
+            await tester.tap(find.byKey(const Key('recurrenceEndChoice1')));
+            await tester.pump();
+            await tester.enterText(
+                find.byKey(const Key('customEndIntervalSizeField')), random.integer(10, min: 1).toString());
+            await tester.pump();
+            await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+            await tester.pump();
+            expect(find.byKey(const Key('recurrenceEndError')), findsOneWidget);
+            expect(pageState.recurrenceOptions.endChoice, recurrenceOptions.endChoice);
+          });
+
+          testWidgets('Interval too large', (WidgetTester tester) async {
+            await pumpScaffold(
+                tester,
+                RecurrenceOptionsEdit(
+                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+            await tester.pump();
+
+            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+
+            await tester.tap(find.byKey(const Key('untilField')));
+            await tester.pumpAndSettle();
+            await tester.tap(find.byKey(const Key('recurrenceEndChoice1')));
+            await tester.pump();
+            for (final RecurrenceIntervalType endIntervalType in RecurrenceIntervalType.values) {
+              await tester.enterText(find.byKey(const Key('customEndIntervalSizeField')),
+                  (endIntervalType == RecurrenceIntervalType.years ? 10 : 100).toString());
+              await tester.tap(find.byKey(const Key('customEndIntervalTypeField')));
+              await tester.pumpAndSettle();
+              await tester.tap(find.byKey(Key('customEndIntervalType${endIntervalType.name}')));
+              await tester.pumpAndSettle();
+              await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+              await tester.pump();
+              expect(find.byKey(const Key('recurrenceEndError')), findsOneWidget);
+              expect(pageState.recurrenceOptions.endChoice, recurrenceOptions.endChoice);
+            }
+          });
+
+          testWidgets('Too many occurences', (WidgetTester tester) async {
+            await pumpScaffold(
+                tester,
+                RecurrenceOptionsEdit(
+                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+            await tester.pump();
+
+            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+
+            await tester.tap(find.byKey(const Key('untilField')));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byKey(const Key('recurrenceEndChoice2')));
+            await tester.pump();
+            await tester.enterText(find.byKey(const Key('customEndOccurenceField')), 100.toString());
+            await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
+            await tester.pump();
+            expect(find.byKey(const Key('recurrenceEndError')), findsOneWidget);
+            expect(pageState.recurrenceOptions.endChoice, recurrenceOptions.endChoice);
+          });
+        });
       });
     });
   });
