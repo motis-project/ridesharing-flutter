@@ -12,6 +12,7 @@ import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/snackbar.dart';
+import '../../util/storage_manager.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 import '../models/drive.dart';
@@ -57,6 +58,8 @@ class CreateDriveForm extends StatefulWidget {
 }
 
 class CreateDriveFormState extends State<CreateDriveForm> {
+  static const String _storageKey = 'expandPreviewCreateDrivePage';
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController startController = TextEditingController();
   late AddressSuggestion startSuggestion;
@@ -70,6 +73,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
 
   late RecurrenceOptions recurrenceOptions;
   bool recurringEnabled = false;
+  bool? _defaultPreviewExpanded;
 
   static final List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
     RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
@@ -88,6 +92,13 @@ class CreateDriveFormState extends State<CreateDriveForm> {
       recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
       endChoice: predefinedRecurrenceEndChoices.last,
     );
+    loadDefaultPreviewExpanded();
+  }
+
+  Future<void> loadDefaultPreviewExpanded() async {
+    await storageManager
+        .readData<bool>(getStorageKey())
+        .then((bool? value) => setState(() => _defaultPreviewExpanded = value));
   }
 
   @override
@@ -317,6 +328,8 @@ class CreateDriveFormState extends State<CreateDriveForm> {
               predefinedEndChoices: predefinedRecurrenceEndChoices,
               // Empty RecurrenceRule so that every day in the indicator is "new"
               originalRecurrenceRule: RecurrenceRule(frequency: Frequency.yearly, until: DateTime.now().toUtc()),
+              showPreview: _defaultPreviewExpanded ?? false,
+              expansionCallback: (bool expanded) => storageManager.saveData(getStorageKey(), expanded),
             ),
           ],
           const SizedBox(height: 10),
@@ -328,5 +341,9 @@ class CreateDriveFormState extends State<CreateDriveForm> {
         ],
       ),
     );
+  }
+
+  String getStorageKey() {
+    return '$_storageKey.${supabaseManager.currentProfile?.id}';
   }
 }

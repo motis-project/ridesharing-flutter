@@ -5,6 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/buttons/button.dart';
 import '../../util/snackbar.dart';
+import '../../util/storage_manager.dart';
+import '../../util/supabase_manager.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/recurring_drive.dart';
 import '../util/recurrence.dart';
@@ -20,10 +22,14 @@ class RecurringDriveEditPage extends StatefulWidget {
 }
 
 class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
+  static const String _storageKey = 'expandPreviewEditRecurringDrivePage';
+
   late RecurringDrive _recurringDrive;
   late RecurrenceOptions _recurrenceOptions;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool? _defaultPreviewExpanded;
 
   @override
   void initState() {
@@ -32,6 +38,13 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     setState(() {
       _recurringDrive = widget.recurringDrive;
     });
+    loadDefaultPreviewExpanded();
+  }
+
+  Future<void> loadDefaultPreviewExpanded() async {
+    await storageManager
+        .readData<bool>(getStorageKey())
+        .then((bool? value) => setState(() => _defaultPreviewExpanded = value));
   }
 
   @override
@@ -61,6 +74,8 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
         child: RecurrenceOptionsEdit(
           recurrenceOptions: _recurrenceOptions,
           predefinedEndChoices: const <RecurrenceEndChoice>[],
+          showPreview: _defaultPreviewExpanded ?? true,
+          expansionCallback: (bool expanded) => storageManager.saveData(getStorageKey(), expanded),
         ),
       ),
     );
@@ -188,5 +203,9 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
         ],
       ),
     );
+  }
+
+  String getStorageKey() {
+    return '$_storageKey.${supabaseManager.currentProfile?.id}';
   }
 }

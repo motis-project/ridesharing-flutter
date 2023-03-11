@@ -19,12 +19,20 @@ class ExpandableSection extends StatefulWidget {
 }
 
 class _ExpandableSectionState extends State<ExpandableSection> {
-  bool _isExpanded = true;
+  late bool _isExpanded;
 
   @override
   void initState() {
-    super.initState();
     _isExpanded = widget.isExpanded;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(ExpandableSection oldWidget) {
+    if (oldWidget.isExpanded != widget.isExpanded) {
+      setState(() => _isExpanded = widget.isExpanded);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

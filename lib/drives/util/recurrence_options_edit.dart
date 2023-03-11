@@ -14,12 +14,16 @@ class RecurrenceOptionsEdit extends StatefulWidget {
   final RecurrenceOptions recurrenceOptions;
   final List<RecurrenceEndChoice> predefinedEndChoices;
   final RecurrenceRule? originalRecurrenceRule;
+  final bool showPreview;
+  final void Function(bool expanded)? expansionCallback;
 
   const RecurrenceOptionsEdit({
     super.key,
     required this.recurrenceOptions,
     required this.predefinedEndChoices,
     this.originalRecurrenceRule,
+    this.showPreview = true,
+    this.expansionCallback,
   });
 
   @override
@@ -236,6 +240,8 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
   Widget buildIndicator() {
     return ExpandableSection(
       title: S.of(context).preview,
+      isExpanded: widget.showPreview,
+      expansionCallback: widget.expansionCallback,
       child: RecurrenceOptionsIndicator(
         before: originalRecurrenceRule,
         after: recurrenceOptions.recurrenceRule,
