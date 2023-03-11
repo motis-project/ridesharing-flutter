@@ -157,7 +157,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
 
   Widget buildWeekDayPicker() {
     return WeekDayPicker(
-      weekDays: recurrenceOptions.weekDays,
+      weekDays: <WeekDay>[...recurrenceOptions.weekDays],
       context: context,
       onChanged: (List<WeekDay> weekDays) => setState(() {
         recurrenceOptions.weekDays = weekDays;
