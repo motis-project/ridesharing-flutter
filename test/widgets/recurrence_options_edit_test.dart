@@ -82,8 +82,6 @@ void main() {
   }
 
   group('RecurrenceOptionsEdit', () {
-    group('Constructors', () {});
-
     group('Input', () {
       testWidgets('Week Days', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();

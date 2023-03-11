@@ -264,6 +264,21 @@ void main() {
           DateTime(dateTime.year, dateTime.month, dateTime.day),
         );
       });
+
+      testWidgets('Interval Size empty', (WidgetTester tester) async {
+        await pumpMaterial(tester, const CreateDrivePage());
+
+        await tapRecurring(tester);
+
+        await tester.enterText(find.byKey(const Key('intervalSizeField')), '');
+        await tester.pump();
+
+        await scrollAndTap(tester, find.byKey(const Key('createDriveButton')));
+        await tester.pump();
+
+        final FormFieldState intervalSizeField = tester.state(find.byKey(const Key('intervalSizeField')));
+        expect(intervalSizeField.hasError, isTrue);
+      });
     });
 
     group('Create drive', () {
