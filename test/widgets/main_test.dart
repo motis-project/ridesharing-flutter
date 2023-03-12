@@ -133,7 +133,7 @@ void main() {
       expect(find.byType(MainApp), findsOneWidget);
     });
 
-    testWidgets('It shows MainApp after signing in when user is not blockd', (WidgetTester tester) async {
+    testWidgets('It shows MainApp after signing in when user is not blocked', (WidgetTester tester) async {
       await pumpMaterial(tester, const AuthApp());
 
       expect(find.byType(WelcomePage), findsOneWidget);
@@ -158,7 +158,7 @@ void main() {
       expect(find.byType(MainApp), findsOneWidget);
     });
 
-    testWidgets('It shows WelcomePage after signing in when user is blockd', (WidgetTester tester) async {
+    testWidgets('It shows WelcomePage after signing in when user is blocked', (WidgetTester tester) async {
       await pumpMaterial(tester, const AuthApp());
 
       expect(find.byType(WelcomePage), findsOneWidget);
