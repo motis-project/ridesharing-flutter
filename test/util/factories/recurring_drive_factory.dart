@@ -47,15 +47,16 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     final generatedStartedAt = startedAt ?? generatedCreatedAt;
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedRecurrenceEndType = recurrenceEndType ?? RecurrenceEndType.date;
 
     final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
         RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,
-          until: recurrenceEndType == RecurrenceEndType.occurrence
+          until: generatedRecurrenceEndType == RecurrenceEndType.occurrence
               ? null
               : generatedStartedAt.add(const Duration(days: 30)).toUtc(),
-          count: recurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
+          count: generatedRecurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
           byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
               .take(random.nextInt(7))
               .map((day) => ByWeekDayEntry(day + 1))
@@ -111,7 +112,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       seats: seats ?? random.nextInt(5) + 1,
       startedAt: generatedStartedAt,
       recurrenceRule: generatedRecurrenceRule,
-      recurrenceEndType: recurrenceEndType ?? RecurrenceEndType.date,
+      recurrenceEndType: generatedRecurrenceEndType,
       stoppedAt: stoppedAt,
       driverId: generatedDriverId,
       driver: generatedDriver,

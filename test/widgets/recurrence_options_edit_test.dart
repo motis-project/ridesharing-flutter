@@ -44,8 +44,7 @@ void main() {
     await tester.pump();
   }
 
-  Future<void> enterDate(WidgetTester tester, DateTime dateTime, {Finder? finder}) async {
-    finder ??= find.byKey(const Key('createDriveDatePicker'));
+  Future<void> enterDate(WidgetTester tester, DateTime dateTime, {required Finder finder}) async {
     await tester.tap(finder);
     await tester.pump();
     await tester.tap(find.byIcon(Icons.edit));
@@ -99,8 +98,10 @@ void main() {
       });
 
       testWidgets('Interval', (WidgetTester tester) async {
-        await pumpScaffold(tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+        await pumpScaffold(
+          tester,
+          RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+        );
         await tester.pump();
 
         final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -119,8 +120,10 @@ void main() {
 
       group('Until', () {
         testWidgets('Predefined End Choices', (WidgetTester tester) async {
-          await pumpScaffold(tester,
-              RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+          await pumpScaffold(
+            tester,
+            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+          );
           await tester.pump();
 
           final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -144,8 +147,10 @@ void main() {
         });
 
         testWidgets('Date', (WidgetTester tester) async {
-          await pumpScaffold(tester,
-              RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+          await pumpScaffold(
+            tester,
+            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+          );
           await tester.pump();
 
           final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -162,8 +167,10 @@ void main() {
         });
 
         testWidgets('Interval', (WidgetTester tester) async {
-          await pumpScaffold(tester,
-              RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+          await pumpScaffold(
+            tester,
+            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+          );
           await tester.pump();
 
           final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -193,8 +200,10 @@ void main() {
         });
 
         testWidgets('Occurences', (WidgetTester tester) async {
-          await pumpScaffold(tester,
-              RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+          await pumpScaffold(
+            tester,
+            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+          );
           await tester.pump();
 
           final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -217,9 +226,12 @@ void main() {
         group('Until Validators', () {
           testWidgets('Nothing entered', (WidgetTester tester) async {
             await pumpScaffold(
-                tester,
-                RecurrenceOptionsEdit(
-                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+              tester,
+              RecurrenceOptionsEdit(
+                recurrenceOptions: recurrenceOptions,
+                predefinedEndChoices: const <RecurrenceEndChoice>[],
+              ),
+            );
             await tester.pump();
 
             final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -250,9 +262,12 @@ void main() {
 
           testWidgets('Interval too large', (WidgetTester tester) async {
             await pumpScaffold(
-                tester,
-                RecurrenceOptionsEdit(
-                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+              tester,
+              RecurrenceOptionsEdit(
+                recurrenceOptions: recurrenceOptions,
+                predefinedEndChoices: const <RecurrenceEndChoice>[],
+              ),
+            );
             await tester.pump();
 
             final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
@@ -277,9 +292,12 @@ void main() {
 
           testWidgets('Too many occurences', (WidgetTester tester) async {
             await pumpScaffold(
-                tester,
-                RecurrenceOptionsEdit(
-                    recurrenceOptions: recurrenceOptions, predefinedEndChoices: const <RecurrenceEndChoice>[]));
+              tester,
+              RecurrenceOptionsEdit(
+                recurrenceOptions: recurrenceOptions,
+                predefinedEndChoices: const <RecurrenceEndChoice>[],
+              ),
+            );
             await tester.pump();
 
             final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);

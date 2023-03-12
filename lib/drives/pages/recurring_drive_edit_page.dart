@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -13,19 +14,20 @@ import '../util/recurrence.dart';
 import '../util/recurrence_options_edit.dart';
 
 class RecurringDriveEditPage extends StatefulWidget {
+  final Clock clock;
   final RecurringDrive recurringDrive;
 
-  const RecurringDriveEditPage(this.recurringDrive, {super.key});
+  const RecurringDriveEditPage(this.recurringDrive, {super.key, this.clock = const Clock()});
 
   @override
-  State<RecurringDriveEditPage> createState() => _RecurringDriveEditPageState();
+  State<RecurringDriveEditPage> createState() => RecurringDriveEditPageState();
 }
 
-class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
+class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
   static const String _storageKey = 'expandPreviewEditRecurringDrivePage';
 
   late RecurringDrive _recurringDrive;
-  late RecurrenceOptions _recurrenceOptions;
+  late RecurrenceOptions recurrenceOptions;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -53,7 +55,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
     // This is here instead of initState
     // because the context is needed for the recurrence options
-    _recurrenceOptions = RecurrenceOptions(
+    recurrenceOptions = RecurrenceOptions(
       startedAt: _recurringDrive.startedAt,
       recurrenceInterval: _recurringDrive.recurrenceInterval,
       weekDays: _recurringDrive.weekDays,
@@ -72,7 +74,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
       Form(
         key: _formKey,
         child: RecurrenceOptionsEdit(
-          recurrenceOptions: _recurrenceOptions,
+          recurrenceOptions: recurrenceOptions,
           predefinedEndChoices: const <RecurrenceEndChoice>[],
           showPreview: _defaultPreviewExpanded ?? true,
           expansionCallback: (bool expanded) => storageManager.saveData(getStorageKey(), expanded),
@@ -118,7 +120,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
   }
 
   Future<void> _changeRecurringDrive() async {
-    await _recurringDrive.setRecurrence(_recurrenceOptions);
+    await _recurringDrive.setRecurrence(recurrenceOptions);
     if (mounted) {
       Navigator.of(context).pop();
       showSnackBar(
@@ -135,10 +137,10 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     final List<DateTime> previousInstances =
         _recurringDrive.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
     final List<DateTime> newInstances =
-        _recurrenceOptions.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
+        recurrenceOptions.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
 
     final int cancelledDrivesCount = previousInstances
-        .where((DateTime instance) => instance.isAfter(DateTime.now()) && !newInstances.contains(instance))
+        .where((DateTime instance) => instance.isAfter(widget.clock.now()) && !newInstances.contains(instance))
         .length;
 
     if (cancelledDrivesCount == 0) return unawaited(_changeRecurringDrive());
@@ -190,7 +192,7 @@ class _RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
             key: const Key('stopRecurringDriveYesButton'),
             child: Text(S.of(context).yes),
             onPressed: () {
-              _stopRecurringDrive(DateTime.now());
+              _stopRecurringDrive(widget.clock.now());
 
               Navigator.of(context).pop();
               showSnackBar(

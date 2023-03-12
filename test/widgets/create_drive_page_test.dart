@@ -230,11 +230,12 @@ void main() {
         });
       });
 
-      testWidgets('Recurring', (WidgetTester tester) async {
+      testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
-        final RecurrenceIntervalType intervalType =
-            RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)];
+        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
+            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
+            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final int intervalSize = random.integer(10, min: 1);
         final DateTime dateTime =
             faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
@@ -352,9 +353,8 @@ void main() {
         final DateTime dateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
         final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats, min: 1);
 
-        final List<WeekDay> weekdays = [...WeekDay.values]
-          ..shuffle()
-          ..take(random.integer(WeekDay.values.length, min: 1));
+        final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
+        final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
         final int intervalSize = random.integer(10, min: 1);
         final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
             .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
