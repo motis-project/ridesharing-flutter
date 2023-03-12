@@ -90,7 +90,7 @@ class AuthAppState extends State<AuthApp> {
         if (event == AuthChangeEvent.signedIn) {
           final bool? isBlocked = await supabaseManager.supabaseClient
               .rpc('is_blocked', params: <String, dynamic>{'user_id': data.session!.user.id}) as bool?;
-          if (isBlocked != null && isBlocked) {
+          if (isBlocked ?? false) {
             await supabaseManager.supabaseClient.auth.signOut();
             if (!mounted) return;
             showSnackBar(context, S.of(context).blockedSnackBar);
