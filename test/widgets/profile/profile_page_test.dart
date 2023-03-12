@@ -66,11 +66,30 @@ void main() {
   });
 
   group('constructors', () {
-    // run for both own and other profile
-    for (int i = 0; i < 2; i++) {
-      i == 0
-          ? supabaseManager.currentProfile = profile
-          : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
+    group('currentProfile', () {
+      testWidgets('Works with id parameter', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage(profile.id!));
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        await tester.pump();
+
+        // you see it once in the AppBar and once in the body
+        expect(find.text(profile.username), findsNWidgets(2));
+      });
+
+      testWidgets('Works with object parameter', (WidgetTester tester) async {
+        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+        await tester.pump();
+
+        expect(find.text(profile.username), findsNWidgets(2));
+      });
+    });
+
+    group('not currentProfile', () {
+      setUp(() {
+        supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
+      });
 
       testWidgets('Works with id parameter', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage(profile.id!));
@@ -89,100 +108,70 @@ void main() {
 
         expect(find.text(profile.username), findsNWidgets(2));
       });
-    }
+    });
   });
 
   group('Profile content', () {
-    // run for both own and other profile
-    for (int i = 0; i < 2; i++) {
-      i == 0
-          ? supabaseManager.currentProfile = profile
-          : supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
+    testWidgets('Own profile', (WidgetTester tester) async {
+      supabaseManager.currentProfile = profile;
 
-      testWidgets('avatar$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('avatarTappable'))),
-            findsOneWidget);
-      });
-
-      testWidgets('username$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.text(profile.username), findsNWidgets(2));
-      });
-
-      testWidgets('fullName$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
-      });
-
-      testWidgets('description$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.text(profile.description!), findsOneWidget);
-      });
-
-      testWidgets('age$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.text(profile.age.toString()), findsOneWidget);
-      });
-
-      testWidgets('gender$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        final genderFinder = find.byKey(const Key('gender'));
-        expect(genderFinder, findsOneWidget);
-      });
-
-      testWidgets('features$i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        final scrollableFinder = find.byType(Scrollable).first;
-        expect(scrollableFinder, findsOneWidget);
-
-        for (int h = 0; h < profile.features!.length; h++) {
-          final feature = profile.features![h];
-          final featureFinder = find.byKey(Key('feature_${feature.name}'));
-          await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
-          expect(featureFinder, findsOneWidget);
-        }
-
-        expect(find.descendant(of: find.byKey(const Key('features')), matching: find.byType(ListTile)),
-            findsNWidgets(profile.features!.length));
-      });
-
-      testWidgets('ReviewsPreview $i', (WidgetTester tester) async {
-        await pumpMaterial(tester, ProfilePage.fromProfile(profile));
-        await tester.pump();
-
-        expect(find.byType(ReviewsPreview), findsOneWidget);
-      });
-    }
-
-    testWidgets('currentUser email', (WidgetTester tester) async {
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
+      expect(
+          find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('avatarTappable'))), findsOneWidget);
+      expect(find.text(profile.username), findsNWidgets(2));
       expect(find.text(profile.email), findsOneWidget);
+      expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
+      expect(find.text(profile.description!), findsOneWidget);
+      expect(find.text(profile.age.toString()), findsOneWidget);
+      expect(find.byKey(const Key('gender')), findsOneWidget);
+
+      final scrollableFinder = find.byType(Scrollable).first;
+      expect(scrollableFinder, findsOneWidget);
+
+      for (int h = 0; h < profile.features!.length; h++) {
+        final feature = profile.features![h];
+        final featureFinder = find.byKey(Key('feature_${feature.name}'));
+        await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
+        expect(featureFinder, findsOneWidget);
+      }
+
+      expect(find.descendant(of: find.byKey(const Key('features')), matching: find.byType(ListTile)),
+          findsNWidgets(profile.features!.length));
+
+      expect(find.byType(ReviewsPreview), findsOneWidget);
     });
 
-    testWidgets('not currentUser email', (WidgetTester tester) async {
+    testWidgets('Other profile', (WidgetTester tester) async {
       supabaseManager.currentProfile = ProfileFactory().generateFake(id: 2);
 
       await pumpMaterial(tester, ProfilePage.fromProfile(profile));
       await tester.pump();
 
+      expect(
+          find.descendant(of: find.byType(Avatar), matching: find.byKey(const Key('avatarTappable'))), findsOneWidget);
+      expect(find.text(profile.username), findsNWidgets(2));
       expect(find.text(profile.email), findsNothing);
+      expect(find.text(profile.fullName), findsAtLeastNWidgets(1));
+      expect(find.text(profile.description!), findsOneWidget);
+      expect(find.text(profile.age.toString()), findsOneWidget);
+      expect(find.byKey(const Key('gender')), findsOneWidget);
+
+      final scrollableFinder = find.byType(Scrollable).first;
+      expect(scrollableFinder, findsOneWidget);
+
+      for (int h = 0; h < profile.features!.length; h++) {
+        final feature = profile.features![h];
+        final featureFinder = find.byKey(Key('feature_${feature.name}'));
+        await tester.scrollUntilVisible(featureFinder, 500, scrollable: scrollableFinder);
+        expect(featureFinder, findsOneWidget);
+      }
+
+      expect(find.descendant(of: find.byKey(const Key('features')), matching: find.byType(ListTile)),
+          findsNWidgets(profile.features!.length));
+
+      expect(find.byType(ReviewsPreview), findsOneWidget);
     });
 
     testWidgets('not currentUser no details', (WidgetTester tester) async {
