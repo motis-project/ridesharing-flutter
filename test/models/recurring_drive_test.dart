@@ -1,6 +1,8 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
+import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:rrule/rrule.dart';
 
@@ -114,6 +116,109 @@ void main() {
       expect(json['stopped_at'], recurringDrive.stoppedAt?.toString());
       expect(json['recurrence_rule'], contains('\n${recurringDrive.recurrenceRule}'));
       expect(json.keys.length, 13);
+    });
+  });
+
+  test('RecurringDrive.duration', () {
+    final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake();
+    expect(recurringDrive.duration, recurringDrive.startTime.getDurationUntil(recurringDrive.endTime));
+  });
+
+  group('RecurringDrive.recurrenceEndChoice', () {
+    test('date', () {
+      final RecurrenceRule recurrenceRule = RecurrenceRule(
+        frequency: Frequency.daily,
+        until: DateTime.now().add(const Duration(days: 1)).toUtc(),
+      );
+      final RecurringDrive recurringDrive = RecurringDriveFactory()
+          .generateFake(recurrenceEndType: RecurrenceEndType.date, recurrenceRule: recurrenceRule);
+      expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.date);
+      expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceDate).date, recurrenceRule.until);
+    });
+
+    group('interval', () {
+      test('years', () {
+        final DateTime now = DateTime.now();
+        final DateTime startedAt = DateTime.utc(now.year, now.month, now.day);
+        final int intervalSize = random.integer(10, min: 1);
+        final RecurrenceRule recurrenceRule = RecurrenceRule(
+          frequency: Frequency.daily,
+          until: DateTime.utc(now.year + intervalSize, now.month, now.day),
+        );
+        final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
+            recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
+        expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+            RecurrenceIntervalType.years);
+      });
+
+      test('months', () {
+        final DateTime now = DateTime.now();
+        final DateTime startedAt = DateTime.utc(now.year, now.month, now.day);
+        //Not divisible by 12
+        final int intervalSize = random.integer(10) * 12 + random.integer(12, min: 1);
+        final RecurrenceRule recurrenceRule = RecurrenceRule(
+          frequency: Frequency.daily,
+          until: DateTime.utc(now.year, now.month + intervalSize, now.day),
+        );
+        final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
+            recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
+        expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+            RecurrenceIntervalType.months);
+      });
+
+      test('weeks', () {
+        final DateTime now = DateTime.now();
+        final DateTime startedAt = DateTime.utc(now.year, now.month, now.day);
+        final int intervalSize = random.integer(10);
+        final RecurrenceRule recurrenceRule = RecurrenceRule(
+          frequency: Frequency.daily,
+          until: DateTime.utc(now.year, now.month, now.day + intervalSize * 7),
+        );
+        final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
+            recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
+        expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+            RecurrenceIntervalType.weeks);
+      });
+
+      test('days', () {
+        final DateTime now = DateTime.now();
+        final DateTime startedAt = DateTime.utc(now.year, now.month, now.day, 12);
+        //Not divisible by 7
+        int intervalSize = random.integer(10) * 7 + random.integer(7, min: 1);
+        DateTime until = DateTime.utc(now.year, now.month, now.day + intervalSize, 12);
+        //Make sure until is not exactly x months in the future
+        while (until.day - startedAt.day == 0) {
+          intervalSize = random.integer(10) * 7 + random.integer(7, min: 1);
+          until = DateTime.utc(now.year, now.month, now.day + intervalSize, 12);
+        }
+        final RecurrenceRule recurrenceRule = RecurrenceRule(
+          frequency: Frequency.daily,
+          until: until,
+        );
+        final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
+            recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
+        expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
+        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+            RecurrenceIntervalType.days);
+      });
+    });
+
+    test('occurence', () {
+      final RecurrenceRule recurrenceRule = RecurrenceRule(
+        frequency: Frequency.daily,
+        count: random.integer(10),
+      );
+      final RecurringDrive recurringDrive = RecurringDriveFactory()
+          .generateFake(recurrenceEndType: RecurrenceEndType.occurrence, recurrenceRule: recurrenceRule);
+      expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.occurrence);
+      expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceOccurrence).occurrences, recurrenceRule.count);
     });
   });
 
