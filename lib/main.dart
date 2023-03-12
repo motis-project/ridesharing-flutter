@@ -93,7 +93,7 @@ class AuthAppState extends State<AuthApp> {
           if (isBlocked != null && isBlocked) {
             await supabaseManager.supabaseClient.auth.signOut();
             if (!mounted) return;
-            showSnackBar(context, "You're blocked!");
+            showSnackBar(context, S.of(context).blockedSnackBar);
             return;
           }
         }
