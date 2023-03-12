@@ -102,6 +102,95 @@ void main() {
   });
 
   group('RideEvent', () {
+    testWidgets('Shows the right RideEvents (driver)', (WidgetTester tester) async {
+      final Drive drive = DriveFactory().generateFake(driver: NullableParameter(profile));
+      final Ride ride = RideFactory().generateFake(drive: NullableParameter(drive));
+
+      final List<RideEvent> rideEvents = [
+        for (RideEventCategory category in RideEventCategory.values)
+          RideEventFactory().generateFake(
+            read: false,
+            ride: NullableParameter(ride),
+            category: category,
+          )
+      ];
+
+      final List<RideEvent> relevantRideEvents = [
+        for (RideEvent rideEvent in rideEvents)
+          if (rideEvent.category == RideEventCategory.cancelledByRider ||
+              rideEvent.category == RideEventCategory.pending ||
+              rideEvent.category == RideEventCategory.withdrawn)
+            rideEvent
+      ];
+
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events'))
+          .thenReturnJson(rideEvents.map((RideEvent rideEvent) => rideEvent.toJsonForApi()).toList());
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read')).thenReturnJson('');
+
+      for (final RideEvent rideEvent in rideEvents) {
+        whenRequest(
+          processor,
+          urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + rideEvent.rideId.toString())),
+        ).thenReturnJson(ride.toJsonForApi());
+      }
+      await pumpMaterial(tester, const HomePage());
+      await tester.pump();
+
+      final Finder finder = find.byType(Dismissible, skipOffstage: false);
+      expect(finder, findsNWidgets(relevantRideEvents.length));
+
+      for (final RideEvent rideEvent in relevantRideEvents) {
+        expect(tester.widget(finder.at(relevantRideEvents.indexOf(rideEvent))).key, Key('rideEvent${rideEvent.id}'));
+      }
+    });
+
+    testWidgets('Shows the right RideEvents (rider)', (WidgetTester tester) async {
+      final Ride ride = RideFactory().generateFake(rider: NullableParameter(profile));
+
+      final List<RideEvent> rideEvents = [
+        for (RideEventCategory category in RideEventCategory.values)
+          RideEventFactory().generateFake(
+            read: false,
+            ride: NullableParameter(ride),
+            category: category,
+          )
+      ];
+
+      final List<RideEvent> relevantRideEvents = [
+        for (RideEvent rideEvent in rideEvents)
+          if (rideEvent.category == RideEventCategory.approved ||
+              rideEvent.category == RideEventCategory.cancelledByDriver ||
+              rideEvent.category == RideEventCategory.rejected)
+            rideEvent
+      ];
+
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events'))
+          .thenReturnJson(rideEvents.map((RideEvent rideEvent) => rideEvent.toJsonForApi()).toList());
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read')).thenReturnJson('');
+
+      for (final RideEvent rideEvent in rideEvents) {
+        whenRequest(
+          processor,
+          urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + rideEvent.rideId.toString())),
+        ).thenReturnJson(ride.toJsonForApi());
+      }
+      await pumpMaterial(tester, const HomePage());
+      await tester.pump();
+
+      final Finder finder = find.byType(Dismissible, skipOffstage: false);
+      expect(finder, findsNWidgets(relevantRideEvents.length));
+
+      for (final RideEvent rideEvent in relevantRideEvents) {
+        expect(tester.widget(finder.at(relevantRideEvents.indexOf(rideEvent))).key, Key('rideEvent${rideEvent.id}'));
+      }
+    });
+
     testWidgets('can navigate to rideDetail if rideEvent is for ride', (WidgetTester tester) async {
       final Ride ride = RideFactory().generateFake(rider: NullableParameter(profile));
       final RideEvent rideEvent = RideEventFactory().generateFake(
