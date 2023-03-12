@@ -83,25 +83,33 @@ class RecurrenceOptionsIndicatorDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle dateStyle = TextStyle(color: getForegroundColor(context));
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: localeManager.formatDate(DateTime(2022, 12, 12)), style: dateStyle),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout();
     return Container(
-      width: 80,
-      height: 60,
+      width: textPainter.size.width + 10,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.elliptical(10, 10)),
         color: getBackgroundColor(context),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            day.toWeekDay().getAbbreviation(context),
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(color: getForegroundColor(context)),
-          ),
-          Text(
-            localeManager.formatDate(day),
-            style: TextStyle(color: getForegroundColor(context)),
-          )
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              day.toWeekDay().getAbbreviation(context),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: getForegroundColor(context)),
+            ),
+            Text(
+              localeManager.formatDate(day),
+              style: dateStyle,
+            )
+          ],
+        ),
       ),
     );
   }
