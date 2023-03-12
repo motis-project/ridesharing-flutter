@@ -17,33 +17,33 @@ class FirebaseManager {
       messaging = FirebaseMessaging.instance;
     }
   }
-}
 
-Future<void> requestPermissionAndLoadPushToken() async {
-  // at the moment Push Notifications are only supported on Android
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    firebaseManager.settings = await firebaseManager.messaging!.requestPermission();
+  Future<void> requestPermissionAndLoadPushToken() async {
+    // at the moment Push Notifications are only supported on Android
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      settings ??= await messaging!.requestPermission();
 
-    if (firebaseManager.settings!.authorizationStatus == AuthorizationStatus.authorized) {
-      final String? fcmToken = await firebaseManager.messaging!.getToken();
-      await supabaseManager.supabaseClient.from('push_tokens').upsert(
-        <String, dynamic>{
-          'token': fcmToken,
-          'user_id': supabaseManager.currentProfile?.id,
-          'disabled': false,
-        },
-        onConflict: 'token',
-      );
+      if (settings!.authorizationStatus == AuthorizationStatus.authorized) {
+        final String? fcmToken = await messaging!.getToken();
+        await supabaseManager.supabaseClient.from('push_tokens').upsert(
+          <String, dynamic>{
+            'token': fcmToken,
+            'user_id': supabaseManager.currentProfile?.id,
+            'disabled': false,
+          },
+          onConflict: 'token',
+        );
+      }
     }
   }
-}
 
-Future<void> disablePushToken() async {
-  // at the moment Push Notifications are only supported on Android
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    final String? fcmToken = await firebaseManager.messaging!.getToken();
-    await supabaseManager.supabaseClient
-        .from('push_tokens')
-        .update(<String, dynamic>{'disabled': true}).eq('token', fcmToken);
+  Future<void> disablePushToken() async {
+    // at the moment Push Notifications are only supported on Android
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      final String? fcmToken = await messaging!.getToken();
+      await supabaseManager.supabaseClient
+          .from('push_tokens')
+          .update(<String, dynamic>{'disabled': true}).eq('token', fcmToken);
+    }
   }
 }

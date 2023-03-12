@@ -85,7 +85,7 @@ class AuthAppState extends State<AuthApp> {
         final AuthChangeEvent event = data.event;
         final Session? session = data.session;
         await supabaseManager.reloadCurrentProfile();
-        if (event == AuthChangeEvent.signedOut) unawaited(disablePushToken());
+        if (event == AuthChangeEvent.signedOut) unawaited(firebaseManager.disablePushToken());
 
         setState(() {
           _isLoggedIn = session != null;
@@ -97,7 +97,7 @@ class AuthAppState extends State<AuthApp> {
               event == AuthChangeEvent.signedIn ||
               event == AuthChangeEvent.passwordRecovery) {
             Navigator.of(context).popUntil((Route<void> route) => route.isFirst);
-            if (event == AuthChangeEvent.signedIn) requestPermissionAndLoadPushToken();
+            if (event == AuthChangeEvent.signedIn) firebaseManager.requestPermissionAndLoadPushToken();
           }
         });
       },
