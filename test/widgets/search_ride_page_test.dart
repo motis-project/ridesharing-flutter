@@ -332,7 +332,10 @@ void main() {
 
         final SearchRidePageState pageState = tester.state(pageFinder);
 
-        await enterSeats(tester, seats);
+        await enterSeats(tester, seats + 1);
+
+        await tester.tap(find.byKey(const Key('decrement')));
+        await tester.pump();
 
         expect(pageState.seats, seats);
       });
