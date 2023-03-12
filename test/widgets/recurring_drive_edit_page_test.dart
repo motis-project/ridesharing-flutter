@@ -210,8 +210,9 @@ void main() {
         final int oldIntervalSize = random.integer(2, min: 1);
         final int newIntervalSize = oldIntervalSize + 1;
         final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
+            .where((RecurrenceIntervalType value) =>
+                value != RecurrenceIntervalType.days && value != RecurrenceIntervalType.years)
+            .toList()[random.integer(RecurrenceIntervalType.values.length - 2)];
         final DateTime newUntilDate = faker.date.dateTimeBetween(
             DateTime.now().add(const Duration(days: 30)), DateTime.now().add(const Duration(days: 60)));
         final DateTime newUntilTime = DateTime(newUntilDate.year, newUntilDate.month, newUntilDate.day, 23, 59).toUtc();
