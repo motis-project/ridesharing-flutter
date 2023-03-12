@@ -5,21 +5,31 @@ import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/pages/about_page.dart';
 import 'package:motis_mitfahr_app/account/pages/account_page.dart';
 import 'package:motis_mitfahr_app/account/pages/help_page.dart';
+import 'package:motis_mitfahr_app/account/pages/profile_page.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/profiles/profile_widget.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
 
 import '../../util/factories/profile_factory.dart';
+import '../../util/mocks/mock_server.dart';
 import '../../util/mocks/navigator_observer.mocks.dart';
+import '../../util/mocks/request_processor.dart';
+import '../../util/mocks/request_processor.mocks.dart';
 import '../../util/pump_material.dart';
 
 void main() {
   final MockNavigatorObserver navigatorObserver = MockNavigatorObserver();
-  final Profile user = ProfileFactory().generateFake();
+  final Profile profile = ProfileFactory().generateFake();
+  final MockRequestProcessor processor = MockRequestProcessor();
+
+  setUpAll(() async {
+    MockServer.setProcessor(processor);
+  });
 
   setUp(() async {
-    supabaseManager.currentProfile = user;
+    reset(processor);
+    supabaseManager.currentProfile = profile;
   });
 
   Future<void> loadPageAndTapKey(WidgetTester tester, Key key) async {
@@ -36,7 +46,7 @@ void main() {
     expect(profileWidgetFinder, findsOneWidget);
 
     final ProfileWidget profileWidget = tester.widget(profileWidgetFinder);
-    expect(profileWidget.profile, user);
+    expect(profileWidget.profile, profile);
     expect(profileWidget.withHero, true);
     expect(profileWidget.isTappable, true); //tappable to open profile page
   });
@@ -89,13 +99,28 @@ void main() {
     verify(navigatorObserver.didPop(any, any)).called(1);
   });
 
-  testWidgets('can navigate to help Page', (WidgetTester tester) async {
+  testWidgets('can navigate to Profile Page', (WidgetTester tester) async {
+    whenRequest(processor, urlMatcher: startsWith('/rest/v1/profiles'), methodMatcher: equals('GET'))
+        .thenReturnJson(profile.toJsonForApi());
+
+    await pumpMaterial(tester, const AccountPage(), navigatorObserver: navigatorObserver);
+    await tester.pump();
+
+    await tester.tap(find.byType(ProfileWidget));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ProfilePage), findsOneWidget);
+
+    await tester.pageBack();
+  });
+
+  testWidgets('can navigate to Help Page', (WidgetTester tester) async {
     await loadPageAndTapKey(tester, const Key('accountHelp'));
 
     expect(find.byType(HelpPage), findsOneWidget);
   });
 
-  testWidgets('can navigate to about Page', (WidgetTester tester) async {
+  testWidgets('can navigate to About Page', (WidgetTester tester) async {
     await loadPageAndTapKey(tester, const Key('accountAbout'));
 
     expect(find.byType(AboutPage), findsOneWidget);
