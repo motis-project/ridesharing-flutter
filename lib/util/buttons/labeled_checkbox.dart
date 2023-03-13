@@ -26,9 +26,12 @@ class LabeledCheckbox extends StatelessWidget {
           children: <Widget>[
             Checkbox(
               value: value,
-              onChanged: (bool? newValue) {
-                onChanged(newValue!);
-              },
+              onChanged: null,
+              fillColor: MaterialStateProperty.resolveWith(
+                (Set<MaterialState> states) => states.contains(MaterialState.selected)
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).disabledColor,
+              ),
             ),
             Text(label),
             const SizedBox(width: 10)
