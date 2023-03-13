@@ -81,7 +81,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                       onRatingUpdate: onRatingUpdate,
                       key: const Key('overallRating'),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     _buildCategoryReviews(),
                     const SizedBox(height: 10),
                     SizedBox(
@@ -126,6 +126,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             onRatingUpdate: onRatingUpdate,
             key: const Key('comfortRating'),
           ),
+          const SizedBox(height: 10),
           Text(S.of(context).reviewCategorySafety),
           const SizedBox(width: 10),
           CustomRatingBar(
@@ -134,6 +135,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             onRatingUpdate: onRatingUpdate,
             key: const Key('safetyRating'),
           ),
+          const SizedBox(height: 10),
           Text(S.of(context).reviewCategoryReliability),
           const SizedBox(width: 10),
           CustomRatingBar(
@@ -142,6 +144,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             onRatingUpdate: onRatingUpdate,
             key: const Key('reliabilityRating'),
           ),
+          const SizedBox(height: 10),
           Text(S.of(context).reviewCategoryHospitality),
           const SizedBox(width: 10),
           CustomRatingBar(
