@@ -452,4 +452,7 @@ void main() {
       expect(find.byType(ProfilePage), findsOneWidget);
     });
   });
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, ProfilePage.fromProfile(profile));
+  });
 }

@@ -33,6 +33,7 @@ class ReviewsPreview extends StatelessWidget {
                 const SizedBox(height: 10),
                 ExcludeSemantics(
                   child: FadeOut(
+                    label: S.of(context).openDetails,
                     indicator: Text(
                       S.of(context).more,
                       style: TextStyle(color: Theme.of(context).colorScheme.primary),

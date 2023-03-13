@@ -23,11 +23,11 @@ class EditableRow extends StatelessWidget {
     );
     if (isEditable) {
       titleWidget = Semantics(
-        tooltip: S.of(context).edit,
+        label: S.of(context).edit,
         child: InkWell(
           onTap: onPressed,
           key: const Key('editableRowTitleButton'),
-          child: titleWidget,
+          child: Container(alignment: Alignment.center, height: 48, child: titleWidget),
         ),
       );
     }
@@ -39,6 +39,7 @@ class EditableRow extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: IconButton(
+                tooltip: S.of(context).edit,
                 icon: const Icon(Icons.edit),
                 key: const Key('editableRowIconButton'),
                 onPressed: onPressed,
@@ -47,22 +48,11 @@ class EditableRow extends StatelessWidget {
           ),
       ],
     );
-    Widget editableInner = innerWidget;
-    if (isEditable) {
-      editableInner = Semantics(
-        label: S.of(context).edit,
-        child: InkWell(
-          onTap: onPressed,
-          key: const Key('editableRowInnerButton'),
-          child: innerWidget,
-        ),
-      );
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         row,
-        editableInner,
+        innerWidget,
       ],
     );
   }
