@@ -102,6 +102,95 @@ void main() {
   });
 
   group('RideEvent', () {
+    testWidgets('Shows the right RideEvents (driver)', (WidgetTester tester) async {
+      final Drive drive = DriveFactory().generateFake(driver: NullableParameter(profile));
+      final Ride ride = RideFactory().generateFake(drive: NullableParameter(drive));
+
+      final List<RideEvent> rideEvents = [
+        for (RideEventCategory category in RideEventCategory.values)
+          RideEventFactory().generateFake(
+            read: false,
+            ride: NullableParameter(ride),
+            category: category,
+          )
+      ];
+
+      final List<RideEvent> relevantRideEvents = [
+        for (RideEvent rideEvent in rideEvents)
+          if (rideEvent.category == RideEventCategory.cancelledByRider ||
+              rideEvent.category == RideEventCategory.pending ||
+              rideEvent.category == RideEventCategory.withdrawn)
+            rideEvent
+      ];
+
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events'))
+          .thenReturnJson(rideEvents.map((RideEvent rideEvent) => rideEvent.toJsonForApi()).toList());
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read')).thenReturnJson('');
+
+      for (final RideEvent rideEvent in rideEvents) {
+        whenRequest(
+          processor,
+          urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + rideEvent.rideId.toString())),
+        ).thenReturnJson(ride.toJsonForApi());
+      }
+      await pumpMaterial(tester, const HomePage());
+      await tester.pump();
+
+      final Finder finder = find.byType(Dismissible, skipOffstage: false);
+      expect(finder, findsNWidgets(relevantRideEvents.length));
+
+      for (final RideEvent rideEvent in relevantRideEvents) {
+        expect(tester.widget(finder.at(relevantRideEvents.indexOf(rideEvent))).key, Key('rideEvent${rideEvent.id}'));
+      }
+    });
+
+    testWidgets('Shows the right RideEvents (rider)', (WidgetTester tester) async {
+      final Ride ride = RideFactory().generateFake(rider: NullableParameter(profile));
+
+      final List<RideEvent> rideEvents = [
+        for (RideEventCategory category in RideEventCategory.values)
+          RideEventFactory().generateFake(
+            read: false,
+            ride: NullableParameter(ride),
+            category: category,
+          )
+      ];
+
+      final List<RideEvent> relevantRideEvents = [
+        for (RideEvent rideEvent in rideEvents)
+          if (rideEvent.category == RideEventCategory.approved ||
+              rideEvent.category == RideEventCategory.cancelledByDriver ||
+              rideEvent.category == RideEventCategory.rejected)
+            rideEvent
+      ];
+
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events'))
+          .thenReturnJson(rideEvents.map((RideEvent rideEvent) => rideEvent.toJsonForApi()).toList());
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/mark_ride_event_as_read')).thenReturnJson('');
+
+      for (final RideEvent rideEvent in rideEvents) {
+        whenRequest(
+          processor,
+          urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + rideEvent.rideId.toString())),
+        ).thenReturnJson(ride.toJsonForApi());
+      }
+      await pumpMaterial(tester, const HomePage());
+      await tester.pump();
+
+      final Finder finder = find.byType(Dismissible, skipOffstage: false);
+      expect(finder, findsNWidgets(relevantRideEvents.length));
+
+      for (final RideEvent rideEvent in relevantRideEvents) {
+        expect(tester.widget(finder.at(relevantRideEvents.indexOf(rideEvent))).key, Key('rideEvent${rideEvent.id}'));
+      }
+    });
+
     testWidgets('can navigate to rideDetail if rideEvent is for ride', (WidgetTester tester) async {
       final Ride ride = RideFactory().generateFake(rider: NullableParameter(profile));
       final RideEvent rideEvent = RideEventFactory().generateFake(
@@ -209,7 +298,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
-      //the folowing request is for the rideEvent in the loadInsertRideEvent function
+      //the following request is for the rideEvent in the loadInsertRideEvent function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/ride_events.*&id=eq\.' + rideEvent.id.toString())),
@@ -218,10 +307,10 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.insertRideEvent(rideEvent.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.insertRideEvent(rideEvent.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsOneWidget);
@@ -241,7 +330,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([rideEvent.toJsonForApi()]);
 
       rideEvent.read = true;
-      //the folowing request is for the rideEvent in the updateRideEvent function
+      //the following request is for the rideEvent in the updateRideEvent function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/ride_events.*&id=eq\.' + rideEvent.id.toString())),
@@ -250,11 +339,11 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
       expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsOneWidget);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.updateRideEvent(rideEvent.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateRideEvent(rideEvent.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('rideEvent${rideEvent.id}')), findsNothing);
@@ -315,7 +404,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
-      //the folowing request is for the message in the insertMessage function
+      //the following request is for the message in the insertMessage function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/messages.*&id=eq\.' + message.id.toString())),
@@ -324,10 +413,10 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.insertMessage(message.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.insertMessage(message.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('message${message.id}')), findsOneWidget);
@@ -341,7 +430,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
       message.read = true;
-      //the folowing request is for the message in the updateMessage function
+      //the following request is for the message in the updateMessage function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/messages.*&id=eq\.' + message.id.toString())),
@@ -350,11 +439,11 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
       expect(find.byKey(Key('message${message.id}')), findsOneWidget);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.updateMessage(message.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateMessage(message.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('message${message.id}')), findsNothing);
@@ -398,7 +487,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
-      //the folowing request is for the rides in the updateRide function
+      //the following request is for the rides in the updateRide function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + ride.id.toString())),
@@ -407,13 +496,58 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.updateRide(ride.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateRide(ride.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('ride${ride.id}')), findsOneWidget);
+    });
+
+    testWidgets('updateRide sorts correctly', (WidgetTester tester) async {
+      final Ride ride1 = RideFactory().generateFake(
+        status: RideStatus.approved,
+        rider: NullableParameter(profile),
+        startTime: DateTime.now(),
+      );
+      final Ride ride2 = RideFactory().generateFake(
+        status: RideStatus.approved,
+        rider: NullableParameter(profile),
+        startTime: DateTime.now().add(const Duration(hours: 2)),
+      );
+      final Ride ride = RideFactory().generateFake(
+        status: RideStatus.approved,
+        rider: NullableParameter(profile),
+        startTime: DateTime.now().add(const Duration(hours: 1)),
+      );
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'))
+          .thenReturnJson([ride1.toJsonForApi(), ride2.toJsonForApi()]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
+
+      //the following request is for the rides in the updateRide function
+      whenRequest(
+        processor,
+        urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + ride.id.toString())),
+      ).thenReturnJson(ride.toJsonForApi());
+
+      await pumpMaterial(tester, const HomePage());
+      await tester.pump();
+
+      final Finder homepage = find.byType(HomePage);
+
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateRide(ride.toJsonForApi());
+      await tester.pumpAndSettle();
+
+      final Finder finder = find.byType(Dismissible, skipOffstage: false);
+      expect(finder, findsNWidgets(3));
+
+      expect(tester.widget(finder.at(0)).key, Key('ride${ride1.id}'));
+      expect(tester.widget(finder.at(1)).key, Key('ride${ride.id}'));
+      expect(tester.widget(finder.at(2)).key, Key('ride${ride2.id}'));
     });
 
     testWidgets('updateRide removes ride if the status changes from approved to cancelled',
@@ -429,7 +563,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
       ride.status = RideStatus.cancelledByDriver;
-      //the folowing request is for the ride in the updateRide function
+      //the following request is for the ride in the updateRide function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/rides.*&id=eq\.' + ride.id.toString())),
@@ -438,11 +572,11 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
       expect(find.byKey(Key('ride${ride.id}')), findsOneWidget);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.updateRide(ride.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateRide(ride.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('ride${ride.id}')), findsNothing);
@@ -493,10 +627,10 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.insertDrive(drive.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.insertDrive(drive.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('drive${drive.id}')), findsOneWidget);
@@ -514,7 +648,7 @@ void main() {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events')).thenReturnJson([]);
 
       drive.cancelled = true;
-      //the folowing request is for the drive in the updateDrive function
+      //the following request is for the drive in the updateDrive function
       whenRequest(
         processor,
         urlMatcher: matches(RegExp(r'/rest/v1/drives.*&id=eq\.' + drive.id.toString())),
@@ -523,11 +657,11 @@ void main() {
       await pumpMaterial(tester, const HomePage());
       await tester.pump();
 
-      final Finder hompage = find.byType(HomePage);
+      final Finder homepage = find.byType(HomePage);
       expect(find.byKey(Key('drive${drive.id}')), findsOneWidget);
 
-      final HomePageState homePage = tester.state(hompage);
-      homePage.updateDrive(drive.toJsonForApi());
+      final HomePageState homepageState = tester.state(homepage);
+      homepageState.updateDrive(drive.toJsonForApi());
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('drive${drive.id}')), findsNothing);
@@ -598,7 +732,7 @@ void main() {
     await pumpMaterial(tester, const HomePage());
     await tester.pump();
 
-    final HomePageState homePage = tester.state(find.byType(HomePage));
+    final HomePageState homepageState = tester.state(find.byType(HomePage));
 
     expect(find.byKey(const Key('messagesColumn')), findsOneWidget);
     expect(find.byKey(const Key('rideEventsColumn')), findsOneWidget);
@@ -615,8 +749,8 @@ void main() {
     expect(tester.widget(finder.at(3)).key, Key('rideEvent${rideEvent.id}'));
     expect(tester.widget(finder.at(4)).key, Key('message${message.id}'));
 
-    homePage.insertMessage(message2.toJsonForApi());
-    homePage.insertDrive(driveTomorrow.toJsonForApi());
+    homepageState.insertMessage(message2.toJsonForApi());
+    homepageState.insertDrive(driveTomorrow.toJsonForApi());
     await tester.pumpAndSettle();
 
     expect(finder, findsNWidgets(7));
