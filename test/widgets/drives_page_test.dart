@@ -46,4 +46,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(CreateDrivePage), findsOneWidget);
   });
+
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, const DrivesPage());
+  });
 }

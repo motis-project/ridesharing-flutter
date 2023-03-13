@@ -780,5 +780,17 @@ void main() {
 
       expect(find.byType(CreateDrivePage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives'))
+          .thenReturnJson([DriveFactory().generateFake().toJsonForApi()]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages'))
+          .thenReturnJson([MessageFactory().generateFake().toJsonForApi()]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'))
+          .thenReturnJson([RideFactory().generateFake().toJsonForApi()]);
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/ride_events'))
+          .thenReturnJson([RideEventFactory().generateFake().toJsonForApi()]);
+      await expectMeetsAccessibilityGuidelines(tester, const HomePage());
+    });
   });
 }
