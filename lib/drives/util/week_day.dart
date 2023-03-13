@@ -31,7 +31,6 @@ class WeekDayPicker extends FormField<List<WeekDay>> {
                                   } else {
                                     weekDays.add(weekDay);
                                   }
-                                  state.didChange(weekDays);
                                   onChanged?.call(weekDays);
                                 }
                               : null,
