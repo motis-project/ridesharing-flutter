@@ -56,6 +56,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                       (int index) {
                         final ReportCategory category = ReportCategory.values[index];
                         return RadioListTile<ReportCategory>(
+                          key: Key('writeReportCategory${category.name}'),
                           visualDensity: VisualDensity.compact,
                           title: Row(
                             children: <Widget>[
@@ -77,6 +78,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
+                    key: const Key('writeReportField'),
                     controller: _textController,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
@@ -95,6 +97,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                   ),
                   const SizedBox(height: 10),
                   LoadingButton(
+                    key: const Key('writeReportButton'),
                     onPressed: _onSubmit,
                     state: _state,
                   )
