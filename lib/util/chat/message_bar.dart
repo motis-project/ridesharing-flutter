@@ -41,6 +41,7 @@ class _MessageBarState extends State<MessageBar> {
                   ),
                 ),
                 IconButton(
+                  tooltip: S.of(context).send,
                   onPressed: _submitMessage,
                   icon: const Icon(Icons.send),
                 ),

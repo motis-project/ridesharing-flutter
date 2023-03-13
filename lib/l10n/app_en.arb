@@ -18,6 +18,10 @@
   "remove": "Remove",
   "before": "Before",
   "after": "After",
+  "toggle": "Toggle",
+  "swap": "Swap",
+  "send": "Send",
+  "delete": "Delete",
   "preview": "Preview",
   "failureSnackBar": "Something went wrong.",
 
@@ -54,6 +58,7 @@
   "formPasswordConfirmHint": "Re-enter your password",
   "formPasswordConfirmValidateEmpty": "Please confirm your password",
   "formPasswordConfirmValidateMatch": "Passwords do not match",
+  "formPasswordToggleVisibilityTooltip": "Toggle visibility",
   "formDate": "Date",
   "formSinceDate": "Recurrence Start Date",
   "formTime": "Time",

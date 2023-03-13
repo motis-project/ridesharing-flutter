@@ -116,36 +116,39 @@ class _DriveChatPageState extends State<DriveChatPage> {
           );
     return Card(
       key: Key('chatWidget${chat.id}'),
-      child: InkWell(
-        child: ListTile(
-          leading: Avatar(ride.rider!),
-          title: Text(ride.rider!.username),
-          subtitle: subtitle,
-          trailing: chat.getUnreadMessagesCount() == 0
-              ? null
-              : Container(
-                  key: Key('chatWidget${chat.id}UnreadMessageCount'),
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      chat.getUnreadMessagesCount().toString(),
-                      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+      child: Semantics(
+        label: S.of(context).openChat,
+        child: InkWell(
+          child: ListTile(
+            leading: Avatar(ride.rider!),
+            title: Text(ride.rider!.username),
+            subtitle: subtitle,
+            trailing: chat.getUnreadMessagesCount() == 0
+                ? null
+                : Container(
+                    key: Key('chatWidget${chat.id}UnreadMessageCount'),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        chat.getUnreadMessagesCount().toString(),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                      ),
                     ),
                   ),
-                ),
-          onTap: () {
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ChatPage(
-                      chatId: chat.id,
-                      profile: ride.rider!,
+            onTap: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => ChatPage(
+                        chatId: chat.id,
+                        profile: ride.rider!,
+                      ),
                     ),
-                  ),
-                )
-                .then((_) => setState(() {}));
-          },
+                  )
+                  .then((_) => setState(() {}));
+            },
+          ),
         ),
       ),
     );

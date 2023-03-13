@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/fade_out.dart';
 import '../../util/locale_manager.dart';
@@ -83,14 +84,18 @@ class ReviewDetailState extends State<ReviewDetail> {
                     }
 
                     if (isExpanded) {
-                      return InkWell(
-                        onTap: () => setState(() => isExpanded = !isExpanded),
-                        child: Column(
-                          children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
+                      return Semantics(
+                        label: S.of(context).retract,
+                        child: InkWell(
+                          onTap: () => setState(() => isExpanded = !isExpanded),
+                          child: Column(
+                            children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
+                          ),
                         ),
                       );
                     }
                     return FadeOut(
+                      tooltip: S.of(context).expand,
                       onTap: () => setState(() => isExpanded = !isExpanded),
                       indicator: const Icon(Icons.expand_more, key: Key('expandReviewButton')),
                       child: Column(

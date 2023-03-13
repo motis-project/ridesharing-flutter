@@ -62,9 +62,12 @@ class ReviewsPreview extends StatelessWidget {
           Positioned.fill(
             child: Material(
               color: Colors.transparent,
-              child: InkWell(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
+              child: Semantics(
+                label: S.of(context).openDetails,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => ReviewsPage(profile: profile)),
+                  ),
                 ),
               ),
             ),
