@@ -84,8 +84,9 @@ class RecurrenceOptionsIndicatorDay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextStyle dateStyle = TextStyle(color: getForegroundColor(context));
+    //Getting the width of the "biggest possible" date so that every date has the same width
     final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: localeManager.formatDate(DateTime(2022, 12, 12)), style: dateStyle),
+      text: TextSpan(text: localeManager.formatDate(DateTime(2022, 12, 22)), style: dateStyle),
       maxLines: 1,
       textDirection: TextDirection.ltr,
     )..layout();
