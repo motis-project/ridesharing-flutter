@@ -356,5 +356,9 @@ void main() {
         methodMatcher: equals('GET'),
       ).called(2);
     });
+
+        testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, EditProfileFeaturesPage(profile));
+    });
   });
 }

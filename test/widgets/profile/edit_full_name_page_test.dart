@@ -132,5 +132,9 @@ void main() {
         methodMatcher: equals('GET'),
       ).called(3);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, EditFullNamePage(profile));
+    });
   });
 }
