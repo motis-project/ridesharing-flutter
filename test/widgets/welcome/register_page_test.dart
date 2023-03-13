@@ -189,5 +189,9 @@ void main() {
         expect(find.byType(AfterRegistrationPage), findsOneWidget);
       });
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, const RegisterPage());
+    });
   });
 }

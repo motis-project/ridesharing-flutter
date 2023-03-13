@@ -91,5 +91,9 @@ void main() {
         verify(navigatorObserver.didPop(any, any)).called(1);
       });
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, const ForgotPasswordPage());
+    });
   });
 }

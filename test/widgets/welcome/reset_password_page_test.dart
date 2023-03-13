@@ -124,5 +124,9 @@ void main() {
         verify(onPasswordReset()).called(1);
       });
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, ResetPasswordPage(onPasswordReset: onPasswordReset));
+    });
   });
 }
