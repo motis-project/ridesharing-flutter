@@ -222,4 +222,8 @@ void main() {
           [true, true, true, false, true, false, false]);
     });
   });
+
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, ChatPage(profile: profile, chatId: chatId));
+  });
 }

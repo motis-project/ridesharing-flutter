@@ -405,4 +405,8 @@ void main() {
       expect(chatPage.profile.id, drive.rides![0].rider!.id);
     });
   });
+
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, DriveChatPage(drive: DriveFactory().generateFake()));
+  });
 }
