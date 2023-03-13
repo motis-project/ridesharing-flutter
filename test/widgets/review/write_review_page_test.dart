@@ -150,6 +150,7 @@ void main() {
       final Finder saveButton = find.byKey(const Key('submitButton'));
       expect(saveButton, findsOneWidget);
 
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(find.byKey(const Key('submitButton')));
 
       await tester.pump(const Duration(milliseconds: 400));
@@ -196,6 +197,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('reviewText')), 'test');
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(saveButton);
 
       await tester.pump(const Duration(milliseconds: 400));
@@ -242,6 +244,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(saveButton);
 
       await tester.pump(const Duration(milliseconds: 400));

@@ -355,10 +355,10 @@ void main() {
         urlMatcher: startsWith('/rest/v1/profiles'),
         methodMatcher: equals('GET'),
       ).called(2);
+    });
 
-      testWidgets('Accessibility', (WidgetTester tester) async {
-        await expectMeetsAccessibilityGuidelines(tester, EditProfileFeaturesPage(profile));
-      });
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, EditProfileFeaturesPage(profile));
     });
   });
 }
