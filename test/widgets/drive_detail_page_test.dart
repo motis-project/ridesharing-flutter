@@ -378,5 +378,9 @@ void main() {
 
       expect(find.byType(DriveChatPage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, DriveDetailPage.fromDrive(drive));
+    });
   });
 }

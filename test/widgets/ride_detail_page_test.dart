@@ -570,6 +570,10 @@ void main() {
 
       expect(find.byType(WriteReviewPage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, RideDetailPage.fromRide(ride));
+    });
   });
 
   group('can Navigate to chatPage', () {
