@@ -158,22 +158,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     );
   }
 
-  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate, Key key) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Flexible(child: SizedBox(width: 100, child: Text(category))),
-        const SizedBox(width: 10),
-        CustomRatingBar(
-          size: CustomRatingBarSize.large,
-          rating: rating,
-          onRatingUpdate: onRatingUpdate,
-          key: key,
-        ),
-      ],
-    );
-  }
-
   void onRatingUpdate(double rating) {
     ratingChangedManually = true;
     setState(() {
