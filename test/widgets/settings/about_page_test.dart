@@ -23,4 +23,8 @@ void main() {
     expect(find.byKey(const Key('aboutPageBuildNumber')), findsOneWidget);
     expect(find.byKey(const Key('aboutPageBuildSignature')), findsOneWidget);
   });
+
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, const AboutPage());
+  });
 }

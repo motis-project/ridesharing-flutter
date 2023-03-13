@@ -125,4 +125,9 @@ void main() {
 
     expect(find.byType(AboutPage), findsOneWidget);
   });
+
+  testWidgets('Accessibility', (WidgetTester tester) async {
+    await expectMeetsAccessibilityGuidelines(tester, const AccountPage());
+    await expectMeetsAccessibilityGuidelines(tester, const HelpPage());
+  });
 }
