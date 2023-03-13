@@ -77,5 +77,9 @@ void main() {
 
       expect(find.byType(ReviewsPage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, ReviewsPreview(profile));
+    });
   });
 }

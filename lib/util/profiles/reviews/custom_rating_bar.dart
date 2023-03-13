@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../../account/models/review.dart';
@@ -20,10 +21,13 @@ class CustomRatingBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return RatingBar.builder(
       minRating: 1,
-      itemBuilder: (BuildContext context, _) => const Icon(
-        key: Key('ratingBarIcon'),
-        Icons.star,
-        color: Colors.amber,
+      itemBuilder: (BuildContext context, int index) => Semantics(
+        label: S.of(context).ratingBarSemantics(index + 1),
+        child: const Icon(
+          key: Key('ratingBarIcon'),
+          Icons.star,
+          color: Colors.amber,
+        ),
       ),
       // Keep the next line for more explicitness, and to avoid breaking changes
       // ignore: avoid_redundant_argument_values

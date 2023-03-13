@@ -210,6 +210,7 @@
   "pageHelpQuestion14": "Ich habe einige Rückmeldungen. Wo kann ich das melden?",
   "pageHelpAnswer14": "Feedback jeglicher Art ist uns wichtig, danke! Verwende bitte die Schaltfläche \"{contactButtonText}\" unten.",
   "pageReviewCount": "{count, plural, one{{count} Bewertung} other{{count} Bewertungen}}",
+  "reviewOverall": "Gesamt",
   "reviewCategoryComfort": "Komfort",
   "reviewCategorySafety": "Sicherheit",
   "reviewCategoryReliability": "Verlässlichkeit",

@@ -61,6 +61,10 @@ class ProfileWidget extends StatelessWidget {
         ],
       );
     }
+    profileRow = Padding(
+      padding: const EdgeInsets.all(4),
+      child: profileRow,
+    );
     return isTappable
         ? InkWell(
             onTap: () => Navigator.of(context)

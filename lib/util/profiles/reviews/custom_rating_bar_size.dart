@@ -15,7 +15,7 @@ extension CustomRatingBarSizeExtension on CustomRatingBarSize {
       case CustomRatingBarSize.large:
         return 30.0;
       case CustomRatingBarSize.huge:
-        return 40.0;
+        return 48.0;
     }
   }
 }

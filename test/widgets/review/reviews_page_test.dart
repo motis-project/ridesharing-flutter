@@ -104,5 +104,9 @@ void main() {
       expect(find.text('0.0'), findsOneWidget);
       expect(find.byType(ReviewDetail), findsNothing);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, ReviewsPage(profile: profile));
+    });
   });
 }

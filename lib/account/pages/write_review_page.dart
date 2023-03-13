@@ -66,7 +66,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
         title: ProfileWidget(widget.profile),
       ),
       body: Center(
@@ -75,6 +74,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             : SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
+                    Text(S.of(context).reviewOverall, style: Theme.of(context).textTheme.titleLarge),
                     CustomRatingBar(
                       size: CustomRatingBarSize.huge,
                       rating: _review!.rating,
@@ -118,29 +118,37 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryComfort,
-            _review!.comfortRating,
-            onComfortRatingUpdate,
-            const Key('comfortRating'),
+          Text(S.of(context).reviewCategoryComfort),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.huge,
+            rating: _review!.comfortRating,
+            onRatingUpdate: onRatingUpdate,
+            key: const Key('comfortRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategorySafety,
-            _review!.safetyRating,
-            onSafetyRatingUpdate,
-            const Key('safetyRating'),
+          Text(S.of(context).reviewCategorySafety),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.huge,
+            rating: _review!.safetyRating,
+            onRatingUpdate: onRatingUpdate,
+            key: const Key('safetyRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryReliability,
-            _review!.reliabilityRating,
-            onReliabilityRatingUpdate,
-            const Key('reliabilityRating'),
+          Text(S.of(context).reviewCategoryReliability),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.huge,
+            rating: _review!.reliabilityRating,
+            onRatingUpdate: onRatingUpdate,
+            key: const Key('reliabilityRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryHospitality,
-            _review!.hospitalityRating,
-            onHospitalityRatingUpdate,
-            const Key('hospitalityRating'),
+          Text(S.of(context).reviewCategoryHospitality),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.huge,
+            rating: _review!.hospitalityRating,
+            onRatingUpdate: onRatingUpdate,
+            key: const Key('hospitalityRating'),
           ),
         ],
       ),

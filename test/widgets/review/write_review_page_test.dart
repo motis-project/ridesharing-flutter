@@ -272,5 +272,9 @@ void main() {
         }),
       ).called(1);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, WriteReviewPage(profile));
+    });
   });
 }

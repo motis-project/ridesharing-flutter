@@ -89,6 +89,7 @@ class ReviewDetailState extends State<ReviewDetail> {
                         child: InkWell(
                           onTap: () => setState(() => isExpanded = !isExpanded),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
                           ),
                         ),
@@ -99,6 +100,7 @@ class ReviewDetailState extends State<ReviewDetail> {
                       onTap: () => setState(() => isExpanded = !isExpanded),
                       indicator: const Icon(Icons.expand_more, key: Key('expandReviewButton')),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[text, const SizedBox(height: 22)],
                       ),
                     );

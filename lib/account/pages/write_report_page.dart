@@ -39,7 +39,6 @@ class _WriteReportPageState extends State<WriteReportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
         title: ProfileWidget(widget.profile),
       ),
       body: Padding(
