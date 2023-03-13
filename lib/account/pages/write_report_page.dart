@@ -86,7 +86,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                       alignLabelWithHint: true,
                     ),
                     textAlignVertical: TextAlignVertical.top,
-                    maxLines: 5,
+                    maxLines: 6,
                     validator: (String? value) {
                       if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
                         return S.of(context).pageWriteReportFieldValidateEmpty;

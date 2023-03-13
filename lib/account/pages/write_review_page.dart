@@ -83,7 +83,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                     ),
                     const SizedBox(height: 20),
                     _buildCategoryReviews(),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: 300,
                       child: TextField(
@@ -95,7 +95,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                           alignLabelWithHint: true,
                         ),
                         textAlignVertical: TextAlignVertical.top,
-                        maxLines: 5,
+                        maxLines: 6,
                         onChanged: onTextUpdate,
                         key: const Key('reviewText'),
                       ),
