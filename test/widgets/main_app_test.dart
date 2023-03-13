@@ -102,5 +102,9 @@ void main() {
       await tester.pump();
       expect(find.byType(HomePage).hitTestable(), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, MainApp());
+    });
   });
 }
