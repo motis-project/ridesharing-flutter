@@ -213,7 +213,7 @@ void main() {
     test('occurence', () {
       final RecurrenceRule recurrenceRule = RecurrenceRule(
         frequency: Frequency.daily,
-        count: random.integer(10),
+        count: random.integer(10, min: 1),
       );
       final RecurringDrive recurringDrive = RecurringDriveFactory()
           .generateFake(recurrenceEndType: RecurrenceEndType.occurrence, recurrenceRule: recurrenceRule);
