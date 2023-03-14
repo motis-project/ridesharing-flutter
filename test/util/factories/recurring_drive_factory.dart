@@ -34,6 +34,8 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
+    final int generatedId = id ?? randomId;
+
     final Profile? generatedDriver = getNullableParameterOr(
       driver,
       ProfileFactory().generateFake(
@@ -95,13 +97,14 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                       driver: NullableParameter(generatedDriver),
                       // Setting to null to avoid infinite recursion
                       recurringDrive: NullableParameter(null),
+                      recurringDriveId: NullableParameter(generatedId),
                       createDependencies: false,
                     ))
                 .toList()
             : null);
 
     return RecurringDrive(
-      id: id ?? randomId,
+      id: generatedId,
       createdAt: generatedCreatedAt,
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),

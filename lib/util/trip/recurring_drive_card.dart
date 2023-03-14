@@ -14,13 +14,13 @@ class RecurringDriveCard extends StatefulWidget {
   const RecurringDriveCard(this.recurringDriveId, {super.key});
 
   @override
-  State<RecurringDriveCard> createState() => _RecurringDriveCardState();
+  State<RecurringDriveCard> createState() => RecurringDriveCardState();
 }
 
-class _RecurringDriveCardState extends State<RecurringDriveCard> {
+class RecurringDriveCardState extends State<RecurringDriveCard> {
   static const int _maxShownDrivesDefault = 3;
 
-  late int _id;
+  late int id;
   late RecurringDrive _recurringDrive;
   late List<Drive> _drives;
   bool fullyLoaded = false;
@@ -30,7 +30,7 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
     super.initState();
 
     setState(() {
-      _id = widget.recurringDriveId;
+      id = widget.recurringDriveId;
     });
     loadRecurringDrive();
   }
@@ -46,7 +46,7 @@ class _RecurringDriveCardState extends State<RecurringDriveCard> {
           rider: rider_id(*)
         )
       )
-    ''').eq('id', _id).single();
+    ''').eq('id', id).single();
     if (mounted) {
       setState(() {
         _recurringDrive = RecurringDrive.fromJson(data);
