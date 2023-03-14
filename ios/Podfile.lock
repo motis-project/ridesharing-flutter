@@ -68,8 +68,6 @@ PODS:
     - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
-  - permission_handler_apple (9.0.4):
-    - Flutter
   - PromisesObjC (2.1.1)
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -139,8 +137,8 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
-  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
 
