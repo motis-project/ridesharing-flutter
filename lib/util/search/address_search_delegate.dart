@@ -88,11 +88,13 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
             }
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
-                  ? EmptySearchResults.shrug(
+                  ? EmptySearchResults(
+                      asset: EmptySearchResults.pointingUpAsset,
                       title: S.of(context).pageSearchRideEmpty,
                       subtitle: Text(
                         S.of(context).searchAddressEnterMoreCharacters,
                         style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
                       ),
                     )
                   : const CircularProgressIndicator(),

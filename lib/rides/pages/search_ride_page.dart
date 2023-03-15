@@ -281,7 +281,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         return SliverToBoxAdapter(
           child: EmptySearchResults(
             key: const Key('searchRideNoInput'),
-            asset: 'assets/pointing_up.png',
+            asset: EmptySearchResults.pointingUpAsset,
             title: S.of(context).pageSearchRideNoInput,
           ),
         );
@@ -301,7 +301,8 @@ class SearchRidePageState extends State<SearchRidePage> {
 
     if (filteredSuggestions.isEmpty) {
       return SliverToBoxAdapter(
-        child: EmptySearchResults.shrug(
+        child: EmptySearchResults(
+          asset: EmptySearchResults.shrugAsset,
           title: S.of(context).pageSearchRideEmpty,
           subtitle: filterApplied.isNotEmpty
               ? Semantics(

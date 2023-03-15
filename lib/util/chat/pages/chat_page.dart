@@ -59,8 +59,9 @@ class _ChatPageState extends State<ChatPage> {
                     children: <Widget>[
                       Expanded(
                         child: messages.isEmpty
-                            ? EmptySearchResults.shrug(
+                            ? EmptySearchResults(
                                 scale: 8,
+                                asset: EmptySearchResults.shrugAsset,
                                 title: S.of(context).pageChatEmptyTitle,
                                 subtitle: Text(
                                   S.of(context).pageChatEmptyMessage,
@@ -82,7 +83,7 @@ class _ChatPageState extends State<ChatPage> {
               },
             )
           : EmptySearchResults(
-              asset: 'assets/pointing_up.png',
+              asset: EmptySearchResults.pointingUpAsset,
               scale: 8,
               title: S.of(context).pageChatEmptyTitle,
               subtitle: Text(

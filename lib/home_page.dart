@@ -277,7 +277,7 @@ class HomePageState extends State<HomePage> {
           notifications = <Widget>[
             EmptySearchResults(
               key: const Key('emptyColumn'),
-              asset: 'assets/pointing_up.png',
+              asset: EmptySearchResults.pointingUpAsset,
               title: S.of(context).pageHomePageEmpty,
               subtitle: Text(
                 S.of(context).pageHomePageEmptySubtitle,
