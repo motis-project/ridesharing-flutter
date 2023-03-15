@@ -18,12 +18,12 @@ class DriveFactory extends TripFactory<Drive> {
     DateTime? createdAt,
     String? start,
     Position? startPosition,
-    DateTime? startTime,
+    DateTime? startDateTime,
     String? end,
     Position? endPosition,
-    DateTime? endTime,
+    DateTime? endDateTime,
     int? seats,
-    bool? cancelled,
+    DriveStatus? status,
     bool? hideInListView,
     int? driverId,
     NullableParameter<Profile>? driver,
@@ -58,23 +58,23 @@ class DriveFactory extends TripFactory<Drive> {
               )
             : null);
 
-    final TripTimes tripTimes = generateTimes(startTime, endTime);
+    final TripTimes tripTimes = generateTimes(startDateTime, endDateTime);
 
     return Drive(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      startTime: tripTimes.start,
+      startDateTime: tripTimes.start,
       end: end ?? faker.address.city(),
       endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endTime: tripTimes.end,
+      endDateTime: tripTimes.end,
       seats: seats ?? random.nextInt(5) + 1,
-      cancelled: cancelled ?? false,
+      status: status ?? DriveStatus.plannedOrFinished,
       hideInListView: hideInListView ?? false,
       driverId: generatedDriver?.id ?? driverId ?? randomId,
       driver: generatedDriver,
-      recurringDriveId: generatedRecurringDrive?.id ?? recurringDriveId?.value ?? randomId,
+      recurringDriveId: generatedRecurringDrive?.id ?? getNullableParameterOr(recurringDriveId, randomId),
       recurringDrive: generatedRecurringDrive,
       rides: generatedRides,
     );

@@ -17,16 +17,17 @@ import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/pending_ride_card.dart';
+import '../../util/trip/trip.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import 'drive_chat_page.dart';
 
 class DriveDetailPage extends StatefulWidget {
-  final int id;
+  final int? id;
   final Drive? drive;
 
   const DriveDetailPage({super.key, required this.id}) : drive = null;
-  DriveDetailPage.fromDrive(this.drive, {super.key}) : id = drive!.id!;
+  DriveDetailPage.fromDrive(this.drive, {super.key}) : id = drive!.id;
 
   @override
   State<DriveDetailPage> createState() => _DriveDetailPageState();
@@ -48,8 +49,9 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data =
-        await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
+    if (_drive?.status != DriveStatus.preview) {
+      final Map<String, dynamic> data =
+          await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
       *,
       rides(
         *,
@@ -60,9 +62,10 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         )
       )
     ''').eq('id', widget.id).single();
+      _drive = Drive.fromJson(data);
+    }
 
     setState(() {
-      _drive = Drive.fromJson(data);
       _fullyLoaded = true;
     });
   }
@@ -73,7 +76,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     if (_drive != null) {
       widgets.add(TripOverview(_drive!));
-      widgets.add(const Divider(thickness: 1));
     }
 
     if (_fullyLoaded) {
@@ -84,18 +86,20 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         Waypoint(
           actions: <WaypointAction>[],
           place: drive.start,
-          time: drive.startTime,
+          time: drive.startDateTime,
         ),
       );
       stops.add(
         Waypoint(
           actions: <WaypointAction>[],
           place: drive.end,
-          time: drive.endTime,
+          time: drive.endDateTime,
         ),
       );
-      final List<Ride> approvedRides = drive.approvedRides!;
-      for (final Ride ride in approvedRides) {
+      final List<Ride> visibleRides = drive.status == DriveStatus.plannedOrFinished
+          ? drive.approvedRides
+          : drive.rides!.where((Ride ride) => ride.status == RideStatus.cancelledByDriver).toList();
+      for (final Ride ride in visibleRides) {
         bool startSaved = false;
         bool endSaved = false;
 
@@ -116,7 +120,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             Waypoint(
               actions: <WaypointAction>[rideStartAction],
               place: ride.start,
-              time: ride.startTime,
+              time: ride.startDateTime,
             ),
           );
         }
@@ -126,7 +130,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
             Waypoint(
               actions: <WaypointAction>[rideEndAction],
               place: ride.end,
-              time: ride.endTime,
+              time: ride.endDateTime,
             ),
           );
         }
@@ -162,8 +166,15 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           itemCount: stops.length,
         ),
       );
-      if (approvedRides.isNotEmpty) {
-        final Set<Profile> riders = approvedRides.map((Ride ride) => ride.rider!).toSet();
+
+      final List<Ride> pendingRides = _drive!.pendingRides.toList();
+
+      if (visibleRides.isNotEmpty || pendingRides.isNotEmpty) {
+        widgets.add(const Divider());
+      }
+
+      if (visibleRides.isNotEmpty) {
+        final Set<Profile> riders = visibleRides.map((Ride ride) => ride.rider!).toSet();
         widgets.addAll(<Widget>[
           const SizedBox(height: 5),
           Align(
@@ -177,7 +188,6 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         ]);
       }
 
-      final List<Ride> pendingRides = _drive!.pendingRides!.toList();
       if (pendingRides.isNotEmpty) {
         final List<Widget> pendingRidesColumn = <Widget>[
           const SizedBox(height: 5.0),
@@ -194,23 +204,26 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
         widgets.addAll(pendingRidesColumn);
       }
 
-      widgets.add(const SizedBox(height: 10));
-      Widget bottomButton;
-      if (_drive!.isFinished || _drive!.cancelled) {
-        bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonHide,
-          onPressed: _showHideDialog,
-          key: const Key('hideDriveButton'),
-        );
-      } else {
-        bottomButton = Button.error(
-          S.of(context).pageDriveDetailButtonCancel,
-          onPressed: _showCancelDialog,
-          key: const Key('cancelDriveButton'),
-        );
+      if (drive.status != DriveStatus.preview) {
+        widgets.add(const SizedBox(height: 20));
+
+        Widget primaryButton;
+        if (drive.isFinished || drive.status.isCancelled()) {
+          primaryButton = Button.error(
+            S.of(context).pageDriveDetailButtonHide,
+            onPressed: _showHideDialog,
+            key: const Key('hideDriveButton'),
+          );
+        } else {
+          primaryButton = Button.error(
+            S.of(context).pageDriveDetailButtonCancel,
+            onPressed: _showCancelDialog,
+            key: const Key('cancelDriveButton'),
+          );
+        }
+        widgets.add(primaryButton);
+        widgets.add(const SizedBox(height: 5));
       }
-      widgets.add(bottomButton);
-      widgets.add(const SizedBox(height: 5));
     } else {
       widgets.add(const SizedBox(height: 10));
       widgets.add(const Center(child: CircularProgressIndicator()));
@@ -218,10 +231,20 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
     final Widget content = Column(
       children: <Widget>[
-        if (_drive?.cancelled ?? false)
+        if (_drive?.status == DriveStatus.cancelledByDriver)
           CustomBanner.error(
-            S.of(context).pageDriveDetailBannerCancelled,
-            key: const Key('cancelledDriveBanner'),
+            S.of(context).pageDriveDetailBannerCancelledByDriver,
+            key: const Key('cancelledByDriverDriveBanner'),
+          )
+        else if (_drive?.status == DriveStatus.cancelledByRecurrenceRule)
+          CustomBanner.error(
+            S.of(context).pageDriveDetailBannerCancelledByRecurrenceRule,
+            key: const Key('cancelledByRecurrenceRuleDriveBanner'),
+          )
+        else if (_drive?.status == DriveStatus.preview)
+          CustomBanner.primary(
+            S.of(context).pageDriveDetailBannerPreview(Trip.creationInterval.inDays),
+            key: const Key('previewDriveBanner'),
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -236,7 +259,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageDriveDetailTitle),
-        actions: <Widget>[buildChatButton()],
+        actions: buildActions(),
       ),
       body: _drive == null
           ? const Center(child: CircularProgressIndicator())
@@ -250,40 +273,48 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
   }
 
-  Widget buildChatButton() {
+  List<Widget> buildActions() {
+    if (_drive?.status == DriveStatus.preview) {
+      return <Widget>[];
+    }
+
     final String tooltip = S.of(context).openChat;
     const Icon icon = Icon(Icons.chat);
 
     if (!_fullyLoaded) {
-      return IconButton(
-        onPressed: null,
-        icon: icon,
-        tooltip: tooltip,
-      );
+      return <Widget>[
+        IconButton(
+          onPressed: null,
+          icon: icon,
+          tooltip: tooltip,
+        )
+      ];
     }
 
-    return IconButton(
-      key: const Key('driveChatButton'),
-      onPressed: () => Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => DriveChatPage(
-            drive: _drive!,
+    return <Widget>[
+      IconButton(
+        key: const Key('driveChatButton'),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => DriveChatPage(
+              drive: _drive!,
+            ),
           ),
+        ).then((_) => loadDrive()),
+        icon: badges.Badge(
+          badgeContent: Text(
+            _drive!.getUnreadMessagesCount().toString(),
+            style: const TextStyle(color: Colors.white),
+            textScaleFactor: 1.0,
+          ),
+          showBadge: _drive!.getUnreadMessagesCount() != 0,
+          position: badges.BadgePosition.topEnd(top: -12),
+          child: icon,
         ),
-      ).then((_) => loadDrive()),
-      icon: badges.Badge(
-        badgeContent: Text(
-          _drive!.getUnreadMessagesCount().toString(),
-          style: const TextStyle(color: Colors.white),
-          textScaleFactor: 1.0,
-        ),
-        showBadge: _drive!.getUnreadMessagesCount() != 0,
-        position: badges.BadgePosition.topEnd(top: -12),
-        child: icon,
+        tooltip: tooltip,
       ),
-      tooltip: tooltip,
-    );
+    ];
   }
 
   Widget buildCard(Waypoint waypoint) {

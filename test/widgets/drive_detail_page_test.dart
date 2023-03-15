@@ -30,7 +30,7 @@ void main() {
     drive = DriveFactory().generateFake(
       start: 'Start',
       end: 'End',
-      endTime: DateTime.now().add(const Duration(hours: 1)),
+      endDateTime: DateTime.now().add(const Duration(hours: 1)),
       rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
     whenRequest(processor).thenReturnJson(drive.toJsonForApi());
@@ -39,7 +39,7 @@ void main() {
   group('DriveDetailPage', () {
     group('constructors', () {
       testWidgets('Works with id parameter', (WidgetTester tester) async {
-        await pumpMaterial(tester, DriveDetailPage(id: drive.id!));
+        await pumpMaterial(tester, DriveDetailPage(id: drive.id));
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         // Wait for the drive to be fully loaded
@@ -52,7 +52,7 @@ void main() {
         drive = DriveFactory().generateFake(
           start: 'Start',
           end: 'End',
-          endTime: DateTime.now().add(const Duration(hours: 1)),
+          endDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [RideFactory().generateFake(status: RideStatus.approved)],
         );
         whenRequest(processor).thenReturnJson(drive.toJsonForApi());
@@ -88,18 +88,34 @@ void main() {
       );
     });
 
-    group('Shows cancel/hide button depending on circumstances', () {
-      testWidgets('Shows cancel when ride is upcoming', (WidgetTester tester) async {
+    group('Shows button and banner depending on circumstances', () {
+      testWidgets('Shows nothing but TripOverview when drive is preview', (WidgetTester tester) async {
+        final Drive previewDrive = DriveFactory().generateFake(
+          status: DriveStatus.preview,
+          rides: <Ride>[],
+        );
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(previewDrive));
+        await tester.pump();
+
+        expect(find.byKey(const Key('driveChatButton')), findsNothing);
+        expect(find.byKey(const Key('previewDriveBanner')), findsOneWidget);
+
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsNothing);
+      });
+
+      testWidgets('Shows cancel button when drive is upcoming', (WidgetTester tester) async {
         await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
         await tester.pump();
 
         expect(find.byKey(const Key('cancelDriveButton')), findsOneWidget);
         expect(find.byKey(const Key('hideDriveButton')), findsNothing);
       });
-      testWidgets('Shows hide when drive is finished', (WidgetTester tester) async {
+
+      testWidgets('Shows hide button when drive is finished', (WidgetTester tester) async {
         final Drive finishedDrive = DriveFactory().generateFake(
-          startTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
-          endTime: DateTime.now().subtract(const Duration(days: 1)),
+          startDateTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
+          endDateTime: DateTime.now().subtract(const Duration(days: 1)),
         );
         whenRequest(processor).thenReturnJson(finishedDrive.toJsonForApi());
 
@@ -108,8 +124,9 @@ void main() {
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
         expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
       });
-      testWidgets('Shows hide when drive is cancelled', (WidgetTester tester) async {
-        final Drive cancelledDrive = DriveFactory().generateFake(cancelled: true);
+
+      testWidgets('Shows hide button and banner when drive is cancelledByDriver', (WidgetTester tester) async {
+        final Drive cancelledDrive = DriveFactory().generateFake(status: DriveStatus.cancelledByDriver);
 
         whenRequest(processor).thenReturnJson(cancelledDrive.toJsonForApi());
 
@@ -117,6 +134,21 @@ void main() {
         await tester.pump();
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
         expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+
+        expect(find.byKey(const Key('cancelledByDriverDriveBanner')), findsOneWidget);
+      });
+
+      testWidgets('Shows hide button and banner when drive is cancelledByRecurrenceRule', (WidgetTester tester) async {
+        final Drive cancelledDrive = DriveFactory().generateFake(status: DriveStatus.cancelledByRecurrenceRule);
+
+        whenRequest(processor).thenReturnJson(cancelledDrive.toJsonForApi());
+
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(cancelledDrive));
+        await tester.pump();
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsOneWidget);
+
+        expect(find.byKey(const Key('cancelledByRecurrenceRuleDriveBanner')), findsOneWidget);
       });
     });
 
@@ -124,17 +156,17 @@ void main() {
       final DateTime now = DateTime.now();
       final Ride approvedRide = RideFactory().generateFake(
         start: 'WaypointStart',
-        startTime: now.add(const Duration(hours: 1)),
+        startDateTime: now.add(const Duration(hours: 1)),
         end: 'WaypointConnecting',
-        endTime: now.add(const Duration(hours: 2)),
+        endDateTime: now.add(const Duration(hours: 2)),
         status: RideStatus.approved,
       );
 
       final Ride anotherApprovedRide = RideFactory().generateFake(
         start: 'WaypointConnecting',
-        startTime: now.add(const Duration(hours: 2)),
+        startDateTime: now.add(const Duration(hours: 2)),
         end: 'WaypointEnd',
-        endTime: now.add(const Duration(hours: 3)),
+        endDateTime: now.add(const Duration(hours: 3)),
         status: RideStatus.approved,
       );
 
@@ -150,9 +182,9 @@ void main() {
 
       drive = DriveFactory().generateFake(
         start: 'DriveStart',
-        startTime: now,
+        startDateTime: now,
         end: 'DriveEnd',
-        endTime: now.add(const Duration(hours: 3)),
+        endDateTime: now.add(const Duration(hours: 3)),
         rides: [
           approvedRide,
           anotherApprovedRide,
@@ -266,10 +298,10 @@ void main() {
           processor,
           urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
           methodMatcher: equals('PATCH'),
-          bodyMatcher: equals({'cancelled': true}),
+          bodyMatcher: equals({'status': DriveStatus.cancelledByDriver.index}),
         ).called(1);
 
-        expect(find.byKey(const Key('cancelledDriveBanner')), findsOneWidget);
+        expect(find.byKey(const Key('cancelledByDriverDriveBanner')), findsOneWidget);
       });
 
       testWidgets('Can abort cancelling drive', (WidgetTester tester) async {
@@ -288,7 +320,7 @@ void main() {
 
     group('Hiding drive', () {
       setUp(() {
-        drive = DriveFactory().generateFake(cancelled: true);
+        drive = DriveFactory().generateFake(status: DriveStatus.cancelledByDriver);
         whenRequest(processor).thenReturnJson(drive.toJsonForApi());
       });
 

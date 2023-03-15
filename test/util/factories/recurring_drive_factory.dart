@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
+import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
+import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
+import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:rrule/rrule.dart';
 
 import 'drive_factory.dart';
@@ -21,8 +24,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     Position? endPosition,
     TimeOfDay? endTime,
     int? seats,
-    DateTime? stoppedAt,
+    DateTime? startedAt,
     RecurrenceRule? recurrenceRule,
+    RecurrenceEndType? recurrenceEndType,
+    DateTime? stoppedAt,
     int? driverId,
     NullableParameter<Profile>? driver,
     List<Drive>? drives,
@@ -30,23 +35,33 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
   }) {
     assert(driverId == null || driver?.value == null || driver!.value?.id == driverId);
 
+    final int generatedId = id ?? randomId;
+
     final Profile? generatedDriver = getNullableParameterOr(
-        driver,
-        ProfileFactory().generateFake(
-          id: driverId,
-          createDependencies: false,
-        ));
+      driver,
+      ProfileFactory().generateFake(
+        id: driverId,
+        createDependencies: false,
+      ),
+    );
     final generatedDriverId = generatedDriver?.id ?? driverId ?? randomId;
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
+    final generatedStartPosition = startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
+    final generatedEndPosition = endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
+    final generatedStartedAt = startedAt ?? generatedCreatedAt;
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedRecurrenceEndType = recurrenceEndType ?? RecurrenceEndType.date;
 
     final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
         RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,
-          until: generatedCreatedAt.add(const Duration(days: 30)).toUtc(),
+          until: generatedRecurrenceEndType == RecurrenceEndType.occurrence
+              ? null
+              : generatedStartedAt.add(Trip.creationInterval).toUtc(),
+          count: generatedRecurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
           byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
               .take(random.nextInt(7))
               .map((day) => ByWeekDayEntry(day + 1))
@@ -57,23 +72,24 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
         (createDependencies
             ? generatedRecurrenceRule
                 .getInstances(
-                  start: generatedCreatedAt.toUtc(),
+                  start: generatedStartedAt.toUtc(),
+                  before: DateTime.now().add(Trip.creationInterval).toUtc(),
                   includeAfter: true,
                   includeBefore: true,
                 )
                 .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
                       start: start,
-                      startPosition: startPosition,
-                      startTime: DateTime(
+                      startPosition: generatedStartPosition,
+                      startDateTime: DateTime(
                         startDate.year,
                         startDate.month,
                         startDate.day,
                         generatedStartTime.hour,
-                        generatedEndTime.hour,
+                        generatedStartTime.minute,
                       ),
                       end: end,
-                      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-                      endTime: DateTime(
+                      endPosition: generatedEndPosition,
+                      endDateTime: DateTime(
                         startDate.year,
                         startDate.month,
                         generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,
@@ -83,40 +99,31 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                       seats: seats,
                       driverId: generatedDriverId,
                       driver: NullableParameter(generatedDriver),
+                      // Setting to null to avoid infinite recursion
+                      recurringDrive: NullableParameter(null),
+                      recurringDriveId: NullableParameter(generatedId),
                       createDependencies: false,
                     ))
                 .toList()
             : null);
 
     return RecurringDrive(
-      id: id ?? randomId,
+      id: generatedId,
       createdAt: generatedCreatedAt,
       start: start ?? faker.address.city(),
-      startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      startPosition: generatedStartPosition,
       startTime: generatedStartTime,
       end: end ?? faker.address.city(),
-      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      endPosition: generatedEndPosition,
       endTime: generatedEndTime,
       seats: seats ?? random.nextInt(5) + 1,
-      stoppedAt: stoppedAt,
+      startedAt: generatedStartedAt,
       recurrenceRule: generatedRecurrenceRule,
+      recurrenceEndType: generatedRecurrenceEndType,
+      stoppedAt: stoppedAt,
       driverId: generatedDriverId,
       driver: generatedDriver,
       drives: generatedDrives,
     );
-  }
-}
-
-extension TimeOfDayComparison on TimeOfDay {
-  bool isBefore(TimeOfDay other) {
-    return hour < other.hour || (hour == other.hour && minute < other.minute);
-  }
-
-  bool isAfter(TimeOfDay other) {
-    return hour > other.hour || (hour == other.hour && minute > other.minute);
-  }
-
-  bool isAtSameMomentAs(TimeOfDay other) {
-    return hour == other.hour && minute == other.minute;
   }
 }

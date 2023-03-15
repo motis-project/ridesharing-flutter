@@ -150,13 +150,13 @@ class HomePageState extends State<HomePage> {
               .from('drives')
               .select<List<Map<String, dynamic>>>()
               .eq('driver_id', profileId)
-              .eq('cancelled', false)
+              .eq('status', DriveStatus.plannedOrFinished.index)
               .lt('start_time', tomorrow)
               .gte('start_time', today),
         ),
       ),
     );
-    _trips.sort((Trip a, Trip b) => a.startTime.compareTo(b.startTime));
+    _trips.sort((Trip a, Trip b) => a.startDateTime.compareTo(b.startDateTime));
 
     final List<Map<String, dynamic>> rideEventsData = parseHelper.parseListOfMaps(
       await supabaseManager.supabaseClient.from('ride_events').select<List<Map<String, dynamic>>>('''
@@ -337,13 +337,13 @@ class HomePageState extends State<HomePage> {
 
   void updateRide(Map<String, dynamic> rideData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(rideData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+    final DateTime startDateTime = DateTime.parse(rideData['start_time'] as String);
+    if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       if (rideData['status'] == RideStatus.approved.index) {
         setState(() {
           bool inserted = false;
           for (int i = 0; i < _trips.length; i++) {
-            if (_trips[i].startTime.isAfter(startTime)) {
+            if (_trips[i].startDateTime.isAfter(startDateTime)) {
               _trips.insert(i, Ride.fromJson(rideData));
               inserted = true;
               break;
@@ -368,12 +368,12 @@ class HomePageState extends State<HomePage> {
 
   void insertDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (startTime.isAfter(now) && startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
+    final DateTime startDateTime = DateTime.parse(driveData['start_time'] as String);
+    if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
         bool inserted = false;
         for (int i = 0; i < _trips.length; i++) {
-          if (_trips[i].startTime.isAfter(startTime)) {
+          if (_trips[i].startDateTime.isAfter(startDateTime)) {
             _trips.insert(i, Drive.fromJson(driveData));
             inserted = true;
             break;
@@ -387,7 +387,7 @@ class HomePageState extends State<HomePage> {
   void updateDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
     final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (driveData['cancelled'] == true &&
+    if (driveData['status'] != DriveStatus.plannedOrFinished.index &&
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
@@ -471,21 +471,25 @@ class HomePageState extends State<HomePage> {
             leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
             title: Text(
               trip is Drive
-                  ? trip.startTime.day == DateTime.now().day
+                  ? trip.startDateTime.day == DateTime.now().day
                       ? S.of(context).pageHomeUpcomingDriveToday
                       : S.of(context).pageHomeUpcomingDriveTomorrow
-                  : trip.startTime.day == DateTime.now().day
+                  : trip.startDateTime.day == DateTime.now().day
                       ? S.of(context).pageHomeUpcomingRideToday
                       : S.of(context).pageHomeUpcomingRideTomorrow,
             ),
             subtitle: Text(
-              S.of(context).pageHomeUpcomingTripMessage(trip.end, trip.start, localeManager.formatTime(trip.startTime)),
+              S.of(context).pageHomeUpcomingTripMessage(
+                    trip.end,
+                    trip.start,
+                    localeManager.formatTime(trip.startDateTime),
+                  ),
             ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) =>
-                      trip is Drive ? DriveDetailPage(id: trip.id!) : RideDetailPage(id: trip.id),
+                      trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
                 ),
               );
             },

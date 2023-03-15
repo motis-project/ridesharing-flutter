@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -32,12 +33,16 @@ class LocaleManager with ChangeNotifier {
     notifyListeners();
   }
 
-  String formatDate(DateTime date) {
-    return DateFormat.yMd(currentLocale.languageCode).format(date);
+  String formatDate(DateTime dateTime) {
+    return DateFormat.yMd(currentLocale.languageCode).format(dateTime);
   }
 
-  String formatTime(DateTime time) {
-    return DateFormat.Hm(currentLocale.languageCode).format(time);
+  String formatTime(DateTime dateTime) {
+    return DateFormat.Hm(currentLocale.languageCode).format(dateTime);
+  }
+
+  String formatTimeOfDay(TimeOfDay time) {
+    return formatTime(DateTime(0, 0, 0, time.hour, time.minute));
   }
 
   String formatDuration(Duration duration, {bool shouldPadHours = true}) {

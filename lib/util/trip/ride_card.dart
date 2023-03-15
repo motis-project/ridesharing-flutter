@@ -8,6 +8,7 @@ import '../../account/models/review.dart';
 import '../../drives/models/drive.dart';
 import '../../rides/models/ride.dart';
 import '../../rides/pages/ride_detail_page.dart';
+import '../locale_manager.dart';
 import '../own_theme_fields.dart';
 import '../profiles/profile_widget.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
@@ -99,6 +100,11 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   }
 
   @override
+  Widget buildTopLeft() {
+    return Text(localeManager.formatDate(trip.startDateTime));
+  }
+
+  @override
   Widget buildTopRight() {
     return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
   }
@@ -164,7 +170,7 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Color pickStatusColor() {
-    if (_ride.endTime.isBefore(DateTime.now())) {
+    if (_ride.endDateTime.isBefore(DateTime.now())) {
       if (_ride.status == RideStatus.approved) {
         return Theme.of(context).own().success;
       } else {

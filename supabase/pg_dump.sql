@@ -1847,7 +1847,7 @@ BEGIN
 		UPDATE drives
 		/* status=2 means cancelledByRecurrenceRule */
 		SET cancelled = TRUE, status = 2
-		WHERE drives.recurring_drive_id = new.id AND drives.start_time >= stopped_at;
+		WHERE drives.recurring_drive_id = new.id AND drives.start_time >= new.stopped_at;
 		RETURN NEW;
 	END IF;
 

@@ -3,20 +3,21 @@ import 'package:flutter/material.dart';
 import '../../drives/models/drive.dart';
 import '../../drives/pages/drive_detail_page.dart';
 import '../../rides/models/ride.dart';
+import '../locale_manager.dart';
 import '../own_theme_fields.dart';
 import '../supabase_manager.dart';
 import 'seat_indicator.dart';
 import 'trip_card.dart';
 
 class DriveCard extends TripCard<Drive> {
-  const DriveCard(super.trip, {super.key});
+  const DriveCard(super.trip, {super.key, super.loadData});
 
   @override
-  State<DriveCard> createState() => _DriveCardState();
+  State<DriveCard> createState() => DriveCardState();
 }
 
-class _DriveCardState extends TripCardState<Drive, DriveCard> {
-  late Drive _drive;
+class DriveCardState extends TripCardState<Drive, DriveCard> {
+  late Drive drive;
   bool _fullyLoaded = false;
 
   @override
@@ -24,9 +25,10 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     super.initState();
 
     setState(() {
-      _drive = widget.trip;
-      trip = _drive;
+      drive = widget.trip;
+      trip = drive;
     });
+
     loadDrive();
   }
 
@@ -39,18 +41,20 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data =
-        await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
+    if (widget.loadData) {
+      final Map<String, dynamic> data =
+          await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
       *,
       rides(
         *,
         rider: rider_id(*)
       )
     ''').eq('id', widget.trip.id).single();
+      drive = Drive.fromJson(data);
+      trip = drive;
+    }
     if (mounted) {
       setState(() {
-        _drive = Drive.fromJson(data);
-        trip = _drive;
         _fullyLoaded = true;
       });
     }
@@ -61,10 +65,15 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
     return () => Navigator.of(context)
         .push(
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => DriveDetailPage.fromDrive(_drive),
+            builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
           ),
         )
         .then((_) => loadDrive());
+  }
+
+  @override
+  Widget buildTopLeft() {
+    return Text(localeManager.formatDate(trip.startDateTime));
   }
 
   @override
@@ -76,14 +85,16 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
-    } else if (_drive.endTime.isBefore(DateTime.now())) {
+    } else if (drive.status == DriveStatus.preview) {
+      return Theme.of(context).colorScheme.primary;
+    } else if (drive.endDateTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {
-      if (_drive.cancelled) {
+      if (drive.status.isCancelled()) {
         return Theme.of(context).colorScheme.error;
-      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
+      } else if (drive.rides!.any((Ride ride) => ride.status == RideStatus.pending)) {
         return Theme.of(context).own().warning;
-      } else if (_drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
+      } else if (drive.rides!.any((Ride ride) => ride.status == RideStatus.approved)) {
         return Theme.of(context).own().success;
       } else {
         return Theme.of(context).disabledColor;
@@ -93,7 +104,7 @@ class _DriveCardState extends TripCardState<Drive, DriveCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_drive.cancelled) {
+    if (drive.status.isCancelled()) {
       return disabledDecoration;
     }
 

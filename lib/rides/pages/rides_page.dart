@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/supabase_manager.dart';
+import '../../util/trip/ride_card.dart';
 import '../../util/trip/trip_page_builder.dart';
+import '../../util/trip/trip_stream_builder.dart';
 import '../models/ride.dart';
 import 'search_ride_page.dart';
 
@@ -30,8 +33,33 @@ class _RidesPageState extends State<RidesPage> {
   @override
   Widget build(BuildContext context) {
     return TripPageBuilder<Ride>(
-      _rides,
-      onFabPressed: searchRide,
+      title: S.of(context).pageRidesTitle,
+      tabs: <String, TripStreamBuilder<Ride>>{
+        S.of(context).widgetTripBuilderTabUpcoming: TripStreamBuilder<Ride>(
+          key: const Key('upcomingTrips'),
+          stream: _rides,
+          emptyMessage: S.of(context).widgetTripBuilderNoUpcomingRides,
+          filterTrips: (List<Ride> rides) =>
+              rides.where((Ride ride) => ride.shouldShowInListView(past: false)).toList(),
+          itemBuilder: (Ride trip) => RideCard(trip),
+        ),
+        S.of(context).widgetTripBuilderTabPast: TripStreamBuilder<Ride>(
+          key: const Key('pastTrips'),
+          stream: _rides,
+          emptyMessage: S.of(context).widgetTripBuilderNoPastRides,
+          filterTrips: (List<Ride> rides) =>
+              rides.reversed.where((Ride ride) => ride.shouldShowInListView(past: true)).toList(),
+          itemBuilder: (Ride trip) => RideCard(trip),
+        )
+      },
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        tooltip: S.of(context).pageRidesTooltipSearchRide,
+        onPressed: searchRide,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        key: const Key('ridesFAB'),
+        child: const Icon(Icons.search),
+      ),
     );
   }
 

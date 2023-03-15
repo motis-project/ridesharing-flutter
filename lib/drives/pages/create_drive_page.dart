@@ -1,22 +1,32 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rrule/rrule.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../account/models/profile.dart';
-import '../../rides/models/ride.dart';
 import '../../util/buttons/button.dart';
+import '../../util/buttons/labeled_checkbox.dart';
 import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
 import '../../util/search/start_destination_timeline.dart';
 import '../../util/snackbar.dart';
+import '../../util/storage_manager.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/trip.dart';
 import '../models/drive.dart';
+import '../models/recurring_drive.dart';
 import '../pages/drive_detail_page.dart';
+import '../util/recurrence.dart';
+import '../util/recurrence_options_edit.dart';
+import '../util/week_day.dart';
+import 'recurring_drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
-  const CreateDrivePage({super.key});
+  // This is needed in order to mock the time in tests
+  final Clock clock;
+  const CreateDrivePage({super.key, this.clock = const Clock()});
 
   @override
   State<CreateDrivePage> createState() => _CreateDrivePageState();
@@ -29,80 +39,108 @@ class _CreateDrivePageState extends State<CreateDrivePage> {
       appBar: AppBar(
         title: Text(S.of(context).pageCreateDriveTitle),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: SingleChildScrollView(child: CreateDriveForm()),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: SingleChildScrollView(child: CreateDriveForm(clock: widget.clock)),
+        ),
       ),
     );
   }
 }
 
 class CreateDriveForm extends StatefulWidget {
-  const CreateDriveForm({super.key});
+  final Clock clock;
+  const CreateDriveForm({super.key, this.clock = const Clock()});
 
   @override
-  State<CreateDriveForm> createState() => _CreateDriveFormState();
+  State<CreateDriveForm> createState() => CreateDriveFormState();
 }
 
-class _CreateDriveFormState extends State<CreateDriveForm> {
+class CreateDriveFormState extends State<CreateDriveForm> {
+  static const String _storageKey = 'expandPreviewCreateDrivePage';
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _startController = TextEditingController();
-  late AddressSuggestion _startSuggestion;
-  final TextEditingController _destinationController = TextEditingController();
-  late AddressSuggestion _destinationSuggestion;
+  final TextEditingController startController = TextEditingController();
+  late AddressSuggestion startSuggestion;
+  final TextEditingController destinationController = TextEditingController();
+  late AddressSuggestion destinationSuggestion;
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  late DateTime _selectedDate;
-  late int _seats;
+  late DateTime selectedDate;
+  late int seats;
+
+  late RecurrenceOptions recurrenceOptions;
+  bool recurringEnabled = false;
+  bool? _defaultPreviewExpanded;
+
+  static final List<RecurrenceEndChoice> predefinedRecurrenceEndChoices = <RecurrenceEndChoice>[
+    RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(3, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(6, RecurrenceIntervalType.months),
+    RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.years),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now();
-    _seats = 1;
+    selectedDate = widget.clock.now();
+    seats = 1;
+    recurrenceOptions = RecurrenceOptions(
+      startedAt: selectedDate,
+      recurrenceIntervalSize: 1,
+      endChoice: predefinedRecurrenceEndChoices.last,
+    );
+    loadDefaultPreviewExpanded();
+  }
+
+  Future<void> loadDefaultPreviewExpanded() async {
+    await storageManager
+        .readData<bool>(getStorageKey())
+        .then((bool? value) => setState(() => _defaultPreviewExpanded = value));
   }
 
   @override
   void dispose() {
     _dateController.dispose();
     _timeController.dispose();
-    _startController.dispose();
-    _destinationController.dispose();
+    startController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
   void _showTimePicker() {
     showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: _selectedDate.hour, minute: _selectedDate.minute),
+      initialTime: TimeOfDay(hour: selectedDate.hour, minute: selectedDate.minute),
       builder: (BuildContext context, Widget? childWidget) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: childWidget!);
       },
     ).then((TimeOfDay? value) {
       setState(() {
         if (value != null) {
-          _selectedDate =
-              DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, value.hour, value.minute);
-          _timeController.text = localeManager.formatTime(_selectedDate);
+          selectedDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, value.hour, value.minute);
+          _timeController.text = localeManager.formatTime(selectedDate);
         }
       });
     });
   }
 
   void _showDatePicker() {
-    final DateTime firstDate = DateTime.now();
+    final DateTime firstDate = widget.clock.now();
 
     showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: selectedDate,
       firstDate: firstDate,
-      lastDate: firstDate.add(const Duration(days: 30)),
+      lastDate: firstDate.add(Trip.creationInterval),
     ).then((DateTime? value) {
       setState(() {
         if (value != null) {
-          _selectedDate = DateTime(value.year, value.month, value.day, _selectedDate.hour, _selectedDate.minute);
-          _dateController.text = localeManager.formatDate(_selectedDate);
+          selectedDate = DateTime(value.year, value.month, value.day, selectedDate.hour, selectedDate.minute);
+          recurrenceOptions.startedAt = selectedDate;
+          _dateController.text = localeManager.formatDate(selectedDate);
         }
       });
     });
@@ -111,60 +149,71 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final DateTime endTime = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          _selectedDate.hour + 2,
-          _selectedDate.minute,
+        final DateTime endDateTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedDate.hour + 2,
+          selectedDate.minute,
         );
         final Profile driver = supabaseManager.currentProfile!;
 
-        final bool hasDrive =
-            await Drive.userHasDriveAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (hasDrive && mounted) {
-          return showSnackBar(
-            context,
-            S.of(context).pageCreateDriveYouAlreadyHaveDrive,
+        if (recurringEnabled) {
+          final RecurringDrive recurringDrive = RecurringDrive(
+            driverId: driver.id!,
+            start: startSuggestion.name,
+            startPosition: startSuggestion.position,
+            end: destinationSuggestion.name,
+            endPosition: destinationSuggestion.position,
+            seats: seats,
+            startTime: TimeOfDay.fromDateTime(selectedDate),
+            endTime: TimeOfDay.fromDateTime(endDateTime),
+            startedAt: recurrenceOptions.startedAt,
+            recurrenceRule: recurrenceOptions.recurrenceRule,
+            recurrenceEndType: recurrenceOptions.endChoice.type,
           );
-        }
+          final Map<String, dynamic> data = await supabaseManager.supabaseClient
+              .from('recurring_drives')
+              .insert(recurringDrive.toJson())
+              .select<Map<String, dynamic>>()
+              .single();
+          final RecurringDrive insertedRecurringDrive = RecurringDrive.fromJson(data);
 
-        final bool hasRide =
-            await Ride.userHasRideAtTimeRange(DateTimeRange(start: _selectedDate, end: endTime), driver.id!);
-        if (hasRide && mounted) {
-          return showSnackBar(
-            context,
-            S.of(context).pageCreateDriveYouAlreadyHaveRide,
-          );
-        }
-
-        final Drive drive = Drive(
-          driverId: driver.id!,
-          start: _startSuggestion.name,
-          startPosition: _startSuggestion.position,
-          end: _destinationSuggestion.name,
-          endPosition: _destinationSuggestion.position,
-          seats: _seats,
-          startTime: _selectedDate,
-          endTime: endTime,
-        );
-
-        await supabaseManager.supabaseClient
-            .from('drives')
-            .insert(drive.toJson())
-            .select<Map<String, dynamic>>()
-            .single()
-            .then(
-          (Map<String, dynamic> data) {
-            final Drive drive = Drive.fromJson(data);
-            Navigator.pushReplacement(
+          if (mounted) {
+            await Navigator.pushReplacement(
               context,
               MaterialPageRoute<void>(
-                builder: (BuildContext context) => DriveDetailPage.fromDrive(drive),
+                builder: (BuildContext context) => RecurringDriveDetailPage.fromRecurringDrive(insertedRecurringDrive),
               ),
             );
-          },
-        );
+          }
+        } else {
+          final Drive drive = Drive(
+            driverId: driver.id!,
+            start: startSuggestion.name,
+            startPosition: startSuggestion.position,
+            end: destinationSuggestion.name,
+            endPosition: destinationSuggestion.position,
+            seats: seats,
+            startDateTime: selectedDate,
+            endDateTime: endDateTime,
+          );
+          final Map<String, dynamic> data = await supabaseManager.supabaseClient
+              .from('drives')
+              .insert(drive.toJson())
+              .select<Map<String, dynamic>>()
+              .single();
+          final Drive insertedDrive = Drive.fromJson(data);
+
+          if (mounted) {
+            await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => DriveDetailPage.fromDrive(insertedDrive),
+              ),
+            );
+          }
+        }
       } on AuthException {
         showSnackBar(
           context,
@@ -178,7 +227,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
     if (value == null || value.isEmpty) {
       return S.of(context).formTimeValidateEmpty;
     }
-    if (_selectedDate.isBefore(DateTime.now())) {
+    // 59 seconds are added because the selected date's seconds are always 0
+    if (selectedDate.add(const Duration(seconds: 59)).isBefore(widget.clock.now()) && !recurringEnabled) {
       return S.of(context).formTimeValidateFuture;
     }
     return null;
@@ -187,8 +237,8 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
   @override
   Widget build(BuildContext context) {
     // This needs to happen on rebuild to make sure we pick up locale changes
-    _dateController.text = localeManager.formatDate(_selectedDate);
-    _timeController.text = localeManager.formatTime(_selectedDate);
+    _dateController.text = localeManager.formatDate(selectedDate);
+    _timeController.text = localeManager.formatTime(selectedDate);
 
     return Form(
       key: _formKey,
@@ -197,11 +247,11 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: StartDestinationTimeline(
-              startController: _startController,
-              destinationController: _destinationController,
-              onStartSelected: (AddressSuggestion suggestion) => setState(() => _startSuggestion = suggestion),
+              startController: startController,
+              destinationController: destinationController,
+              onStartSelected: (AddressSuggestion suggestion) => setState(() => startSuggestion = suggestion),
               onDestinationSelected: (AddressSuggestion suggestion) =>
-                  setState(() => _destinationSuggestion = suggestion),
+                  setState(() => destinationSuggestion = suggestion),
             ),
           ),
           const SizedBox(height: 10),
@@ -214,11 +264,12 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: S.of(context).formDate,
+                      labelText: recurringEnabled ? S.of(context).formSinceDate : S.of(context).formDate,
                     ),
                     readOnly: true,
                     onTap: _showDatePicker,
                     controller: _dateController,
+                    key: const Key('createDriveDatePicker'),
                   ),
                 ),
               ),
@@ -229,12 +280,13 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: S.of(context).formTime,
+                      labelText: S.of(context).formStartTime,
                     ),
                     readOnly: true,
                     onTap: _showTimePicker,
                     controller: _timeController,
                     validator: _timeValidator,
+                    key: const Key('createDriveTimePicker'),
                   ),
                 ),
               ),
@@ -244,7 +296,7 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
           SizedBox(
             width: 150,
             child: IncrementField(
-              initialValue: _seats,
+              initialValue: seats,
               maxValue: Trip.maxSelectableSeats,
               icon: Icon(
                 Icons.chair,
@@ -253,18 +305,45 @@ class _CreateDriveFormState extends State<CreateDriveForm> {
               ),
               onChanged: (int? value) {
                 setState(() {
-                  _seats = value!;
+                  seats = value!;
                 });
               },
             ),
           ),
+          LabeledCheckbox(
+            label: S.of(context).pageCreateDriveRecurringCheckbox,
+            value: recurringEnabled,
+            onChanged: (bool? value) => setState(() {
+              recurringEnabled = value!;
+              if (value && recurrenceOptions.weekDays.isEmpty) {
+                recurrenceOptions.weekDays = <WeekDay>[selectedDate.toWeekDay()];
+              }
+            }),
+            key: const Key('createDriveRecurringCheckbox'),
+          ),
+          if (recurringEnabled) ...<Widget>[
+            const SizedBox(height: 10),
+            RecurrenceOptionsEdit(
+              recurrenceOptions: recurrenceOptions,
+              predefinedEndChoices: predefinedRecurrenceEndChoices,
+              // Empty RecurrenceRule so that every day in the indicator is "new"
+              originalRecurrenceRule: RecurrenceRule(frequency: Frequency.yearly, until: DateTime.now().toUtc()),
+              showPreview: _defaultPreviewExpanded ?? false,
+              expansionCallback: (bool expanded) => storageManager.saveData(getStorageKey(), expanded),
+            ),
+          ],
           const SizedBox(height: 10),
           Button.submit(
             S.of(context).pageCreateDriveButtonCreate,
             onPressed: _onSubmit,
+            key: const Key('createDriveButton'),
           ),
         ],
       ),
     );
+  }
+
+  String getStorageKey() {
+    return '$_storageKey.${supabaseManager.currentProfile?.id}';
   }
 }

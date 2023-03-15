@@ -37,11 +37,12 @@ class Button extends StatelessWidget {
     );
   }
 
-  factory Button.submit(String text, {VoidCallback? onPressed}) {
+  factory Button.submit(String text, {VoidCallback? onPressed, Key? key}) {
     return Button(
       text,
       onPressed: onPressed,
       kind: ButtonKind.submit,
+      key: key,
     );
   }
 
