@@ -334,7 +334,10 @@
   "pageRecurringDriveEditStopDialogTitle": "Stop recurring drive",
   "pageRecurringDriveEditStopDialogContent": "Do you really want to stop this recurring drive?",
   "pageRecurringDriveEditStopDialogSnackBar": "Recurring drive stopped.",
-
+  "pageRecurringDriveSaveChangesDialogTitle": "Are you sure you want to leave this page?",
+  "pageRecurringDriveSaveChangesDialogContent": "You have unsaved changes. If you leave this page, your changes will be lost.",
+  "pageRecurringDriveSaveChangesDialogButtonLeave": "Leave",
+  "pageRecurringDriveSaveChangesDialogButtonStay": "Stay",
 
   "pageDrivesTitle": "Drives",
   "pageDrivesTooltipOfferRide": "Offer ride",

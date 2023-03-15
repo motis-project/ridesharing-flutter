@@ -334,7 +334,10 @@
   "pageRecurringDriveEditStopDialogTitle": "Wiederkehrende Fahrt stoppen",
   "pageRecurringDriveEditStopDialogContent": "Bist du sicher, dass du diese wiederkehrende Fahrt stoppen willst?",
   "pageRecurringDriveEditStopDialogSnackBar": "Wiederkehrende Fahrt gestoppt.",
-
+  "pageRecurringDriveSaveChangesDialogTitle": "Bist du sicher, dass du die Seite verlassen möchtest?",
+  "pageRecurringDriveSaveChangesDialogContent": "Du hast noch nicht gespeicherte Änderungen. Wenn du die Seite verlässt, gehen diese Änderungen verloren.",
+  "pageRecurringDriveSaveChangesDialogButtonLeave": "Verlassen",
+  "pageRecurringDriveSaveChangesDialogButtonStay": "Bleiben",
 
   "pageDrivesTitle": "Fahrten",
   "pageDrivesTooltipOfferRide": "Fahrt anbieten",

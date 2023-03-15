@@ -96,21 +96,69 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
       ),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context).pageRecurringDriveEditTitle),
-      ),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: widgets,
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(S.of(context).pageRecurringDriveEditTitle),
+        ),
+        body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widgets,
+            ),
           ),
         ),
       ),
+      onWillPop: () async {
+        final List<DateTime> previousInstances = getPreviousInstances();
+        final List<DateTime> newInstances = getNewInstances();
+
+        final int changedDrivesCount =
+            newInstances.where((DateTime instance) => !previousInstances.contains(instance)).length +
+                previousInstances.where((DateTime instance) => !newInstances.contains(instance)).length;
+
+        if (changedDrivesCount == 0) return true;
+
+        return showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text(S.of(context).pageRecurringDriveSaveChangesDialogTitle),
+            content: Text(S.of(context).pageRecurringDriveSaveChangesDialogContent),
+            actions: <Widget>[
+              TextButton(
+                key: const Key('saveChangesLeaveButton'),
+                child: Text(S.of(context).pageRecurringDriveSaveChangesDialogButtonLeave),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+              TextButton(
+                key: const Key('saveChangesStayButton'),
+                child: Text(S.of(context).pageRecurringDriveSaveChangesDialogButtonStay),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+            ],
+          ),
+        ).then((bool? value) => value ?? false);
+      },
     );
+  }
+
+  List<DateTime> getPreviousInstances() {
+    final DateTime after =
+        _recurringDrive.startedAt.isAfter(DateTime.now()) ? _recurringDrive.startedAt : DateTime.now();
+
+    return _recurringDrive.recurrenceRule
+        .getAllInstances(start: _recurringDrive.startedAt.toUtc(), after: after.toUtc(), includeAfter: true);
+  }
+
+  List<DateTime> getNewInstances() {
+    final DateTime after =
+        _recurringDrive.startedAt.isAfter(DateTime.now()) ? _recurringDrive.startedAt : DateTime.now();
+
+    return recurrenceOptions.recurrenceRule
+        .getAllInstances(start: _recurringDrive.startedAt.toUtc(), after: after.toUtc(), includeAfter: true);
   }
 
   Future<void> _changeRecurringDrive() async {
@@ -128,14 +176,11 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
   void _showChangeDialog() {
     if (!_formKey.currentState!.validate()) return;
 
-    final List<DateTime> previousInstances =
-        _recurringDrive.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
-    final List<DateTime> newInstances =
-        recurrenceOptions.recurrenceRule.getAllInstances(start: _recurringDrive.startedAt.toUtc());
+    final List<DateTime> previousInstances = getPreviousInstances();
+    final List<DateTime> newInstances = getNewInstances();
 
-    final int cancelledDrivesCount = previousInstances
-        .where((DateTime instance) => instance.isAfter(widget.clock.now()) && !newInstances.contains(instance))
-        .length;
+    final int cancelledDrivesCount =
+        previousInstances.where((DateTime instance) => !newInstances.contains(instance)).length;
 
     if (cancelledDrivesCount == 0) return unawaited(_changeRecurringDrive());
 

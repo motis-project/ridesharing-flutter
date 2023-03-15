@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
+import 'package:motis_mitfahr_app/drives/pages/recurring_drive_detail_page.dart';
 import 'package:motis_mitfahr_app/drives/pages/recurring_drive_edit_page.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence_options_edit.dart';
@@ -121,6 +122,61 @@ void main() {
 
       final FormFieldState intervalSizeField = tester.state(find.byKey(const Key('intervalSizeField')));
       expect(intervalSizeField.hasError, isTrue);
+    });
+
+    group('Back button', () {
+      Future<void> goToEditFromDetailPage(WidgetTester tester) async {
+        whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
+
+        await pumpMaterial(tester, RecurringDriveDetailPage(id: recurringDrive.id!));
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.edit));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> makeChanges(WidgetTester tester) async {
+        await enterUntil(tester, DateTime.now().add(Trip.creationInterval * 10), tapEndChoice: true);
+
+        await tester.pageBack();
+        await tester.pump();
+
+        expect(find.byType(AlertDialog), findsOneWidget);
+      }
+
+      testWidgets('Shows no dialog when no changes made', (WidgetTester tester) async {
+        await goToEditFromDetailPage(tester);
+
+        await tester.pageBack();
+        await tester.pump();
+
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(find.byType(RecurringDriveDetailPage), findsOneWidget);
+      });
+
+      testWidgets('Can leave dialog when changes were made', (WidgetTester tester) async {
+        await goToEditFromDetailPage(tester);
+
+        await makeChanges(tester);
+
+        await tester.tap(find.byKey(const Key('saveChangesLeaveButton')));
+
+        await tester.pumpAndSettle();
+
+        expect(find.byType(RecurringDriveDetailPage), findsOneWidget);
+      });
+
+      testWidgets('Can stay on page from dialog when changes were made', (WidgetTester tester) async {
+        await goToEditFromDetailPage(tester);
+
+        await makeChanges(tester);
+
+        await tester.tap(find.byKey(const Key('saveChangesStayButton')));
+
+        await tester.pumpAndSettle();
+
+        expect(find.byType(RecurringDriveEditPage), findsOneWidget);
+      });
     });
 
     group('Edit Recurring Drive', () {
