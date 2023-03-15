@@ -1,7 +1,9 @@
+import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/main.dart';
 import 'package:motis_mitfahr_app/main_app.dart';
+import 'package:motis_mitfahr_app/util/firebase.dart';
 import 'package:motis_mitfahr_app/util/locale_manager.dart';
 import 'package:motis_mitfahr_app/util/supabase_manager.dart';
 import 'package:motis_mitfahr_app/util/theme_manager.dart';
@@ -16,9 +18,12 @@ import '../util/pump_material.dart';
 
 void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setupFirebaseCoreMocks();
 
   setUpAll(() async {
     MockServer.setProcessor(processor);
+    await firebaseManager.initialize(name: 'test');
   });
 
   group('AppWrapper', () {
