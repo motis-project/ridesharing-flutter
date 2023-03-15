@@ -34,9 +34,10 @@ void main() {
         frequency: Frequency.weekly,
         interval: 1,
         byWeekDays: {WeekDay.monday.toByWeekDayEntry(), WeekDay.wednesday.toByWeekDayEntry()},
-        // Generate 28 days of recurring drives (30 days in the backend, but that makes calculation for tests harder)
-        until: DateTime.now().add(const Duration(days: 28)).toUtc(),
+        // Drives here will be less than 28 days future (to avoid problems with the end date and drive generation)
+        count: 6,
       ),
+      recurrenceEndType: RecurrenceEndType.occurrence,
     );
     whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
   });
@@ -54,6 +55,7 @@ void main() {
         expect(find.byType(WeekDayPicker), findsOneWidget);
 
         expect(find.byType(DriveCard, skipOffstage: false), findsNWidgets(recurringDrive.drives!.length));
+        expect(find.byIcon(Icons.edit), findsOneWidget);
       });
 
       testWidgets('Works with object parameter', (WidgetTester tester) async {
@@ -70,7 +72,32 @@ void main() {
         await tester.pump();
 
         expect(find.byType(DriveCard, skipOffstage: false), findsNWidgets(recurringDrive.drives!.length));
+        expect(find.byIcon(Icons.edit), findsOneWidget);
       });
+    });
+
+    testWidgets('Works with stopped drive', (WidgetTester tester) async {
+      recurringDrive = RecurringDriveFactory().generateFake(stoppedAt: DateTime.now());
+      whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
+
+      await pumpMaterial(tester, RecurringDriveDetailPage.fromRecurringDrive(recurringDrive));
+
+      await tester.pump();
+
+      expect(find.byType(DriveCard), findsNothing);
+      expect(find.byIcon(Icons.edit), findsNothing);
+    });
+
+    testWidgets('Works when drive has no drives', (WidgetTester tester) async {
+      recurringDrive = RecurringDriveFactory().generateFake(drives: []);
+      whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
+
+      await pumpMaterial(tester, RecurringDriveDetailPage.fromRecurringDrive(recurringDrive));
+
+      await tester.pump();
+
+      expect(find.byType(DriveCard), findsNothing);
+      expect(find.byIcon(Icons.edit), findsOneWidget);
     });
 
     testWidgets('Can show previews of further upcoming drives', (WidgetTester tester) async {
