@@ -144,7 +144,14 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
           const SizedBox(height: 10.0),
           const Divider(thickness: 1),
           const SizedBox(height: 10.0),
-          ...previewedDrives.map((Drive drive) => DriveCard(drive, loadData: false)),
+          ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return DriveCard(previewedDrives[index], loadData: false);
+            },
+            itemCount: previewedDrives.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+          ),
         ];
         widgets.addAll(upcomingDrivesColumn);
       } else {
