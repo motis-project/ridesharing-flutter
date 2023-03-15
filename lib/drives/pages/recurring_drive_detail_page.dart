@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../rides/models/ride.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/drive_card.dart';
+import '../../util/trip/trip.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import '../models/recurring_drive.dart';
@@ -99,7 +100,7 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       final List<Drive> previewedDrives = recurringDrive.recurrenceRule
           .getAllInstances(
         start: recurringDrive.startedAt.toUtc(),
-        after: DateTime.now().toUtc().add(const Duration(days: 30)),
+        after: DateTime.now().add(Trip.creationInterval).toUtc(),
       )
           .map(
         (DateTime date) {

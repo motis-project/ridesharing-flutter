@@ -237,8 +237,7 @@ void main() {
             .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
             .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final int intervalSize = random.integer(10, min: 1);
-        final DateTime dateTime =
-            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+        final DateTime dateTime = faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
 
         await pumpMaterial(tester, const CreateDrivePage());
         await tester.pump();
@@ -360,7 +359,7 @@ void main() {
             .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
             .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final DateTime untilDate =
-            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
         final DateTime untilTime = DateTime(untilDate.year, untilDate.month, untilDate.day, 23, 59).toUtc();
 
         final RecurrenceRule recurrenceRule = RecurrenceRule(

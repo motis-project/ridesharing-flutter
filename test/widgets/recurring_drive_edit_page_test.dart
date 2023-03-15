@@ -9,6 +9,7 @@ import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/drives/util/week_day.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
+import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:rrule/rrule.dart';
 
 import '../util/factories/recurring_drive_factory.dart';
@@ -94,8 +95,7 @@ void main() {
           .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
           .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
       final int intervalSize = random.integer(10, min: 1);
-      final DateTime untilDate =
-          faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+      final DateTime untilDate = faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
 
       await pumpMaterial(tester, RecurringDriveEditPage(recurringDrive));
       await tester.pump();
@@ -146,7 +146,7 @@ void main() {
             .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
             .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final DateTime oldUntilDate =
-            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+            faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
         final DateTime oldUntilTime = DateTime(oldUntilDate.year, oldUntilDate.month, oldUntilDate.day, 23, 59).toUtc();
         final DateTime newUntilDate = oldUntilDate.add(Duration(days: random.integer(30)));
         final DateTime newUntilTime = DateTime(newUntilDate.year, newUntilDate.month, newUntilDate.day, 23, 59).toUtc();
@@ -213,8 +213,8 @@ void main() {
             .where((RecurrenceIntervalType value) =>
                 value != RecurrenceIntervalType.days && value != RecurrenceIntervalType.years)
             .toList()[random.integer(RecurrenceIntervalType.values.length - 2)];
-        final DateTime newUntilDate = faker.date.dateTimeBetween(
-            DateTime.now().add(const Duration(days: 30)), DateTime.now().add(const Duration(days: 60)));
+        final DateTime newUntilDate = faker.date
+            .dateTimeBetween(DateTime.now().add(Trip.creationInterval), DateTime.now().add(Trip.creationInterval * 2));
         final DateTime newUntilTime = DateTime(newUntilDate.year, newUntilDate.month, newUntilDate.day, 23, 59).toUtc();
         final DateTime oldUntilDate = newUntilDate.add(Duration(days: random.integer(30)));
         final DateTime oldUntilTime = DateTime(oldUntilDate.year, oldUntilDate.month, oldUntilDate.day, 23, 59).toUtc();

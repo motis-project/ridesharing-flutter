@@ -66,7 +66,7 @@ class SearchRidePageState extends State<SearchRidePage> {
       context: context,
       initialDate: selectedDate,
       firstDate: firstDate,
-      lastDate: firstDate.add(const Duration(days: 30)),
+      lastDate: firstDate.add(Trip.creationInterval),
     ).then((DateTime? value) {
       if (value != null) {
         setState(() {

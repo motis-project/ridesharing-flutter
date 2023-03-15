@@ -134,7 +134,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
       context: context,
       initialDate: selectedDate,
       firstDate: firstDate,
-      lastDate: firstDate.add(const Duration(days: 30)),
+      lastDate: firstDate.add(Trip.creationInterval),
     ).then((DateTime? value) {
       setState(() {
         if (value != null) {

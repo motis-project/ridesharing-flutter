@@ -5,6 +5,7 @@ import 'package:motis_mitfahr_app/drives/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:motis_mitfahr_app/util/search/position.dart';
+import 'package:motis_mitfahr_app/util/trip/trip.dart';
 import 'package:rrule/rrule.dart';
 
 import 'drive_factory.dart';
@@ -59,7 +60,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
           interval: 1,
           until: generatedRecurrenceEndType == RecurrenceEndType.occurrence
               ? null
-              : generatedStartedAt.add(const Duration(days: 30)).toUtc(),
+              : generatedStartedAt.add(Trip.creationInterval).toUtc(),
           count: generatedRecurrenceEndType == RecurrenceEndType.occurrence ? 10 : null,
           byWeekDays: (List<int>.generate(7, (index) => index)..shuffle())
               .take(random.nextInt(7))
@@ -72,7 +73,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
             ? generatedRecurrenceRule
                 .getInstances(
                   start: generatedStartedAt.toUtc(),
-                  before: DateTime.now().add(const Duration(days: 30)).toUtc(),
+                  before: DateTime.now().add(Trip.creationInterval).toUtc(),
                   includeAfter: true,
                   includeBefore: true,
                 )

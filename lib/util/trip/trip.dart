@@ -3,7 +3,17 @@ import 'package:flutter/material.dart';
 import 'trip_like.dart';
 
 class Trip extends TripLike {
+  //-------------------- Constants --------------//
+  // These constants are also defined in the backend
+
+  // How far in the future trips can be created
+  // (Also applies to the drives created by recurring drives)
+  static const Duration creationInterval = Duration(days: 30);
+
+  // How many seats can be selected at most
   static const int maxSelectableSeats = 8;
+
+  //-------------------- Constants --------------//
 
   final DateTime startDateTime;
   final DateTime endDateTime;

@@ -6,6 +6,7 @@ import 'package:motis_mitfahr_app/drives/pages/create_drive_page.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence.dart';
 import 'package:motis_mitfahr_app/drives/util/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/drives/util/week_day.dart';
+import 'package:motis_mitfahr_app/util/trip/trip.dart';
 
 import '../util/mocks/mock_server.dart';
 import '../util/mocks/request_processor.mocks.dart';
@@ -156,7 +157,7 @@ void main() {
           final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
 
           final DateTime dateTime =
-              faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(const Duration(days: 30)));
+              faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
           await enterUntil(tester, dateTime);
           expect(pageState.recurrenceOptions.endChoice.isCustom, isTrue);
           expect(pageState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
