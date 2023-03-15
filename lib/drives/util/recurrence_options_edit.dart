@@ -238,8 +238,8 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
 
   Widget buildIndicator() {
     return RecurrenceOptionsIndicator(
-      before: originalRecurrenceRule,
-      after: recurrenceOptions.recurrenceRule,
+      previousRule: originalRecurrenceRule,
+      newRule: recurrenceOptions.recurrenceRule,
       showPreview: widget.showPreview,
       start: recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now(),
     );

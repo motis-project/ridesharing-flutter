@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rrule/rrule.dart';
@@ -10,8 +8,8 @@ import '../../util/own_theme_fields.dart';
 import 'week_day.dart';
 
 class RecurrenceOptionsIndicator extends StatefulWidget {
-  final RecurrenceRule? before;
-  final RecurrenceRule after;
+  final RecurrenceRule? previousRule;
+  final RecurrenceRule newRule;
   final DateTime start;
 
   final bool showPreview;
@@ -19,8 +17,8 @@ class RecurrenceOptionsIndicator extends StatefulWidget {
 
   const RecurrenceOptionsIndicator({
     super.key,
-    this.before,
-    required this.after,
+    this.previousRule,
+    required this.newRule,
     required this.start,
     required this.showPreview,
     this.expansionCallback,
@@ -33,16 +31,15 @@ class RecurrenceOptionsIndicator extends StatefulWidget {
 class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator> {
   @override
   Widget build(BuildContext context) {
-    final List<DateTime> beforeDays = widget.before?.getAllInstances(start: widget.start.toUtc()) ?? <DateTime>[];
-    final List<DateTime> afterDays = widget.after.getAllInstances(start: widget.start.toUtc());
-    final List<DateTime> addedDays = afterDays.where((DateTime day) => !beforeDays.contains(day)).toList();
-    final List<DateTime> removedDays = beforeDays.where((DateTime day) => !afterDays.contains(day)).toList();
-    final List<DateTime> allDays = (beforeDays + afterDays).toSet().toList()
+    final Set<DateTime> previousDays =
+        widget.previousRule?.getAllInstances(start: widget.start.toUtc()).toSet() ?? <DateTime>{};
+    final Set<DateTime> newDays = widget.newRule.getAllInstances(start: widget.start.toUtc()).toSet();
+    final Set<DateTime> addedDays = newDays.difference(previousDays);
+    final Set<DateTime> removedDays = previousDays.difference(newDays);
+    final List<DateTime> allDays = (previousDays.union(newDays)).toList()
       ..sort((DateTime a, DateTime b) => a.compareTo(b));
 
-    if (allDays.isEmpty) {}
-
-    final List<Widget> days = allDays
+    final List<Widget> dayIndicators = allDays
         .map<Widget>(
           (DateTime elem) => RecurrenceOptionsIndicatorDay(
             day: elem,
@@ -55,15 +52,15 @@ class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator>
         )
         .toList();
 
-    final int maxDaysFront =
-        max(4, allDays.where((DateTime elem) => elem.difference(widget.start) < const Duration(days: 14)).length);
-    final int maxDaysBack = maxDaysFront ~/ 2;
+    final int maxDaysBeforeGapCount =
+        allDays.where((DateTime elem) => elem.difference(widget.start) < const Duration(days: 14)).length.clamp(4, 8);
+    final int maxDaysAfterGapCount = maxDaysBeforeGapCount ~/ 2;
 
-    final List<Widget> daysFront = days.sublist(0, min(maxDaysFront, days.length));
-
-    List<Widget> daysBack = <Widget>[];
-    if (maxDaysFront + maxDaysBack < days.length) {
-      daysBack = days.sublist(days.length - maxDaysBack);
+    List<Widget> dayIndicatorsBeforeGap = dayIndicators;
+    List<Widget> dayIndicatorsAfterGap = <Widget>[];
+    if (maxDaysBeforeGapCount + maxDaysAfterGapCount < dayIndicators.length) {
+      dayIndicatorsBeforeGap = dayIndicators.take(maxDaysBeforeGapCount).toList();
+      dayIndicatorsAfterGap = dayIndicators.sublist(dayIndicators.length - maxDaysAfterGapCount);
     }
 
     return ExpandableSection(
@@ -75,10 +72,10 @@ class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator>
           ? Text(S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty)
           : Column(
               children: <Widget>[
-                Wrap(spacing: 4, runSpacing: 4, children: daysFront),
-                if (daysBack.isNotEmpty) ...<Widget>[
+                Wrap(spacing: 4, runSpacing: 4, children: dayIndicatorsBeforeGap),
+                if (dayIndicatorsAfterGap.isNotEmpty) ...<Widget>[
                   const Padding(padding: EdgeInsets.symmetric(vertical: 5), child: Icon(Icons.more_vert, size: 42)),
-                  Wrap(spacing: 4, runSpacing: 4, children: daysBack),
+                  Wrap(spacing: 4, runSpacing: 4, children: dayIndicatorsAfterGap),
                 ]
               ],
             ),

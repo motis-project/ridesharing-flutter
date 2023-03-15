@@ -74,12 +74,25 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
       widgets.add(WeekDayPicker(context: context, enabled: false, weekDays: _recurringDrive!.weekDays));
 
+      widgets.add(const SizedBox(height: 5.0));
+
       widgets.add(
-        Text(_recurringDrive!.recurrenceEndChoice.getName(context)),
+        Text(
+          _recurringDrive!.recurrenceInterval.getName(context),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
       );
+
+      widgets.add(const SizedBox(height: 5.0));
+
       widgets.add(
-        Text(_recurringDrive!.recurrenceInterval.getName(context)),
+        Text(
+          _recurringDrive!.recurrenceEndChoice.getName(context),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
       );
+
+      widgets.add(const SizedBox(height: 10.0));
     }
 
     if (_fullyLoaded) {
