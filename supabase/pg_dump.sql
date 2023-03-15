@@ -31,6 +31,14 @@ ALTER SCHEMA "_rrule" OWNER TO "postgres";
 
 CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "extensions";
 
+
+--
+-- Name: pg_net; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
+
+
 --
 -- Name: pgsodium; Type: EXTENSION; Schema: -; Owner: -
 --
@@ -1529,6 +1537,29 @@ $$;
 ALTER FUNCTION "public"."approve_ride"("ride_id" integer) OWNER TO "postgres";
 
 --
+-- Name: block_user("uuid"); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."block_user"("userid" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$declare profile_id int8;
+begin
+    if is_admin(auth.uid()) then
+    update auth.users set raw_app_meta_data = 
+          raw_app_meta_data || 
+            json_build_object('blocked', true)::jsonb where id = userid;
+    select id into profile_id from public.profiles where auth_id = userid; 
+    update public.drives set status = 2 where driver_id = profile_id and start_time >= NOW();
+    update public.rides set status = 5 where rider_id = profile_id and start_time >= NOW();
+    update public.recurring_drives set stopped_at = NOW() where driver_id = profile_id;
+    delete from auth.sessions where auth.sessions.user_id = userid; 
+    end if;
+end$$;
+
+
+ALTER FUNCTION "public"."block_user"("userid" "uuid") OWNER TO "postgres";
+
+--
 -- Name: create_chat(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1613,7 +1644,7 @@ CREATE FUNCTION "public"."create_ride_event"() RETURNS "trigger"
     insert into ride_events(ride_id,category)
     values(
       new.id,
-      /* the corresponding status of a event is the ride status -1 since there is now event for preview and the ride status therefore begins with one in Supabase*/
+      /* the corresponding status of a event is (ride.status - 1) since there is no event for preview and the ride status therefore begins with 1 in Supabase*/
       new.status -1
     );
   end if;
@@ -1718,11 +1749,42 @@ $$;
 ALTER FUNCTION "public"."get_my_claims"() OWNER TO "postgres";
 
 --
+-- Name: is_admin("uuid"); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."is_admin"("user_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+  DECLARE retval jsonb;
+BEGIN
+  select coalesce(raw_app_meta_data->'admin', null) from auth.users into retval where id = user_id;
+  return retval = 'true'::jsonb;
+end;$$;
+
+
+ALTER FUNCTION "public"."is_admin"("user_id" "uuid") OWNER TO "postgres";
+
+--
+-- Name: is_blocked("uuid"); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."is_blocked"("user_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$ DECLARE retval jsonb;
+BEGIN
+  select coalesce(raw_app_meta_data->'blocked', null) from auth.users into retval where id = user_id;
+  return retval = 'true'::jsonb;
+end;$$;
+
+
+ALTER FUNCTION "public"."is_blocked"("user_id" "uuid") OWNER TO "postgres";
+
+--
 -- Name: is_claims_admin(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION "public"."is_claims_admin"() RETURNS boolean
-    LANGUAGE "plpgsql"
+    LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
   BEGIN
     IF session_user = 'authenticator' THEN
@@ -1781,6 +1843,82 @@ end;$$;
 
 
 ALTER FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) OWNER TO "postgres";
+
+--
+-- Name: message_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."message_insert"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$declare
+  username varchar;
+  receiver_id int; 
+  deep_link varchar;
+  drive_id int;
+begin
+  select rides.rider_id, rides.drive_id into receiver_id, drive_id from rides where rides.chat_id = new.chat_id;
+  -- receiver_id is now the rider_id of the ride the message belongs to
+  if receiver_id = new.sender_id then
+    select drives.driver_id into receiver_id from drives where drives.id = drive_id;
+   end if;
+
+  select profiles.username into username from profiles where profiles.id = new.sender_id;
+
+  --todo: deeplink
+  deep_link := '';
+
+  insert into notifications(receiver_id, title, body, deep_link)
+  values(receiver_id, username, new.content, deep_link);
+
+  return new;
+end;$$;
+
+
+ALTER FUNCTION "public"."message_insert"() OWNER TO "postgres";
+
+--
+-- Name: notification_insert(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."notification_insert"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+declare
+  firebase_server_key varchar := 'key=AAAA2zcyAqM:APA91bFEertMAna6LyuZ5UIKYZVvO25S5BvRx9UViSDg92c5TwOjQcdI_WTadcPNZuexFBhOkpj4ukl-Az8d-A-t17xUXwrzYf_nFwqxgddPLtWHvkiChwURo0NJixL99vIR5On682B6';
+  headers jsonb;
+  body jsonb;
+  push_token varchar;
+begin
+	FOR push_token IN
+		SELECT token FROM push_tokens WHERE user_id = new.receiver_id and disabled = false
+	LOOP
+		body := jsonb_build_object(
+		    'to', push_token,
+		    'notification', jsonb_build_object(
+		    	'title', new.title,
+		    	'body', new.body
+		    ),
+		    'data', jsonb_build_object(
+		    	'dl', new.deep_link
+		    )
+	    );
+
+		headers := jsonb_build_object(
+			'Content-Type', 'application/json',
+			'Authorization', firebase_server_key
+		);
+	
+		PERFORM net.http_post(
+	        url := 'https://fcm.googleapis.com/fcm/send',
+	        body := body,
+	        headers := headers
+	    );
+    END LOOP;
+  return new;
+end;$$;
+
+
+ALTER FUNCTION "public"."notification_insert"() OWNER TO "postgres";
 
 --
 -- Name: recurring_drive_creation_interval(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -1845,16 +1983,16 @@ BEGIN
 
 	IF new.stopped_at IS NOT NULL AND old.stopped_at IS NULL THEN
 		UPDATE drives
-		/* status=2 means cancelledByRecurrenceRule */
-		SET cancelled = TRUE, status = 2
+		/* status=3 means cancelledByRecurrenceRule */
+		SET "status" = 3
 		WHERE drives.recurring_drive_id = new.id AND drives.start_time >= new.stopped_at;
 		RETURN NEW;
 	END IF;
 
 	IF new.recurrence_rule != old.recurrence_rule THEN
 		UPDATE drives
-		/* status=2 means cancelledByRecurrenceRule */
-		SET cancelled = TRUE, status = 2
+		/* status=3 means cancelledByRecurrenceRule */
+		SET "status" = 3
 		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP AND NOT(_rrule.rruleset (new.recurrence_rule) @> DATE(drives.start_time));
 
 		FOR next_date IN
@@ -1869,7 +2007,7 @@ BEGIN
 			AND NOT EXISTS(
 				SELECT *
 				FROM drives
-				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time) AND drive.status != 2
+				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time) AND drives.status != 3
 			)
 		LOOP
 			PERFORM create_drive_from_recurring(new, next_date);
@@ -1910,40 +2048,60 @@ ALTER FUNCTION "public"."reject_ride"("ride_id" integer) OWNER TO "postgres";
 
 CREATE FUNCTION "public"."ride_event_insert"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$begin
+    AS $$
+declare
+  title varchar;
+  body varchar;
+  receiver_id int;
+  deep_link varchar;
+begin
 
   update public.ride_events 
   set read = true
   where ride_id = new.ride_id;
-      
+
+  /* pending, cancelledByRider, withdrawn -> message is for driver */
+  if new.category = 0 OR new.category = 4 OR new.category = 5 then
+	SELECT driver_id
+	INTO receiver_id 
+	FROM drives
+	INNER JOIN rides ON rides.drive_id = drives.id
+	WHERE rides.id = new.ride_id;
+  /* otherwise -> message is for rider */
+  else
+  	SELECT rider_id
+  	INTO receiver_id
+  	FROM rides
+  	WHERE rides.id = new.ride_id;
+  end if;
+
+  case new.category
+  when 0 then
+  	body := 'Someone requested a ride with you';
+  when 1 then
+  	body := 'Your ride has been approved';
+  when 2 then
+  	body := 'Your ride request has been rejected';
+  when 3 then
+  	body := 'Your ride has been cancelled';
+  when 4 then
+  	body := 'Someone cancelled a ride with you';
+  when 5 then
+  	body := 'Someone withdrew his ride request';
+  end case;
+
+  --todo: deeplink
+  deep_link := '';
+  title := 'You have a new ride event';
+
+  insert into notifications(receiver_id, title, body, deep_link)
+  values(receiver_id, title, body, deep_link);
+
   return new;
 end;$$;
 
 
 ALTER FUNCTION "public"."ride_event_insert"() OWNER TO "postgres";
-
---
--- Name: set_admin_role(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION "public"."set_admin_role"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$/* users are admins if they get invited into supabase */
-begin
-    if new.invited_at notnull then 
-     update auth.users
-    set raw_app_meta_data = raw_app_meta_data || jsonb_build_object('admin', 'true')
-    where id = new.id;
-    else 
-      update auth.users
-    set raw_app_meta_data = raw_app_meta_data || jsonb_build_object('admin', 'false')
-    where id = new.id;
-    end if;
-    return new;
-end;$$;
-
-
-ALTER FUNCTION "public"."set_admin_role"() OWNER TO "postgres";
 
 --
 -- Name: set_claim("uuid", "text", "jsonb"); Type: FUNCTION; Schema: public; Owner: postgres
@@ -1969,13 +2127,29 @@ $$;
 ALTER FUNCTION "public"."set_claim"("uid" "uuid", "claim" "text", "value" "jsonb") OWNER TO "postgres";
 
 --
+-- Name: unblock_user("uuid"); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION "public"."unblock_user"("userid" "uuid") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$begin
+if is_admin(auth.uid()) then
+  update auth.users set raw_app_meta_data = 
+          raw_app_meta_data - 'blocked' where id = userId;
+end if;
+end;$$;
+
+
+ALTER FUNCTION "public"."unblock_user"("userid" "uuid") OWNER TO "postgres";
+
+--
 -- Name: update_ride_status(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
 CREATE FUNCTION "public"."update_ride_status"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$begin
-    if (new.cancelled = True and old.cancelled = False) or (new.status != old.status and old.status = 0)  then 
+    if new.status != old.status and old.status = 1  then 
       update public.rides 
       /* status = 4 is the cancelledByDriver status for rides in the app */
       set status = 4
@@ -1983,7 +2157,7 @@ CREATE FUNCTION "public"."update_ride_status"() RETURNS "trigger"
       /* the update  is only for rides with status = 2 (approved rides)*/
         and (rides.status = 2);
       update public.rides 
-      /* status = 3 is the rejected status for drives in the app */
+      /* status = 3 is the rejected status for rides in the app */
       set status = 3
       where rides.drive_id = new.id 
       /* the status is only updated when status = 1 (pending ride) */
@@ -2170,14 +2344,13 @@ CREATE TABLE "public"."drives" (
     "end" character varying NOT NULL,
     "end_time" timestamp with time zone NOT NULL,
     "seats" smallint NOT NULL,
-    "cancelled" boolean DEFAULT false NOT NULL,
     "hide_in_list_view" boolean DEFAULT false NOT NULL,
     "start_lat" real NOT NULL,
     "start_lng" real NOT NULL,
     "end_lat" real NOT NULL,
     "end_lng" real NOT NULL,
     "recurring_drive_id" bigint,
-    "status" smallint DEFAULT '0'::smallint NOT NULL,
+    "status" smallint DEFAULT '1'::smallint NOT NULL,
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
 );
 
@@ -2220,6 +2393,36 @@ ALTER TABLE "public"."messages" OWNER TO "postgres";
 
 ALTER TABLE "public"."messages" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME "public"."messages_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: notifications; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "public"."notifications" (
+    "id" bigint NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "receiver_id" bigint NOT NULL,
+    "title" character varying DEFAULT '""'::character varying NOT NULL,
+    "body" character varying NOT NULL,
+    "deep_link" character varying DEFAULT '""'::character varying NOT NULL
+);
+
+
+ALTER TABLE "public"."notifications" OWNER TO "postgres";
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE "public"."notifications" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."notifications_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2282,6 +2485,35 @@ CREATE TABLE "public"."profiles" (
 ALTER TABLE "public"."profiles" OWNER TO "postgres";
 
 --
+-- Name: push_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE "public"."push_tokens" (
+    "id" bigint NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "user_id" bigint NOT NULL,
+    "token" character varying NOT NULL,
+    "disabled" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE "public"."push_tokens" OWNER TO "postgres";
+
+--
+-- Name: push_notification_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE "public"."push_tokens" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."push_notification_tokens_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
 -- Name: recurring_drives; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2300,6 +2532,7 @@ CREATE TABLE "public"."recurring_drives" (
     "end_lng" real NOT NULL,
     "recurrence_rule" "text",
     "stopped_at" timestamp with time zone,
+    "until_field_entered_as_date" boolean DEFAULT true NOT NULL,
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
 );
 
@@ -2365,7 +2598,8 @@ CREATE TABLE "public"."reviews" (
     "comfort_rating" smallint,
     "safety_rating" smallint,
     "reliability_rating" smallint,
-    "hospitality_rating" smallint
+    "hospitality_rating" smallint,
+    "updated_at" timestamp with time zone
 );
 
 
@@ -2498,11 +2732,35 @@ ALTER TABLE ONLY "public"."messages"
 
 
 --
+-- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_pkey" PRIMARY KEY ("id");
+
+
+--
 -- Name: profile_features profile_features_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY "public"."profile_features"
     ADD CONSTRAINT "profile_features_pkey" PRIMARY KEY ("id");
+
+
+--
+-- Name: push_tokens push_notification_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "public"."push_tokens"
+    ADD CONSTRAINT "push_notification_tokens_pkey" PRIMARY KEY ("id");
+
+
+--
+-- Name: push_tokens push_tokens_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "public"."push_tokens"
+    ADD CONSTRAINT "push_tokens_token_key" UNIQUE ("token");
 
 
 --
@@ -2576,6 +2834,20 @@ CREATE TRIGGER "create_ride_event_trigger" AFTER INSERT OR UPDATE ON "public"."r
 
 
 --
+-- Name: messages message_insert_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER "message_insert_trigger" AFTER INSERT ON "public"."messages" FOR EACH ROW EXECUTE FUNCTION "public"."message_insert"();
+
+
+--
+-- Name: notifications notification_insert_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER "notification_insert_trigger" AFTER INSERT ON "public"."notifications" FOR EACH ROW EXECUTE FUNCTION "public"."notification_insert"();
+
+
+--
 -- Name: recurring_drives recurring_drive_insert_trigger; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -2636,6 +2908,14 @@ ALTER TABLE ONLY "public"."messages"
 
 
 --
+-- Name: notifications notifications_receiver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "public"."notifications"
+    ADD CONSTRAINT "notifications_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "public"."profiles"("id");
+
+
+--
 -- Name: profile_features profile_features_profile_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2649,6 +2929,14 @@ ALTER TABLE ONLY "public"."profile_features"
 
 ALTER TABLE ONLY "public"."profiles"
     ADD CONSTRAINT "profiles_auth_id_fkey" FOREIGN KEY ("auth_id") REFERENCES "auth"."users"("id");
+
+
+--
+-- Name: push_tokens push_tokens_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY "public"."push_tokens"
+    ADD CONSTRAINT "push_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 --
@@ -2748,13 +3036,6 @@ ALTER TABLE ONLY "public"."rides"
 --
 
 -- ALTER TABLE "cron"."job_run_details" ENABLE ROW LEVEL SECURITY;
-
---
--- Name: profiles Enable authenticated users to create a profile with their id; Type: POLICY; Schema: public; Owner: postgres
---
-
-CREATE POLICY "Enable authenticated users to create a profile with their id" ON "public"."profiles" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() = "auth_id"));
-
 
 --
 -- Name: drives Enable read access for all users; Type: POLICY; Schema: public; Owner: postgres
@@ -2960,70 +3241,84 @@ CREATE POLICY "Users can update their own rides" ON "public"."rides" FOR UPDATE 
 -- Name: chats admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."chats" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."chats" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: drives admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."drives" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."drives" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: messages admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."messages" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."messages" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
+
+
+--
+-- Name: notifications admins have full control; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "admins have full control" ON "public"."notifications" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: profile_features admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."profile_features" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."profile_features" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: profiles admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."profiles" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."profiles" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
+
+
+--
+-- Name: push_tokens admins have full control; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "admins have full control" ON "public"."push_tokens" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: recurring_drives admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."recurring_drives" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."recurring_drives" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: reports admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."reports" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."reports" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: reviews admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."reviews" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."reviews" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: ride_events admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."ride_events" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."ride_events" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
 -- Name: rides admins have full control; Type: POLICY; Schema: public; Owner: postgres
 --
 
-CREATE POLICY "admins have full control" ON "public"."rides" TO "authenticated" USING (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb")) WITH CHECK (("public"."get_claim"("auth"."uid"(), 'admin'::"text") = '{"admin": "true"}'::"jsonb"));
+CREATE POLICY "admins have full control" ON "public"."rides" TO "authenticated" USING ("public"."is_admin"("auth"."uid"())) WITH CHECK ("public"."is_admin"("auth"."uid"()));
 
 
 --
@@ -3045,6 +3340,12 @@ ALTER TABLE "public"."drives" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."messages" ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: notifications; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE "public"."notifications" ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: profile_features; Type: ROW SECURITY; Schema: public; Owner: postgres
 --
 
@@ -3055,6 +3356,12 @@ ALTER TABLE "public"."profile_features" ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: push_tokens; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE "public"."push_tokens" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: recurring_drives; Type: ROW SECURITY; Schema: public; Owner: postgres
@@ -3087,6 +3394,15 @@ ALTER TABLE "public"."ride_events" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."rides" ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: push_tokens users can insert tokens for their own profiles; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "users can insert tokens for their own profiles" ON "public"."push_tokens" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "push_tokens"."user_id"))));
+
+
+--
 -- Name: chats users can select chats from rides they can see; Type: POLICY; Schema: public; Owner: postgres
 --
 
@@ -3111,6 +3427,36 @@ CREATE POLICY "users can select events from rides they can see" ON "public"."rid
 CREATE POLICY "users can select messages from their chats" ON "public"."messages" FOR SELECT TO "authenticated" USING ((EXISTS ( SELECT 1
    FROM "public"."chats"
   WHERE ("chats"."id" = "messages"."chat_id"))));
+
+
+--
+-- Name: push_tokens users can select their own tokens; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "users can select their own tokens" ON "public"."push_tokens" FOR SELECT TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "push_tokens"."user_id"))));
+
+
+--
+-- Name: push_tokens users can update their own tokens; Type: POLICY; Schema: public; Owner: postgres
+--
+
+CREATE POLICY "users can update their own tokens" ON "public"."push_tokens" FOR UPDATE TO "authenticated" USING (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "push_tokens"."user_id")))) WITH CHECK (("auth"."uid"() IN ( SELECT "profiles"."auth_id"
+   FROM "public"."profiles"
+  WHERE ("profiles"."id" = "push_tokens"."user_id"))));
+
+
+--
+-- Name: SCHEMA "net"; Type: ACL; Schema: -; Owner: supabase_admin
+--
+
+-- GRANT USAGE ON SCHEMA "net" TO "supabase_functions_admin";
+-- GRANT USAGE ON SCHEMA "net" TO "anon";
+-- GRANT USAGE ON SCHEMA "net" TO "authenticated";
+-- GRANT USAGE ON SCHEMA "net" TO "service_role";
 
 
 --
@@ -3595,6 +3941,30 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 --
+-- Name: FUNCTION "http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer); Type: ACL; Schema: net; Owner: supabase_admin
+--
+
+-- REVOKE ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) FROM PUBLIC;
+-- GRANT ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "supabase_functions_admin";
+-- GRANT ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "postgres";
+-- GRANT ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "anon";
+-- GRANT ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "authenticated";
+-- GRANT ALL ON FUNCTION "net"."http_get"("url" "text", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "service_role";
+
+
+--
+-- Name: FUNCTION "http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer); Type: ACL; Schema: net; Owner: supabase_admin
+--
+
+-- REVOKE ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) FROM PUBLIC;
+-- GRANT ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "supabase_functions_admin";
+-- GRANT ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "postgres";
+-- GRANT ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "anon";
+-- GRANT ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "authenticated";
+-- GRANT ALL ON FUNCTION "net"."http_post"("url" "text", "body" "jsonb", "params" "jsonb", "headers" "jsonb", "timeout_milliseconds" integer) TO "service_role";
+
+
+--
 -- Name: TABLE "valid_key"; Type: ACL; Schema: pgsodium; Owner: supabase_admin
 --
 
@@ -3630,6 +4000,15 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 GRANT ALL ON FUNCTION "public"."approve_ride"("ride_id" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."approve_ride"("ride_id" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."approve_ride"("ride_id" integer) TO "service_role";
+
+
+--
+-- Name: FUNCTION "block_user"("userid" "uuid"); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."block_user"("userid" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."block_user"("userid" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."block_user"("userid" "uuid") TO "service_role";
 
 
 --
@@ -3714,6 +4093,24 @@ GRANT ALL ON FUNCTION "public"."get_my_claims"() TO "service_role";
 
 
 --
+-- Name: FUNCTION "is_admin"("user_id" "uuid"); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."is_admin"("user_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."is_admin"("user_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."is_admin"("user_id" "uuid") TO "service_role";
+
+
+--
+-- Name: FUNCTION "is_blocked"("user_id" "uuid"); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."is_blocked"("user_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."is_blocked"("user_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."is_blocked"("user_id" "uuid") TO "service_role";
+
+
+--
 -- Name: FUNCTION "is_claims_admin"(); Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -3747,6 +4144,24 @@ GRANT ALL ON FUNCTION "public"."mark_message_as_read"("message_id" integer) TO "
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."mark_ride_event_as_read"("ride_event_id" integer) TO "service_role";
+
+
+--
+-- Name: FUNCTION "message_insert"(); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."message_insert"() TO "anon";
+GRANT ALL ON FUNCTION "public"."message_insert"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."message_insert"() TO "service_role";
+
+
+--
+-- Name: FUNCTION "notification_insert"(); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."notification_insert"() TO "anon";
+GRANT ALL ON FUNCTION "public"."notification_insert"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."notification_insert"() TO "service_role";
 
 
 --
@@ -3795,21 +4210,21 @@ GRANT ALL ON FUNCTION "public"."ride_event_insert"() TO "service_role";
 
 
 --
--- Name: FUNCTION "set_admin_role"(); Type: ACL; Schema: public; Owner: postgres
---
-
-GRANT ALL ON FUNCTION "public"."set_admin_role"() TO "anon";
-GRANT ALL ON FUNCTION "public"."set_admin_role"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."set_admin_role"() TO "service_role";
-
-
---
 -- Name: FUNCTION "set_claim"("uid" "uuid", "claim" "text", "value" "jsonb"); Type: ACL; Schema: public; Owner: postgres
 --
 
 GRANT ALL ON FUNCTION "public"."set_claim"("uid" "uuid", "claim" "text", "value" "jsonb") TO "anon";
 GRANT ALL ON FUNCTION "public"."set_claim"("uid" "uuid", "claim" "text", "value" "jsonb") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."set_claim"("uid" "uuid", "claim" "text", "value" "jsonb") TO "service_role";
+
+
+--
+-- Name: FUNCTION "unblock_user"("userid" "uuid"); Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION "public"."unblock_user"("userid" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."unblock_user"("userid" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."unblock_user"("userid" "uuid") TO "service_role";
 
 
 --
@@ -3928,6 +4343,24 @@ GRANT ALL ON SEQUENCE "public"."messages_id_seq" TO "service_role";
 
 
 --
+-- Name: TABLE "notifications"; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE "public"."notifications" TO "anon";
+GRANT ALL ON TABLE "public"."notifications" TO "authenticated";
+GRANT ALL ON TABLE "public"."notifications" TO "service_role";
+
+
+--
+-- Name: SEQUENCE "notifications_id_seq"; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE "public"."notifications_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."notifications_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."notifications_id_seq" TO "service_role";
+
+
+--
 -- Name: TABLE "profile_features"; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -3952,6 +4385,24 @@ GRANT ALL ON SEQUENCE "public"."profile_features_id_seq" TO "service_role";
 GRANT ALL ON TABLE "public"."profiles" TO "anon";
 GRANT ALL ON TABLE "public"."profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."profiles" TO "service_role";
+
+
+--
+-- Name: TABLE "push_tokens"; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE "public"."push_tokens" TO "anon";
+GRANT ALL ON TABLE "public"."push_tokens" TO "authenticated";
+GRANT ALL ON TABLE "public"."push_tokens" TO "service_role";
+
+
+--
+-- Name: SEQUENCE "push_notification_tokens_id_seq"; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE "public"."push_notification_tokens_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."push_notification_tokens_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."push_notification_tokens_id_seq" TO "service_role";
 
 
 --
