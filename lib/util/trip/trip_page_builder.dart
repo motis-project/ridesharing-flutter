@@ -23,6 +23,7 @@ class TripPageBuilder<T> extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
           bottom: TabBar(
+            labelPadding: EdgeInsets.zero,
             labelColor: Theme.of(context).colorScheme.onSurface,
             tabs: tabs.keys.map((String title) => Tab(text: title)).toList(),
           ),
