@@ -58,7 +58,5 @@ class RecurringDriveEmptyCardState extends TripCardState<RecurringDrive, Recurri
   }
 
   @override
-  Color pickStatusColor() {
-    return Theme.of(context).colorScheme.error;
-  }
+  Color get statusColor => Theme.of(context).colorScheme.error;
 }

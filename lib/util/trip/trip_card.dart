@@ -23,7 +23,7 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: pickStatusColor(),
+      color: statusColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -103,6 +103,7 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
                       const SizedBox(width: 4),
                       Text(
                         localeManager.formatDuration(trip.duration),
+                        key: const Key('duration'),
                       ),
                     ],
                   ),
@@ -201,9 +202,7 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
     return const SizedBox();
   }
 
-  Color pickStatusColor() {
-    return Theme.of(context).cardColor;
-  }
+  Color get statusColor => Theme.of(context).cardColor;
 
   BoxDecoration pickDecoration() {
     return BoxDecoration(

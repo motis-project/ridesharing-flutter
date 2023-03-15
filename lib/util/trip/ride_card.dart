@@ -105,7 +105,34 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   Widget buildTopRight() {
-    return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
+    if (!_fullyLoaded || _ride.isFinished) {
+      return const SizedBox();
+    }
+    switch (_ride.status) {
+      case RideStatus.preview:
+        return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
+      case RideStatus.pending:
+        return Icon(
+          Icons.access_time_outlined,
+          color: statusColor,
+          key: const Key('pendingIcon'),
+        );
+      case RideStatus.approved:
+        return Icon(
+          Icons.done_all,
+          color: statusColor,
+          key: const Key('approvedIcon'),
+        );
+      case RideStatus.rejected:
+      case RideStatus.cancelledByDriver:
+      case RideStatus.cancelledByRider:
+      case RideStatus.withdrawnByRider:
+        return Icon(
+          Icons.block,
+          color: statusColor,
+          key: const Key('cancelledOrRejectedIcon'),
+        );
+    }
   }
 
   @override
@@ -167,13 +194,9 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   }
 
   @override
-  Color pickStatusColor() {
-    if (_ride.endDateTime.isBefore(DateTime.now())) {
-      if (_ride.status == RideStatus.approved) {
-        return Theme.of(context).own().success;
-      } else {
-        return Theme.of(context).disabledColor;
-      }
+  Color get statusColor {
+    if (_ride.isFinished) {
+      return Theme.of(context).disabledColor;
     } else {
       switch (_ride.status) {
         case RideStatus.pending:
@@ -195,7 +218,9 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
 
   @override
   BoxDecoration pickDecoration() {
-    if (_ride.status.isCancelled() || _ride.status == RideStatus.rejected) {
+    if (_ride.status.isCancelled() ||
+        _ride.status == RideStatus.rejected ||
+        (_ride.isFinished && _ride.status != RideStatus.approved)) {
       return disabledDecoration;
     }
     return super.pickDecoration();
