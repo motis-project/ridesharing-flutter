@@ -155,10 +155,10 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
   List<DateTime> getNewInstances() {
     final DateTime after =
-        _recurringDrive.startedAt.isAfter(DateTime.now()) ? _recurringDrive.startedAt : DateTime.now();
+        recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now();
 
     return recurrenceOptions.recurrenceRule
-        .getAllInstances(start: _recurringDrive.startedAt.toUtc(), after: after.toUtc(), includeAfter: true);
+        .getAllInstances(start: recurrenceOptions.startedAt.toUtc(), after: after.toUtc(), includeAfter: true);
   }
 
   Future<void> _changeRecurringDrive() async {

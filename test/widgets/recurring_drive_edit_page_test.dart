@@ -43,12 +43,12 @@ void main() {
   }
 
   Future<void> enterDate(WidgetTester tester, DateTime dateTime, {required Finder finder}) async {
-    await tester.tap(finder);
+    await tester.tap(finder, warnIfMissed: false);
     await tester.pump();
-    await tester.tap(find.byIcon(Icons.edit));
+    await tester.tap(find.byIcon(Icons.edit), warnIfMissed: false);
     await tester.pump();
     await tester.enterText(find.byType(InputDatePickerFormField), '${dateTime.month}/${dateTime.day}/${dateTime.year}');
-    await tester.tap(find.text('OK'));
+    await tester.tap(find.text('OK'), warnIfMissed: false);
     await tester.pump();
   }
 
@@ -125,9 +125,21 @@ void main() {
     });
 
     group('Back button', () {
-      Future<void> goToEditFromDetailPage(WidgetTester tester) async {
-        whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
+      setUp(() {
+        recurringDrive = RecurringDriveFactory().generateFake(
+          startedAt: DateTime.now(),
+          recurrenceRule: RecurrenceRule(
+            frequency: Frequency.weekly,
+            interval: 1,
+            byWeekDays: {WeekDay.monday.toByWeekDayEntry()},
+            until: DateTime.now().add(Trip.creationInterval).toUtc(),
+          ),
+        );
 
+        whenRequest(processor).thenReturnJson(recurringDrive.toJsonForApi());
+      });
+
+      Future<void> goToEditFromDetailPage(WidgetTester tester) async {
         await pumpMaterial(tester, RecurringDriveDetailPage(id: recurringDrive.id!));
         await tester.pump();
 
