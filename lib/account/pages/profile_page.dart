@@ -88,17 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
       children: <Widget>[
         if (_profile!.isCurrentUser) ...<Widget>[
           Expanded(child: Container()),
-          Flexible(
-            flex: 5,
-            child: Semantics(
-              label: S.of(context).edit,
-              child: InkWell(
-                onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
-                key: const Key('editUsernameText'),
-                child: Container(alignment: Alignment.center, height: 48, child: username),
-              ),
-            ),
-          ),
+          Flexible(flex: 5, child: username),
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,

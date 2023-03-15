@@ -238,7 +238,6 @@ void main() {
       expect(find.byKey(const Key('editableRowIconButton')), findsNothing);
       expect(find.byKey(const Key('editableRowTitleButton')), findsNothing);
       expect(find.byKey(const Key('editUsernameIcon')), findsNothing);
-      expect(find.byKey(const Key('editUsernameText')), findsNothing);
       expect(find.byKey(const Key('avatarUpload')), findsNothing);
       expect(find.byKey(const Key('signOutButton')), findsNothing);
     });
@@ -250,7 +249,6 @@ void main() {
       expect(find.byKey(const Key('editableRowIconButton')), findsNWidgets(5));
       expect(find.byKey(const Key('editableRowTitleButton')), findsNWidgets(5));
       expect(find.byKey(const Key('editUsernameIcon')), findsOneWidget);
-      expect(find.byKey(const Key('editUsernameText')), findsOneWidget);
       expect(find.byKey(const Key('avatarUpload')), findsOneWidget);
       expect(find.byKey(const Key('signOutButton')), findsOneWidget);
       expect(find.byKey(const Key('reportButton')), findsNothing);
@@ -298,14 +296,6 @@ void main() {
       await tester.pump();
 
       await tester.tap(find.byKey(const Key('editUsernameIcon')));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(EditUsernamePage), findsOneWidget);
-
-      await tester.pageBack();
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byKey(const Key('editUsernameText')));
       await tester.pumpAndSettle();
 
       expect(find.byType(EditUsernamePage), findsOneWidget);
