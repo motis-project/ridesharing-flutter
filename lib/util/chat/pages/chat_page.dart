@@ -60,7 +60,6 @@ class _ChatPageState extends State<ChatPage> {
                       Expanded(
                         child: messages.isEmpty
                             ? EmptySearchResults(
-                                scale: 8,
                                 asset: EmptySearchResults.shrugAsset,
                                 title: S.of(context).pageChatEmptyTitle,
                                 subtitle: Text(
@@ -84,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
             )
           : EmptySearchResults(
               asset: EmptySearchResults.pointingUpAsset,
-              scale: 8,
               title: S.of(context).pageChatEmptyTitle,
               subtitle: Text(
                 S.of(context).pageChatNoChatMessage,

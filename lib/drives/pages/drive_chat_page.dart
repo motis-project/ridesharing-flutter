@@ -74,7 +74,6 @@ class _DriveChatPageState extends State<DriveChatPage> {
           : EmptySearchResults(
               key: const Key('noChatsImage'),
               asset: EmptySearchResults.shrugAsset,
-              scale: 8,
               title: S.of(context).pageChatEmptyTitle,
               subtitle: Text(
                 S.of(context).pageDriveChatEmptyMessage,
