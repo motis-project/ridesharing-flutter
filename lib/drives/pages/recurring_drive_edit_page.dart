@@ -40,6 +40,14 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     setState(() {
       _recurringDrive = widget.recurringDrive;
     });
+
+    recurrenceOptions = RecurrenceOptions(
+      startedAt: _recurringDrive.startedAt,
+      recurrenceInterval: _recurringDrive.recurrenceInterval,
+      weekDays: _recurringDrive.weekDays,
+      endChoice: _recurringDrive.recurrenceEndChoice.copyWith(isCustom: true),
+    );
+
     loadDefaultPreviewExpanded();
   }
 
@@ -47,20 +55,6 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     await storageManager
         .readData<bool>(getStorageKey())
         .then((bool? value) => setState(() => _defaultPreviewExpanded = value));
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // This is here instead of initState
-    // because the context is needed for the recurrence options
-    recurrenceOptions = RecurrenceOptions(
-      startedAt: _recurringDrive.startedAt,
-      recurrenceInterval: _recurringDrive.recurrenceInterval,
-      weekDays: _recurringDrive.weekDays,
-      endChoice: _recurringDrive.recurrenceEndChoice.copyWith(isCustom: true),
-    );
   }
 
   @override

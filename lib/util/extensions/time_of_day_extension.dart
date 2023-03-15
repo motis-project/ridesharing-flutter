@@ -5,14 +5,6 @@ extension TimeOfDayExtension on TimeOfDay {
     return hour < other.hour || (hour == other.hour && minute < other.minute);
   }
 
-  bool isAfter(TimeOfDay other) {
-    return hour > other.hour || (hour == other.hour && minute > other.minute);
-  }
-
-  bool isAtSameMomentAs(TimeOfDay other) {
-    return hour == other.hour && minute == other.minute;
-  }
-
   String get formatted {
     return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00';
   }
