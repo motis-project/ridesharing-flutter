@@ -42,7 +42,8 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
   RecurrenceEndChoiceDate customEndDateChoice = RecurrenceEndChoiceDate(null, isCustom: true);
   final TextEditingController customEndDateController = TextEditingController();
 
-  RecurrenceEndChoiceInterval customEndIntervalChoice = RecurrenceEndChoiceInterval(null, null, isCustom: true);
+  RecurrenceEndChoiceInterval customEndIntervalChoice =
+      RecurrenceEndChoiceInterval(null, RecurrenceIntervalType.weeks, isCustom: true);
   final TextEditingController customEndIntervalSizeController = TextEditingController();
   final TextEditingController customEndIntervalTypeController = TextEditingController();
 
@@ -157,12 +158,6 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
       controller: recurrenceIntervalSizeController,
-      validator: (String? value) {
-        if (value == null || value.isEmpty) {
-          return S.of(context).pageCreateDriveIntervalSizeValidationEmpty;
-        }
-        return null;
-      },
       onChanged: (String value) {
         setState(() {
           recurrenceOptions.recurrenceIntervalSize = int.tryParse(value) ?? recurrenceOptions.recurrenceIntervalSize;
@@ -172,7 +167,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
     );
 
     return TextWithFields(
-      S.of(context).pageCreateDriveEveryInterval(TextWithFields.placeholder),
+      S.of(context).recurrenceIntervalEveryWeeksPlaceholder(TextWithFields.placeholder),
       fields: <Widget>[SizedBox(width: 80, child: intervalSizeField)],
       separator: const SizedBox(width: 5),
       textStyle: Theme.of(context).textTheme.titleMedium,
@@ -225,7 +220,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
 
                         return RadioListTile<RecurrenceEndChoice>(
                           contentPadding: EdgeInsets.zero,
-                          title: Text(recurringEndChoice.getName(context)),
+                          title: Text(recurringEndChoice.getName(context, short: true)),
                           value: recurringEndChoice,
                           groupValue: _endChoice,
                           onChanged: onChanged,
@@ -266,7 +261,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                             );
 
                             content = TextWithFields(
-                              S.of(context).pageCreateDriveRecurrenceEndUntil(TextWithFields.placeholder),
+                              S.of(context).recurrenceEndDateChoice(TextWithFields.placeholder),
                               fields: <Widget>[Flexible(child: datePicker)],
                             );
                             break;
@@ -276,7 +271,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                                 border: OutlineInputBorder(),
                                 // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
                                 contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
-                                hintText: '5',
+                                hintText: 'x',
                               ),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
@@ -324,7 +319,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                             );
 
                             content = TextWithFields(
-                              S.of(context).pageCreateDriveRecurrenceEndFor(TextWithFields.placeholder),
+                              S.of(context).recurrenceEndIntervalChoice(TextWithFields.placeholder),
                               fields: <Widget>[
                                 SizedBox(width: 45, child: intervalSizeField),
                                 SizedBox(width: 80, child: intervalTypeField),
@@ -337,7 +332,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                                 border: OutlineInputBorder(),
                                 // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
                                 contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
-                                hintText: '20',
+                                hintText: 'y',
                               ),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
@@ -352,7 +347,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                             );
 
                             content = TextWithFields(
-                              S.of(context).pageCreateDriveRecurrenceEndAfterOccurrences(TextWithFields.placeholder),
+                              S.of(context).recurrenceEndOccurencesChoice(TextWithFields.placeholder),
                               fields: <Widget>[SizedBox(width: 45, child: occurenceField)],
                             );
                             break;
@@ -372,7 +367,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
                   const SizedBox(height: 20),
                   if (!validate(createError: false))
                     Text(
-                      S.of(context).pageCreateDriveRecurrenceEndError(validationError!),
+                      S.of(context).recurrenceEndError(validationError!),
                       style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
                       key: const Key('recurrenceEndError'),
                     ),

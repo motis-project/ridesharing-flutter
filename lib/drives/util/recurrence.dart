@@ -57,7 +57,7 @@ abstract class RecurrenceEndChoice {
 
   const RecurrenceEndChoice({this.type = RecurrenceEndType.occurrence, this.isCustom = false});
 
-  String getName(BuildContext context);
+  String getName(BuildContext context, {bool short = false});
 
   @override
   bool operator ==(Object other) =>
@@ -79,7 +79,9 @@ class RecurrenceEndChoiceDate extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.date);
 
   @override
-  String getName(BuildContext context) => S.of(context).recurrenceEndUntilDate(localeManager.formatDate(date!));
+  String getName(BuildContext context, {bool short = false}) => short
+      ? S.of(context).recurrenceEndUntilDateShort(localeManager.formatDate(date!))
+      : S.of(context).recurrenceEndUntilDate(localeManager.formatDate(date!));
 
   @override
   bool operator ==(Object other) =>
@@ -118,16 +120,24 @@ class RecurrenceEndChoiceInterval extends RecurrenceEndChoice {
   }
 
   @override
-  String getName(BuildContext context) {
+  String getName(BuildContext context, {bool short = false}) {
     switch (intervalType!) {
       case RecurrenceIntervalType.days:
-        return S.of(context).recurrenceEndForDays(intervalSize!);
+        return short
+            ? S.of(context).recurrenceEndForDaysShort(intervalSize!)
+            : S.of(context).recurrenceEndForDays(intervalSize!);
       case RecurrenceIntervalType.weeks:
-        return S.of(context).recurrenceEndForWeeks(intervalSize!);
+        return short
+            ? S.of(context).recurrenceEndForWeeksShort(intervalSize!)
+            : S.of(context).recurrenceEndForWeeks(intervalSize!);
       case RecurrenceIntervalType.months:
-        return S.of(context).recurrenceEndForMonths(intervalSize!);
+        return short
+            ? S.of(context).recurrenceEndForMonthsShort(intervalSize!)
+            : S.of(context).recurrenceEndForMonths(intervalSize!);
       case RecurrenceIntervalType.years:
-        return S.of(context).recurrenceEndForYears(intervalSize!);
+        return short
+            ? S.of(context).recurrenceEndForYearsShort(intervalSize!)
+            : S.of(context).recurrenceEndForYears(intervalSize!);
     }
   }
 
@@ -164,7 +174,9 @@ class RecurrenceEndChoiceOccurrence extends RecurrenceEndChoice {
         super(type: RecurrenceEndType.occurrence);
 
   @override
-  String getName(BuildContext context) => S.of(context).recurrenceEndAfterOccurrences(occurrences!);
+  String getName(BuildContext context, {bool short = false}) => short
+      ? S.of(context).recurrenceEndAfterOccurrencesShort(occurrences!)
+      : S.of(context).recurrenceEndAfterOccurrences(occurrences!);
 
   @override
   String? validate(BuildContext context) => occurrences == null
