@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../rides/models/ride.dart';
+import '../../util/buttons/custom_banner.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/drive_card.dart';
 import '../../util/trip/trip.dart';
@@ -128,7 +129,7 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
         },
       ).toList();
 
-      if (recurringDrive.stoppedAt == null && (upcomingDrives.isNotEmpty || previewedDrives.isNotEmpty)) {
+      if (!recurringDrive.isStopped && (upcomingDrives.isNotEmpty || previewedDrives.isNotEmpty)) {
         final List<Widget> upcomingDrivesColumn = <Widget>[
           const SizedBox(height: 5.0),
           Align(
@@ -150,9 +151,9 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
         widgets.add(const SizedBox(height: 10));
         widgets.add(
           Text(
-            recurringDrive.stoppedAt == null
-                ? S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty
-                : S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped,
+            recurringDrive.isStopped
+                ? S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped
+                : S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty,
             key: const Key('noUpcomingDrives'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -164,10 +165,27 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       widgets.add(const Center(child: CircularProgressIndicator()));
     }
 
+    final Widget content = Column(
+      children: <Widget>[
+        if (_recurringDrive?.isStopped ?? false)
+          CustomBanner.error(
+            S.of(context).pageRecurringDriveDetailBannerStopped,
+            key: const Key('stoppedRecurringDriveBanner'),
+          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageRecurringDriveDetailTitle),
-        actions: _recurringDrive?.stoppedAt == null ? <Widget>[buildEditButton()] : null,
+        actions: buildActions(),
       ),
       body: _recurringDrive == null
           ? const Center(child: CircularProgressIndicator())
@@ -175,30 +193,28 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
               onRefresh: loadRecurringDrive,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widgets,
-                  ),
-                ),
+                child: content,
               ),
             ),
     );
   }
 
-  Widget buildEditButton() {
-    return IconButton(
-      icon: const Icon(Icons.edit),
-      onPressed: () {
-        Navigator.of(context)
-            .push(
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => RecurringDriveEditPage(_recurringDrive!),
-              ),
-            )
-            .then((_) => loadRecurringDrive());
-      },
-    );
+  List<Widget> buildActions() {
+    if (_recurringDrive?.isStopped ?? false) return <Widget>[];
+
+    return <Widget>[
+      IconButton(
+        icon: const Icon(Icons.edit),
+        onPressed: () {
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => RecurringDriveEditPage(_recurringDrive!),
+                ),
+              )
+              .then((_) => loadRecurringDrive());
+        },
+      )
+    ];
   }
 }

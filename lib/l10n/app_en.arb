@@ -317,6 +317,7 @@
   "pageDriveDetailHideDialog": "Are you sure you want to delete this drive?",
 
   "pageRecurringDriveDetailTitle": "Recurring Drive Detail",
+  "pageRecurringDriveDetailBannerStopped": "You have stopped this recurring drive.",
   "pageRecurringDriveDetailUpcomingDrives": "Upcoming Drives",
   "pageRecurringDriveDetailUpcomingDrivesStopped": "You have stopped this recurring drive, therefore there are no upcoming drives.",
   "pageRecurringDriveDetailUpcomingDrivesEmpty": "There are no upcoming drives for this recurring drive. Try changing the recurrence rule to plan new drives.",

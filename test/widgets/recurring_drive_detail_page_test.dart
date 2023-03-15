@@ -84,6 +84,7 @@ void main() {
 
       await tester.pump();
 
+      expect(find.byKey(const Key('stoppedRecurringDriveBanner')), findsOneWidget);
       expect(find.byType(DriveCard), findsNothing);
       expect(find.byIcon(Icons.edit), findsNothing);
     });

@@ -46,9 +46,9 @@ class RecurringDriveEmptyCardState extends TripCardState<RecurringDrive, Recurri
   Widget buildTopLeft() {
     return Flexible(
       child: Text(
-        recurringDrive.stoppedAt == null
-            ? S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty
-            : S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped,
+        recurringDrive.isStopped
+            ? S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped
+            : S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty,
         style: TextStyle(
           color: Theme.of(context).colorScheme.error,
           fontWeight: FontWeight.bold,

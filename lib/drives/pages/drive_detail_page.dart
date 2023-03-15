@@ -205,21 +205,22 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
 
       if (drive.status != DriveStatus.preview) {
         widgets.add(const SizedBox(height: 20));
-        Widget bottomButton;
+
+        Widget primaryButton;
         if (drive.isFinished || drive.status.isCancelled()) {
-          bottomButton = Button.error(
+          primaryButton = Button.error(
             S.of(context).pageDriveDetailButtonHide,
             onPressed: _showHideDialog,
             key: const Key('hideDriveButton'),
           );
         } else {
-          bottomButton = Button.error(
+          primaryButton = Button.error(
             S.of(context).pageDriveDetailButtonCancel,
             onPressed: _showCancelDialog,
             key: const Key('cancelDriveButton'),
           );
         }
-        widgets.add(bottomButton);
+        widgets.add(primaryButton);
         widgets.add(const SizedBox(height: 5));
       }
     } else {

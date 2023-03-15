@@ -155,6 +155,8 @@ class RecurringDrive extends TripLike {
         .from('recurring_drives')
         .update(<String, dynamic>{'stopped_at': stoppedAt.toString()}).eq('id', id);
   }
+
+  bool get isStopped => stoppedAt != null;
 }
 
 class PostgresRecurrenceRule {
