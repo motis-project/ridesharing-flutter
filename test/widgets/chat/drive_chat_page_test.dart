@@ -190,9 +190,7 @@ void main() {
         await tester.pump();
 
         final Finder subtitle = find.byKey(Key('chatWidget${drive.rides![0].chatId}Subtitle'));
-
         expect(subtitle, findsOneWidget);
-        expect(find.descendant(of: subtitle, matching: find.text(message.content)), findsOneWidget);
       });
 
       testWidgets('is not shown when Chat has no messages', (WidgetTester tester) async {

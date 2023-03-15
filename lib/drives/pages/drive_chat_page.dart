@@ -92,20 +92,28 @@ class _DriveChatPageState extends State<DriveChatPage> {
     final Message? lastMessage = chat.messages!.isEmpty ? null : chat.messages!.first;
     final Widget? subtitle = lastMessage == null
         ? null
-        : Wrap(
+        : RichText(
             key: Key('chatWidget${chat.id}Subtitle'),
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
-              if (lastMessage.isFromCurrentUser)
-                Icon(
-                  Icons.done_all,
-                  size: 18,
-                  color: lastMessage.read
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                ),
-              Text(lastMessage.content),
-            ],
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              children: <InlineSpan>[
+                if (lastMessage.isFromCurrentUser)
+                  WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Icon(
+                        Icons.done_all,
+                        size: 18,
+                        color: lastMessage.read
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ),
+                TextSpan(text: lastMessage.content, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
           );
     return Card(
       key: Key('chatWidget${chat.id}'),
