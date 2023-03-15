@@ -74,10 +74,11 @@ void main() {
       testWidgets('Switching to a gender', (WidgetTester tester) async {
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
-        await tester.tap(
-          find.descendant(
-              of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editableRowIconButton'))),
-        );
+
+        final Finder editableRowIconButton = find.descendant(
+            of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editableRowIconButton')));
+        await tester.scrollUntilVisible(editableRowIconButton, 50, scrollable: find.byType(Scrollable).first);
+        await tester.tap(editableRowIconButton);
         await tester.pumpAndSettle();
         expect(find.byType(EditGenderPage), findsOneWidget);
 
@@ -112,6 +113,7 @@ void main() {
 
         await pumpMaterial(tester, ProfilePage.fromProfile(profile));
         await tester.pump();
+
         final Finder editableRowIconButton = find.descendant(
             of: find.byKey(const Key('gender')), matching: find.byKey(const Key('editableRowIconButton')));
         await tester.scrollUntilVisible(editableRowIconButton, 50, scrollable: find.byType(Scrollable).first);
