@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../account/models/profile.dart';
+import '../../empty_search_results.dart';
 import '../../profiles/profile_widget.dart';
 import '../../supabase_manager.dart';
 import '../chat_bubble.dart';
@@ -58,23 +59,15 @@ class _ChatPageState extends State<ChatPage> {
                     children: <Widget>[
                       Expanded(
                         child: messages.isEmpty
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    'assets/chat_shrug.png',
-                                    scale: 8,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    S.of(context).pageChatEmptyTitle,
-                                    style: Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    S.of(context).pageChatEmptyMessage,
-                                  ),
-                                ],
+                            ? EmptySearchResults(
+                                scale: 8,
+                                asset: EmptySearchResults.shrugAsset,
+                                title: S.of(context).pageChatEmptyTitle,
+                                subtitle: Text(
+                                  S.of(context).pageChatEmptyMessage,
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                  textAlign: TextAlign.center,
+                                ),
                               )
                             : ListView(
                                 reverse: true,
@@ -89,27 +82,15 @@ class _ChatPageState extends State<ChatPage> {
                 }
               },
             )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  'assets/chat_shrug.png',
-                  scale: 8,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  S.of(context).pageChatEmptyTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    S.of(context).pageChatNoChatMessage,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+          : EmptySearchResults(
+              asset: EmptySearchResults.pointingUpAsset,
+              scale: 8,
+              title: S.of(context).pageChatEmptyTitle,
+              subtitle: Text(
+                S.of(context).pageChatNoChatMessage,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
             ),
     );
   }

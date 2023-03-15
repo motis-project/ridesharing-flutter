@@ -5,6 +5,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../drives/models/drive.dart';
 import '../../util/buttons/labeled_checkbox.dart';
+import '../../util/empty_search_results.dart';
 import '../../util/fields/increment_field.dart';
 import '../../util/locale_manager.dart';
 import '../../util/search/address_suggestion.dart';
@@ -274,32 +275,15 @@ class SearchRidePageState extends State<SearchRidePage> {
     );
   }
 
-  Widget buildEmptyRideSuggestions(String asset, String title, {Widget? subtitle, Key? key}) {
-    return SliverToBoxAdapter(
-      child: Column(
-        key: key,
-        children: <Widget>[
-          const SizedBox(height: 10),
-          Image.asset(asset),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          if (subtitle != null) subtitle,
-        ],
-      ),
-    );
-  }
-
   Widget buildMainContentSliver() {
     if (possibleRides == null || _loading) {
       if (_startSuggestion == null || _destinationSuggestion == null) {
-        return buildEmptyRideSuggestions(
-          key: const Key('searchRideNoInput'),
-          'assets/pointing_up.png',
-          S.of(context).pageSearchRideNoInput,
+        return SliverToBoxAdapter(
+          child: EmptySearchResults(
+            key: const Key('searchRideNoInput'),
+            asset: EmptySearchResults.pointingUpAsset,
+            title: S.of(context).pageSearchRideNoInput,
+          ),
         );
       }
       return const SliverToBoxAdapter(
@@ -316,50 +300,52 @@ class SearchRidePageState extends State<SearchRidePage> {
     final List<Ride> filteredSuggestions = applyTimeConstraints(filterApplied);
 
     if (filteredSuggestions.isEmpty) {
-      return buildEmptyRideSuggestions(
-        'assets/shrug.png',
-        S.of(context).pageSearchRideEmpty,
-        subtitle: filterApplied.isNotEmpty
-            ? Semantics(
-                button: true,
-                child: InkWell(
-                  key: const Key('searchRideWrongTime'),
-                  onTap: () => setState(
-                    () {
-                      selectedDate = filterApplied[0].startDateTime;
-                      _dateController.text = localeManager.formatDate(selectedDate);
-                      if (!_wholeDay) {
-                        _timeController.text = localeManager.formatTime(selectedDate);
-                      }
-                    },
-                  ),
-                  child: Text(
-                    S.of(context).pageSearchRideWrongTime,
-                    style: Theme.of(context).textTheme.titleMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : possibleRides!.isNotEmpty
-                ? Semantics(
-                    button: true,
-                    tooltip: S.of(context).pageSearchRideTooltipFilter,
-                    child: InkWell(
-                      key: const Key('searchRideRelaxRestrictions'),
-                      onTap: () => filter.dialog(context, setState),
-                      child: Text(
-                        S.of(context).pageSearchRideRelaxRestrictions,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        textAlign: TextAlign.center,
-                      ),
+      return SliverToBoxAdapter(
+        child: EmptySearchResults(
+          asset: EmptySearchResults.shrugAsset,
+          title: S.of(context).pageSearchRideEmpty,
+          subtitle: filterApplied.isNotEmpty
+              ? Semantics(
+                  button: true,
+                  child: InkWell(
+                    key: const Key('searchRideWrongTime'),
+                    onTap: () => setState(
+                      () {
+                        selectedDate = filterApplied[0].startDateTime;
+                        _dateController.text = localeManager.formatDate(selectedDate);
+                        if (!_wholeDay) {
+                          _timeController.text = localeManager.formatTime(selectedDate);
+                        }
+                      },
                     ),
-                  )
-                : Text(
-                    key: const Key('searchRideNoResults'),
-                    S.of(context).pageSearchRideNoResults,
-                    style: Theme.of(context).textTheme.titleMedium,
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      S.of(context).pageSearchRideWrongTime,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                )
+              : possibleRides!.isNotEmpty
+                  ? Semantics(
+                      button: true,
+                      tooltip: S.of(context).pageSearchRideTooltipFilter,
+                      child: InkWell(
+                        key: const Key('searchRideRelaxRestrictions'),
+                        onTap: () => filter.dialog(context, setState),
+                        child: Text(
+                          S.of(context).pageSearchRideRelaxRestrictions,
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      key: const Key('searchRideNoResults'),
+                      S.of(context).pageSearchRideNoResults,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+        ),
       );
     } else {
       return SliverList(

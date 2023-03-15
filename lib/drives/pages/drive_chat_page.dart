@@ -6,6 +6,7 @@ import '../../rides/models/ride.dart';
 import '../../util/chat/models/chat.dart';
 import '../../util/chat/models/message.dart';
 import '../../util/chat/pages/chat_page.dart';
+import '../../util/empty_search_results.dart';
 import '../../util/supabase_manager.dart';
 import '../models/drive.dart';
 
@@ -70,24 +71,16 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 }
               },
             )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(key: const Key('noChatsImage'), 'assets/chat_shrug.png', scale: 8),
-                const SizedBox(height: 16),
-                Text(
-                  S.of(context).pageChatEmptyTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    S.of(context).pageDriveChatEmptyMessage,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+          : EmptySearchResults(
+              key: const Key('noChatsImage'),
+              asset: EmptySearchResults.shrugAsset,
+              scale: 8,
+              title: S.of(context).pageChatEmptyTitle,
+              subtitle: Text(
+                S.of(context).pageDriveChatEmptyMessage,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
             ),
     );
   }

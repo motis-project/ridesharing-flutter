@@ -17,6 +17,7 @@ import 'rides/pages/ride_detail_page.dart';
 import 'rides/pages/search_ride_page.dart';
 import 'util/chat/models/message.dart';
 import 'util/chat/pages/chat_page.dart';
+import 'util/empty_search_results.dart';
 import 'util/locale_manager.dart';
 import 'util/model.dart';
 import 'util/parse_helper.dart';
@@ -259,47 +260,30 @@ class HomePageState extends State<HomePage> {
       if (notifications.isEmpty) {
         if (supabaseManager.currentProfile!.hasNoPersonalInformation) {
           notifications = <Widget>[
-            Column(
+            EmptySearchResults(
               key: const Key('completeProfileColumn'),
-              children: <Widget>[
-                const SizedBox(height: 10),
-                Image.asset('assets/ninja.png', scale: 2),
-                const SizedBox(height: 10),
-                Text(
-                  S.of(context).pageHomePageCompleteProfile,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Button(
-                  key: const Key('completeProfileButton'),
-                  S.of(context).pageHomePageCompleteProfileButton,
-                  onPressed: () => mainAppKey.currentState!
-                      .selectTabAndPush(TabItem.account, ProfilePage.fromProfile(supabaseManager.currentProfile))
-                      .then((_) => setState(() {})),
-                ),
-              ],
+              asset: 'assets/ninja.png',
+              title: S.of(context).pageHomePageCompleteProfile,
+              subtitle: Button(
+                key: const Key('completeProfileButton'),
+                S.of(context).pageHomePageCompleteProfileButton,
+                onPressed: () => mainAppKey.currentState!
+                    .selectTabAndPush(TabItem.account, ProfilePage.fromProfile(supabaseManager.currentProfile))
+                    .then((_) => setState(() {})),
+              ),
             ),
           ];
         } else {
           notifications = <Widget>[
-            Column(
+            EmptySearchResults(
               key: const Key('emptyColumn'),
-              children: <Widget>[
-                const SizedBox(height: 10),
-                Image.asset('assets/pointing_up.png'),
-                const SizedBox(height: 10),
-                Text(
-                  S.of(context).pageHomePageEmpty,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  S.of(context).pageHomePageEmptySubtitle,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              asset: EmptySearchResults.pointingUpAsset,
+              title: S.of(context).pageHomePageEmpty,
+              subtitle: Text(
+                S.of(context).pageHomePageEmptySubtitle,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
             ),
           ];
         }
