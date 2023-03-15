@@ -42,6 +42,12 @@ class Profile extends Model {
     this.reportsReceived,
   });
 
+  /// Returns the full name of the user.
+  ///
+  /// The full name is composed of the surname and the name, separated by a space.
+  /// - If the user has no surname, only the name is returned.
+  /// - If the user has no name, only the surname is returned.
+  /// - If the user has no name and no surname, an empty string is returned.
   String get fullName {
     if (name != null && surname != null) return '$surname $name';
     if (name != null) return name!;
@@ -51,6 +57,17 @@ class Profile extends Model {
 
   bool get isCurrentUser => id == supabaseManager.currentProfile?.id;
 
+  /// Returns true if the user hasn't filled any personal information.
+  ///
+  /// If any of the following fields is given, this is false:
+  /// - description
+  /// - birth date
+  /// - surname
+  /// - name
+  /// - gender
+  /// - avatar
+  ///
+  /// Features are not considered personal information.
   bool get hasNoPersonalInformation =>
       description == null &&
       birthDate == null &&
@@ -59,9 +76,13 @@ class Profile extends Model {
       gender == null &&
       avatarUrl == null;
 
+  /// The maximum permitted age of a user (120 years)
   static const Duration maxAge = Duration(days: 365 * 120);
+
+  /// The minimum permitted age of a user (12 years)
   static const Duration minAge = Duration(days: 365 * 12);
 
+  /// Returns the corresponding [Feature]s of the [ProfileFeature]s of this [Profile].
   List<Feature>? get features =>
       profileFeatures?.map((ProfileFeature profileFeature) => profileFeature.feature).toList();
 
