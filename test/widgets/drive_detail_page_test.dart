@@ -98,6 +98,7 @@ void main() {
         await tester.pump();
 
         expect(find.byKey(const Key('driveChatButton')), findsNothing);
+        expect(find.byKey(const Key('previewDriveBanner')), findsOneWidget);
 
         expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
         expect(find.byKey(const Key('hideDriveButton')), findsNothing);

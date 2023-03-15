@@ -313,6 +313,7 @@
   "pageDriveDetailCancelDialogToast": "Drive cancelled.",
   "pageDriveDetailBannerCancelledByDriver": "You have cancelled this drive.",
   "pageDriveDetailBannerCancelledByRecurrenceRule": "This drive has been cancelled because you have changed your recurrence settings.",
+  "pageDriveDetailBannerPreview": "This is a preview. You can only interact with this drive {days} days before it starts.",
   "pageDriveDetailButtonHide": "Delete Drive",
   "pageDriveDetailHideDialog": "Are you sure you want to delete this drive?",
 

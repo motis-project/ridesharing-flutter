@@ -17,6 +17,7 @@ import '../../util/profiles/profile_wrap_list.dart';
 import '../../util/snackbar.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/pending_ride_card.dart';
+import '../../util/trip/trip.dart';
 import '../../util/trip/trip_overview.dart';
 import '../models/drive.dart';
 import 'drive_chat_page.dart';
@@ -239,6 +240,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           CustomBanner.error(
             S.of(context).pageDriveDetailBannerCancelledByRecurrenceRule,
             key: const Key('cancelledByRecurrenceRuleDriveBanner'),
+          )
+        else if (_drive?.status == DriveStatus.preview)
+          CustomBanner.primary(
+            S.of(context).pageDriveDetailBannerPreview(Trip.creationInterval.inDays),
+            key: const Key('previewDriveBanner'),
           ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),

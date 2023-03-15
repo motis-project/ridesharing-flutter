@@ -313,6 +313,7 @@
   "pageDriveDetailCancelDialogToast": "Fahrt abgesagt.",
   "pageDriveDetailBannerCancelledByDriver": "Du hast diese Fahrt abgesagt.",
   "pageDriveDetailBannerCancelledByRecurrenceRule": "Diese Fahrt wurde abgesagt, weil du deine Wiederholungsregeln geändert hast.",
+  "pageDriveDetailBannerPreview": "Dies ist eine Vorschau. Es ist erst {days} Tage vor Fahrtbeginn möglich, mit der Fahrt zu interagieren.",
   "pageDriveDetailButtonHide": "Fahrt löschen",
   "pageDriveDetailHideDialog": "Bist du sicher, dass du die Fahrt löschen möchtest?",
 
