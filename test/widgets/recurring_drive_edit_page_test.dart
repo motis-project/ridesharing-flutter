@@ -199,8 +199,8 @@ void main() {
         final List<WeekDay> oldWeekdays =
             weekdaysWithoutAdded.take(random.integer(weekdaysWithoutAdded.length, min: 1)).toList();
         final List<WeekDay> newWeekdays = [...oldWeekdays, addedWeekday];
-        final int oldIntervalSize = random.integer(10, min: 2);
-        final int newIntervalSize = oldIntervalSize - 1;
+        final int newIntervalSize = random.integer(5, min: 1);
+        final int oldIntervalSize = newIntervalSize * 2;
         final DateTime oldUntilDate =
             faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
         final DateTime oldUntilTime = DateTime(oldUntilDate.year, oldUntilDate.month, oldUntilDate.day, 23, 59).toUtc();
