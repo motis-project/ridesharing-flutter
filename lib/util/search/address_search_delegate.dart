@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../empty_search_results.dart';
 import 'address_suggestion.dart';
 import 'address_suggestion_manager.dart';
 
@@ -87,13 +88,13 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
             }
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image.asset('assets/shrug.png'),
-                        const SizedBox(height: 10),
-                        Text(S.of(context).searchAddressEnterMoreCharacters),
-                      ],
+                  ? EmptySearchResults(
+                      asset: 'assets/shrug.png',
+                      title: S.of(context).pageSearchRideEmpty,
+                      subtitle: Text(
+                        S.of(context).searchAddressEnterMoreCharacters,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     )
                   : const CircularProgressIndicator(),
             );
