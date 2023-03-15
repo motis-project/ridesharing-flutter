@@ -89,7 +89,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
     seats = 1;
     recurrenceOptions = RecurrenceOptions(
       startedAt: selectedDate,
-      recurrenceInterval: RecurrenceInterval(1, RecurrenceIntervalType.weeks),
+      recurrenceIntervalSize: 1,
       endChoice: predefinedRecurrenceEndChoices.last,
     );
     loadDefaultPreviewExpanded();

@@ -122,13 +122,8 @@ void main() {
     }
   }
 
-  Future<void> enterInterval(WidgetTester tester, int size, RecurrenceIntervalType type) async {
+  Future<void> enterInterval(WidgetTester tester, int size) async {
     await tester.enterText(find.byKey(const Key('intervalSizeField')), size.toString());
-
-    await scrollAndTap(tester, find.byKey(const Key('intervalTypeField')));
-    await tester.pumpAndSettle();
-    await scrollAndTap(tester, find.byKey(Key('intervalType${type.name}')), scrollable: find.byType(Scrollable).last);
-    await tester.pumpAndSettle();
   }
 
   Future<void> enterUntil(WidgetTester tester, DateTime dateTime) async {
@@ -233,9 +228,6 @@ void main() {
       testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
-        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final int intervalSize = random.integer(10, min: 1);
         final DateTime dateTime = faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
 
@@ -249,14 +241,13 @@ void main() {
         expect(find.byType(RecurrenceOptionsEdit), findsOneWidget);
 
         await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
-        await enterInterval(tester, intervalSize, intervalType);
+        await enterInterval(tester, intervalSize);
         await enterUntil(tester, dateTime);
 
         final CreateDriveFormState formState = tester.state(formFinder);
 
         expect(formState.recurrenceOptions.weekDays, weekdays);
-        expect(formState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
-        expect(formState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
+        expect(formState.recurrenceOptions.recurrenceIntervalSize, intervalSize);
         expect(formState.recurrenceOptions.endChoice.isCustom, isTrue);
         expect(formState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
         expect(
@@ -355,18 +346,16 @@ void main() {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
         final int intervalSize = random.integer(10, min: 1);
-        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final DateTime untilDate =
             faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
         final DateTime untilTime = DateTime(untilDate.year, untilDate.month, untilDate.day, 23, 59).toUtc();
 
         final RecurrenceRule recurrenceRule = RecurrenceRule(
-            frequency: intervalType.frequency,
-            interval: intervalSize,
-            byWeekDays: weekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
-            until: untilTime);
+          frequency: Frequency.weekly,
+          interval: intervalSize,
+          byWeekDays: weekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
+          until: untilTime,
+        );
 
         whenRequest(processor).thenReturnJson(RecurringDriveFactory()
             .generateFake(
@@ -399,7 +388,7 @@ void main() {
         await tapRecurring(tester);
 
         await selectWeekdays(tester, weekdays, selectedDate: dateTime);
-        await enterInterval(tester, intervalSize, intervalType);
+        await enterInterval(tester, intervalSize);
         await enterUntil(tester, untilTime);
 
         await tester.tap(find.byKey(const Key('createDriveButton')));

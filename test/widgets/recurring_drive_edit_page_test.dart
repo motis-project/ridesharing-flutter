@@ -63,13 +63,8 @@ void main() {
     }
   }
 
-  Future<void> enterInterval(WidgetTester tester, int size, RecurrenceIntervalType type) async {
+  Future<void> enterInterval(WidgetTester tester, int size) async {
     await tester.enterText(find.byKey(const Key('intervalSizeField')), size.toString());
-
-    await scrollAndTap(tester, find.byKey(const Key('intervalTypeField')));
-    await tester.pumpAndSettle();
-    await scrollAndTap(tester, find.byKey(Key('intervalType${type.name}')), scrollable: find.byType(Scrollable).last);
-    await tester.pumpAndSettle();
   }
 
   Future<void> enterUntil(WidgetTester tester, DateTime dateTime, {bool tapEndChoice = false}) async {
@@ -91,9 +86,6 @@ void main() {
     testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
       final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
       final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
-      final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-          .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-          .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
       final int intervalSize = random.integer(10, min: 1);
       final DateTime untilDate = faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
 
@@ -103,14 +95,13 @@ void main() {
       expect(find.byType(RecurrenceOptionsEdit), findsOneWidget);
 
       await selectWeekdays(tester, weekdays, selectedWeekdays: recurringDrive.weekDays);
-      await enterInterval(tester, intervalSize, intervalType);
+      await enterInterval(tester, intervalSize);
       await enterUntil(tester, untilDate);
 
       final RecurringDriveEditPageState pageState = tester.state(pageFinder);
 
       expect(pageState.recurrenceOptions.weekDays.toSet(), weekdays.toSet());
-      expect(pageState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
-      expect(pageState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
+      expect(pageState.recurrenceOptions.recurrenceIntervalSize, intervalSize);
       expect(pageState.recurrenceOptions.endChoice.isCustom, isTrue);
       expect(pageState.recurrenceOptions.endChoice.type, RecurrenceEndType.date);
       expect(
@@ -142,9 +133,6 @@ void main() {
         final List<WeekDay> newWeekdays = [...oldWeekdays, addedWeekday];
         final int oldIntervalSize = random.integer(10, min: 2);
         final int newIntervalSize = oldIntervalSize - 1;
-        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 1)];
         final DateTime oldUntilDate =
             faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
         final DateTime oldUntilTime = DateTime(oldUntilDate.year, oldUntilDate.month, oldUntilDate.day, 23, 59).toUtc();
@@ -153,7 +141,7 @@ void main() {
 
         final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
           recurrenceRule: RecurrenceRule(
-              frequency: intervalType.frequency,
+              frequency: Frequency.weekly,
               interval: oldIntervalSize,
               byWeekDays: oldWeekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
               until: oldUntilTime),
@@ -166,7 +154,7 @@ void main() {
         await tester.pump();
 
         await selectWeekdays(tester, newWeekdays, selectedWeekdays: oldWeekdays);
-        await enterInterval(tester, newIntervalSize, intervalType);
+        await enterInterval(tester, newIntervalSize);
         await enterUntil(tester, newUntilTime);
 
         await scrollAndTap(tester, find.byKey(const Key('saveRecurringDriveButton')));
@@ -187,7 +175,7 @@ void main() {
               'end_time': recurringDrive.endTime.formatted,
               'recurrence_rule': PostgresRecurrenceRule(
                       RecurrenceRule(
-                          frequency: intervalType.frequency,
+                          frequency: Frequency.weekly,
                           interval: newIntervalSize,
                           byWeekDays: newWeekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
                           until: newUntilTime),
@@ -209,10 +197,6 @@ void main() {
         final List<WeekDay> newWeekdays = [...oldWeekdays..remove(removedWeekday), addedWeekday];
         final int oldIntervalSize = random.integer(2, min: 1);
         final int newIntervalSize = oldIntervalSize + 1;
-        final RecurrenceIntervalType intervalType = RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) =>
-                value != RecurrenceIntervalType.days && value != RecurrenceIntervalType.years)
-            .toList()[random.integer(RecurrenceIntervalType.values.length - 2)];
         final DateTime newUntilDate = faker.date
             .dateTimeBetween(DateTime.now().add(Trip.creationInterval), DateTime.now().add(Trip.creationInterval * 2));
         final DateTime newUntilTime = DateTime(newUntilDate.year, newUntilDate.month, newUntilDate.day, 23, 59).toUtc();
@@ -221,7 +205,7 @@ void main() {
 
         final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake(
           recurrenceRule: RecurrenceRule(
-              frequency: intervalType.frequency,
+              frequency: Frequency.weekly,
               interval: oldIntervalSize,
               byWeekDays: oldWeekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
               until: oldUntilTime),
@@ -229,7 +213,7 @@ void main() {
         );
 
         final RecurrenceRule newRecurrenceRule = RecurrenceRule(
-            frequency: intervalType.frequency,
+            frequency: Frequency.weekly,
             interval: newIntervalSize,
             byWeekDays: newWeekdays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet(),
             until: newUntilTime);
@@ -240,7 +224,7 @@ void main() {
         await tester.pump();
 
         await selectWeekdays(tester, newWeekdays, selectedWeekdays: oldWeekdays);
-        await enterInterval(tester, newIntervalSize, intervalType);
+        await enterInterval(tester, newIntervalSize);
         await enterUntil(tester, newUntilTime);
 
         await scrollAndTap(tester, find.byKey(const Key('saveRecurringDriveButton')));

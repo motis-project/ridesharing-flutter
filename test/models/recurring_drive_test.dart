@@ -149,8 +149,10 @@ void main() {
             recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
         expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
         expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
-        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
-            RecurrenceIntervalType.years);
+        expect(
+          (recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+          RecurrenceIntervalType.years,
+        );
       });
 
       test('months', () {
@@ -166,8 +168,10 @@ void main() {
             recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
         expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
         expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
-        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
-            RecurrenceIntervalType.months);
+        expect(
+          (recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+          RecurrenceIntervalType.months,
+        );
       });
 
       test('weeks', () {
@@ -182,8 +186,10 @@ void main() {
             recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
         expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
         expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
-        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
-            RecurrenceIntervalType.weeks);
+        expect(
+          (recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+          RecurrenceIntervalType.weeks,
+        );
       });
 
       test('days', () {
@@ -205,8 +211,10 @@ void main() {
             recurrenceEndType: RecurrenceEndType.interval, recurrenceRule: recurrenceRule, startedAt: startedAt);
         expect(recurringDrive.recurrenceEndChoice.type, RecurrenceEndType.interval);
         expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalSize, intervalSize);
-        expect((recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
-            RecurrenceIntervalType.days);
+        expect(
+          (recurringDrive.recurrenceEndChoice as RecurrenceEndChoiceInterval).intervalType,
+          RecurrenceIntervalType.days,
+        );
       });
     });
 

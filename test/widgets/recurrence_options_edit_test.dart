@@ -32,8 +32,7 @@ void main() {
   setUp(() {
     recurrenceOptions = RecurrenceOptions(
         startedAt: DateTime.now(),
-        recurrenceInterval: RecurrenceInterval(random.integer(4, min: 1),
-            RecurrenceIntervalType.values[random.integer(RecurrenceIntervalType.values.length)]),
+        recurrenceIntervalSize: random.integer(4, min: 1),
         endChoice: predefinedEndChoices[random.integer(predefinedEndChoices.length)]);
     reset(processor);
   });
@@ -62,13 +61,8 @@ void main() {
     }
   }
 
-  Future<void> enterInterval(WidgetTester tester, int size, RecurrenceIntervalType type) async {
+  Future<void> enterInterval(WidgetTester tester, int size) async {
     await tester.enterText(find.byKey(const Key('intervalSizeField')), size.toString());
-
-    await scrollAndTap(tester, find.byKey(const Key('intervalTypeField')));
-    await tester.pumpAndSettle();
-    await scrollAndTap(tester, find.byKey(Key('intervalType${type.name}')), scrollable: find.byType(Scrollable).last);
-    await tester.pumpAndSettle();
   }
 
   Future<void> enterUntil(WidgetTester tester, DateTime dateTime) async {
@@ -107,16 +101,11 @@ void main() {
 
         final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
 
-        for (final RecurrenceIntervalType intervalType in RecurrenceIntervalType.values
-            .where((RecurrenceIntervalType value) => value != RecurrenceIntervalType.days)
-            .toList()) {
-          final int intervalSize = random.integer(10, min: 1);
-          await enterInterval(tester, intervalSize, intervalType);
+        final int intervalSize = random.integer(10, min: 1);
+        await enterInterval(tester, intervalSize);
 
-          expect(pageState.recurrenceIntervalSizeController.text, intervalSize.toString());
-          expect(pageState.recurrenceOptions.recurrenceInterval.intervalSize, intervalSize);
-          expect(pageState.recurrenceOptions.recurrenceInterval.intervalType, intervalType);
-        }
+        expect(pageState.recurrenceIntervalSizeController.text, intervalSize.toString());
+        expect(pageState.recurrenceOptions.recurrenceIntervalSize, intervalSize);
       });
 
       group('Until', () {

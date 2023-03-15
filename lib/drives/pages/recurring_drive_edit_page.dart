@@ -43,7 +43,7 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
 
     recurrenceOptions = RecurrenceOptions(
       startedAt: _recurringDrive.startedAt,
-      recurrenceInterval: _recurringDrive.recurrenceInterval,
+      recurrenceIntervalSize: _recurringDrive.recurrenceRule.interval,
       weekDays: _recurringDrive.weekDays,
       endChoice: _recurringDrive.recurrenceEndChoice.copyWith(isCustom: true),
     );

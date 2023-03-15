@@ -8,7 +8,7 @@ import 'week_day.dart';
 class RecurrenceOptions {
   RecurrenceOptions({
     required this.startedAt,
-    required this.recurrenceInterval,
+    this.recurrenceIntervalSize,
     required this.endChoice,
     this.weekDays = const <WeekDay>[],
   });
@@ -19,11 +19,11 @@ class RecurrenceOptions {
 
   List<WeekDay> weekDays;
 
-  RecurrenceInterval recurrenceInterval;
+  // Every x weeks
+  int? recurrenceIntervalSize;
 
   RecurrenceRule get recurrenceRule {
-    final Frequency frequency = recurrenceInterval.intervalType.frequency;
-    final int interval = recurrenceInterval.intervalSize!;
+    final int interval = recurrenceIntervalSize!;
     final Set<ByWeekDayEntry> byWeekDays = weekDays.map((WeekDay weekDay) => weekDay.toByWeekDayEntry()).toSet();
 
     DateTime? until;
@@ -34,7 +34,7 @@ class RecurrenceOptions {
       until = (endChoice as RecurrenceEndChoiceInterval).getDate(startedAt);
     } else if (endChoice.type == RecurrenceEndType.occurrence) {
       return RecurrenceRule(
-        frequency: frequency,
+        frequency: Frequency.weekly,
         interval: interval,
         byWeekDays: byWeekDays,
         count: (endChoice as RecurrenceEndChoiceOccurrence).occurrences,
@@ -42,43 +42,13 @@ class RecurrenceOptions {
     }
 
     return RecurrenceRule(
-      frequency: frequency,
+      frequency: Frequency.weekly,
       interval: interval,
       byWeekDays: byWeekDays,
       // Make sure the date is at the end of the day to create inclusive dates
       until: until!.copyWith(hour: 23, minute: 59).toUtc(),
     );
   }
-}
-
-class RecurrenceInterval {
-  int? intervalSize;
-  RecurrenceIntervalType intervalType;
-
-  RecurrenceInterval(this.intervalSize, this.intervalType);
-
-  RecurrenceInterval.fromRecurrenceRule(RecurrenceRule recurrenceRule)
-      : intervalSize = recurrenceRule.interval,
-        intervalType = recurrenceRule.frequency.recurrenceIntervalType;
-
-  String getName(BuildContext context) {
-    final String? validationError = validate(context);
-    if (validationError != null) return validationError;
-
-    switch (intervalType) {
-      case RecurrenceIntervalType.days:
-        return S.of(context).recurrenceIntervalEveryDays(intervalSize!);
-      case RecurrenceIntervalType.weeks:
-        return S.of(context).recurrenceIntervalEveryWeeks(intervalSize!);
-      case RecurrenceIntervalType.months:
-        return S.of(context).recurrenceIntervalEveryMonths(intervalSize!);
-      case RecurrenceIntervalType.years:
-        return S.of(context).recurrenceIntervalEveryYears(intervalSize!);
-    }
-  }
-
-  String? validate(BuildContext context) =>
-      intervalSize == null ? S.of(context).recurrenceIntervalValidationIntervalNull : null;
 }
 
 abstract class RecurrenceEndChoice {
@@ -231,29 +201,5 @@ extension RecurrenceIntervalTypeExtension on RecurrenceIntervalType {
       case RecurrenceIntervalType.years:
         return S.of(context).recurrenceIntervalYears;
     }
-  }
-
-  Frequency get frequency {
-    switch (this) {
-      // This case is not possible, but the analyzer doesn't know that
-      case RecurrenceIntervalType.days:
-        return Frequency.daily;
-      case RecurrenceIntervalType.weeks:
-        return Frequency.weekly;
-      case RecurrenceIntervalType.months:
-        return Frequency.monthly;
-      case RecurrenceIntervalType.years:
-        return Frequency.yearly;
-    }
-  }
-}
-
-extension FrequencyExtension on Frequency {
-  RecurrenceIntervalType get recurrenceIntervalType {
-    if (this == Frequency.daily) return RecurrenceIntervalType.days;
-    if (this == Frequency.weekly) return RecurrenceIntervalType.weeks;
-    if (this == Frequency.monthly) return RecurrenceIntervalType.months;
-    if (this == Frequency.yearly) return RecurrenceIntervalType.years;
-    throw Exception('Unknown frequency: $this');
   }
 }

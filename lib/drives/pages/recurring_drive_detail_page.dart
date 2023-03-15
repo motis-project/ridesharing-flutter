@@ -75,7 +75,7 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
       widgets.add(
         Text(
-          _recurringDrive!.recurrenceInterval.getName(context),
+          S.of(context).recurrenceIntervalEveryWeeks(_recurringDrive!.recurrenceRule.interval!),
           style: Theme.of(context).textTheme.titleMedium,
         ),
       );

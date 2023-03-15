@@ -33,11 +33,13 @@ class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator>
   Widget build(BuildContext context) {
     final DateTime after = widget.startedAt.isAfter(DateTime.now()) ? widget.startedAt : DateTime.now();
 
-    final Set<DateTime> previousDays =
-        widget.previousRule?.getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc()).toSet() ??
-            <DateTime>{};
-    final Set<DateTime> newDays =
-        widget.newRule.getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc()).toSet();
+    final Set<DateTime> previousDays = widget.previousRule
+            ?.getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc(), includeAfter: true)
+            .toSet() ??
+        <DateTime>{};
+    final Set<DateTime> newDays = widget.newRule
+        .getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc(), includeAfter: true)
+        .toSet();
     final Set<DateTime> addedDays = newDays.difference(previousDays);
     final Set<DateTime> removedDays = previousDays.difference(newDays);
     final List<DateTime> allDays = (previousDays.union(newDays)).toList()

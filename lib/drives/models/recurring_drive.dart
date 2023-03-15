@@ -107,8 +107,6 @@ class RecurringDrive extends TripLike {
     }
   }
 
-  RecurrenceInterval get recurrenceInterval => RecurrenceInterval.fromRecurrenceRule(recurrenceRule);
-
   Future<void> setRecurrence(RecurrenceOptions options) async {
     recurrenceEndType = options.endChoice.type;
     recurrenceRule = options.recurrenceRule;

@@ -94,11 +94,8 @@ class TripOverview extends StatelessWidget {
       ],
     );
 
-    final String dateText = (trip is Trip)
-        ? localeManager.formatDate((trip as Trip).startDateTime)
-        : S.of(context).widgetTripOverviewSinceDate(localeManager.formatDate((trip as RecurringDrive).startedAt));
     final Widget date = Text(
-      dateText,
+      buildDateString(context),
       style: Theme.of(context).textTheme.titleMedium,
     );
 
@@ -123,5 +120,15 @@ class TripOverview extends StatelessWidget {
         )
       ],
     );
+  }
+
+  String buildDateString(BuildContext context) {
+    if (trip is Trip) return localeManager.formatDate((trip as Trip).startDateTime);
+
+    final DateTime startedAt = (trip as RecurringDrive).startedAt;
+
+    return startedAt.isBefore(DateTime.now())
+        ? S.of(context).widgetTripOverviewSinceDate(localeManager.formatDate(startedAt))
+        : S.of(context).widgetTripOverviewFromDate(localeManager.formatDate(startedAt));
   }
 }

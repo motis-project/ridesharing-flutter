@@ -257,7 +257,7 @@
   "pageCreateDriveButtonCreate": "Create",
   "pageCreateDriveRecurringCheckbox": "Recurring",
   "pageCreateDriveIntervalSizeValidationEmpty": "Please enter a value.",
-  "pageCreateDriveEveryInterval": "Every {placeholder}{placeholder}",
+  "pageCreateDriveEveryInterval": "Every {placeholder} weeks",
   "pageCreateDriveRecurrenceEndUntil": "Until {placeholder}",
   "pageCreateDriveRecurrenceEndFor": "For {placeholder} {placeholder}",
   "pageCreateDriveRecurrenceEndAfterOccurrences": "After {placholder} drives",
@@ -283,10 +283,7 @@
   "recurrenceIntervalWeeks": "Weeks",
   "recurrenceIntervalMonths": "Months",
   "recurrenceIntervalYears": "Years",
-  "recurrenceIntervalEveryDays": "Every {count} {count, plural, one{day} other{days}}",
   "recurrenceIntervalEveryWeeks": "Every {count} {count, plural, one{week} other{weeks}}",
-  "recurrenceIntervalEveryMonths": "Every {count} {count, plural, one{month} other{months}}",
-  "recurrenceIntervalEveryYears": "Every {count} {count, plural, one{year} other{years}}",
   "recurrenceIntervalValidationIntervalNull": "Interval needed",
   "recurrenceEndForDays": "Runs for {count} {count, plural, one{day} other{days}}",
   "recurrenceEndForWeeks": "Runs for {count} {count, plural, one{week} other{weeks}}",
@@ -445,6 +442,7 @@
 
 
   "widgetTripOverviewSinceDate": "Since {date}",
+  "widgetTripOverviewFromDate": "Starting from {date}",
 
   "appName": "Motis Ride-Sharing App"
   }
