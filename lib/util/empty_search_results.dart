@@ -7,6 +7,15 @@ class EmptySearchResults extends StatelessWidget {
   final Widget? subtitle;
   const EmptySearchResults({super.key, required this.asset, this.scale, required this.title, this.subtitle});
 
+  factory EmptySearchResults.shrug({Key? key, double? scale, required String title, Widget? subtitle}) =>
+      EmptySearchResults(
+        key: key,
+        asset: 'assets/shrug.png',
+        scale: scale,
+        title: title,
+        subtitle: subtitle,
+      );
+
   @override
   Widget build(BuildContext context) {
     return Column(

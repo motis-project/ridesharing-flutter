@@ -301,8 +301,7 @@ class SearchRidePageState extends State<SearchRidePage> {
 
     if (filteredSuggestions.isEmpty) {
       return SliverToBoxAdapter(
-        child: EmptySearchResults(
-          asset: 'assets/shrug.png',
+        child: EmptySearchResults.shrug(
           title: S.of(context).pageSearchRideEmpty,
           subtitle: filterApplied.isNotEmpty
               ? Semantics(

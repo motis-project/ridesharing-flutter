@@ -88,8 +88,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
             }
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
-                  ? EmptySearchResults(
-                      asset: 'assets/shrug.png',
+                  ? EmptySearchResults.shrug(
                       title: S.of(context).pageSearchRideEmpty,
                       subtitle: Text(
                         S.of(context).searchAddressEnterMoreCharacters,

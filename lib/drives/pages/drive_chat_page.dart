@@ -71,9 +71,8 @@ class _DriveChatPageState extends State<DriveChatPage> {
                 }
               },
             )
-          : EmptySearchResults(
+          : EmptySearchResults.shrug(
               key: const Key('noChatsImage'),
-              asset: 'assets/chat_shrug.png',
               scale: 8,
               title: S.of(context).pageChatEmptyTitle,
               subtitle: Text(
