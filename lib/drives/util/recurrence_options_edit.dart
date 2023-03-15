@@ -158,6 +158,12 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
       controller: recurrenceIntervalSizeController,
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return S.of(context).recurrenceIntervalValidationIntervalNull;
+        }
+        return null;
+      },
       onChanged: (String value) {
         setState(() {
           recurrenceOptions.recurrenceIntervalSize = int.tryParse(value) ?? recurrenceOptions.recurrenceIntervalSize;

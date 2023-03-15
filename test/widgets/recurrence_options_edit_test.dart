@@ -238,11 +238,7 @@ void main() {
               expect(pageState.recurrenceOptions.endChoice, recurrenceOptions.endChoice);
             }
 
-            // For Interval, an error is thrown if either the interval size OR interval type is not set
             await tester.tap(find.byKey(const Key('recurrenceEndChoice1')));
-            await tester.pump();
-            await tester.enterText(
-                find.byKey(const Key('customEndIntervalSizeField')), random.integer(10, min: 1).toString());
             await tester.pump();
             await tester.tap(find.byKey(const Key('okButtonRecurrenceEndDialog')));
             await tester.pump();

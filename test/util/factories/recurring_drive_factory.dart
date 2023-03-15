@@ -85,7 +85,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                         startDate.month,
                         startDate.day,
                         generatedStartTime.hour,
-                        generatedEndTime.hour,
+                        generatedStartTime.minute,
                       ),
                       end: end,
                       endPosition: generatedEndPosition,

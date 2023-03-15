@@ -279,7 +279,7 @@
   "recurrenceIntervalYears": "Jahre",
   "recurrenceIntervalEveryWeeks": "Alle {count} {count, plural, one{Woche} other{Wochen}}",
   "recurrenceIntervalEveryWeeksPlaceholder": "Alle {placeholder} Wochen",
-  "recurrenceIntervalValidationIntervalNull": "Intervalllänge benötigt",
+  "recurrenceIntervalValidationIntervalNull": "Bitte wähle eine Intervalllänge.",
   "recurrenceEndForDays": "Läuft für {count} {count, plural, one{Tag} other{Tage}}",
   "recurrenceEndForWeeks": "Läuft für {count} {count, plural, one{Woche} other{Wochen}}",
   "recurrenceEndForMonths": "Läuft für {count} {count, plural, one{Monat} other{Monate}}",
