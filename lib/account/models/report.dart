@@ -25,6 +25,7 @@ class Report extends Model {
     this.text,
   });
 
+  /// Returns whether the report has been created in the last 3 days.
   bool get isRecent => DateTime.now().difference(createdAt!).inDays < 3;
 
   @override

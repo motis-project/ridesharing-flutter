@@ -15,7 +15,8 @@ import 'drive.dart';
 class RecurringDrive extends TripLike {
   DateTime startedAt;
   RecurrenceRule recurrenceRule;
-  // A helper field to get display information out of the recurrence rule
+
+  /// A helper field to get display information out of the recurrence rule
   RecurrenceEndType recurrenceEndType;
   DateTime? stoppedAt;
 
@@ -80,6 +81,10 @@ class RecurringDrive extends TripLike {
 
   List<WeekDay> get weekDays => recurrenceRule.byWeekDays.map((ByWeekDayEntry day) => day.toWeekDay()).toList();
 
+  /// Returns the [RecurrenceEndChoice] according to the [recurrenceEndType] and the [recurrenceRule]
+  ///
+  /// If [recurrenceEndType] is [RecurrenceEndType.interval], the [recurrenceRule.until] field is used to calculate the [RecurrenceIntervalType].
+  /// For example, if the [recurrenceRule.until] is 1 year and 1 month after [startedAt], the [RecurrenceIntervalType] is [RecurrenceIntervalType.months].
   RecurrenceEndChoice get recurrenceEndChoice {
     switch (recurrenceEndType) {
       case RecurrenceEndType.date:
@@ -107,6 +112,7 @@ class RecurringDrive extends TripLike {
     }
   }
 
+  /// Sets the [recurrenceRule] and the [recurrenceEndType] according to the given [options] and updates the database entry.
   Future<void> setRecurrence(RecurrenceOptions options) async {
     recurrenceEndType = options.endChoice.type;
     recurrenceRule = options.recurrenceRule;
@@ -145,8 +151,12 @@ class RecurringDrive extends TripLike {
     return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
   }
 
+  /// Returns the upcoming drive instances of this recurring drive which should be shown in the ListView.
+  ///
+  /// Expects [drives] to be not null
   List<Drive> get upcomingDrives => drives!.where((Drive drive) => drive.isUpcomingRecurringDriveInstance).toList();
 
+  /// Sets the [stoppedAt] field to the given [stoppedAt] date and updates the database entry.
   Future<void> stop(DateTime stoppedAt) async {
     this.stoppedAt = stoppedAt;
     await supabaseManager.supabaseClient

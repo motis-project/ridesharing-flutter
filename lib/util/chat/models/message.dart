@@ -64,6 +64,7 @@ class Message extends Model {
 
   bool get isFromCurrentUser => senderId == supabaseManager.currentProfile?.id;
 
+  /// Marks this message as read and updates the database entry.
   Future<void> markAsRead() async {
     read = true;
     //custom rpc call to mark message as read, so the user does not need the write permission on the messages table

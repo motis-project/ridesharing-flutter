@@ -1,5 +1,4 @@
 import 'package:faker/faker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/drives/models/drive.dart';
 import 'package:motis_mitfahr_app/rides/models/ride.dart';
@@ -261,74 +260,6 @@ void main() {
         rides: RideFactory().generateFakeList(),
       );
       expect(drive.isUpcomingRecurringDriveInstance, isTrue);
-    });
-  });
-
-  group('Drive.userHasDriveAtTimeRange', () {
-    test('has drive in time range', () async {
-      whenRequest(driveProcessor).thenReturnJson([
-        DriveFactory()
-            .generateFake(
-              driverId: 2,
-              startDateTime: DateTime.now().add(const Duration(hours: 2)),
-              endDateTime: DateTime.now().add(const Duration(hours: 4)),
-            )
-            .toJsonForApi()
-      ]);
-      expect(
-        await Drive.userHasDriveAtTimeRange(
-          DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 10))),
-          2,
-        ),
-        true,
-      );
-    });
-    test('has no drive at time range', () async {
-      whenRequest(driveProcessor).thenReturnJson([
-        DriveFactory()
-            .generateFake(
-              driverId: 2,
-              startDateTime: DateTime.now().add(const Duration(hours: 8)),
-              endDateTime: DateTime.now().add(const Duration(hours: 10)),
-            )
-            .toJsonForApi(),
-        DriveFactory()
-            .generateFake(
-              driverId: 2,
-              startDateTime: DateTime.now().add(const Duration(hours: 14)),
-              endDateTime: DateTime.now().add(const Duration(hours: 16)),
-            )
-            .toJsonForApi(),
-      ]);
-      expect(
-        await Drive.userHasDriveAtTimeRange(
-          DateTimeRange(
-            start: DateTime.now().add(const Duration(hours: 11)),
-            end: DateTime.now().add(const Duration(hours: 13)),
-          ),
-          2,
-        ),
-        false,
-      );
-    });
-    test('drive overlaps with time range', () async {
-      whenRequest(driveProcessor).thenReturnJson([
-        DriveFactory()
-            .generateFake(
-              driverId: 2,
-              startDateTime: DateTime.now().add(const Duration(hours: 7)),
-              endDateTime: DateTime.now().add(const Duration(hours: 10)),
-            )
-            .toJsonForApi(),
-      ]);
-      expect(
-          await Drive.userHasDriveAtTimeRange(
-              DateTimeRange(
-                start: DateTime.now().add(const Duration(hours: 6)),
-                end: DateTime.now().add(const Duration(hours: 8)),
-              ),
-              2),
-          true);
     });
   });
   group('Drive.getMaxUsedSeats', () {

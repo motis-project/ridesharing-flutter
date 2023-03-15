@@ -61,6 +61,10 @@ class Trip extends TripLike {
     return startDateTime.isBefore(range.end) && endDateTime.isAfter(range.start);
   }
 
+  /// Returns whether this trip should be shown in the list view given if the list view is for past or future trips:
+  ///
+  /// - [past] If the trip is finished and the list view is for past trips, it is shown
+  /// - ![past] If the trip is not finished and the list view is for future trips, it is shown
   bool shouldShowInListView({required bool past}) {
     return !hideInListView && (past ? isFinished : !isFinished);
   }

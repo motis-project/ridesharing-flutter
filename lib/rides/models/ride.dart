@@ -118,6 +118,7 @@ class Ride extends Trip {
       });
   }
 
+  /// Returns true if the user has another approved ride that is not finished in the given [range]
   static Future<bool> userHasRideAtTimeRange(DateTimeRange range, int userId) async {
     final List<Map<String, dynamic>> jsonList =
         await supabaseManager.supabaseClient.from('rides').select<List<Map<String, dynamic>>>().eq('rider_id', userId);
@@ -133,6 +134,9 @@ class Ride extends Trip {
     return false;
   }
 
+  /// Returns whether this trip should be shown in the list view given if the list view is for past or future trips:
+  ///
+  /// - [past] rides should not show pending or withdrawn rides
   @override
   bool shouldShowInListView({required bool past}) {
     return super.shouldShowInListView(past: past) &&
@@ -153,11 +157,13 @@ class Ride extends Trip {
         chatId == ride.chatId;
   }
 
+  /// Cancels the ride and updates the database
   Future<void> cancel() async {
     status = RideStatus.cancelledByRider;
     await supabaseManager.supabaseClient.from('rides').update(<String, dynamic>{'status': status.index}).eq('id', id);
   }
 
+  /// Withdraws the ride and updates the database
   Future<void> withdraw() async {
     status = RideStatus.withdrawnByRider;
     await supabaseManager.supabaseClient
@@ -205,11 +211,16 @@ extension RideStatusExtension on RideStatus {
     return this == RideStatus.approved;
   }
 
-  // This is used to determine if the rider can see and be seen in the riders list
+  /// Whether the rider can see and be seen in the riders list
+  ///
+  /// - [approved] and [cancelledByDriver] are real riders
   bool isRealRider() {
     return this == RideStatus.approved || this == RideStatus.cancelledByDriver;
   }
 
+  /// Whether the ride's chat is active
+  ///
+  /// - [approved], [cancelledByDriver] and [cancelledByRider] are active
   bool activeChat() {
     return this == RideStatus.approved || this == RideStatus.cancelledByDriver || this == RideStatus.cancelledByRider;
   }

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../account/models/profile.dart';
 import '../../rides/models/ride.dart';
 import '../../util/parse_helper.dart';
@@ -88,33 +86,31 @@ class Drive extends Trip {
       });
   }
 
+  /// Returns all rides belonging to this drive that are approved
+  ///
+  /// Expects [rides] to be not null
   List<Ride> get approvedRides => rides!.where((Ride ride) => ride.status == RideStatus.approved).toList();
+
+  /// Returns all rides belonging to this drive that are pending
+  ///
+  /// Expects [rides] to be not null
   List<Ride> get pendingRides => rides!.where((Ride ride) => ride.status == RideStatus.pending).toList();
+
+  /// Returns all rides belonging to this drive that have an active chat, i.e. have been approved in the past
+  ///
+  /// Expects [rides] to be not null
   List<Ride> get ridesWithChat => rides!.where((Ride ride) => ride.status.activeChat()).toList();
 
+  /// Returns whether this drive belongs to a recurring drive and should be shown in the list view.
   bool get isUpcomingRecurringDriveInstance =>
       recurringDriveId != null &&
       startDateTime.isAfter(DateTime.now()) &&
       !hideInListView &&
       !(status == DriveStatus.cancelledByRecurrenceRule && (rides?.isEmpty ?? false));
 
-  static Future<bool> userHasDriveAtTimeRange(DateTimeRange range, int userId) async {
-    final List<Map<String, dynamic>> data = await supabaseManager.supabaseClient
-        .from('drives')
-        .select<List<Map<String, dynamic>>>()
-        .eq('driver_id', userId);
-    List<Drive> drives = Drive.fromJsonList(data);
-    drives = drives.where((Drive drive) => !drive.status.isCancelled() && !drive.isFinished).toList();
-
-    //check if drive overlaps with start and end
-    for (final Drive drive in drives) {
-      if (drive.overlapsWithTimeRange(range)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
+  /// Returns the maximum number of seats occupied during the course of this drive
+  ///
+  /// Returns null if [rides] is null
   int? getMaxUsedSeats() {
     if (rides == null) return null;
 
@@ -142,6 +138,9 @@ class Drive extends Trip {
     return maxUsedSeats;
   }
 
+  /// Returns whether the given [ride] can be added to this drive, i.e. whether there are enough seats available at the time
+  ///
+  /// Expects [rides] to be not null
   bool isRidePossible(Ride ride) {
     final List<Ride> consideredRides = approvedRides..add(ride);
     final Set<DateTime> times = consideredRides
@@ -166,12 +165,16 @@ class Drive extends Trip {
     return true;
   }
 
+  /// Cancels the drive, sending a request to supabase. The rides get updated automatically by a supabase function.
   Future<void> cancel() async {
     status = DriveStatus.cancelledByDriver;
     await supabaseManager.supabaseClient.from('drives').update(<String, dynamic>{'status': status.index}).eq('id', id);
-    //the rides get updated automatically by a supabase function.
   }
 
+  /// Returns the number of rides with unread messages
+  ///
+  /// Expects [rides] to be not null
+  /// Expects [messages] of all rides to be not null
   int getUnreadMessagesCount() {
     return ridesWithChat.where((Ride ride) => ride.chat!.getUnreadMessagesCount() > 0).length;
   }
@@ -192,6 +195,7 @@ class Drive extends Trip {
 enum DriveStatus { preview, plannedOrFinished, cancelledByDriver, cancelledByRecurrenceRule }
 
 extension DriveStatusExtension on DriveStatus {
+  /// Returns whether the drive is cancelled, either by the driver or by the recurrence rule
   bool isCancelled() {
     return this == DriveStatus.cancelledByDriver || this == DriveStatus.cancelledByRecurrenceRule;
   }

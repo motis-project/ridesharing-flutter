@@ -31,6 +31,9 @@ class Chat extends Model {
     return jsonList.map((Map<String, dynamic> json) => Chat.fromJson(json)).toList();
   }
 
+  /// Returns the number of unread messages in this chat.
+  ///
+  /// Expects [messages] to be not null
   int getUnreadMessagesCount() {
     return messages!
         .where((Message message) => message.senderId != supabaseManager.currentProfile!.id && !message.read)

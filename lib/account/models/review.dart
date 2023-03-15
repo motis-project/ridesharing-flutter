@@ -82,6 +82,7 @@ class Review extends Model implements Comparable<Review> {
       });
   }
 
+  /// Returns true if the review has been changed from [other].
   bool isChangedFrom(Review other) {
     return rating != other.rating ||
         comfortRating != other.comfortRating ||
@@ -109,6 +110,8 @@ class Review extends Model implements Comparable<Review> {
     );
   }
 
+  /// Returns a -1 if this review is "more relevant" than [other], i.e. it has text and [other] doesn't OR it was created more recently.
+  /// Returns a 1 if this review is "less relevant" than [other], i.e. it doesn't have text and [other] does OR it was created less recently.
   @override
   int compareTo(Review other) {
     final bool thisHasText = text?.isNotEmpty ?? false;
@@ -146,12 +149,24 @@ class AggregateReview {
     required this.numberOfReviews,
   });
 
+  /// Returns true if the overall rating has been changed, i.e. is not 0.
   bool get isRatingSet => rating != 0;
+
+  /// Returns true if the comfort rating has been changed, i.e. is not 0.
   bool get isComfortSet => comfortRating != 0;
+
+  /// Returns true if the safety rating has been changed, i.e. is not 0.
   bool get isSafetySet => safetyRating != 0;
+
+  /// Returns true if the reliability rating has been changed, i.e. is not 0.
   bool get isReliabilitySet => reliabilityRating != 0;
+
+  /// Returns true if the hospitality rating has been changed, i.e. is not 0.
   bool get isHospitalitySet => hospitalityRating != 0;
 
+  /// Builds an [AggregateReview] from a list of [Review]s.
+  ///
+  /// Every rating is the average of all the reviews that have a rating for that category.
   factory AggregateReview.fromReviews(List<Review> reviews) {
     final double rating = reviews.isEmpty
         ? 0
