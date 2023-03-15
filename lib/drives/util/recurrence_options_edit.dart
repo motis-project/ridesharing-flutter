@@ -241,7 +241,7 @@ class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
       previousRule: originalRecurrenceRule,
       newRule: recurrenceOptions.recurrenceRule,
       showPreview: widget.showPreview,
-      start: recurrenceOptions.startedAt.isAfter(DateTime.now()) ? recurrenceOptions.startedAt : DateTime.now(),
+      startedAt: recurrenceOptions.startedAt,
     );
   }
 

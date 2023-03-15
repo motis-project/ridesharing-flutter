@@ -10,7 +10,7 @@ import 'week_day.dart';
 class RecurrenceOptionsIndicator extends StatefulWidget {
   final RecurrenceRule? previousRule;
   final RecurrenceRule newRule;
-  final DateTime start;
+  final DateTime startedAt;
 
   final bool showPreview;
   final void Function(bool expanded)? expansionCallback;
@@ -19,7 +19,7 @@ class RecurrenceOptionsIndicator extends StatefulWidget {
     super.key,
     this.previousRule,
     required this.newRule,
-    required this.start,
+    required this.startedAt,
     required this.showPreview,
     this.expansionCallback,
   });
@@ -31,9 +31,13 @@ class RecurrenceOptionsIndicator extends StatefulWidget {
 class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator> {
   @override
   Widget build(BuildContext context) {
+    final DateTime after = widget.startedAt.isAfter(DateTime.now()) ? widget.startedAt : DateTime.now();
+
     final Set<DateTime> previousDays =
-        widget.previousRule?.getAllInstances(start: widget.start.toUtc()).toSet() ?? <DateTime>{};
-    final Set<DateTime> newDays = widget.newRule.getAllInstances(start: widget.start.toUtc()).toSet();
+        widget.previousRule?.getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc()).toSet() ??
+            <DateTime>{};
+    final Set<DateTime> newDays =
+        widget.newRule.getAllInstances(start: widget.startedAt.toUtc(), after: after.toUtc()).toSet();
     final Set<DateTime> addedDays = newDays.difference(previousDays);
     final Set<DateTime> removedDays = previousDays.difference(newDays);
     final List<DateTime> allDays = (previousDays.union(newDays)).toList()
@@ -52,8 +56,10 @@ class _RecurrenceOptionsIndicatorState extends State<RecurrenceOptionsIndicator>
         )
         .toList();
 
-    final int maxDaysBeforeGapCount =
-        allDays.where((DateTime elem) => elem.difference(widget.start) < const Duration(days: 14)).length.clamp(4, 8);
+    final int maxDaysBeforeGapCount = allDays
+        .where((DateTime elem) => elem.difference(widget.startedAt) < const Duration(days: 14))
+        .length
+        .clamp(4, 8);
     final int maxDaysAfterGapCount = maxDaysBeforeGapCount ~/ 2;
 
     List<Widget> dayIndicatorsBeforeGap = dayIndicators;

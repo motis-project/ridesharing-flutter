@@ -337,7 +337,7 @@ void main() {
             'end_time':
                 DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 2, dateTime.minute).toString(),
             'hide_in_list_view': false,
-            'status': 0,
+            'status': 1,
             'driver_id': driver.id,
             'recurring_drive_id': null,
           }),

@@ -39,7 +39,7 @@ void main() {
   group('DriveDetailPage', () {
     group('constructors', () {
       testWidgets('Works with id parameter', (WidgetTester tester) async {
-        await pumpMaterial(tester, DriveDetailPage(id: drive.id!));
+        await pumpMaterial(tester, DriveDetailPage(id: drive.id));
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
         // Wait for the drive to be fully loaded
@@ -89,7 +89,21 @@ void main() {
     });
 
     group('Shows button and banner depending on circumstances', () {
-      testWidgets('Shows cancel button when ride is upcoming', (WidgetTester tester) async {
+      testWidgets('Shows nothing but TripOverview when drive is preview', (WidgetTester tester) async {
+        final Drive previewDrive = DriveFactory().generateFake(
+          status: DriveStatus.preview,
+          rides: <Ride>[],
+        );
+        await pumpMaterial(tester, DriveDetailPage.fromDrive(previewDrive));
+        await tester.pump();
+
+        expect(find.byKey(const Key('driveChatButton')), findsNothing);
+
+        expect(find.byKey(const Key('cancelDriveButton')), findsNothing);
+        expect(find.byKey(const Key('hideDriveButton')), findsNothing);
+      });
+
+      testWidgets('Shows cancel button when drive is upcoming', (WidgetTester tester) async {
         await pumpMaterial(tester, DriveDetailPage.fromDrive(drive));
         await tester.pump();
 

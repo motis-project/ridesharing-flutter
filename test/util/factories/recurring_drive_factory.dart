@@ -46,6 +46,8 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     final generatedDriverId = generatedDriver?.id ?? driverId ?? randomId;
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
+    final generatedStartPosition = startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
+    final generatedEndPosition = endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
     final generatedStartedAt = startedAt ?? generatedCreatedAt;
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
@@ -70,12 +72,13 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
             ? generatedRecurrenceRule
                 .getInstances(
                   start: generatedStartedAt.toUtc(),
+                  before: DateTime.now().add(const Duration(days: 30)).toUtc(),
                   includeAfter: true,
                   includeBefore: true,
                 )
                 .map<Drive>((DateTime startDate) => DriveFactory().generateFake(
                       start: start,
-                      startPosition: startPosition,
+                      startPosition: generatedStartPosition,
                       startDateTime: DateTime(
                         startDate.year,
                         startDate.month,
@@ -84,7 +87,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                         generatedEndTime.hour,
                       ),
                       end: end,
-                      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+                      endPosition: generatedEndPosition,
                       endDateTime: DateTime(
                         startDate.year,
                         startDate.month,
@@ -107,10 +110,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       id: generatedId,
       createdAt: generatedCreatedAt,
       start: start ?? faker.address.city(),
-      startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      startPosition: generatedStartPosition,
       startTime: generatedStartTime,
       end: end ?? faker.address.city(),
-      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      endPosition: generatedEndPosition,
       endTime: generatedEndTime,
       seats: seats ?? random.nextInt(5) + 1,
       startedAt: generatedStartedAt,

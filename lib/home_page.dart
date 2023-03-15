@@ -489,7 +489,7 @@ class HomePageState extends State<HomePage> {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) =>
-                      trip is Drive ? DriveDetailPage(id: trip.id!) : RideDetailPage(id: trip.id),
+                      trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
                 ),
               );
             },

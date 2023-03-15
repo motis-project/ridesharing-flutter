@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../rides/models/ride.dart';
 import '../../util/supabase_manager.dart';
 import '../../util/trip/drive_card.dart';
 import '../../util/trip/trip_overview.dart';
@@ -23,10 +22,7 @@ class RecurringDriveDetailPage extends StatefulWidget {
 }
 
 class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
-  static const int shownDrivesCountDefault = 5;
-
   RecurringDrive? _recurringDrive;
-  int _shownDrivesCount = shownDrivesCountDefault;
   bool _fullyLoaded = false;
 
   @override
@@ -59,7 +55,6 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
     setState(() {
       _recurringDrive = RecurringDrive.fromJson(data);
-      _shownDrivesCount = max(_shownDrivesCount, 1);
       _fullyLoaded = true;
     });
   }
@@ -100,8 +95,39 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
       final List<Drive> upcomingDrives = recurringDrive.upcomingDrives
         ..sort((Drive a, Drive b) => a.startDateTime.compareTo(b.startDateTime));
-      _shownDrivesCount = min(_shownDrivesCount, upcomingDrives.length);
-      if (upcomingDrives.isNotEmpty) {
+
+      final List<Drive> previewedDrives = recurringDrive.recurrenceRule
+          .getAllInstances(
+        start: recurringDrive.startedAt.toUtc(),
+        after: DateTime.now().toUtc().add(const Duration(days: 30)),
+      )
+          .map(
+        (DateTime date) {
+          final DateTime startDateTime = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            recurringDrive.startTime.hour,
+            recurringDrive.startTime.minute,
+          );
+
+          return Drive(
+            start: recurringDrive.start,
+            startPosition: recurringDrive.startPosition,
+            startDateTime: startDateTime,
+            end: recurringDrive.end,
+            endPosition: recurringDrive.endPosition,
+            endDateTime: startDateTime.add(recurringDrive.duration),
+            seats: recurringDrive.seats,
+            driver: recurringDrive.driver,
+            driverId: recurringDrive.driverId,
+            rides: <Ride>[],
+            status: DriveStatus.preview,
+          );
+        },
+      ).toList();
+
+      if (recurringDrive.stoppedAt == null && (upcomingDrives.isNotEmpty || previewedDrives.isNotEmpty)) {
         final List<Widget> upcomingDrivesColumn = <Widget>[
           const SizedBox(height: 5.0),
           Align(
@@ -112,43 +138,18 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
             ),
           ),
           const SizedBox(height: 10.0),
-          ...upcomingDrives.take(_shownDrivesCount).map((Drive drive) => DriveCard(drive, loadData: false)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              if (_shownDrivesCount > 1)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _shownDrivesCount = max(_shownDrivesCount - shownDrivesCountDefault, 1);
-                    });
-                  },
-                  key: const Key('showLessButton'),
-                  child: Text(S.of(context).showLess),
-                )
-              else
-                const SizedBox(),
-              if (_shownDrivesCount < upcomingDrives.length)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _shownDrivesCount = _shownDrivesCount + shownDrivesCountDefault;
-                    });
-                  },
-                  key: const Key('showMoreButton'),
-                  child: Text(S.of(context).showMore),
-                )
-              else
-                const SizedBox(),
-            ],
-          ),
+          ...upcomingDrives.map((Drive drive) => DriveCard(drive, loadData: false)),
+          const SizedBox(height: 10.0),
+          const Divider(thickness: 1),
+          const SizedBox(height: 10.0),
+          ...previewedDrives.map((Drive drive) => DriveCard(drive, loadData: false)),
         ];
         widgets.addAll(upcomingDrivesColumn);
       } else {
         widgets.add(const SizedBox(height: 10));
         widgets.add(
           Text(
-            _recurringDrive!.stoppedAt == null
+            recurringDrive.stoppedAt == null
                 ? S.of(context).pageRecurringDriveDetailUpcomingDrivesEmpty
                 : S.of(context).pageRecurringDriveDetailUpcomingDrivesStopped,
             key: const Key('noUpcomingDrives'),

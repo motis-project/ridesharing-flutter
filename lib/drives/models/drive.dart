@@ -189,7 +189,7 @@ class Drive extends Trip {
   }
 }
 
-enum DriveStatus { plannedOrFinished, cancelledByDriver, cancelledByRecurrenceRule }
+enum DriveStatus { preview, plannedOrFinished, cancelledByDriver, cancelledByRecurrenceRule }
 
 extension DriveStatusExtension on DriveStatus {
   bool isCancelled() {

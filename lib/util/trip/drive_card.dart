@@ -27,12 +27,9 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
     setState(() {
       drive = widget.trip;
       trip = drive;
-      _fullyLoaded = !widget.loadData;
     });
 
-    if (widget.loadData) {
-      loadDrive();
-    }
+    loadDrive();
   }
 
   @override
@@ -44,18 +41,20 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   }
 
   Future<void> loadDrive() async {
-    final Map<String, dynamic> data =
-        await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
+    if (widget.loadData) {
+      final Map<String, dynamic> data =
+          await supabaseManager.supabaseClient.from('drives').select<Map<String, dynamic>>('''
       *,
       rides(
         *,
         rider: rider_id(*)
       )
     ''').eq('id', widget.trip.id).single();
+      drive = Drive.fromJson(data);
+      trip = drive;
+    }
     if (mounted) {
       setState(() {
-        drive = Drive.fromJson(data);
-        trip = drive;
         _fullyLoaded = true;
       });
     }
@@ -86,6 +85,8 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   Color pickStatusColor() {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
+    } else if (drive.status == DriveStatus.preview) {
+      return Theme.of(context).colorScheme.primary;
     } else if (drive.endDateTime.isBefore(DateTime.now())) {
       return Theme.of(context).disabledColor;
     } else {

@@ -202,10 +202,7 @@ void main() {
         endDateTime: DateTime.now().add(const Duration(hours: 4)),
         recurringDriveId: NullableParameter(random.integer(1000)),
         hideInListView: false,
-        status: [
-          DriveStatus.cancelledByDriver,
-          DriveStatus.plannedOrFinished
-        ][random.integer(DriveStatus.values.length - 1)],
+        status: [DriveStatus.cancelledByDriver, DriveStatus.plannedOrFinished][random.integer(2)],
       );
       expect(drive.isUpcomingRecurringDriveInstance, isTrue);
     });
@@ -489,7 +486,7 @@ void main() {
         urlMatcher: equals('/rest/v1/drives?id=eq.${drive.id}'),
         methodMatcher: equals('PATCH'),
         bodyMatcher: equals({
-          'status': 1,
+          'status': 2,
         }),
       );
       expect(drive.status, DriveStatus.cancelledByDriver);

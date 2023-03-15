@@ -151,7 +151,7 @@ class _RideDetailPageState extends State<RideDetailPage> {
 
       final Widget? primaryButton = _buildPrimaryButton(driver);
       if (primaryButton != null) {
-        widgets.add(const SizedBox(height: 10));
+        widgets.add(const SizedBox(height: 20));
         widgets.add(primaryButton);
         widgets.add(const SizedBox(height: 5));
       }
