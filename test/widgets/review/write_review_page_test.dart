@@ -226,6 +226,32 @@ void main() {
       ).called(1);
     });
 
+    testWidgets('no edit rating save button', (WidgetTester tester) async {
+      final Review review = ReviewFactory().generateFake(writerId: profile.id! + 1, receiverId: profile.id);
+
+      whenRequest(processor, urlMatcher: startsWith('/rest/v1/reviews'), methodMatcher: equals('GET'))
+          .thenReturnJson(review.toJsonForApi());
+
+      await pumpMaterial(tester, ReviewsPage(profile: profile));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('reviewsPage_reviewButton')));
+      await tester.pumpAndSettle();
+
+      final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
+      await tester.tap(saveButton);
+
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect((tester.widget(saveButton) as LoadingButton).state, ButtonState.success);
+
+      verifyRequestNever(
+        processor,
+        urlMatcher: startsWith('/rest/v1/reviews?id=eq.${review.id}'),
+        methodMatcher: equals('PATCH'),
+      );
+    });
+
     testWidgets('edit rating save button', (WidgetTester tester) async {
       final Review review = ReviewFactory().generateFake(writerId: profile.id! + 1, receiverId: profile.id);
 
@@ -237,7 +263,9 @@ void main() {
       await tester.tap(find.byKey(const Key('reviewsPage_reviewButton')));
       await tester.pumpAndSettle();
 
-      final int rating = Random().nextInt(4);
+      // Make sure the rating is different before saving
+      final int rating =
+          List<int>.generate(5, (int index) => index).firstWhere((int index) => index != review.comfortRating! - 1);
       final Finder ratingBarStars =
           find.descendant(of: find.byKey(const Key('comfortRating')), matching: find.byKey(const Key('ratingBarIcon')));
       await tester.tap(ratingBarStars.at(rating));
