@@ -387,7 +387,7 @@ class HomePageState extends State<HomePage> {
   void updateDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
     final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
-    if (driveData['cancelled'] == true &&
+    if (driveData['status'] != DriveStatus.plannedOrFinished.index &&
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
