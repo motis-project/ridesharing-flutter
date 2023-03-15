@@ -87,7 +87,14 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
             }
             return Center(
               child: query.length < AddressSuggestionManager.searchLengthRequirement
-                  ? Text(S.of(context).searchAddressEnterMoreCharacters)
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset('assets/shrug.png'),
+                        const SizedBox(height: 10),
+                        Text(S.of(context).searchAddressEnterMoreCharacters),
+                      ],
+                    )
                   : const CircularProgressIndicator(),
             );
           },
