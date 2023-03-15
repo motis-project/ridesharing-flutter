@@ -63,5 +63,9 @@ void main() {
 
       expect(expandReviewButtonFinder, findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, ReviewDetail(review: review));
+    });
   });
 }

@@ -88,14 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
       children: <Widget>[
         if (_profile!.isCurrentUser) ...<Widget>[
           Expanded(child: Container()),
-          Flexible(
-            flex: 5,
-            child: InkWell(
-              onTap: () => _pushEditPage(EditUsernamePage(_profile!)),
-              key: const Key('editUsernameText'),
-              child: username,
-            ),
-          ),
+          Flexible(flex: 5, child: username),
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
@@ -121,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildEmail() {
     return Text(
       _profile!.email,
-      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
     );
   }
 
@@ -221,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Text(
       '<$noInfoText>',
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
           ),
       key: const Key('noInfoText'),
     );

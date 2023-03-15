@@ -35,5 +35,9 @@ void main() {
 
       expect(find.byType(LoginPage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, const AfterRegistrationPage());
+    });
   });
 }

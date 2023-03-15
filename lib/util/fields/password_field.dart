@@ -34,6 +34,7 @@ class _PasswordFieldState extends State<PasswordField> {
         helperText: helperText,
         helperMaxLines: 2,
         suffixIcon: IconButton(
+          tooltip: S.of(context).formPasswordToggleVisibilityTooltip,
           icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
           onPressed: () {
             setState(() {

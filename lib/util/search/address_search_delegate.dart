@@ -10,6 +10,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
       IconButton(
+        tooltip: S.of(context).formClearInput,
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
@@ -67,6 +68,7 @@ class AddressSearchDelegate extends SearchDelegate<AddressSuggestion?> {
                       title: Text(suggestion.toString()),
                       trailing: suggestion.fromHistory
                           ? IconButton(
+                              tooltip: S.of(context).delete,
                               icon: const Icon(Icons.delete),
                               onPressed: () {
                                 addressSuggestionManager.removeSuggestion(suggestion);

@@ -186,5 +186,9 @@ void main() {
         expect(loginFormState.buttonState, ButtonState.success);
       });
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, const LoginPage());
+    });
   });
 }

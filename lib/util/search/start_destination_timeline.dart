@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
 import '../custom_timeline_theme.dart';
@@ -56,6 +57,7 @@ class StartDestinationTimeline extends StatelessWidget {
           ),
           IconButton(
             key: const Key('swapButton'),
+            tooltip: S.of(context).swap,
             onPressed: () {
               final String oldStartText = startController.text;
               startController.text = destinationController.text;

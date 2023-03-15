@@ -39,7 +39,6 @@ class _WriteReportPageState extends State<WriteReportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
         title: ProfileWidget(widget.profile),
       ),
       body: Padding(
@@ -87,7 +86,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                       alignLabelWithHint: true,
                     ),
                     textAlignVertical: TextAlignVertical.top,
-                    maxLines: 5,
+                    maxLines: 6,
                     validator: (String? value) {
                       if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
                         return S.of(context).pageWriteReportFieldValidateEmpty;

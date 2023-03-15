@@ -385,7 +385,10 @@ class SearchRidePageState extends State<SearchRidePage> {
               SliverAppBar(
                 floating: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(S.of(context).pageSearchRideTitle),
+                  title: Text(
+                    S.of(context).pageSearchRideTitle,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  ),
                 ),
               ),
               SliverPinnedHeader(

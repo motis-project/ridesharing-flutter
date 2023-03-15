@@ -150,6 +150,7 @@ void main() {
       final Finder saveButton = find.byKey(const Key('submitButton'));
       expect(saveButton, findsOneWidget);
 
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(find.byKey(const Key('submitButton')));
 
       await tester.pump(const Duration(milliseconds: 400));
@@ -196,6 +197,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('reviewText')), 'test');
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(saveButton);
 
       await tester.pump(const Duration(milliseconds: 400));
@@ -242,6 +244,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final Finder saveButton = find.byKey(const Key('submitButton'));
+      await tester.scrollUntilVisible(saveButton, 50, scrollable: find.byType(Scrollable).first);
       await tester.tap(saveButton);
 
       await tester.pump(const Duration(milliseconds: 400));
@@ -271,6 +274,11 @@ void main() {
           'receiver_id': profile.id
         }),
       ).called(1);
+    });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      // Ignore tap targets because the rating bar is not a button (48px would be too big)
+      await expectMeetsAccessibilityGuidelines(tester, WriteReviewPage(profile), checkTapTargets: false);
     });
   });
 }

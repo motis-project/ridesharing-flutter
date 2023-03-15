@@ -18,6 +18,10 @@
   "remove": "Remove",
   "before": "Before",
   "after": "After",
+  "toggle": "Toggle",
+  "swap": "Swap",
+  "send": "Send",
+  "delete": "Delete",
   "preview": "Preview",
   "failureSnackBar": "Something went wrong.",
 
@@ -54,6 +58,7 @@
   "formPasswordConfirmHint": "Re-enter your password",
   "formPasswordConfirmValidateEmpty": "Please confirm your password",
   "formPasswordConfirmValidateMatch": "Passwords do not match",
+  "formPasswordToggleVisibilityTooltip": "Toggle visibility",
   "formDate": "Date",
   "formSinceDate": "Recurrence Start Date",
   "formTime": "Time",
@@ -205,6 +210,7 @@
   "pageHelpAnswer14": "Feedback of any kind is important to us, thank you! Please use the \"{contactButtonText}\" button below.",
 
   "pageReviewCount": "{count, plural, one{{count} review} other{{count} reviews}}",
+  "reviewOverall": "Overall",
   "reviewCategoryComfort": "Comfort",
   "reviewCategorySafety": "Safety",
   "reviewCategoryReliability": "Reliability",

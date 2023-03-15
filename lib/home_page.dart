@@ -466,33 +466,36 @@ class HomePageState extends State<HomePage> {
         });
       },
       child: Card(
-        child: InkWell(
-          child: ListTile(
-            leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
-            title: Text(
-              trip is Drive
-                  ? trip.startDateTime.day == DateTime.now().day
-                      ? S.of(context).pageHomeUpcomingDriveToday
-                      : S.of(context).pageHomeUpcomingDriveTomorrow
-                  : trip.startDateTime.day == DateTime.now().day
-                      ? S.of(context).pageHomeUpcomingRideToday
-                      : S.of(context).pageHomeUpcomingRideTomorrow,
-            ),
-            subtitle: Text(
-              S.of(context).pageHomeUpcomingTripMessage(
-                    trip.end,
-                    trip.start,
-                    localeManager.formatTime(trip.startDateTime),
+        child: Semantics(
+          label: S.of(context).openDetails,
+          child: InkWell(
+            child: ListTile(
+              leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
+              title: Text(
+                trip is Drive
+                    ? trip.startDateTime.day == DateTime.now().day
+                        ? S.of(context).pageHomeUpcomingDriveToday
+                        : S.of(context).pageHomeUpcomingDriveTomorrow
+                    : trip.startDateTime.day == DateTime.now().day
+                        ? S.of(context).pageHomeUpcomingRideToday
+                        : S.of(context).pageHomeUpcomingRideTomorrow,
+              ),
+              subtitle: Text(
+                S.of(context).pageHomeUpcomingTripMessage(
+                      trip.end,
+                      trip.start,
+                      localeManager.formatTime(trip.startDateTime),
+                    ),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) =>
+                        trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
                   ),
+                );
+              },
             ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) =>
-                      trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
-                ),
-              );
-            },
           ),
         ),
       ),
@@ -510,24 +513,27 @@ class HomePageState extends State<HomePage> {
         });
       },
       child: Card(
-        child: InkWell(
-          child: ListTile(
-            leading: isForRide ? const Icon(Icons.chair) : const Icon(Icons.drive_eta),
-            title: Text(rideEvent.getTitle(context)),
-            subtitle: Text(rideEvent.getMessage(context)),
-            trailing: Text(
-              localeManager.formatTime(rideEvent.createdAt!),
-              style: Theme.of(context).textTheme.bodySmall,
+        child: Semantics(
+          label: S.of(context).openDetails,
+          child: InkWell(
+            child: ListTile(
+              leading: isForRide ? const Icon(Icons.chair) : const Icon(Icons.drive_eta),
+              title: Text(rideEvent.getTitle(context)),
+              subtitle: Text(rideEvent.getMessage(context)),
+              trailing: Text(
+                localeManager.formatTime(rideEvent.createdAt!),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              onTap: () {
+                rideEvent.markAsRead();
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) =>
+                        isForRide ? RideDetailPage(id: rideEvent.rideId) : DriveDetailPage(id: rideEvent.ride!.driveId),
+                  ),
+                );
+              },
             ),
-            onTap: () {
-              rideEvent.markAsRead();
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) =>
-                      isForRide ? RideDetailPage(id: rideEvent.rideId) : DriveDetailPage(id: rideEvent.ride!.driveId),
-                ),
-              );
-            },
           ),
         ),
       ),
@@ -544,25 +550,28 @@ class HomePageState extends State<HomePage> {
         });
       },
       child: Card(
-        child: InkWell(
-          child: ListTile(
-            leading: Avatar(message.sender!),
-            title: Text(message.sender!.username),
-            subtitle: Text(message.content, maxLines: 1),
-            trailing: Text(
-              localeManager.formatTime(message.createdAt!),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => ChatPage(
-                    chatId: message.chatId,
-                    profile: message.sender!,
+        child: Semantics(
+          label: S.of(context).openDetails,
+          child: InkWell(
+            child: ListTile(
+              leading: Avatar(message.sender!),
+              title: Text(message.sender!.username),
+              subtitle: Text(message.content, maxLines: 1),
+              trailing: Text(
+                localeManager.formatTime(message.createdAt!),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ChatPage(
+                      chatId: message.chatId,
+                      profile: message.sender!,
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

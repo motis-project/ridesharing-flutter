@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LabeledCheckbox extends StatelessWidget {
   const LabeledCheckbox({
@@ -14,22 +15,28 @@ class LabeledCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onChanged(!value);
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Checkbox(
-            value: value,
-            onChanged: (bool? newValue) {
-              onChanged(newValue!);
-            },
-          ),
-          Text(label),
-          const SizedBox(width: 10)
-        ],
+    return Semantics(
+      tooltip: S.of(context).toggle,
+      child: InkWell(
+        onTap: () {
+          onChanged(!value);
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Checkbox(
+              value: value,
+              onChanged: null,
+              fillColor: MaterialStateProperty.resolveWith(
+                (Set<MaterialState> states) => states.contains(MaterialState.selected)
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).disabledColor,
+              ),
+            ),
+            Text(label),
+            const SizedBox(width: 10)
+          ],
+        ),
       ),
     );
   }

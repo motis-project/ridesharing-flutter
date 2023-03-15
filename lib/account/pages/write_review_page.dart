@@ -66,7 +66,6 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
         title: ProfileWidget(widget.profile),
       ),
       body: Center(
@@ -75,15 +74,16 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             : SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
+                    Text(S.of(context).reviewOverall, style: Theme.of(context).textTheme.titleLarge),
                     CustomRatingBar(
                       size: CustomRatingBarSize.huge,
                       rating: _review!.rating,
                       onRatingUpdate: onRatingUpdate,
                       key: const Key('overallRating'),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     _buildCategoryReviews(),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: 300,
                       child: TextField(
@@ -95,7 +95,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                           alignLabelWithHint: true,
                         ),
                         textAlignVertical: TextAlignVertical.top,
-                        maxLines: 5,
+                        maxLines: 6,
                         onChanged: onTextUpdate,
                         key: const Key('reviewText'),
                       ),
@@ -118,48 +118,43 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryComfort,
-            _review!.comfortRating,
-            onComfortRatingUpdate,
-            const Key('comfortRating'),
+          Text(S.of(context).reviewCategoryComfort),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.large,
+            rating: _review!.comfortRating,
+            onRatingUpdate: onComfortRatingUpdate,
+            key: const Key('comfortRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategorySafety,
-            _review!.safetyRating,
-            onSafetyRatingUpdate,
-            const Key('safetyRating'),
+          const SizedBox(height: 10),
+          Text(S.of(context).reviewCategorySafety),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.large,
+            rating: _review!.safetyRating,
+            onRatingUpdate: onSafetyRatingUpdate,
+            key: const Key('safetyRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryReliability,
-            _review!.reliabilityRating,
-            onReliabilityRatingUpdate,
-            const Key('reliabilityRating'),
+          const SizedBox(height: 10),
+          Text(S.of(context).reviewCategoryReliability),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.large,
+            rating: _review!.reliabilityRating,
+            onRatingUpdate: onReliabilityRatingUpdate,
+            key: const Key('reliabilityRating'),
           ),
-          _buildCategoryReviewRow(
-            S.of(context).reviewCategoryHospitality,
-            _review!.hospitalityRating,
-            onHospitalityRatingUpdate,
-            const Key('hospitalityRating'),
+          const SizedBox(height: 10),
+          Text(S.of(context).reviewCategoryHospitality),
+          const SizedBox(width: 10),
+          CustomRatingBar(
+            size: CustomRatingBarSize.large,
+            rating: _review!.hospitalityRating,
+            onRatingUpdate: onHospitalityRatingUpdate,
+            key: const Key('hospitalityRating'),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCategoryReviewRow(String category, int? rating, void Function(double) onRatingUpdate, Key key) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Flexible(child: SizedBox(width: 100, child: Text(category))),
-        const SizedBox(width: 10),
-        CustomRatingBar(
-          size: CustomRatingBarSize.large,
-          rating: rating,
-          onRatingUpdate: onRatingUpdate,
-          key: key,
-        ),
-      ],
     );
   }
 

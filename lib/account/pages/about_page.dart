@@ -32,7 +32,7 @@ class _AboutPageState extends State<AboutPage> {
     final TextStyle packageInfoStyle = Theme.of(context)
         .textTheme
         .titleSmall!
-        .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5));
+        .copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6));
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).pageAboutTitle),

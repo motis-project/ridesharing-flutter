@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../util/fade_out.dart';
 import '../../util/locale_manager.dart';
 import '../../util/profiles/profile_chip.dart';
 import '../../util/profiles/reviews/custom_rating_bar_indicator.dart';
-import '../../util/profiles/reviews/custom_rating_bar_size.dart';
 import '../models/review.dart';
 
 class ReviewDetail extends StatefulWidget {
@@ -45,7 +45,6 @@ class ReviewDetailState extends State<ReviewDetail> {
         const SizedBox(width: 10),
         CustomRatingBarIndicator(
           rating: widget.review.rating.toDouble(),
-          size: CustomRatingBarSize.medium,
           key: const Key('reviewRating'),
         ),
       ],
@@ -83,17 +82,23 @@ class ReviewDetailState extends State<ReviewDetail> {
                     }
 
                     if (isExpanded) {
-                      return InkWell(
-                        onTap: () => setState(() => isExpanded = !isExpanded),
-                        child: Column(
-                          children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
+                      return Semantics(
+                        label: S.of(context).retract,
+                        child: InkWell(
+                          onTap: () => setState(() => isExpanded = !isExpanded),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[text, const Icon(Icons.expand_less, key: Key('retractReviewButton'))],
+                          ),
                         ),
                       );
                     }
                     return FadeOut(
+                      tooltip: S.of(context).expand,
                       onTap: () => setState(() => isExpanded = !isExpanded),
                       indicator: const Icon(Icons.expand_more, key: Key('expandReviewButton')),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[text, const SizedBox(height: 22)],
                       ),
                     );

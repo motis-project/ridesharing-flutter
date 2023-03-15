@@ -23,7 +23,7 @@ class AggregateReviewWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 S.of(context).pageReviewCount(aggregateReview.numberOfReviews),
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                 textAlign: TextAlign.right,
               ),
             ),
