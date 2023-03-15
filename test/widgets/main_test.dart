@@ -133,7 +133,7 @@ void main() {
       expect(find.byType(MainApp), findsOneWidget);
     });
 
-    testWidgets('It shows MainApp after signing in', (WidgetTester tester) async {
+    testWidgets('It shows MainApp after signing in when user is not blocked', (WidgetTester tester) async {
       await pumpMaterial(tester, const AuthApp());
 
       expect(find.byType(WelcomePage), findsOneWidget);
@@ -145,6 +145,8 @@ void main() {
         methodMatcher: equals('POST'),
       ).thenReturnJson(responseHash);
 
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/is_blocked')).thenReturnJson(false);
+
       // Sending AuthChangeEvent.signedIn
       await supabaseManager.supabaseClient.auth.signInWithPassword(
         email: 'motismitfahrapp@gmail.com',
@@ -154,6 +156,31 @@ void main() {
       await tester.pump();
 
       expect(find.byType(MainApp), findsOneWidget);
+    });
+
+    testWidgets('It logs user out again after signing in when user is blocked', (WidgetTester tester) async {
+      await pumpMaterial(tester, const AuthApp());
+
+      expect(find.byType(WelcomePage), findsOneWidget);
+
+      whenRequest(
+        processor,
+        urlMatcher: equals('/auth/v1/token?grant_type=password'),
+        bodyMatcher: equals({'email': 'motismitfahrapp@gmail.com', 'password': '?Pass123word'}),
+        methodMatcher: equals('POST'),
+      ).thenReturnJson(responseHash);
+
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/is_blocked')).thenReturnJson(true);
+
+      // Sending AuthChangeEvent.signedIn
+      await supabaseManager.supabaseClient.auth.signInWithPassword(
+        email: 'motismitfahrapp@gmail.com',
+        password: '?Pass123word',
+      );
+
+      await tester.pump();
+
+      expect(find.byType(WelcomePage), findsOneWidget);
     });
 
     testWidgets('It shows WelcomePage after signing out', (WidgetTester tester) async {
@@ -179,6 +206,8 @@ void main() {
         urlMatcher: equals('/auth/v1/user?'),
         methodMatcher: equals('GET'),
       ).thenReturnJson(userHash);
+
+      whenRequest(processor, urlMatcher: equals('/rest/v1/rpc/is_blocked')).thenReturnJson(false);
 
       await supabaseManager.supabaseClient.auth.getSessionFromUrl(
         Uri(host: 'localhost', port: 3000, queryParameters: {

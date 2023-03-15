@@ -24,6 +24,7 @@
   "delete": "Delete",
   "preview": "Preview",
   "failureSnackBar": "Something went wrong.",
+  "blockedSnackBar": "Your Account has been blocked, please contact us for more information.",
 
   "riders": "Riders",
   "seats": "Seats",

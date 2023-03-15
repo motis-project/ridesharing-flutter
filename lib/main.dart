@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'main_app.dart';
 import 'util/firebase.dart';
 import 'util/locale_manager.dart';
+import 'util/snackbar.dart';
 import 'util/supabase_manager.dart';
 import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
@@ -86,6 +87,16 @@ class AuthAppState extends State<AuthApp> {
         final Session? session = data.session;
         await supabaseManager.reloadCurrentProfile();
         if (event == AuthChangeEvent.signedOut) unawaited(firebaseManager.disablePushToken());
+        if (event == AuthChangeEvent.signedIn) {
+          final bool? isBlocked = await supabaseManager.supabaseClient
+              .rpc('is_blocked', params: <String, dynamic>{'user_id': data.session!.user.id}) as bool?;
+          if (isBlocked ?? false) {
+            await supabaseManager.supabaseClient.auth.signOut();
+            if (!mounted) return;
+            showSnackBar(context, S.of(context).blockedSnackBar);
+            return;
+          }
+        }
 
         setState(() {
           _isLoggedIn = session != null;
