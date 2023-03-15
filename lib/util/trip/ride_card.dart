@@ -12,7 +12,6 @@ import '../locale_manager.dart';
 import '../own_theme_fields.dart';
 import '../profiles/profile_widget.dart';
 import '../profiles/reviews/custom_rating_bar_indicator.dart';
-import '../profiles/reviews/custom_rating_bar_size.dart';
 import '../supabase_manager.dart';
 import 'trip_card.dart';
 
@@ -137,7 +136,6 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
             padding: const EdgeInsets.fromLTRB(0, 8, 16, 16),
             child: CustomRatingBarIndicator(
               rating: AggregateReview.fromReviews(_ride.drive!.driver!.reviewsReceived!).rating,
-              size: CustomRatingBarSize.medium,
             ),
           )
         : const Center(

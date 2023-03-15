@@ -94,7 +94,6 @@ class SearchRideFilter {
             Text(S.of(context).reviewCategoryComfort),
             CustomRatingBar(
               key: const Key('searchRideComfortRatingBar'),
-              size: CustomRatingBarSize.medium,
               rating: _minComfortRating,
               onRatingUpdate: (double newRating) => innerSetState(
                 () => _minComfortRating = newRating.toInt(),
@@ -103,7 +102,6 @@ class SearchRideFilter {
             Text(S.of(context).reviewCategorySafety),
             CustomRatingBar(
               key: const Key('searchRideSafetyRatingBar'),
-              size: CustomRatingBarSize.medium,
               rating: _minSafetyRating,
               onRatingUpdate: (double newRating) => innerSetState(
                 () => _minSafetyRating = newRating.toInt(),
@@ -112,7 +110,6 @@ class SearchRideFilter {
             Text(S.of(context).reviewCategoryReliability),
             CustomRatingBar(
               key: const Key('searchRideReliabilityRatingBar'),
-              size: CustomRatingBarSize.medium,
               rating: _minReliabilityRating,
               onRatingUpdate: (double newRating) => innerSetState(
                 () => _minReliabilityRating = newRating.toInt(),
@@ -121,7 +118,6 @@ class SearchRideFilter {
             Text(S.of(context).reviewCategoryHospitality),
             CustomRatingBar(
               key: const Key('searchRideHospitalityRatingBar'),
-              size: CustomRatingBarSize.medium,
               rating: _minHospitalityRating,
               onRatingUpdate: (double newRating) => innerSetState(
                 () => _minHospitalityRating = newRating.toInt(),

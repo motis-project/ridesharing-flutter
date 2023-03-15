@@ -30,13 +30,17 @@ Future<void> pumpForm(WidgetTester tester, Widget widget, {required Key formKey}
   await pumpScaffold(tester, Form(key: formKey, child: widget));
 }
 
-Future<void> expectMeetsAccessibilityGuidelines(WidgetTester tester, Widget widget) async {
+Future<void> expectMeetsAccessibilityGuidelines(WidgetTester tester, Widget widget,
+    {bool checkTapTargets = true}) async {
   final SemanticsHandle handle = tester.ensureSemantics();
   for (final ThemeData theme in [themeManager.lightTheme, themeManager.darkTheme]) {
     await pumpMaterial(tester, widget, themeData: theme);
     await tester.pump();
-    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
-    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+
+    if (checkTapTargets) {
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    }
     await expectLater(tester, meetsGuideline(textContrastGuideline));
   }
   handle.dispose();

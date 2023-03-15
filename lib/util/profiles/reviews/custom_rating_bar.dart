@@ -12,7 +12,7 @@ class CustomRatingBar extends StatelessWidget {
 
   const CustomRatingBar({
     super.key,
-    this.size = CustomRatingBarSize.small,
+    this.size = CustomRatingBarSize.medium,
     required this.onRatingUpdate,
     this.rating,
   });

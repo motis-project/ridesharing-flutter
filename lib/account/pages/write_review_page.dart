@@ -121,7 +121,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           Text(S.of(context).reviewCategoryComfort),
           const SizedBox(width: 10),
           CustomRatingBar(
-            size: CustomRatingBarSize.huge,
+            size: CustomRatingBarSize.large,
             rating: _review!.comfortRating,
             onRatingUpdate: onComfortRatingUpdate,
             key: const Key('comfortRating'),
@@ -130,7 +130,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           Text(S.of(context).reviewCategorySafety),
           const SizedBox(width: 10),
           CustomRatingBar(
-            size: CustomRatingBarSize.huge,
+            size: CustomRatingBarSize.large,
             rating: _review!.safetyRating,
             onRatingUpdate: onSafetyRatingUpdate,
             key: const Key('safetyRating'),
@@ -139,7 +139,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           Text(S.of(context).reviewCategoryReliability),
           const SizedBox(width: 10),
           CustomRatingBar(
-            size: CustomRatingBarSize.huge,
+            size: CustomRatingBarSize.large,
             rating: _review!.reliabilityRating,
             onRatingUpdate: onReliabilityRatingUpdate,
             key: const Key('reliabilityRating'),
@@ -148,7 +148,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
           Text(S.of(context).reviewCategoryHospitality),
           const SizedBox(width: 10),
           CustomRatingBar(
-            size: CustomRatingBarSize.huge,
+            size: CustomRatingBarSize.large,
             rating: _review!.hospitalityRating,
             onRatingUpdate: onHospitalityRatingUpdate,
             key: const Key('hospitalityRating'),
