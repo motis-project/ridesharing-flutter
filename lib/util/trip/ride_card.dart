@@ -106,35 +106,32 @@ class _RideCardState extends TripCardState<Ride, RideCard> {
   @override
   Widget buildTopRight() {
     if (!_fullyLoaded || _ride.isFinished) {
-      return const Center(
-        child: SizedBox(),
-      );
-    } else {
-      switch (_ride.status) {
-        case RideStatus.preview:
-          return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
-        case RideStatus.pending:
-          return Icon(
-            Icons.access_time_outlined,
-            color: statusColor,
-            key: const Key('pendingIcon'),
-          );
-        case RideStatus.approved:
-          return Icon(
-            Icons.done_all,
-            color: statusColor,
-            key: const Key('approvedIcon'),
-          );
-        case RideStatus.rejected:
-        case RideStatus.cancelledByDriver:
-        case RideStatus.cancelledByRider:
-        case RideStatus.withdrawnByRider:
-          return Icon(
-            Icons.block,
-            color: statusColor,
-            key: const Key('cancelledOrRejectedIcon'),
-          );
-      }
+      return const SizedBox();
+    }
+    switch (_ride.status) {
+      case RideStatus.preview:
+        return Text(key: const Key('price'), ' ${_ride.price?.toStringAsFixed(2)}€');
+      case RideStatus.pending:
+        return Icon(
+          Icons.access_time_outlined,
+          color: statusColor,
+          key: const Key('pendingIcon'),
+        );
+      case RideStatus.approved:
+        return Icon(
+          Icons.done_all,
+          color: statusColor,
+          key: const Key('approvedIcon'),
+        );
+      case RideStatus.rejected:
+      case RideStatus.cancelledByDriver:
+      case RideStatus.cancelledByRider:
+      case RideStatus.withdrawnByRider:
+        return Icon(
+          Icons.block,
+          color: statusColor,
+          key: const Key('cancelledOrRejectedIcon'),
+        );
     }
   }
 

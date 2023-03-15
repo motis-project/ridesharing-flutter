@@ -83,9 +83,7 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   @override
   Widget buildTopRight() {
     if (!_fullyLoaded || drive.isFinished) {
-      return const Center(
-        child: SizedBox(),
-      );
+      return const SizedBox();
     } else if (drive.status.isCancelled()) {
       return Icon(
         Icons.block,
@@ -99,9 +97,7 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
         key: const Key('pendingIcon'),
       );
     } else {
-      return const Center(
-        child: SizedBox(),
-      );
+      return const SizedBox();
     }
   }
 
@@ -109,6 +105,8 @@ class DriveCardState extends TripCardState<Drive, DriveCard> {
   Color get statusColor {
     if (!_fullyLoaded) {
       return Theme.of(context).cardColor;
+    } else if (drive.status == DriveStatus.preview) {
+      return Theme.of(context).primaryColor;
     } else if (drive.isFinished) {
       return Theme.of(context).disabledColor;
     } else {
