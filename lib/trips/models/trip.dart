@@ -36,8 +36,8 @@ class Trip extends TripLike {
   Map<String, dynamic> toJson() {
     return super.toJson()
       ..addAll(<String, dynamic>{
-        'start_time': startDateTime.toString(),
-        'destination_time': destinationDateTime.toString(),
+        'start_date_time': startDateTime.toString(),
+        'destination_date_time': destinationDateTime.toString(),
         'hide_in_list_view': hideInListView,
       });
   }

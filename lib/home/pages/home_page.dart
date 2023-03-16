@@ -139,8 +139,8 @@ class HomePageState extends State<HomePage> {
               .select<List<Map<String, dynamic>>>()
               .eq('rider_id', profileId)
               .eq('status', RideStatus.approved.index)
-              .lt('start_time', tomorrow)
-              .gte('start_time', today),
+              .lt('start_date_time', tomorrow)
+              .gte('start_date_time', today),
         ),
       ),
     );
@@ -152,8 +152,8 @@ class HomePageState extends State<HomePage> {
               .select<List<Map<String, dynamic>>>()
               .eq('driver_id', profileId)
               .eq('status', DriveStatus.plannedOrFinished.index)
-              .lt('start_time', tomorrow)
-              .gte('start_time', today),
+              .lt('start_date_time', tomorrow)
+              .gte('start_date_time', today),
         ),
       ),
     );
@@ -321,7 +321,7 @@ class HomePageState extends State<HomePage> {
 
   void updateRide(Map<String, dynamic> rideData) {
     final DateTime now = DateTime.now();
-    final DateTime startDateTime = DateTime.parse(rideData['start_time'] as String);
+    final DateTime startDateTime = DateTime.parse(rideData['start_date_time'] as String);
     if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       if (rideData['status'] == RideStatus.approved.index) {
         setState(() {
@@ -352,7 +352,7 @@ class HomePageState extends State<HomePage> {
 
   void insertDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startDateTime = DateTime.parse(driveData['start_time'] as String);
+    final DateTime startDateTime = DateTime.parse(driveData['start_date_time'] as String);
     if (startDateTime.isAfter(now) && startDateTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {
       setState(() {
         bool inserted = false;
@@ -370,7 +370,7 @@ class HomePageState extends State<HomePage> {
 
   void updateDrive(Map<String, dynamic> driveData) {
     final DateTime now = DateTime.now();
-    final DateTime startTime = DateTime.parse(driveData['start_time'] as String);
+    final DateTime startTime = DateTime.parse(driveData['start_date_time'] as String);
     if (driveData['status'] != DriveStatus.plannedOrFinished.index &&
         startTime.isAfter(now) &&
         startTime.isBefore(DateTime(now.year, now.month, now.day + 2))) {

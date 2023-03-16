@@ -26,7 +26,7 @@ class _DrivesPageState extends State<DrivesPage> {
         .from('drives')
         .stream(primaryKey: <String>['id'])
         .eq('driver_id', userId)
-        .order('start_time', ascending: true)
+        .order('start_date_time', ascending: true)
         .map(
           (List<Map<String, dynamic>> drive) => Drive.fromJsonList(drive),
         );

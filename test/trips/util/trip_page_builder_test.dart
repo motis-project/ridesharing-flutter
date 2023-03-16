@@ -50,7 +50,7 @@ void main() {
     final List<Map<String, dynamic>> rides = [ride1.toJsonForApi(), ride2.toJsonForApi()];
     whenRequest(
       processor,
-      urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+      urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
     ).thenReturnJson(rides);
     whenRequest(
       processor,
@@ -74,7 +74,7 @@ void main() {
     testWidgets('Drives finds all Tabs(before and after Drives are loaded)', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
 
       await pumpMaterial(tester, const DrivesPage());
@@ -91,7 +91,7 @@ void main() {
     testWidgets('Rides finds all Tabs(before and after Rides are loaded)', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/rides?select=%2A&rider_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
 
       await pumpMaterial(tester, const RidesPage());
@@ -108,7 +108,7 @@ void main() {
     testWidgets('shows upcoming Trips at beginning', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
 
@@ -118,7 +118,7 @@ void main() {
     testWidgets('can navigate between Tabs', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
       await tester.pump();
@@ -182,7 +182,7 @@ void main() {
       ];
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       whenRequest(
         processor,
@@ -228,7 +228,7 @@ void main() {
       ];
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       await pumpMaterial(tester, const DrivesPage());
       await tester.pump();
@@ -248,7 +248,7 @@ void main() {
     testWidgets('shows Nothing if no Drives are there', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
 
@@ -287,7 +287,7 @@ void main() {
       ];
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       whenRequest(
         processor,
@@ -337,7 +337,7 @@ void main() {
       ];
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       whenRequest(
         processor,
@@ -362,7 +362,7 @@ void main() {
     testWidgets('shows Nothing if no Drives are there', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
 
@@ -395,7 +395,7 @@ void main() {
           .toList();
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       for (final RecurringDrive recurringDrive in recurringDrives) {
         whenRequest(
@@ -476,7 +476,7 @@ void main() {
       ];
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson(drives);
       whenRequest(
         processor,
@@ -515,7 +515,7 @@ void main() {
     testWidgets('shows Nothing if no RecurringDrives are there', (WidgetTester tester) async {
       whenRequest(
         processor,
-        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+        urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
       ).thenReturnJson([]);
       await pumpMaterial(tester, const DrivesPage());
 

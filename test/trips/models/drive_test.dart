@@ -26,11 +26,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
         'destination': 'Berlin',
         'destination_lat': 4,
         'destination_lng': 5,
-        'destination_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'status': 1,
         'driver_id': 7,
@@ -42,10 +42,10 @@ void main() {
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
       expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(drive.startDateTime, DateTime.parse(json['start_time']));
+      expect(drive.startDateTime, DateTime.parse(json['start_date_time']));
       expect(drive.destination, json['destination']);
       expect(drive.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
-      expect(drive.destinationDateTime, DateTime.parse(json['destination_time']));
+      expect(drive.destinationDateTime, DateTime.parse(json['destination_date_time']));
       expect(drive.seats, json['seats']);
       expect(drive.status.index, json['status']);
       expect(drive.driverId, json['driver_id']);
@@ -62,11 +62,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
         'destination': 'Berlin',
         'destination_lat': 4,
         'destination_lng': 5,
-        'destination_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'status': 1,
         'hide_in_list_view': false,
@@ -81,10 +81,10 @@ void main() {
       expect(drive.createdAt, DateTime.parse(json['created_at']));
       expect(drive.start, json['start']);
       expect(drive.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(drive.startDateTime, DateTime.parse(json['start_time']));
+      expect(drive.startDateTime, DateTime.parse(json['start_date_time']));
       expect(drive.destination, json['destination']);
       expect(drive.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
-      expect(drive.destinationDateTime, DateTime.parse(json['destination_time']));
+      expect(drive.destinationDateTime, DateTime.parse(json['destination_date_time']));
       expect(drive.seats, json['seats']);
       expect(drive.status.index, json['status']);
       expect(drive.hideInListView, json['hide_in_list_view']);
@@ -103,11 +103,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
         'destination': 'Berlin',
         'destination_lat': 4,
         'destination_lng': 5,
-        'destination_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'status': 1,
         'driver_id': 7,
@@ -132,11 +132,11 @@ void main() {
       expect(json['start'], drive.start);
       expect(json['start_lat'], drive.startPosition.lat);
       expect(json['start_lng'], drive.startPosition.lng);
-      expect(json['start_time'], drive.startDateTime.toString());
+      expect(json['start_date_time'], drive.startDateTime.toString());
       expect(json['destination'], drive.destination);
       expect(json['destination_lat'], drive.destinationPosition.lat);
       expect(json['destination_lng'], drive.destinationPosition.lng);
-      expect(json['destination_time'], drive.destinationDateTime.toString());
+      expect(json['destination_date_time'], drive.destinationDateTime.toString());
       expect(json['status'], drive.status.index);
       expect(json['seats'], drive.seats);
       expect(json['driver_id'], drive.driverId);
