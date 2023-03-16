@@ -53,50 +53,50 @@ void main() {
   });
 
   group('edit_full_name_page', () {
-    testWidgets('surname TextField', (WidgetTester tester) async {
+    testWidgets('first name TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
 
-      final Finder surnameFinder = find.text(profile.surname!);
-      expect(surnameFinder, findsOneWidget);
+      final Finder firstNameFinder = find.text(profile.firstName!);
+      expect(firstNameFinder, findsOneWidget);
 
-      await tester.enterText(surnameFinder, 'newSurname');
-      expect(find.text('newSurname'), findsOneWidget);
+      await tester.enterText(firstNameFinder, 'newFirstName');
+      expect(find.text('newFirstName'), findsOneWidget);
     });
 
-    testWidgets('name TextField', (WidgetTester tester) async {
+    testWidgets('last name TextField', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
 
-      final Finder nameFinder = find.text(profile.name!);
-      expect(nameFinder, findsOneWidget);
+      final Finder lastNameFinder = find.text(profile.lastName!);
+      expect(lastNameFinder, findsOneWidget);
 
-      await tester.enterText(nameFinder, 'newName');
-      expect(find.text('newName'), findsOneWidget);
+      await tester.enterText(lastNameFinder, 'newLastName');
+      expect(find.text('newLastName'), findsOneWidget);
     });
 
-    testWidgets('surname clear Button', (WidgetTester tester) async {
+    testWidgets('first name clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
 
-      expect(find.text(profile.surname!), findsOneWidget);
+      expect(find.text(profile.firstName!), findsOneWidget);
 
       final Finder clearButton = find.byKey(const Key('clearButton')).first;
       expect(clearButton, findsOneWidget);
 
       await tester.tap(clearButton);
       await tester.pump();
-      expect(find.text(profile.surname!), findsNothing);
+      expect(find.text(profile.firstName!), findsNothing);
     });
 
-    testWidgets('name clear Button', (WidgetTester tester) async {
+    testWidgets('last name clear Button', (WidgetTester tester) async {
       await pumpMaterial(tester, EditFullNamePage(profile));
 
-      expect(find.text(profile.name!), findsOneWidget);
+      expect(find.text(profile.lastName!), findsOneWidget);
 
       final Finder clearButton = find.byKey(const Key('clearButton')).last;
       expect(clearButton, findsOneWidget);
 
       await tester.tap(clearButton);
       await tester.pump();
-      expect(find.text(profile.name!), findsNothing);
+      expect(find.text(profile.lastName!), findsNothing);
     });
 
     testWidgets('save Button', (WidgetTester tester) async {
@@ -123,7 +123,7 @@ void main() {
         processor,
         urlMatcher: equals('/rest/v1/profiles?id=eq.1'),
         methodMatcher: equals('PATCH'),
-        bodyMatcher: equals({'surname': null, 'name': null}),
+        bodyMatcher: equals({'first_name': null, 'last_name': null}),
       ).called(1);
 
       verifyRequest(

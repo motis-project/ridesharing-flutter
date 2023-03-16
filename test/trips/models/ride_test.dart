@@ -31,7 +31,7 @@ void main() {
         drive,
         start: 'start',
         startPosition: Position(1, 1),
-        destination: 'end',
+        destination: 'destination',
         destinationPosition: Position(3, 3),
         seats: 2,
         riderId: 5,
@@ -39,7 +39,7 @@ void main() {
       expect(ride.start, 'start');
       expect(ride.startPosition, Position(1, 1));
       expect(ride.startDateTime, drive.startDateTime);
-      expect(ride.destination, 'end');
+      expect(ride.destination, 'destination');
       expect(ride.destinationPosition, Position(3, 3));
       expect(ride.destinationDateTime, drive.destinationDateTime);
       expect(ride.seats, 2);
@@ -59,10 +59,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -77,9 +77,9 @@ void main() {
       expect(ride.start, json['start']);
       expect(ride.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
       expect(ride.startDateTime, DateTime.parse(json['start_time']));
-      expect(ride.destination, json['end']);
-      expect(ride.destinationPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(ride.destinationDateTime, DateTime.parse(json['end_time']));
+      expect(ride.destination, json['destination']);
+      expect(ride.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
+      expect(ride.destinationDateTime, DateTime.parse(json['destination_time']));
       expect(ride.seats, json['seats']);
       expect(ride.price, parseHelper.parseDouble(json['price']));
       expect(ride.status, RideStatus.values[json['status']]);
@@ -100,10 +100,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -121,9 +121,9 @@ void main() {
       expect(ride.start, json['start']);
       expect(ride.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
       expect(ride.startDateTime, DateTime.parse(json['start_time']));
-      expect(ride.destination, json['end']);
-      expect(ride.destinationPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(ride.destinationDateTime, DateTime.parse(json['end_time']));
+      expect(ride.destination, json['destination']);
+      expect(ride.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
+      expect(ride.destinationDateTime, DateTime.parse(json['destination_time']));
       expect(ride.seats, json['seats']);
       expect(ride.price, parseHelper.parseDouble(json['price']));
       expect(ride.status, RideStatus.values[json['status']]);
@@ -145,10 +145,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'hide_in_list_view': false,
@@ -177,10 +177,10 @@ void main() {
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
       expect(json['start_time'], ride.startDateTime.toString());
-      expect(json['end'], ride.destination);
-      expect(json['end_lat'], ride.destinationPosition.lat);
-      expect(json['end_lng'], ride.destinationPosition.lng);
-      expect(json['end_time'], ride.destinationDateTime.toString());
+      expect(json['destination'], ride.destination);
+      expect(json['destination_lat'], ride.destinationPosition.lat);
+      expect(json['destination_lng'], ride.destinationPosition.lng);
+      expect(json['destination_time'], ride.destinationDateTime.toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -199,10 +199,10 @@ void main() {
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
       expect(json['start_time'], ride.startDateTime.toString());
-      expect(json['end'], ride.destination);
-      expect(json['end_lat'], ride.destinationPosition.lat);
-      expect(json['end_lng'], ride.destinationPosition.lng);
-      expect(json['end_time'], ride.destinationDateTime.toString());
+      expect(json['destination'], ride.destination);
+      expect(json['destination_lat'], ride.destinationPosition.lat);
+      expect(json['destination_lng'], ride.destinationPosition.lng);
+      expect(json['destination_time'], ride.destinationDateTime.toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -424,7 +424,7 @@ void main() {
         id: 1,
         start: 'start',
         startDateTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
-        destination: 'end',
+        destination: 'destination',
         destinationDateTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
         driveId: 7,
         riderId: 5,
@@ -433,7 +433,7 @@ void main() {
       );
       expect(
         ride.toString(),
-        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000Z, to: end at 2023-03-03 00:00:00.000Z, by: 5}',
+        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000Z, to: destination at 2023-03-03 00:00:00.000Z, by: 5}',
       );
     });
   });

@@ -73,8 +73,8 @@ void main() {
       id: 1,
       description: NullableParameter(null),
       birthDate: NullableParameter(null),
-      surname: NullableParameter(null),
-      name: NullableParameter(null),
+      firstName: NullableParameter(null),
+      lastName: NullableParameter(null),
       gender: NullableParameter(null),
       avatarUrl: NullableParameter(null),
     );

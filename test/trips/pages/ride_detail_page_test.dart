@@ -53,7 +53,7 @@ void main() {
 
     ride = RideFactory().generateFake(
       start: 'Start',
-      destination: 'End',
+      destination: 'Destination',
       destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
       status: RideStatus.approved,
       drive: NullableParameter(drive),

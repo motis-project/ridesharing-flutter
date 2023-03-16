@@ -364,6 +364,7 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
+              key: Key('chatPageButton${action.ride.id}${action.isStart ? 'Start' : 'End'}'),
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(

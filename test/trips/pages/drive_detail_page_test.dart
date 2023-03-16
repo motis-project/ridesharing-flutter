@@ -29,7 +29,7 @@ void main() {
 
     drive = DriveFactory().generateFake(
       start: 'Start',
-      destination: 'End',
+      destination: 'Destination',
       destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
       rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
@@ -51,7 +51,7 @@ void main() {
       testWidgets('Works with object parameter', (WidgetTester tester) async {
         drive = DriveFactory().generateFake(
           start: 'Start',
-          destination: 'End',
+          destination: 'Destination',
           destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [RideFactory().generateFake(status: RideStatus.approved)],
         );
@@ -165,7 +165,7 @@ void main() {
       final Ride anotherApprovedRide = RideFactory().generateFake(
         start: 'WaypointConnecting',
         startDateTime: now.add(const Duration(hours: 2)),
-        destination: 'WaypointEnd',
+        destination: 'WaypointDestination',
         destinationDateTime: now.add(const Duration(hours: 3)),
         status: RideStatus.approved,
       );
@@ -177,13 +177,13 @@ void main() {
 
       final Ride cancelledByDriverRide = RideFactory().generateFake(
         status: RideStatus.cancelledByDriver,
-        destination: 'UnusedWaypointEnd',
+        destination: 'UnusedWaypointDestination',
       );
 
       drive = DriveFactory().generateFake(
         start: 'DriveStart',
         startDateTime: now,
-        destination: 'DriveEnd',
+        destination: 'DriveDestination',
         destinationDateTime: now.add(const Duration(hours: 3)),
         rides: [
           approvedRide,
@@ -210,8 +210,8 @@ void main() {
         'DriveStart',
         'WaypointStart',
         'WaypointConnecting',
-        'WaypointEnd',
-        'DriveEnd',
+        'WaypointDestination',
+        'DriveDestination',
       ];
 
       for (int i = 0; i < 5; i++) {
@@ -219,7 +219,7 @@ void main() {
       }
 
       expect(find.text('UnusedWaypointStart'), findsNothing);
-      expect(find.text('UnusedWaypointEnd'), findsNothing);
+      expect(find.text('UnusedWaypointDestination'), findsNothing);
     });
 
     testWidgets('can Navigate to chatPage on Waypoint', (WidgetTester tester) async {

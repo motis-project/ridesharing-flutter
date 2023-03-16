@@ -7,12 +7,12 @@ import '../../models/profile.dart';
 
 class EditFullNamePage extends StatelessWidget {
   final Profile profile;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _surnameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
 
   EditFullNamePage(this.profile, {super.key}) {
-    _nameController.text = profile.name ?? '';
-    _surnameController.text = profile.surname ?? '';
+    _firstNameController.text = profile.firstName ?? '';
+    _lastNameController.text = profile.lastName ?? '';
   }
 
   @override
@@ -29,21 +29,21 @@ class EditFullNamePage extends StatelessWidget {
               TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  hintText: S.of(context).pageProfileEditSurnameHint,
-                  suffixIcon: _getClearButton(_surnameController, context),
+                  hintText: S.of(context).pageProfileEditFirstNameHint,
+                  suffixIcon: _getClearButton(_firstNameController, context),
                 ),
-                controller: _surnameController,
-                key: const Key('surname'),
+                controller: _firstNameController,
+                key: const Key('firstName'),
               ),
               const SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  hintText: S.of(context).pageProfileEditNameHint,
-                  suffixIcon: _getClearButton(_nameController, context),
+                  hintText: S.of(context).pageProfileEditLastNameHint,
+                  suffixIcon: _getClearButton(_lastNameController, context),
                 ),
-                controller: _nameController,
-                key: const Key('name'),
+                controller: _lastNameController,
+                key: const Key('lastName'),
               ),
               const SizedBox(height: 10),
               Button(
@@ -71,11 +71,11 @@ class EditFullNamePage extends StatelessWidget {
   }
 
   Future<void> onPressed(BuildContext context) async {
-    final String? surname = _surnameController.text == '' ? null : _surnameController.text;
-    final String? name = _nameController.text == '' ? null : _nameController.text;
+    final String? firstName = _firstNameController.text == '' ? null : _firstNameController.text;
+    final String? lastName = _lastNameController.text == '' ? null : _lastNameController.text;
     await supabaseManager.supabaseClient.from('profiles').update(<String, dynamic>{
-      'surname': surname,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
     }).eq('id', profile.id);
     await supabaseManager.reloadCurrentProfile();
 

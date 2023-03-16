@@ -29,12 +29,12 @@ void main() {
 
     recurringDrive = RecurringDriveFactory().generateFake(
       start: 'Start',
-      destination: 'End',
+      destination: 'Destination',
       recurrenceRule: RecurrenceRule(
         frequency: Frequency.weekly,
         interval: 1,
         byWeekDays: {WeekDay.monday.toByWeekDayEntry(), WeekDay.wednesday.toByWeekDayEntry()},
-        // Drives here will be less than 28 days future (to avoid problems with the end date and drive generation)
+        // Drives here will be less than 28 days future (to avoid problems with the destination date and drive generation)
         count: 6,
       ),
       recurrenceEndType: RecurrenceEndType.occurrence,
@@ -104,7 +104,7 @@ void main() {
     testWidgets('Can show previews of further upcoming drives', (WidgetTester tester) async {
       recurringDrive = RecurringDriveFactory().generateFake(
         start: 'Start',
-        destination: 'End',
+        destination: 'Destination',
         recurrenceRule: RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,

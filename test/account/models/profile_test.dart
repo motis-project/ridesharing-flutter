@@ -10,34 +10,34 @@ import '../../test_util/factories/review_factory.dart';
 
 void main() {
   group('fullname', () {
-    test('returns empty if neither name nor surname are set', () async {
+    test('returns empty if neither first not last name are set', () async {
       final Profile profile = ProfileFactory().generateFake(
-        name: NullableParameter(null),
-        surname: NullableParameter(null),
+        firstName: NullableParameter(null),
+        lastName: NullableParameter(null),
       );
       expect(profile.fullName, '');
     });
 
-    test('returns surname if name is not set', () async {
+    test('returns first name if last name is not set', () async {
       final profile = ProfileFactory().generateFake(
-        name: NullableParameter(null),
+        lastName: NullableParameter(null),
       );
-      expect(profile.fullName, profile.surname);
+      expect(profile.fullName, profile.firstName);
     });
 
-    test('returns name if surname is not set', () async {
+    test('returns last name if first name is not set', () async {
       final profile = ProfileFactory().generateFake(
-        surname: NullableParameter(null),
+        firstName: NullableParameter(null),
       );
-      expect(profile.fullName, profile.name);
+      expect(profile.fullName, profile.lastName);
     });
 
-    test('returns name and surname if both are set', () async {
+    test('returns first and last name if both are set', () async {
       final profile = ProfileFactory().generateFake(
-        name: NullableParameter('name'),
-        surname: NullableParameter('surname'),
+        firstName: NullableParameter('first_name'),
+        lastName: NullableParameter('last_name'),
       );
-      expect(profile.fullName, 'surname name');
+      expect(profile.fullName, 'first_name last_name');
     });
   });
 
@@ -64,8 +64,8 @@ void main() {
       final profile = ProfileFactory().generateFake(
         description: NullableParameter(null),
         birthDate: NullableParameter(null),
-        surname: NullableParameter(null),
-        name: NullableParameter(null),
+        firstName: NullableParameter(null),
+        lastName: NullableParameter(null),
         gender: NullableParameter(null),
         avatarUrl: NullableParameter(null),
       );
@@ -76,8 +76,8 @@ void main() {
       final profile = ProfileFactory().generateFake(
         description: NullableParameter(null),
         birthDate: NullableParameter(null),
-        surname: NullableParameter(null),
-        name: NullableParameter(null),
+        firstName: NullableParameter(null),
+        lastName: NullableParameter(null),
         gender: NullableParameter(null),
         avatarUrl: NullableParameter('https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
       );
@@ -94,8 +94,8 @@ void main() {
         'email': 'email',
         'description': 'description',
         'birth_date': '2021-01-01T00:00:00.000Z',
-        'surname': 'surname',
-        'name': 'name',
+        'first_name': 'first_name',
+        'last_name': 'last_name',
         'gender': 0,
         'avatar_url': 'avatar_url',
       };
@@ -106,8 +106,8 @@ void main() {
       expect(profile.email, json['email']);
       expect(profile.description, json['description']);
       expect(profile.birthDate, DateTime.parse(json['birth_date']));
-      expect(profile.surname, json['surname']);
-      expect(profile.name, json['name']);
+      expect(profile.firstName, json['first_name']);
+      expect(profile.lastName, json['last_name']);
       expect(profile.gender, Gender.male);
       expect(profile.avatarUrl, json['avatar_url']);
     });
@@ -136,8 +136,8 @@ void main() {
         'email': 'email',
         'description': 'description',
         'birth_date': '2021-01-01T00:00:00.000Z',
-        'surname': 'surname',
-        'name': 'name',
+        'first_name': 'first_name',
+        'last_name': 'last_name',
         'gender': -1,
         'avatar_url': 'avatar_url',
       };
@@ -148,8 +148,8 @@ void main() {
         'email': 'email',
         'description': 'description',
         'birth_date': '2021-01-01T00:00:00.000Z',
-        'surname': 'surname',
-        'name': 'name',
+        'first_name': 'first_name',
+        'last_name': 'last_name',
         'gender': 5,
         'avatar_url': 'avatar_url',
       };
@@ -188,8 +188,8 @@ void main() {
       expect(json['email'], profile.email);
       expect(json['description'], profile.description);
       expect(json['birth_date'], profile.birthDate!.toString());
-      expect(json['surname'], profile.surname);
-      expect(json['name'], profile.name);
+      expect(json['first_name'], profile.firstName);
+      expect(json['last_name'], profile.lastName);
       expect(json['gender'], profile.gender?.index);
       expect(json['avatar_url'], profile.avatarUrl);
       expect(json.keys.length, 8);
