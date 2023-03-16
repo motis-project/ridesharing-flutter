@@ -4,6 +4,8 @@ This directory contains the files necessary for setting up the Supabase project 
 
 ## Set up Supabase
 
+- Set up a project in Firebase to handle the push notifications. Then copy the connection information into `firebase_options.dart` as well as replacing the redacted server key (the only thing that needs to be kept secret) in the SQL dump by the one from the Firebase project.
+
 - Create a new project in [Supabase](https://app.supabase.com/)
 
 - Go to the `Storage` tab, and create a public bucket called `public`, as well as a private bucket called `avatars`.
