@@ -444,7 +444,7 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildTripWidget(Trip trip) {
     return DismissibleListTile(
-      key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
+      dismissibleKey: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
       onDismissed: (DismissDirection direction) async {
         setState(() {
           _trips.remove(trip);
@@ -481,7 +481,7 @@ class HomePageState extends State<HomePage> {
   Widget _buildRideEventWidget(RideEvent rideEvent) {
     final bool isForRide = rideEvent.ride!.rider!.isCurrentUser;
     return DismissibleListTile(
-      key: Key('rideEvent${rideEvent.id}'),
+      dismissibleKey: Key('rideEvent${rideEvent.id}'),
       semanticsLabel: S.of(context).openDetails,
       onDismissed: (DismissDirection direction) async {
         unawaited(rideEvent.markAsRead());
@@ -510,7 +510,7 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildMessageWidget(Message message) {
     return DismissibleListTile(
-      key: Key('message${message.id}'),
+      dismissibleKey: Key('message${message.id}'),
       onDismissed: (DismissDirection direction) async {
         unawaited(message.markAsRead());
         setState(() {

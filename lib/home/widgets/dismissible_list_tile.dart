@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../util/own_theme_fields.dart';
 
 class DismissibleListTile extends StatelessWidget {
+  final Key dismissibleKey;
+
   final void Function(DismissDirection)? onDismissed;
   final String semanticsLabel;
 
@@ -13,7 +15,8 @@ class DismissibleListTile extends StatelessWidget {
 
   final VoidCallback? onTap;
   const DismissibleListTile({
-    required super.key,
+    super.key,
+    required this.dismissibleKey,
     this.onDismissed,
     required this.semanticsLabel,
     this.leading,
@@ -26,7 +29,7 @@ class DismissibleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: key!,
+      key: dismissibleKey,
       onDismissed: onDismissed,
       background: buildBackground(context: context),
       secondaryBackground: buildBackground(context: context, secondary: true),
