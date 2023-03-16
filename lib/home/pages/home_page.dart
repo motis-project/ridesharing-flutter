@@ -294,12 +294,12 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(S.of(context).pageHomePageHello(supabaseManager.currentProfile!.username)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
+          ),
           child: Column(
             children: <Widget>[
               const SizedBox(height: 10),
