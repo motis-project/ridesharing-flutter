@@ -118,13 +118,23 @@ class SearchRidePageState extends State<SearchRidePage> {
             *,
             profile_features (*),
             reviews_received: reviews!reviews_receiver_id_fkey(*)
-          )
+          ),
+          rides(*)
         ''')
         .eq('start', startController.text)
         .eq('status', DriveStatus.plannedOrFinished.index)
+        .neq('driver_id', supabaseManager.currentProfile?.id)
         .gt('start_date_time', DateTime.now());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
+        // Filter out drives that already have a pending ride from the current user
+        .where(
+          (Drive drive) => drive.rides!
+              .where(
+                (Ride ride) => ride.status == RideStatus.pending && ride.riderId == supabaseManager.currentProfile?.id,
+              )
+              .isEmpty,
+        )
         .map(
           (Drive drive) => Ride.previewFromDrive(
             drive,
