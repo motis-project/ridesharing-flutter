@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension TimeOfDayExtension on TimeOfDay {
   bool isBefore(TimeOfDay other) {
@@ -6,7 +7,8 @@ extension TimeOfDayExtension on TimeOfDay {
   }
 
   String get formatted {
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00';
+    final DateTime dateTime = DateTime(0, 0, 0, hour, minute).toUtc();
+    return DateFormat('HH:mm:ss').format(dateTime);
   }
 
   Duration getDurationUntil(TimeOfDay other) {

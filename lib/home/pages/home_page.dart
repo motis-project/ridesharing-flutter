@@ -129,7 +129,7 @@ class HomePageState extends State<HomePage> {
   Future<void> load() async {
     final int profileId = supabaseManager.currentProfile!.id!;
 
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().toUtc();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime tomorrow = today.add(const Duration(days: 2));
     _trips.addAll(

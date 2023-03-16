@@ -33,7 +33,7 @@ void main() {
     test('parses a report from json', () async {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-05-01T00:00:00.000Z',
+        'created_at': '2021-05-01T00:00:00.000',
         'reporter_id': 2,
         'offender_id': 3,
         'reason': ReportReason.didNotPay.index,
@@ -43,13 +43,13 @@ void main() {
       expect(report.reporterId, 2);
       expect(report.offenderId, 3);
       expect(report.reason, ReportReason.didNotPay);
-      expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
+      expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000'));
     });
 
     test('parses a report from json with optional field text', () async {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-05-01T00:00:00.000Z',
+        'created_at': '2021-05-01T00:00:00.000',
         'reporter_id': 2,
         'offender_id': 3,
         'reason': ReportReason.didNotFollowRules.index,
@@ -61,20 +61,20 @@ void main() {
       expect(report.offenderId, 3);
       expect(report.reason, ReportReason.didNotFollowRules);
       expect(report.text, 'text');
-      expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
+      expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000'));
     });
 
     test('throws error if reason is not in enum', () async {
       final Map<String, dynamic> json1 = {
         'id': 1,
-        'created_at': '2021-05-01T00:00:00.000Z',
+        'created_at': '2021-05-01T00:00:00.000',
         'reporter_id': 2,
         'offender_id': 3,
         'reason': 100,
       };
       final Map<String, dynamic> json2 = {
         'id': 1,
-        'created_at': '2021-05-01T00:00:00.000Z',
+        'created_at': '2021-05-01T00:00:00.000',
         'reporter_id': 2,
         'offender_id': 3,
         'reason': -1,
@@ -89,7 +89,7 @@ void main() {
 
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-05-01T00:00:00.000Z',
+        'created_at': '2021-05-01T00:00:00.000',
         'reporter_id': 2,
         'offender_id': 3,
         'reason': ReportReason.didNotFollowRules.index,
@@ -108,14 +108,14 @@ void main() {
       final List<Map<String, dynamic>> jsonList = [
         {
           'id': 1,
-          'created_at': '2021-05-01T00:00:00.000Z',
+          'created_at': '2021-05-01T00:00:00.000',
           'reporter_id': 2,
           'offender_id': 3,
           'reason': ReportReason.didNotPay.index,
         },
         {
           'id': 2,
-          'created_at': '2021-05-01T00:00:00.000Z',
+          'created_at': '2021-05-01T00:00:00.000',
           'reporter_id': 2,
           'offender_id': 3,
           'reason': ReportReason.didNotFollowRules.index,
@@ -128,13 +128,13 @@ void main() {
       expect(reports[0].reporterId, 2);
       expect(reports[0].offenderId, 3);
       expect(reports[0].reason, ReportReason.didNotPay);
-      expect(reports[0].createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
+      expect(reports[0].createdAt, DateTime.parse('2021-05-01T00:00:00.000'));
       expect(reports[1].id, 2);
       expect(reports[1].reporterId, 2);
       expect(reports[1].offenderId, 3);
       expect(reports[1].reason, ReportReason.didNotFollowRules);
       expect(reports[1].text, 'text');
-      expect(reports[1].createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
+      expect(reports[1].createdAt, DateTime.parse('2021-05-01T00:00:00.000'));
     });
   });
 

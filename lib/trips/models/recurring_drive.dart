@@ -58,18 +58,19 @@ class RecurringDrive extends TripLike {
 
     return RecurringDrive(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['start_time'] as String)),
+      startTime: TimeOfDay.fromDateTime(DateFormat('HH:mm:ss').parse(json['start_time'] as String, true).toLocal()),
       destination: json['destination'] as String,
       destinationPosition: Position.fromDynamicValues(json['destination_lat'], json['destination_lng']),
-      destinationTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['destination_time'] as String)),
+      destinationTime:
+          TimeOfDay.fromDateTime(DateFormat('HH:mm:ss').parse(json['destination_time'] as String, true).toLocal()),
       seats: json['seats'] as int,
       startedAt: postgresRecurrenceRule.dtStart,
       recurrenceRule: postgresRecurrenceRule.rule,
       recurrenceEndType: postgresRecurrenceRule.endType,
-      stoppedAt: json['stopped_at'] == null ? null : DateTime.parse(json['stopped_at'] as String),
+      stoppedAt: json['stopped_at'] == null ? null : DateTime.parse(json['stopped_at'] as String).toLocal(),
       driverId: json['driver_id'] as int,
       driver: json.containsKey('driver') ? Profile.fromJson(json['driver'] as Map<String, dynamic>) : null,
       drives: json.containsKey('drives') ? Drive.fromJsonList(parseHelper.parseListOfMaps(json['drives'])) : null,
@@ -132,7 +133,7 @@ class RecurringDrive extends TripLike {
         'destination_time': destinationTime.formatted,
         'recurrence_rule': PostgresRecurrenceRule(recurrenceRule, startedAt).toString(),
         'until_field_entered_as_date': recurrenceEndType == RecurrenceEndType.date,
-        'stopped_at': stoppedAt?.toString(),
+        'stopped_at': stoppedAt?.toUtc().toString(),
         'driver_id': driverId,
       });
   }
@@ -161,7 +162,7 @@ class RecurringDrive extends TripLike {
     this.stoppedAt = stoppedAt;
     await supabaseManager.supabaseClient
         .from('recurring_drives')
-        .update(<String, dynamic>{'stopped_at': stoppedAt.toString()}).eq('id', id);
+        .update(<String, dynamic>{'stopped_at': stoppedAt.toUtc().toString()}).eq('id', id);
   }
 
   bool get isStopped => stoppedAt != null;
@@ -186,6 +187,7 @@ class PostgresRecurrenceRule {
 
   @override
   String toString() {
+    final DateTime dtStart = this.dtStart.toUtc();
     final String dtStartString = '${DateFormat('yyyyMMdd').format(dtStart)}T${DateFormat('HHmmss').format(dtStart)}Z';
     return 'DTSTART:$dtStartString\n$rule';
   }

@@ -90,11 +90,11 @@ class Profile extends Model {
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       username: json['username'] as String,
       email: json['email'] as String,
       description: json['description'] as String?,
-      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date'] as String) : null,
+      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date'] as String).toLocal() : null,
       firstName: json['first_name'] as String?,
       lastName: json['last_name'] as String?,
       gender: json['gender'] != null ? Gender.values[json['gender'] as int] : null,
@@ -121,7 +121,7 @@ class Profile extends Model {
       'username': username,
       'email': email,
       'description': description,
-      'birth_date': birthDate?.toString(),
+      'birth_date': birthDate?.toUtc().toString(),
       'first_name': firstName,
       'last_name': lastName,
       'gender': gender?.index,

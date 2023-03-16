@@ -10,14 +10,14 @@ void main() {
     test('parses ProfileFeature from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'profile_id': 1,
         'feature': Feature.noSmoking.index,
         'rank': 1,
       };
       final ProfileFeature profileFeature = ProfileFeature.fromJson(json);
       expect(profileFeature.id, 1);
-      expect(profileFeature.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(profileFeature.createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(profileFeature.profileId, 1);
       expect(profileFeature.feature, Feature.noSmoking);
     });
@@ -26,7 +26,7 @@ void main() {
       final Profile profile = ProfileFactory().generateFake();
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'profile_id': profile.id,
         'feature': Feature.accessible.index,
         'rank': 1,
@@ -39,14 +39,14 @@ void main() {
     test('throws error when feature is not in enum', () {
       final Map<String, dynamic> json1 = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'profile_id': 1,
         'feature': 20,
         'rank': 1,
       };
       final Map<String, dynamic> json2 = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'profile_id': 1,
         'feature': -1,
         'rank': 1,
@@ -60,7 +60,7 @@ void main() {
     test('parses a list of ProfileFeatures from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'profile_id': 1,
         'feature': Feature.noSmoking.index,
         'rank': 1,

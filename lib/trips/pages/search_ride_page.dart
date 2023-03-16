@@ -124,7 +124,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         .eq('start', startController.text)
         .eq('status', DriveStatus.plannedOrFinished.index)
         .neq('driver_id', supabaseManager.currentProfile?.id)
-        .gt('start_date_time', DateTime.now());
+        .gt('start_date_time', DateTime.now().toUtc());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         // Filter out drives that already have a pending ride from the current user

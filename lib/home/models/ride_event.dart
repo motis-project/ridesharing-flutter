@@ -23,7 +23,7 @@ class RideEvent extends Model {
   factory RideEvent.fromJson(Map<String, dynamic> json) {
     return RideEvent(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       rideId: json['ride_id'] as int,
       ride: json.containsKey('ride') ? Ride.fromJson(json['ride'] as Map<String, dynamic>) : null,
       category: RideEventCategory.values.elementAt(json['category'] as int),

@@ -20,7 +20,7 @@ class Chat extends Model {
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       ride: json.containsKey('ride') ? Ride.fromJson(json['ride'] as Map<String, dynamic>) : null,
       messages:
           json.containsKey('messages') ? Message.fromJsonList(parseHelper.parseListOfMaps(json['messages'])) : null,

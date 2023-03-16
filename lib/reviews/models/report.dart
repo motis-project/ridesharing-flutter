@@ -32,7 +32,7 @@ class Report extends Model {
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       offenderId: json['offender_id'] as int,
       offender: json['offender'] != null ? Profile.fromJson(json['offender'] as Map<String, dynamic>) : null,
       reporterId: json['reporter_id'] as int,

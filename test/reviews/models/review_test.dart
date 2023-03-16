@@ -11,8 +11,8 @@ void main() {
     test('parses Review from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
-        'updated_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
+        'updated_at': '2021-01-01T00:00:00.000',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 5,
@@ -20,8 +20,8 @@ void main() {
       };
       final Review review = Review.fromJson(json);
       expect(review.id, 1);
-      expect(review.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
-      expect(review.updatedAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(review.createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
+      expect(review.updatedAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(review.writerId, 1);
       expect(review.receiverId, 1);
       expect(review.rating, 5);
@@ -32,8 +32,8 @@ void main() {
       final Profile receiver = ProfileFactory().generateFake();
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
-        'updated_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
+        'updated_at': '2021-01-01T00:00:00.000',
         'writer_id': writer.id,
         'receiver_id': writer.id,
         'rating': 5,
@@ -49,8 +49,8 @@ void main() {
     test('can handle non required values', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
-        'updated_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
+        'updated_at': '2021-01-01T00:00:00.000',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 1,
@@ -73,8 +73,8 @@ void main() {
     test('parses a list of Reviews from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
-        'updated_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
+        'updated_at': '2021-01-01T00:00:00.000',
         'writer_id': 1,
         'receiver_id': 1,
         'rating': 5,
@@ -99,7 +99,7 @@ void main() {
     test('returns a json representation of the review', () {
       final Review review = ReviewFactory().generateFake();
       final Map<String, dynamic> json = review.toJson();
-      expect(json['updated_at'], review.updatedAt!.toIso8601String());
+      expect(json['updated_at'], review.updatedAt!.toUtc().toString());
       expect(json['writer_id'], review.writerId);
       expect(json['receiver_id'], review.receiverId);
       expect(json['rating'], review.rating);
@@ -194,10 +194,10 @@ void main() {
     });
     test('ratings are rated by created at', () {
       final Review review = ReviewFactory().generateFake(
-        createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
+        createdAt: DateTime.parse('2021-01-01T00:00:00.000'),
       );
       final Review review2 = ReviewFactory().generateFake(
-        createdAt: DateTime.parse('2021-01-02T00:00:00.000Z'),
+        createdAt: DateTime.parse('2021-01-02T00:00:00.000'),
       );
       expect(review.compareTo(review2), 1);
       expect(review2.compareTo(review), -1);
@@ -205,11 +205,11 @@ void main() {
 
     test('text is prioritized over created at', () {
       final Review review = ReviewFactory().generateFake(
-        createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
+        createdAt: DateTime.parse('2021-01-01T00:00:00.000'),
         text: NullableParameter('text'),
       );
       final Review review2 = ReviewFactory().generateFake(
-        createdAt: DateTime.parse('2021-01-02T00:00:00.000Z'),
+        createdAt: DateTime.parse('2021-01-02T00:00:00.000'),
         text: NullableParameter(null),
       );
       expect(review.compareTo(review2), -1);
