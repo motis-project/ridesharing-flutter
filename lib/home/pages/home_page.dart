@@ -24,6 +24,7 @@ import '../../trips/pages/search_ride_page.dart';
 import '../../util/empty_search_results.dart';
 import '../../util/parse_helper.dart';
 import '../models/ride_event.dart';
+import '../widgets/dismissible_list_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -442,123 +443,98 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildTripWidget(Trip trip) {
-    return Dismissible(
-      key: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
+    return DismissibleListTile(
+      dismissibleKey: trip is Ride ? Key('ride${trip.id}') : Key('drive${trip.id}'),
       onDismissed: (DismissDirection direction) async {
         setState(() {
           _trips.remove(trip);
         });
       },
-      child: Card(
-        child: Semantics(
-          label: S.of(context).openDetails,
-          child: InkWell(
-            child: ListTile(
-              leading: Icon(trip is Drive ? Icons.drive_eta : Icons.chair),
-              title: Text(
-                trip is Drive
-                    ? trip.startDateTime.day == DateTime.now().day
-                        ? S.of(context).pageHomeUpcomingDriveToday
-                        : S.of(context).pageHomeUpcomingDriveTomorrow
-                    : trip.startDateTime.day == DateTime.now().day
-                        ? S.of(context).pageHomeUpcomingRideToday
-                        : S.of(context).pageHomeUpcomingRideTomorrow,
-              ),
-              subtitle: Text(
-                S.of(context).pageHomeUpcomingTripMessage(
-                      trip.destination,
-                      trip.start,
-                      localeManager.formatTime(trip.startDateTime),
-                    ),
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+      semanticsLabel: S.of(context).openDetails,
+      title: Text(
+        trip is Drive
+            ? trip.startDateTime.day == DateTime.now().day
+                ? S.of(context).pageHomeUpcomingDriveToday
+                : S.of(context).pageHomeUpcomingDriveTomorrow
+            : trip.startDateTime.day == DateTime.now().day
+                ? S.of(context).pageHomeUpcomingRideToday
+                : S.of(context).pageHomeUpcomingRideTomorrow,
       ),
+      subtitle: Text(
+        S.of(context).pageHomeUpcomingTripMessage(
+              trip.destination,
+              trip.start,
+              localeManager.formatTime(trip.startDateTime),
+            ),
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) =>
+                trip is Drive ? DriveDetailPage(id: trip.id) : RideDetailPage(id: trip.id),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildRideEventWidget(RideEvent rideEvent) {
     final bool isForRide = rideEvent.ride!.rider!.isCurrentUser;
-    return Dismissible(
-      key: Key('rideEvent${rideEvent.id}'),
+    return DismissibleListTile(
+      dismissibleKey: Key('rideEvent${rideEvent.id}'),
+      semanticsLabel: S.of(context).openDetails,
       onDismissed: (DismissDirection direction) async {
         unawaited(rideEvent.markAsRead());
         setState(() {
           _rideEvents.remove(rideEvent);
         });
       },
-      child: Card(
-        child: Semantics(
-          label: S.of(context).openDetails,
-          child: InkWell(
-            child: ListTile(
-              leading: isForRide ? const Icon(Icons.chair) : const Icon(Icons.drive_eta),
-              title: Text(rideEvent.getTitle(context)),
-              subtitle: Text(rideEvent.getMessage(context)),
-              trailing: Text(
-                localeManager.formatTime(rideEvent.createdAt!),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              onTap: () {
-                rideEvent.markAsRead();
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        isForRide ? RideDetailPage(id: rideEvent.rideId) : DriveDetailPage(id: rideEvent.ride!.driveId),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
+      leading: isForRide ? const Icon(Icons.chair) : const Icon(Icons.drive_eta),
+      title: Text(rideEvent.getTitle(context)),
+      subtitle: Text(rideEvent.getMessage(context)),
+      trailing: Text(
+        localeManager.formatTime(rideEvent.createdAt!),
+        style: Theme.of(context).textTheme.bodySmall,
       ),
+      onTap: () {
+        rideEvent.markAsRead();
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) =>
+                isForRide ? RideDetailPage(id: rideEvent.rideId) : DriveDetailPage(id: rideEvent.ride!.driveId),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildMessageWidget(Message message) {
-    return Dismissible(
-      key: Key('message${message.id}'),
+    return DismissibleListTile(
+      dismissibleKey: Key('message${message.id}'),
       onDismissed: (DismissDirection direction) async {
         unawaited(message.markAsRead());
         setState(() {
           _messages.remove(message);
         });
       },
-      child: Card(
-        child: Semantics(
-          label: S.of(context).openDetails,
-          child: InkWell(
-            child: ListTile(
-              leading: Avatar(message.sender!),
-              title: Text(message.sender!.username),
-              subtitle: Text(message.content, maxLines: 1),
-              trailing: Text(
-                localeManager.formatTime(message.createdAt!),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ChatPage(
-                      chatId: message.chatId,
-                      profile: message.sender!,
-                    ),
-                  ),
-                );
-              },
+      semanticsLabel: S.of(context).openDetails,
+      leading: Avatar(message.sender!),
+      title: Text(message.sender!.username),
+      subtitle: Text(message.content, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: Text(
+        localeManager.formatTime(message.createdAt!),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => ChatPage(
+              chatId: message.chatId,
+              profile: message.sender!,
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
