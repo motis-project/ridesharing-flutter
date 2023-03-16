@@ -36,13 +36,13 @@ void main() {
         'created_at': '2021-05-01T00:00:00.000Z',
         'reporter_id': 2,
         'offender_id': 3,
-        'category': ReportCategory.didNotPay.index,
+        'reason': ReportReason.didNotPay.index,
       };
       final report = Report.fromJson(json);
       expect(report.id, 1);
       expect(report.reporterId, 2);
       expect(report.offenderId, 3);
-      expect(report.category, ReportCategory.didNotPay);
+      expect(report.reason, ReportReason.didNotPay);
       expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
     });
 
@@ -52,32 +52,32 @@ void main() {
         'created_at': '2021-05-01T00:00:00.000Z',
         'reporter_id': 2,
         'offender_id': 3,
-        'category': ReportCategory.didNotFollowRules.index,
+        'reason': ReportReason.didNotFollowRules.index,
         'text': 'text',
       };
       final report = Report.fromJson(json);
       expect(report.id, 1);
       expect(report.reporterId, 2);
       expect(report.offenderId, 3);
-      expect(report.category, ReportCategory.didNotFollowRules);
+      expect(report.reason, ReportReason.didNotFollowRules);
       expect(report.text, 'text');
       expect(report.createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
     });
 
-    test('throws error if category is not in enum', () async {
+    test('throws error if reason is not in enum', () async {
       final Map<String, dynamic> json1 = {
         'id': 1,
         'created_at': '2021-05-01T00:00:00.000Z',
         'reporter_id': 2,
         'offender_id': 3,
-        'category': 100,
+        'reason': 100,
       };
       final Map<String, dynamic> json2 = {
         'id': 1,
         'created_at': '2021-05-01T00:00:00.000Z',
         'reporter_id': 2,
         'offender_id': 3,
-        'category': -1,
+        'reason': -1,
       };
       expect(() => Report.fromJson(json1), throwsA(isA<RangeError>()));
       expect(() => Report.fromJson(json2), throwsA(isA<RangeError>()));
@@ -92,7 +92,7 @@ void main() {
         'created_at': '2021-05-01T00:00:00.000Z',
         'reporter_id': 2,
         'offender_id': 3,
-        'category': ReportCategory.didNotFollowRules.index,
+        'reason': ReportReason.didNotFollowRules.index,
         'text': 'text',
         'reporter': reporter.toJsonForApi(),
         'offender': offender.toJsonForApi(),
@@ -111,14 +111,14 @@ void main() {
           'created_at': '2021-05-01T00:00:00.000Z',
           'reporter_id': 2,
           'offender_id': 3,
-          'category': ReportCategory.didNotPay.index,
+          'reason': ReportReason.didNotPay.index,
         },
         {
           'id': 2,
           'created_at': '2021-05-01T00:00:00.000Z',
           'reporter_id': 2,
           'offender_id': 3,
-          'category': ReportCategory.didNotFollowRules.index,
+          'reason': ReportReason.didNotFollowRules.index,
           'text': 'text',
         },
       ];
@@ -127,12 +127,12 @@ void main() {
       expect(reports[0].id, 1);
       expect(reports[0].reporterId, 2);
       expect(reports[0].offenderId, 3);
-      expect(reports[0].category, ReportCategory.didNotPay);
+      expect(reports[0].reason, ReportReason.didNotPay);
       expect(reports[0].createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
       expect(reports[1].id, 2);
       expect(reports[1].reporterId, 2);
       expect(reports[1].offenderId, 3);
-      expect(reports[1].category, ReportCategory.didNotFollowRules);
+      expect(reports[1].reason, ReportReason.didNotFollowRules);
       expect(reports[1].text, 'text');
       expect(reports[1].createdAt, DateTime.parse('2021-05-01T00:00:00.000Z'));
     });
@@ -144,7 +144,7 @@ void main() {
       final Map<String, dynamic> json = report.toJson();
       expect(json['reporter_id'], report.reporterId);
       expect(json['offender_id'], report.offenderId);
-      expect(json['category'], report.category.index);
+      expect(json['reason'], report.reason.index);
       expect(json['text'], report.text);
       expect(json.keys.length, 4);
     });
@@ -156,7 +156,7 @@ void main() {
       final Map<String, dynamic> json = report.toJson();
       expect(json['reporter_id'], report.reporterId);
       expect(json['offender_id'], report.offenderId);
-      expect(json['category'], report.category.index);
+      expect(json['reason'], report.reason.index);
       expect(json['text'], null);
       expect(json.keys.length, 4);
     });

@@ -27,19 +27,19 @@ class _HelpPageState extends State<HelpPage> {
           question: S.of(context).pageHelpQuestion3,
           answer: S
               .of(context)
-              .pageHelpAnswer3(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryDidNotPay),
+              .pageHelpAnswer3(S.of(context).pageProfileButtonReport, S.of(context).modelReportReasonDidNotPay),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion4,
           answer: S
               .of(context)
-              .pageHelpAnswer4(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryDidNotShowUp),
+              .pageHelpAnswer4(S.of(context).pageProfileButtonReport, S.of(context).modelReportReasonDidNotShowUp),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion5,
           answer: S
               .of(context)
-              .pageHelpAnswer5(S.of(context).pageProfileButtonReport, S.of(context).modelReportCategoryOther),
+              .pageHelpAnswer5(S.of(context).pageProfileButtonReport, S.of(context).modelReportReasonOther),
         ),
         FAQCard(
           question: S.of(context).pageHelpQuestion6,

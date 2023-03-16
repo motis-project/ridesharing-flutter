@@ -25,7 +25,7 @@ class _RidesPageState extends State<RidesPage> {
         .from('rides')
         .stream(primaryKey: <String>['id'])
         .eq('rider_id', userId)
-        .order('start_time', ascending: true)
+        .order('start_date_time', ascending: true)
         .map((List<Map<String, dynamic>> ride) => Ride.fromJsonList(ride));
     super.initState();
   }

@@ -6,13 +6,13 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/managers/supabase_manager.dart';
 import 'package:motis_mitfahr_app/search/position.dart';
-import 'package:motis_mitfahr_app/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/trips/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/trips/models/trip.dart';
 import 'package:motis_mitfahr_app/trips/pages/create_drive_page.dart';
+import 'package:motis_mitfahr_app/trips/util/recurrence/edit_recurrence_options.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence.dart';
-import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/week_day.dart';
+import 'package:motis_mitfahr_app/trips/util/trip_timeline.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:rrule/rrule.dart';
 
@@ -57,8 +57,7 @@ void main() {
     Position? destinationPosition,
   }) async {
     final CreateDriveFormState formState = tester.state(formFinder);
-    final StartDestinationTimeline timeline =
-        find.byType(StartDestinationTimeline).evaluate().first.widget as StartDestinationTimeline;
+    final TripTimeline timeline = find.byType(TripTimeline).evaluate().first.widget as TripTimeline;
 
     if (startName != null || startPosition != null) {
       startName ??= faker.address.city();
@@ -225,7 +224,7 @@ void main() {
         });
       });
 
-      testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
+      testWidgets('EditRecurrenceOptions', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
         final int intervalSize = random.integer(10, min: 1);
@@ -234,11 +233,11 @@ void main() {
         await pumpMaterial(tester, const CreateDrivePage());
         await tester.pump();
 
-        expect(find.byType(RecurrenceOptionsEdit), findsNothing);
+        expect(find.byType(EditRecurrenceOptions), findsNothing);
 
         await tapRecurring(tester);
 
-        expect(find.byType(RecurrenceOptionsEdit), findsOneWidget);
+        expect(find.byType(EditRecurrenceOptions), findsOneWidget);
 
         await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
         await enterInterval(tester, intervalSize);
@@ -287,11 +286,11 @@ void main() {
                 driverId: driver.id,
                 start: startName,
                 startPosition: startPosition,
-                end: destinationName,
-                endPosition: destinationPosition,
+                destination: destinationName,
+                destinationPosition: destinationPosition,
                 seats: seats,
                 startDateTime: dateTime,
-                endDateTime: dateTime.add(const Duration(hours: 2)),
+                destinationDateTime: dateTime.add(const Duration(hours: 2)),
               )
               .toJsonForApi());
 
@@ -319,12 +318,12 @@ void main() {
               'start': startName,
               'start_lat': startPosition.lat,
               'start_lng': startPosition.lng,
-              'end': destinationName,
-              'end_lat': destinationPosition.lat,
-              'end_lng': destinationPosition.lng,
+              'destination': destinationName,
+              'destination_lat': destinationPosition.lat,
+              'destination_lng': destinationPosition.lng,
               'seats': seats,
-              'start_time': isA<String>(),
-              'end_time': isA<String>(),
+              'start_date_time': isA<String>(),
+              'destination_date_time': isA<String>(),
               'hide_in_list_view': false,
               'status': 1,
               'driver_id': driver.id,
@@ -362,12 +361,12 @@ void main() {
                 driverId: driver.id,
                 start: startName,
                 startPosition: startPosition,
-                end: destinationName,
-                endPosition: destinationPosition,
+                destination: destinationName,
+                destinationPosition: destinationPosition,
                 seats: seats,
                 startedAt: dateTime,
                 startTime: TimeOfDay.fromDateTime(dateTime),
-                endTime: TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))),
+                destinationTime: TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))),
                 recurrenceRule: recurrenceRule,
                 recurrenceEndType: RecurrenceEndType.date)
             .toJsonForApi());
@@ -401,12 +400,12 @@ void main() {
               'start': startName,
               'start_lat': startPosition.lat,
               'start_lng': startPosition.lng,
-              'end': destinationName,
-              'end_lat': destinationPosition.lat,
-              'end_lng': destinationPosition.lng,
+              'destination': destinationName,
+              'destination_lat': destinationPosition.lat,
+              'destination_lng': destinationPosition.lng,
               'seats': seats,
               'start_time': TimeOfDay.fromDateTime(dateTime).formatted,
-              'end_time': TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))).formatted,
+              'destination_time': TimeOfDay.fromDateTime(dateTime.add(const Duration(hours: 2))).formatted,
               'recurrence_rule': PostgresRecurrenceRule(recurrenceRule, dateTime).toString(),
               'until_field_entered_as_date': true,
               'stopped_at': null,

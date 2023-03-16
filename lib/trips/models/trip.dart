@@ -16,7 +16,7 @@ class Trip extends TripLike {
   //-------------------- Constants --------------//
 
   final DateTime startDateTime;
-  final DateTime endDateTime;
+  final DateTime destinationDateTime;
   final bool hideInListView;
 
   Trip({
@@ -25,9 +25,9 @@ class Trip extends TripLike {
     required super.start,
     required super.startPosition,
     required this.startDateTime,
-    required super.end,
-    required super.endPosition,
-    required this.endDateTime,
+    required super.destination,
+    required super.destinationPosition,
+    required this.destinationDateTime,
     required super.seats,
     this.hideInListView = false,
   });
@@ -36,29 +36,29 @@ class Trip extends TripLike {
   Map<String, dynamic> toJson() {
     return super.toJson()
       ..addAll(<String, dynamic>{
-        'start_time': startDateTime.toString(),
-        'end_time': endDateTime.toString(),
+        'start_date_time': startDateTime.toString(),
+        'destination_date_time': destinationDateTime.toString(),
         'hide_in_list_view': hideInListView,
       });
   }
 
   @override
-  Duration get duration => endDateTime.difference(startDateTime);
-  bool get isFinished => endDateTime.isBefore(DateTime.now());
-  bool get isOngoing => startDateTime.isBefore(DateTime.now()) && endDateTime.isAfter(DateTime.now());
+  Duration get duration => destinationDateTime.difference(startDateTime);
+  bool get isFinished => destinationDateTime.isBefore(DateTime.now());
+  bool get isOngoing => startDateTime.isBefore(DateTime.now()) && destinationDateTime.isAfter(DateTime.now());
 
   @override
   TimeOfDay get startTime => TimeOfDay.fromDateTime(startDateTime);
 
   @override
-  TimeOfDay get endTime => TimeOfDay.fromDateTime(endDateTime);
+  TimeOfDay get destinationTime => TimeOfDay.fromDateTime(destinationDateTime);
 
   bool overlapsWith(Trip other) {
-    return startDateTime.isBefore(other.endDateTime) && endDateTime.isAfter(other.startDateTime);
+    return startDateTime.isBefore(other.destinationDateTime) && destinationDateTime.isAfter(other.startDateTime);
   }
 
   bool overlapsWithTimeRange(DateTimeRange range) {
-    return startDateTime.isBefore(range.end) && endDateTime.isAfter(range.start);
+    return startDateTime.isBefore(range.end) && destinationDateTime.isAfter(range.start);
   }
 
   /// Returns whether this trip should be shown in the list view given if the list view is for past or future trips:
@@ -75,9 +75,9 @@ class Trip extends TripLike {
         start == other.start &&
         startPosition == other.startPosition &&
         startDateTime == other.startDateTime &&
-        end == other.end &&
-        endPosition == other.endPosition &&
-        endDateTime == other.endDateTime &&
+        destination == other.destination &&
+        destinationPosition == other.destinationPosition &&
+        destinationDateTime == other.destinationDateTime &&
         seats == other.seats &&
         hideInListView == other.hideInListView;
   }

@@ -28,10 +28,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '22:37:23',
-        'end': 'Berlin',
-        'end_lat': 4,
-        'end_lng': 5,
-        'end_time': '12:47:01',
+        'destination': 'Berlin',
+        'destination_lat': 4,
+        'destination_lng': 5,
+        'destination_time': '12:47:01',
         'seats': 2,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
         'until_field_entered_as_date': true,
@@ -58,10 +58,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '22:37:23',
-        'end': 'Berlin',
-        'end_lat': 4,
-        'end_lng': 5,
-        'end_time': '12:47:01',
+        'destination': 'Berlin',
+        'destination_lat': 4,
+        'destination_lng': 5,
+        'destination_time': '12:47:01',
         'seats': 2,
         'stopped_at': DateTime.now().toString(),
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
@@ -86,10 +86,10 @@ void main() {
         'start_lat': 2,
         'start_lng': 3,
         'start_time': '22:37:23',
-        'end': 'Berlin',
-        'end_lat': 4,
-        'end_lng': 5,
-        'end_time': '12:47:01',
+        'destination': 'Berlin',
+        'destination_lat': 4,
+        'destination_lng': 5,
+        'destination_time': '12:47:01',
         'seats': 2,
         'recurrence_rule': 'DTSTART:20230207T234500Z\nRRULE:FREQ=DAILY;UNTIL=20230410T234500Z;INTERVAL=1;WKST=MO',
         'until_field_entered_as_date': true,
@@ -121,7 +121,7 @@ void main() {
 
   test('RecurringDrive.duration', () {
     final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake();
-    expect(recurringDrive.duration, recurringDrive.startTime.getDurationUntil(recurringDrive.endTime));
+    expect(recurringDrive.duration, recurringDrive.startTime.getDurationUntil(recurringDrive.destinationTime));
   });
 
   group('RecurringDrive.recurrenceEndChoice', () {
@@ -255,7 +255,7 @@ void main() {
       final String string = recurringDrive.toString();
       expect(
         string,
-        'RecurringDrive{id: ${recurringDrive.id}, from: ${recurringDrive.start} at ${recurringDrive.startTime}, to: ${recurringDrive.end} at ${recurringDrive.endTime}, by: ${recurringDrive.driverId}, rule: ${recurringDrive.recurrenceRule}}',
+        'RecurringDrive{id: ${recurringDrive.id}, from: ${recurringDrive.start} at ${recurringDrive.startTime}, to: ${recurringDrive.destination} at ${recurringDrive.destinationTime}, by: ${recurringDrive.driverId}, rule: ${recurringDrive.recurrenceRule}}',
       );
     });
   });

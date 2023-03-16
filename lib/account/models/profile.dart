@@ -16,8 +16,8 @@ class Profile extends Model {
 
   final String? description;
   final DateTime? birthDate;
-  final String? surname;
-  final String? name;
+  final String? firstName;
+  final String? lastName;
   final Gender? gender;
 
   final String? avatarUrl;
@@ -33,8 +33,8 @@ class Profile extends Model {
     required this.email,
     this.description,
     this.birthDate,
-    this.surname,
-    this.name,
+    this.firstName,
+    this.lastName,
     this.gender,
     this.avatarUrl,
     this.reviewsReceived,
@@ -44,14 +44,14 @@ class Profile extends Model {
 
   /// Returns the full name of the user.
   ///
-  /// The full name is composed of the surname and the name, separated by a space.
-  /// - If the user has no surname, only the name is returned.
-  /// - If the user has no name, only the surname is returned.
-  /// - If the user has no name and no surname, an empty string is returned.
+  /// The full name is composed of the first and the last name, separated by a space.
+  /// - If the user has no first name, only the last name is returned.
+  /// - If the user has no last name, only the first name is returned.
+  /// - If the user has first or last name, an empty string is returned.
   String get fullName {
-    if (name != null && surname != null) return '$surname $name';
-    if (name != null) return name!;
-    if (surname != null) return surname!;
+    if (lastName != null && firstName != null) return '$firstName $lastName';
+    if (lastName != null) return lastName!;
+    if (firstName != null) return firstName!;
     return '';
   }
 
@@ -62,8 +62,8 @@ class Profile extends Model {
   /// If any of the following fields is given, this is false:
   /// - description
   /// - birth date
-  /// - surname
-  /// - name
+  /// - first name
+  /// - last name
   /// - gender
   /// - avatar
   ///
@@ -71,8 +71,8 @@ class Profile extends Model {
   bool get hasNoPersonalInformation =>
       description == null &&
       birthDate == null &&
-      surname == null &&
-      name == null &&
+      firstName == null &&
+      lastName == null &&
       gender == null &&
       avatarUrl == null;
 
@@ -95,8 +95,8 @@ class Profile extends Model {
       email: json['email'] as String,
       description: json['description'] as String?,
       birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date'] as String) : null,
-      surname: json['surname'] as String?,
-      name: json['name'] as String?,
+      firstName: json['first_name'] as String?,
+      lastName: json['last_name'] as String?,
       gender: json['gender'] != null ? Gender.values[json['gender'] as int] : null,
       avatarUrl: json['avatar_url'] as String?,
       reviewsReceived: json.containsKey('reviews_received')
@@ -122,8 +122,8 @@ class Profile extends Model {
       'email': email,
       'description': description,
       'birth_date': birthDate?.toString(),
-      'surname': surname,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
       'gender': gender?.index,
       'avatar_url': avatarUrl,
     };

@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../../search/address_suggestion.dart';
-import '../../../search/start_destination_timeline.dart';
 import '../../../util/empty_search_results.dart';
 import '../../../util/fields/increment_field.dart';
 import '../../../util/fields/labeled_checkbox.dart';
@@ -15,6 +14,7 @@ import '../models/drive.dart';
 import '../models/ride.dart';
 import '../models/trip.dart';
 import '../util/search_ride_filter.dart';
+import '../util/trip_timeline.dart';
 
 class SearchRidePage extends StatefulWidget {
   //This is needed in order to mock the time in tests
@@ -122,7 +122,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         ''')
         .eq('start', startController.text)
         .eq('status', DriveStatus.plannedOrFinished.index)
-        .gt('start_time', DateTime.now());
+        .gt('start_date_time', DateTime.now());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
         .map(
@@ -130,8 +130,8 @@ class SearchRidePageState extends State<SearchRidePage> {
             drive,
             start: _startSuggestion!.name,
             startPosition: _startSuggestion!.position,
-            end: _destinationSuggestion!.name,
-            endPosition: _destinationSuggestion!.position,
+            destination: _destinationSuggestion!.name,
+            destinationPosition: _destinationSuggestion!.position,
             seats: seats,
             riderId: supabaseManager.currentProfile?.id ?? -1,
           ),
@@ -146,7 +146,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   Widget buildSearchFieldViewer() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: StartDestinationTimeline(
+      child: TripTimeline(
         startController: startController,
         destinationController: destinationController,
         onStartSelected: (AddressSuggestion suggestion) => setState(() {
@@ -411,12 +411,12 @@ class SearchRidePageState extends State<SearchRidePage> {
   List<Ride> applyTimeConstraints(List<Ride> rides) {
     if (_wholeDay) {
       return rides.where((Ride ride) {
-        return selectedDate.isSameDayAs(ride.startDateTime) || selectedDate.isSameDayAs(ride.endDateTime);
+        return selectedDate.isSameDayAs(ride.startDateTime) || selectedDate.isSameDayAs(ride.destinationDateTime);
       }).toList();
     }
     return rides.where((Ride ride) {
       return selectedDate.difference(ride.startDateTime).inDays.abs() < 1 ||
-          selectedDate.difference(ride.endDateTime).inDays.abs() < 1;
+          selectedDate.difference(ride.destinationDateTime).inDays.abs() < 1;
     }).toList();
   }
 }

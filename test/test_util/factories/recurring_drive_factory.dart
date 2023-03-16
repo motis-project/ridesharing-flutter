@@ -20,9 +20,9 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     String? start,
     Position? startPosition,
     TimeOfDay? startTime,
-    String? end,
-    Position? endPosition,
-    TimeOfDay? endTime,
+    String? destination,
+    Position? destinationPosition,
+    TimeOfDay? destinationTime,
     int? seats,
     DateTime? startedAt,
     RecurrenceRule? recurrenceRule,
@@ -48,10 +48,10 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
     final generatedStartPosition = startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
-    final generatedEndPosition = endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
+    final generatedDestinationPosition = destinationPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
     final generatedStartedAt = startedAt ?? generatedCreatedAt;
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
-    final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
+    final generatedDestinationTime = destinationTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedRecurrenceEndType = recurrenceEndType ?? RecurrenceEndType.date;
 
     final RecurrenceRule generatedRecurrenceRule = recurrenceRule ??
@@ -87,14 +87,14 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                         generatedStartTime.hour,
                         generatedStartTime.minute,
                       ),
-                      end: end,
-                      endPosition: generatedEndPosition,
-                      endDateTime: DateTime(
+                      destination: destination,
+                      destinationPosition: generatedDestinationPosition,
+                      destinationDateTime: DateTime(
                         startDate.year,
                         startDate.month,
-                        generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,
-                        generatedEndTime.hour,
-                        generatedEndTime.minute,
+                        generatedStartTime.isBefore(generatedDestinationTime) ? startDate.day : startDate.day + 1,
+                        generatedDestinationTime.hour,
+                        generatedDestinationTime.minute,
                       ),
                       seats: seats,
                       driverId: generatedDriverId,
@@ -113,9 +113,9 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       start: start ?? faker.address.city(),
       startPosition: generatedStartPosition,
       startTime: generatedStartTime,
-      end: end ?? faker.address.city(),
-      endPosition: generatedEndPosition,
-      endTime: generatedEndTime,
+      destination: destination ?? faker.address.city(),
+      destinationPosition: generatedDestinationPosition,
+      destinationTime: generatedDestinationTime,
       seats: seats ?? random.nextInt(5) + 1,
       startedAt: generatedStartedAt,
       recurrenceRule: generatedRecurrenceRule,

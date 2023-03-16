@@ -9,7 +9,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
   RideEvent generateFake({
     int? id,
     DateTime? createdAt,
-    RideEventCategory? category,
+    RideEventCategory? reason,
     bool? read,
     int? rideId,
     NullableParameter<Ride>? ride,
@@ -23,7 +23,7 @@ class RideEventFactory extends ModelFactory<RideEvent> {
     return RideEvent(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
-      category: category ?? RideEventCategory.values[random.nextInt(RideEventCategory.values.length)],
+      category: reason ?? RideEventCategory.values[random.nextInt(RideEventCategory.values.length)],
       read: read ?? false,
       rideId: generatedRide?.id ?? rideId ?? randomId,
       ride: generatedRide,

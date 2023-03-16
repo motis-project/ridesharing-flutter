@@ -18,9 +18,9 @@ class RideFactory extends TripFactory<Ride> {
     String? start,
     Position? startPosition,
     DateTime? startDateTime,
-    String? end,
-    Position? endPosition,
-    DateTime? endDateTime,
+    String? destination,
+    Position? destinationPosition,
+    DateTime? destinationDateTime,
     int? seats,
     NullableParameter<double>? price,
     RideStatus? status,
@@ -46,7 +46,7 @@ class RideFactory extends TripFactory<Ride> {
 
     final int generatedId = id ?? randomId;
 
-    final TripTimes tripTimes = generateTimes(startDateTime, endDateTime);
+    final TripTimes tripTimes = generateTimes(startDateTime, destinationDateTime);
 
     return Ride(
       id: generatedId,
@@ -54,9 +54,9 @@ class RideFactory extends TripFactory<Ride> {
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
       startDateTime: tripTimes.start,
-      end: end ?? faker.address.city(),
-      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endDateTime: tripTimes.end,
+      destination: destination ?? faker.address.city(),
+      destinationPosition: destinationPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      destinationDateTime: tripTimes.destination,
       seats: seats ?? random.nextInt(5) + 1,
       price: getNullableParameterOr(price, double.parse((random.nextDouble() * 10).toStringAsFixed(2))),
       status: status ?? RideStatus.values[random.nextInt(RideStatus.values.length)],

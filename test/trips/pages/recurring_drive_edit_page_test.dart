@@ -7,8 +7,8 @@ import 'package:motis_mitfahr_app/trips/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/trips/models/trip.dart';
 import 'package:motis_mitfahr_app/trips/pages/recurring_drive_detail_page.dart';
 import 'package:motis_mitfahr_app/trips/pages/recurring_drive_edit_page.dart';
+import 'package:motis_mitfahr_app/trips/util/recurrence/edit_recurrence_options.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence.dart';
-import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/week_day.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:rrule/rrule.dart';
@@ -84,7 +84,7 @@ void main() {
   }
 
   group('RecurringDriveEditPage', () {
-    testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
+    testWidgets('EditRecurrenceOptions', (WidgetTester tester) async {
       final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
       final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
       final int intervalSize = random.integer(10, min: 1);
@@ -93,7 +93,7 @@ void main() {
       await pumpMaterial(tester, RecurringDriveEditPage(recurringDrive));
       await tester.pump();
 
-      expect(find.byType(RecurrenceOptionsEdit), findsOneWidget);
+      expect(find.byType(EditRecurrenceOptions), findsOneWidget);
 
       await selectWeekdays(tester, weekdays, selectedWeekdays: recurringDrive.weekDays);
       await enterInterval(tester, intervalSize);
@@ -235,12 +235,12 @@ void main() {
               'start': recurringDrive.start,
               'start_lat': recurringDrive.startPosition.lat,
               'start_lng': recurringDrive.startPosition.lng,
-              'end': recurringDrive.end,
-              'end_lat': recurringDrive.endPosition.lat,
-              'end_lng': recurringDrive.endPosition.lng,
+              'destination': recurringDrive.destination,
+              'destination_lat': recurringDrive.destinationPosition.lat,
+              'destination_lng': recurringDrive.destinationPosition.lng,
               'seats': recurringDrive.seats,
               'start_time': recurringDrive.startTime.formatted,
-              'end_time': recurringDrive.endTime.formatted,
+              'destination_time': recurringDrive.destinationTime.formatted,
               'recurrence_rule': PostgresRecurrenceRule(
                       RecurrenceRule(
                           frequency: Frequency.weekly,
@@ -321,12 +321,12 @@ void main() {
               'start': recurringDrive.start,
               'start_lat': recurringDrive.startPosition.lat,
               'start_lng': recurringDrive.startPosition.lng,
-              'end': recurringDrive.end,
-              'end_lat': recurringDrive.endPosition.lat,
-              'end_lng': recurringDrive.endPosition.lng,
+              'destination': recurringDrive.destination,
+              'destination_lat': recurringDrive.destinationPosition.lat,
+              'destination_lng': recurringDrive.destinationPosition.lng,
               'seats': recurringDrive.seats,
               'start_time': recurringDrive.startTime.formatted,
-              'end_time': recurringDrive.endTime.formatted,
+              'destination_time': recurringDrive.destinationTime.formatted,
               'recurrence_rule': PostgresRecurrenceRule(newRecurrenceRule, recurringDrive.startedAt).toString(),
               'until_field_entered_as_date': true,
               'stopped_at': recurringDrive.stoppedAt,

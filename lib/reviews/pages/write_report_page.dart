@@ -18,7 +18,7 @@ class WriteReportPage extends StatefulWidget {
 }
 
 class _WriteReportPageState extends State<WriteReportPage> {
-  ReportCategory? _category = ReportCategory.other;
+  ReportReason? _reason = ReportReason.other;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _textController;
   ButtonState _state = ButtonState.idle;
@@ -50,25 +50,25 @@ class _WriteReportPageState extends State<WriteReportPage> {
               child: Column(
                 children: <Widget>[
                   Column(
-                    children: List<RadioListTile<ReportCategory>>.generate(
-                      ReportCategory.values.length,
+                    children: List<RadioListTile<ReportReason>>.generate(
+                      ReportReason.values.length,
                       (int index) {
-                        final ReportCategory category = ReportCategory.values[index];
-                        return RadioListTile<ReportCategory>(
-                          key: Key('writeReportCategory${category.name}'),
+                        final ReportReason reason = ReportReason.values[index];
+                        return RadioListTile<ReportReason>(
+                          key: Key('writeReportReason${reason.name}'),
                           visualDensity: VisualDensity.compact,
                           title: Row(
                             children: <Widget>[
-                              category.getIcon(context),
+                              reason.getIcon(context),
                               const SizedBox(width: 15),
-                              Expanded(child: Text(category.getDescription(context))),
+                              Expanded(child: Text(reason.getDescription(context))),
                             ],
                           ),
-                          value: category,
-                          groupValue: _category,
-                          onChanged: (ReportCategory? value) {
+                          value: reason,
+                          groupValue: _reason,
+                          onChanged: (ReportReason? value) {
                             setState(() {
-                              _category = value;
+                              _reason = value;
                             });
                           },
                         );
@@ -88,7 +88,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
                     textAlignVertical: TextAlignVertical.top,
                     maxLines: 6,
                     validator: (String? value) {
-                      if ((value == null || value.isEmpty) && _category == ReportCategory.other) {
+                      if ((value == null || value.isEmpty) && _reason == ReportReason.other) {
                         return S.of(context).pageWriteReportFieldValidateEmpty;
                       }
                       return null;
@@ -121,7 +121,7 @@ class _WriteReportPageState extends State<WriteReportPage> {
     final Report report = Report(
       offenderId: widget.profile.id!,
       reporterId: supabaseManager.currentProfile!.id!,
-      category: _category!,
+      reason: _reason!,
       text: _textController.text,
     );
 

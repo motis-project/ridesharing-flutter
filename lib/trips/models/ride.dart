@@ -28,9 +28,9 @@ class Ride extends Trip {
     required super.start,
     required super.startPosition,
     required super.startDateTime,
-    required super.end,
-    required super.endPosition,
-    required super.endDateTime,
+    required super.destination,
+    required super.destinationPosition,
+    required super.destinationDateTime,
     required super.seats,
     this.price,
     required this.status,
@@ -47,8 +47,8 @@ class Ride extends Trip {
     Drive drive, {
     required String start,
     required Position startPosition,
-    required String end,
-    required Position endPosition,
+    required String destination,
+    required Position destinationPosition,
     required int seats,
     required int riderId,
   }) {
@@ -56,15 +56,15 @@ class Ride extends Trip {
       start: start,
       startPosition: startPosition,
       startDateTime: drive.startDateTime,
-      end: end,
-      endPosition: endPosition,
-      endDateTime: drive.endDateTime,
+      destination: destination,
+      destinationPosition: destinationPosition,
+      destinationDateTime: drive.destinationDateTime,
       seats: seats,
       riderId: riderId,
       status: RideStatus.preview,
       driveId: drive.id!,
       drive: drive,
-      price: double.parse(drive.startPosition.distanceTo(drive.endPosition).toStringAsFixed(2)),
+      price: double.parse(drive.startPosition.distanceTo(drive.destinationPosition).toStringAsFixed(2)),
     );
   }
 
@@ -75,10 +75,10 @@ class Ride extends Trip {
       createdAt: DateTime.parse(json['created_at'] as String),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startDateTime: DateTime.parse(json['start_time'] as String),
-      end: json['end'] as String,
-      endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endDateTime: DateTime.parse(json['end_time'] as String),
+      startDateTime: DateTime.parse(json['start_date_time'] as String),
+      destination: json['destination'] as String,
+      destinationPosition: Position.fromDynamicValues(json['destination_lat'], json['destination_lng']),
+      destinationDateTime: DateTime.parse(json['destination_date_time'] as String),
       seats: json['seats'] as int,
       price: parseHelper.parseDouble(json['price']),
       status: RideStatus.values[json['status'] as int],
@@ -125,7 +125,7 @@ class Ride extends Trip {
     final List<Ride> rides =
         Ride.fromJsonList(jsonList).where((Ride ride) => ride.status.isApproved() && !ride.isFinished).toList();
 
-    //check if ride overlaps with start and end
+    //check if ride overlaps with start and destination
     for (final Ride ride in rides) {
       if (ride.overlapsWithTimeRange(range)) {
         return true;
@@ -173,7 +173,7 @@ class Ride extends Trip {
 
   @override
   String toString() {
-    return 'Ride{id: $id, in: $driveId, from: $start at $startDateTime, to: $end at $endDateTime, by: $riderId}';
+    return 'Ride{id: $id, in: $driveId, from: $start at $startDateTime, to: $destination at $destinationDateTime, by: $riderId}';
   }
 
   Ride copyWith({int? id, RideStatus? status}) {
@@ -183,9 +183,9 @@ class Ride extends Trip {
       start: start,
       startPosition: startPosition,
       startDateTime: startDateTime,
-      end: end,
-      endPosition: endPosition,
-      endDateTime: endDateTime,
+      destination: destination,
+      destinationPosition: destinationPosition,
+      destinationDateTime: destinationDateTime,
       seats: seats,
       price: price,
       status: status ?? this.status,

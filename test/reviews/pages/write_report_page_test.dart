@@ -52,8 +52,8 @@ void main() {
       await pumpMaterial(tester, WriteReportPage(profile));
       await tester.pump();
 
-      final ReportCategory category = ReportCategory.values[Random().nextInt(ReportCategory.values.length)];
-      await tester.tap(find.byKey(Key('writeReportCategory${category.name}')));
+      final ReportReason reason = ReportReason.values[Random().nextInt(ReportReason.values.length)];
+      await tester.tap(find.byKey(Key('writeReportReason${reason.name}')));
 
       final String reportText = faker.lorem.sentence();
       await tester.enterText(find.byKey(const Key('writeReportField')), reportText);
@@ -68,7 +68,7 @@ void main() {
         bodyMatcher: equals({
           'offender_id': profile.id,
           'reporter_id': supabaseManager.currentProfile!.id,
-          'category': category.index,
+          'reason': reason.index,
           'text': reportText,
         }),
       );

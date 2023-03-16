@@ -10,8 +10,8 @@ import '../../trips/util/trip_overview.dart';
 import '../../util/buttons/button.dart';
 import '../../util/snackbar.dart';
 import '../models/recurring_drive.dart';
+import '../util/recurrence/edit_recurrence_options.dart';
 import '../util/recurrence/recurrence.dart';
-import '../util/recurrence/recurrence_options_edit.dart';
 
 class RecurringDriveEditPage extends StatefulWidget {
   final Clock clock;
@@ -67,7 +67,7 @@ class RecurringDriveEditPageState extends State<RecurringDriveEditPage> {
     widgets.add(
       Form(
         key: _formKey,
-        child: RecurrenceOptionsEdit(
+        child: EditRecurrenceOptions(
           recurrenceOptions: recurrenceOptions,
           predefinedEndChoices: const <RecurrenceEndChoice>[],
           showPreview: _defaultPreviewExpanded ?? true,

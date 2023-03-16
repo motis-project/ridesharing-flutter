@@ -73,13 +73,13 @@ class TripOverview extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTimeOfDay(trip.endTime),
+                  localeManager.formatTimeOfDay(trip.destinationTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
-                    trip.end,
+                    trip.destination,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )

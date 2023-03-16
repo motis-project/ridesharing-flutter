@@ -1549,8 +1549,8 @@ begin
           raw_app_meta_data || 
             json_build_object('blocked', true)::jsonb where id = userid;
     select id into profile_id from public.profiles where auth_id = userid; 
-    update public.drives set status = 2 where driver_id = profile_id and start_time >= NOW();
-    update public.rides set status = 5 where rider_id = profile_id and start_time >= NOW();
+    update public.drives set status = 2 where driver_id = profile_id and start_date_time >= NOW();
+    update public.rides set status = 5 where rider_id = profile_id and start_date_time >= NOW();
     update public.recurring_drives set stopped_at = NOW() where driver_id = profile_id;
     delete from auth.sessions where auth.sessions.user_id = userid; 
     end if;
@@ -1584,17 +1584,17 @@ CREATE FUNCTION "public"."create_drive_from_recurring"("recurring_drive" "record
     LANGUAGE "plpgsql"
     AS $$
 DECLARE
-	drive_start_time TIMESTAMP;
-	drive_end_time TIMESTAMP;
+	drive_start_date_time TIMESTAMP;
+	drive_destination_date_time TIMESTAMP;
 BEGIN
-   	drive_start_time = base_date + recurring_drive.start_time;
-	drive_end_time = base_date + recurring_drive.end_time;
-	IF drive_start_time > drive_end_time THEN
-		drive_end_time = drive_end_time + interval '1 day';
+   	drive_start_date_time = base_date + recurring_drive.start_time;
+	drive_destination_date_time = base_date + recurring_drive.destination_time;
+	IF drive_start_date_time > drive_destination_date_time THEN
+		drive_destination_date_time = drive_destination_date_time + interval '1 day';
 	END IF;
 	
-	INSERT INTO drives (driver_id, "start", start_time, "end", end_time, seats, start_lat, start_lng, end_lat, end_lng, recurring_drive_id)
-	VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_time, recurring_drive."end", drive_end_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.end_lat, recurring_drive.end_lng, recurring_drive.id);
+	INSERT INTO drives (driver_id, "start", start_date_time, destination, destination_date_time, seats, start_lat, start_lng, destination_lat, destination_lng, recurring_drive_id)
+	VALUES (recurring_drive.driver_id, recurring_drive."start", drive_start_date_time, recurring_drive.destination, drive_destination_date_time, recurring_drive.seats, recurring_drive.start_lat, recurring_drive.start_lng, recurring_drive.destination_lat, recurring_drive.destination_lng, recurring_drive.id);
 END; $$;
 
 
@@ -1609,8 +1609,6 @@ CREATE FUNCTION "public"."create_drives_from_recurring"() RETURNS "void"
     AS $$
 DECLARE
 	recurring_drive RECORD;
-	drive_start_time TIMESTAMP;
-	drive_end_time TIMESTAMP;
 	considered_date DATE;
 BEGIN
 	SELECT (recurring_drive_creation_interval() + CURRENT_DATE) INTO considered_date;
@@ -1641,7 +1639,7 @@ CREATE FUNCTION "public"."create_ride_event"() RETURNS "trigger"
     AS $$begin
   
   if old is null or new.status != old.status then
-    insert into ride_events(ride_id,category)
+    insert into ride_events(ride_id, category)
     values(
       new.id,
       /* the corresponding status of a event is (ride.status - 1) since there is no event for preview and the ride status therefore begins with 1 in Supabase*/
@@ -1884,7 +1882,7 @@ CREATE FUNCTION "public"."notification_insert"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 declare
-  firebase_server_key varchar := 'example';
+  firebase_server_key varchar := 'REDACTED';
   headers jsonb;
   body jsonb;
   push_token varchar;
@@ -1975,8 +1973,6 @@ CREATE FUNCTION "public"."recurring_drive_update"() RETURNS "trigger"
 DECLARE
 	day_offset INTERVAL;
 	next_date DATE;	
-	drive_start_time TIMESTAMP;
-	drive_end_time TIMESTAMP;
 	recurring_drive_creation_interval INTERVAL;
 BEGIN
 	SELECT recurring_drive_creation_interval() INTO recurring_drive_creation_interval;
@@ -1985,7 +1981,7 @@ BEGIN
 		UPDATE drives
 		/* status=3 means cancelledByRecurrenceRule */
 		SET "status" = 3
-		WHERE drives.recurring_drive_id = new.id AND drives.start_time >= new.stopped_at;
+		WHERE drives.recurring_drive_id = new.id AND drives.start_date_time >= new.stopped_at;
 		RETURN NEW;
 	END IF;
 
@@ -1993,7 +1989,7 @@ BEGIN
 		UPDATE drives
 		/* status=3 means cancelledByRecurrenceRule */
 		SET "status" = 3
-		WHERE drives.recurring_drive_id = new.id AND drives.start_time > CURRENT_TIMESTAMP AND NOT(_rrule.rruleset (new.recurrence_rule) @> DATE(drives.start_time));
+		WHERE drives.recurring_drive_id = new.id AND drives.start_date_time > CURRENT_TIMESTAMP AND NOT(_rrule.rruleset (new.recurrence_rule) @> DATE(drives.start_date_time));
 
 		FOR next_date IN
 			SELECT next_dates.d
@@ -2007,7 +2003,7 @@ BEGIN
 			AND NOT EXISTS(
 				SELECT *
 				FROM drives
-				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_time) AND drives.status != 3
+				WHERE drives.recurring_drive_id = new.id AND DATE(next_dates.d) = DATE(drives.start_date_time) AND drives.status != 3
 			)
 		LOOP
 			PERFORM create_drive_from_recurring(new, next_date);
@@ -2340,15 +2336,15 @@ CREATE TABLE "public"."drives" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "driver_id" bigint NOT NULL,
     "start" character varying NOT NULL,
-    "start_time" timestamp with time zone NOT NULL,
-    "end" character varying NOT NULL,
-    "end_time" timestamp with time zone NOT NULL,
+    "start_date_time" timestamp with time zone NOT NULL,
+    "destination" character varying NOT NULL,
+    "destination_date_time" timestamp with time zone NOT NULL,
     "seats" smallint NOT NULL,
     "hide_in_list_view" boolean DEFAULT false NOT NULL,
     "start_lat" real NOT NULL,
     "start_lng" real NOT NULL,
-    "end_lat" real NOT NULL,
-    "end_lng" real NOT NULL,
+    "destination_lat" real NOT NULL,
+    "destination_lng" real NOT NULL,
     "recurring_drive_id" bigint,
     "status" smallint DEFAULT '1'::smallint NOT NULL,
     CONSTRAINT "seats_validator" CHECK (("seats" >= 1))
@@ -2474,8 +2470,8 @@ CREATE TABLE "public"."profiles" (
     "auth_id" "uuid" NOT NULL,
     "description" "text",
     "birth_date" timestamp with time zone,
-    "surname" "text",
-    "name" "text",
+    "first_name" "text",
+    "last_name" "text",
     "gender" smallint,
     "avatar_url" "text",
     CONSTRAINT "gender_validator" CHECK ((("gender" IS NULL) OR (("gender" >= 0) AND ("gender" <= 2))))
@@ -2523,13 +2519,13 @@ CREATE TABLE "public"."recurring_drives" (
     "driver_id" bigint NOT NULL,
     "start" "text" NOT NULL,
     "start_time" time without time zone NOT NULL,
-    "end" "text" NOT NULL,
-    "end_time" time without time zone NOT NULL,
+    "destination" "text" NOT NULL,
+    "destination_time" time without time zone NOT NULL,
     "seats" smallint NOT NULL,
     "start_lat" real NOT NULL,
     "start_lng" real NOT NULL,
-    "end_lat" real NOT NULL,
-    "end_lng" real NOT NULL,
+    "destination_lat" real NOT NULL,
+    "destination_lng" real NOT NULL,
     "recurrence_rule" "text",
     "stopped_at" timestamp with time zone,
     "until_field_entered_as_date" boolean DEFAULT true NOT NULL,
@@ -2562,9 +2558,9 @@ CREATE TABLE "public"."reports" (
     "created_at" timestamp with time zone DEFAULT "now"(),
     "offender_id" bigint NOT NULL,
     "reporter_id" bigint NOT NULL,
-    "category" smallint NOT NULL,
+    "reason" smallint NOT NULL,
     "text" "text",
-    CONSTRAINT "category_validator" CHECK ((("category" >= 0) AND ("category" <= 5)))
+    CONSTRAINT "reason_validator" CHECK ((("reason" >= 0) AND ("reason" <= 5)))
 );
 
 
@@ -2660,15 +2656,15 @@ CREATE TABLE "public"."rides" (
     "drive_id" bigint NOT NULL,
     "seats" smallint DEFAULT '1'::smallint NOT NULL,
     "start" character varying NOT NULL,
-    "start_time" timestamp with time zone NOT NULL,
-    "end" character varying NOT NULL,
-    "end_time" timestamp with time zone NOT NULL,
+    "start_date_time" timestamp with time zone NOT NULL,
+    "destination" character varying NOT NULL,
+    "destination_date_time" timestamp with time zone NOT NULL,
     "price" double precision NOT NULL,
     "status" smallint NOT NULL,
     "hide_in_list_view" boolean DEFAULT false NOT NULL,
     "start_lat" real NOT NULL,
-    "end_lat" real NOT NULL,
-    "end_lng" real NOT NULL,
+    "destination_lat" real NOT NULL,
+    "destination_lng" real NOT NULL,
     "start_lng" real NOT NULL,
     "chat_id" bigint,
     CONSTRAINT "price_validator" CHECK (("price" >= (0)::double precision)),

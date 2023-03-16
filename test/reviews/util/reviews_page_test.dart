@@ -50,7 +50,8 @@ void main() {
     testWidgets('rate button', (WidgetTester tester) async {
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides'), methodMatcher: equals('GET')).thenReturnJson([
         RideFactory()
-            .generateFake(endDateTime: DateTime.now().subtract(const Duration(days: 2)), status: RideStatus.approved)
+            .generateFake(
+                destinationDateTime: DateTime.now().subtract(const Duration(days: 2)), status: RideStatus.approved)
             .toJsonForApi(),
       ]);
 

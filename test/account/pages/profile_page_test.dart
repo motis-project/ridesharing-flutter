@@ -179,8 +179,8 @@ void main() {
 
       profile = ProfileFactory().generateFake(
           id: 1,
-          surname: NullableParameter(null),
-          name: NullableParameter(null),
+          firstName: NullableParameter(null),
+          lastName: NullableParameter(null),
           description: NullableParameter(null),
           gender: NullableParameter(null),
           birthDate: NullableParameter(null),
@@ -206,8 +206,8 @@ void main() {
     testWidgets('currentUser no details', (WidgetTester tester) async {
       profile = ProfileFactory().generateFake(
           id: 1,
-          surname: NullableParameter(null),
-          name: NullableParameter(null),
+          firstName: NullableParameter(null),
+          lastName: NullableParameter(null),
           description: NullableParameter(null),
           gender: NullableParameter(null),
           birthDate: NullableParameter(null),

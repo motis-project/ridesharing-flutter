@@ -9,8 +9,8 @@ abstract class TripLike extends Model {
 
   final String start;
   final Position startPosition;
-  final String end;
-  final Position endPosition;
+  final String destination;
+  final Position destinationPosition;
 
   final int seats;
 
@@ -19,13 +19,13 @@ abstract class TripLike extends Model {
     super.createdAt,
     required this.start,
     required this.startPosition,
-    required this.end,
-    required this.endPosition,
+    required this.destination,
+    required this.destinationPosition,
     required this.seats,
   });
 
   TimeOfDay get startTime;
-  TimeOfDay get endTime;
+  TimeOfDay get destinationTime;
   Duration get duration;
 
   @override
@@ -34,9 +34,9 @@ abstract class TripLike extends Model {
       'start': start,
       'start_lat': startPosition.lat,
       'start_lng': startPosition.lng,
-      'end': end,
-      'end_lat': endPosition.lat,
-      'end_lng': endPosition.lng,
+      'destination': destination,
+      'destination_lat': destinationPosition.lat,
+      'destination_lng': destinationPosition.lng,
       'seats': seats,
     };
   }

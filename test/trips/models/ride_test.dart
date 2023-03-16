@@ -25,23 +25,23 @@ void main() {
       final Drive drive = DriveFactory().generateFake(
         id: 34,
         startPosition: Position(48.8566, 2.3522),
-        endPosition: Position(50.0755, 14.4378),
+        destinationPosition: Position(50.0755, 14.4378),
       );
       final Ride ride = Ride.previewFromDrive(
         drive,
         start: 'start',
         startPosition: Position(1, 1),
-        end: 'end',
-        endPosition: Position(3, 3),
+        destination: 'destination',
+        destinationPosition: Position(3, 3),
         seats: 2,
         riderId: 5,
       );
       expect(ride.start, 'start');
       expect(ride.startPosition, Position(1, 1));
       expect(ride.startDateTime, drive.startDateTime);
-      expect(ride.end, 'end');
-      expect(ride.endPosition, Position(3, 3));
-      expect(ride.endDateTime, drive.endDateTime);
+      expect(ride.destination, 'destination');
+      expect(ride.destinationPosition, Position(3, 3));
+      expect(ride.destinationDateTime, drive.destinationDateTime);
       expect(ride.seats, 2);
       expect(ride.riderId, 5);
       expect(ride.status, RideStatus.preview);
@@ -58,11 +58,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -76,10 +76,10 @@ void main() {
       expect(ride.createdAt, DateTime.parse(json['created_at']));
       expect(ride.start, json['start']);
       expect(ride.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(ride.startDateTime, DateTime.parse(json['start_time']));
-      expect(ride.end, json['end']);
-      expect(ride.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(ride.endDateTime, DateTime.parse(json['end_time']));
+      expect(ride.startDateTime, DateTime.parse(json['start_date_time']));
+      expect(ride.destination, json['destination']);
+      expect(ride.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
+      expect(ride.destinationDateTime, DateTime.parse(json['destination_date_time']));
       expect(ride.seats, json['seats']);
       expect(ride.price, parseHelper.parseDouble(json['price']));
       expect(ride.status, RideStatus.values[json['status']]);
@@ -99,11 +99,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -120,10 +120,10 @@ void main() {
       expect(ride.createdAt, DateTime.parse(json['created_at']));
       expect(ride.start, json['start']);
       expect(ride.startPosition, Position.fromDynamicValues(json['start_lat'], json['start_lng']));
-      expect(ride.startDateTime, DateTime.parse(json['start_time']));
-      expect(ride.end, json['end']);
-      expect(ride.endPosition, Position.fromDynamicValues(json['end_lat'], json['end_lng']));
-      expect(ride.endDateTime, DateTime.parse(json['end_time']));
+      expect(ride.startDateTime, DateTime.parse(json['start_date_time']));
+      expect(ride.destination, json['destination']);
+      expect(ride.destinationPosition, Position.fromDynamicValues(json['destination_lat'], json['destination_lng']));
+      expect(ride.destinationDateTime, DateTime.parse(json['destination_date_time']));
       expect(ride.seats, json['seats']);
       expect(ride.price, parseHelper.parseDouble(json['price']));
       expect(ride.status, RideStatus.values[json['status']]);
@@ -144,11 +144,11 @@ void main() {
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_time': '2022-01-01T00:00:00.000Z',
-        'end': 'Berlin',
-        'end_lat': 4.0,
-        'end_lng': 3.0,
-        'end_time': '2023-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'destination': 'Berlin',
+        'destination_lat': 4.0,
+        'destination_lng': 3.0,
+        'destination_date_time': '2023-01-01T00:00:00.000Z',
         'seats': 2,
         'price': 3.5,
         'hide_in_list_view': false,
@@ -176,11 +176,11 @@ void main() {
       expect(json['start'], ride.start);
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
-      expect(json['start_time'], ride.startDateTime.toString());
-      expect(json['end'], ride.end);
-      expect(json['end_lat'], ride.endPosition.lat);
-      expect(json['end_lng'], ride.endPosition.lng);
-      expect(json['end_time'], ride.endDateTime.toString());
+      expect(json['start_date_time'], ride.startDateTime.toString());
+      expect(json['destination'], ride.destination);
+      expect(json['destination_lat'], ride.destinationPosition.lat);
+      expect(json['destination_lng'], ride.destinationPosition.lng);
+      expect(json['destination_date_time'], ride.destinationDateTime.toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -198,11 +198,11 @@ void main() {
       expect(json['start'], ride.start);
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
-      expect(json['start_time'], ride.startDateTime.toString());
-      expect(json['end'], ride.end);
-      expect(json['end_lat'], ride.endPosition.lat);
-      expect(json['end_lng'], ride.endPosition.lng);
-      expect(json['end_time'], ride.endDateTime.toString());
+      expect(json['start_date_time'], ride.startDateTime.toString());
+      expect(json['destination'], ride.destination);
+      expect(json['destination_lat'], ride.destinationPosition.lat);
+      expect(json['destination_lng'], ride.destinationPosition.lng);
+      expect(json['destination_date_time'], ride.destinationDateTime.toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -224,7 +224,7 @@ void main() {
               riderId: 2,
               status: RideStatus.approved,
               startDateTime: now.add(const Duration(hours: 2)),
-              endDateTime: now.add(const Duration(hours: 4)),
+              destinationDateTime: now.add(const Duration(hours: 4)),
             )
             .toJsonForApi()
       ]);
@@ -244,14 +244,14 @@ void main() {
               riderId: 2,
               status: RideStatus.approved,
               startDateTime: now.add(const Duration(hours: 8)),
-              endDateTime: now.add(const Duration(hours: 10)),
+              destinationDateTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
         RideFactory()
             .generateFake(
               riderId: 2,
               startDateTime: now.add(const Duration(hours: 2)),
-              endDateTime: now.add(const Duration(hours: 4)),
+              destinationDateTime: now.add(const Duration(hours: 4)),
             )
             .toJsonForApi(),
       ]);
@@ -274,7 +274,7 @@ void main() {
               riderId: 2,
               status: RideStatus.pending,
               startDateTime: now.add(const Duration(hours: 7)),
-              endDateTime: now.add(const Duration(hours: 10)),
+              destinationDateTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
       ]);
@@ -297,7 +297,7 @@ void main() {
               riderId: 2,
               status: RideStatus.approved,
               startDateTime: now.add(const Duration(hours: 7)),
-              endDateTime: now.add(const Duration(hours: 10)),
+              destinationDateTime: now.add(const Duration(hours: 10)),
             )
             .toJsonForApi(),
       ]);
@@ -316,14 +316,14 @@ void main() {
   group('Ride.shouldShowInListView', () {
     test('rides are shown in ListView', () {
       final Ride ride = RideFactory().generateFake(
-        endDateTime: DateTime.now().add(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 2)),
         status: RideStatus.pending,
       );
       expect(ride.shouldShowInListView(past: false), true);
     });
     test('rides are shown in past ListView', () {
       final Ride ride = RideFactory().generateFake(
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
         status: RideStatus.approved,
       );
       expect(ride.shouldShowInListView(past: true), true);
@@ -331,7 +331,7 @@ void main() {
     test('withdrawn rides are not shown in past ListView', () {
       final Ride ride = RideFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
         status: RideStatus.withdrawnByRider,
       );
       expect(ride.shouldShowInListView(past: true), false);
@@ -344,9 +344,9 @@ void main() {
       start: 'Berlin',
       startPosition: Position(1, 1),
       startDateTime: DateTime(2022, 11),
-      end: 'Frankfurt',
-      endPosition: Position(2, 2),
-      endDateTime: DateTime(2022, 12),
+      destination: 'Frankfurt',
+      destinationPosition: Position(2, 2),
+      destinationDateTime: DateTime(2022, 12),
       seats: 1,
       createDependencies: false,
       driveId: 2,
@@ -362,9 +362,9 @@ void main() {
         start: 'Berlin',
         startPosition: Position(1, 1),
         startDateTime: DateTime(2022, 11),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endDateTime: DateTime(2022, 12),
+        destination: 'Frankfurt',
+        destinationPosition: Position(2, 2),
+        destinationDateTime: DateTime(2022, 12),
         seats: 1,
         price: NullableParameter(6),
         status: RideStatus.approved,
@@ -387,9 +387,9 @@ void main() {
           start: 'Berlin',
           startPosition: Position(1, 1),
           startDateTime: DateTime(2022, 11),
-          end: 'Frankfurt',
-          endPosition: Position(2, 2),
-          endDateTime: DateTime(2022, 12),
+          destination: 'Frankfurt',
+          destinationPosition: Position(2, 2),
+          destinationDateTime: DateTime(2022, 12),
           seats: 1,
           price: i == 0 ? NullableParameter(5) : NullableParameter(6),
           status: i == 1 ? RideStatus.pending : RideStatus.approved,
@@ -424,8 +424,8 @@ void main() {
         id: 1,
         start: 'start',
         startDateTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
-        end: 'end',
-        endDateTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
+        destination: 'destination',
+        destinationDateTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
         driveId: 7,
         riderId: 5,
         chatId: 6,
@@ -433,7 +433,7 @@ void main() {
       );
       expect(
         ride.toString(),
-        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000Z, to: end at 2023-03-03 00:00:00.000Z, by: 5}',
+        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000Z, to: destination at 2023-03-03 00:00:00.000Z, by: 5}',
       );
     });
   });

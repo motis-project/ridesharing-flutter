@@ -31,7 +31,7 @@ void main() {
     expect(subscription[0].topic, 'realtime:public:drives:1');
     verifyRequest(
       processor,
-      urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_time.asc.nullslast'),
+      urlMatcher: equals('/rest/v1/drives?select=%2A&driver_id=eq.${profile.id}&order=start_date_time.asc.nullslast'),
     ).called(1);
   });
 

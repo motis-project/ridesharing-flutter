@@ -92,8 +92,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       stops.add(
         Waypoint(
           actions: <WaypointAction>[],
-          place: drive.end,
-          time: drive.endDateTime,
+          place: drive.destination,
+          time: drive.destinationDateTime,
         ),
       );
       final List<Ride> visibleRides = drive.status == DriveStatus.plannedOrFinished
@@ -101,17 +101,17 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           : drive.rides!.where((Ride ride) => ride.status == RideStatus.cancelledByDriver).toList();
       for (final Ride ride in visibleRides) {
         bool startSaved = false;
-        bool endSaved = false;
+        bool destinationSaved = false;
 
         final WaypointAction rideStartAction = WaypointAction(ride, isStart: true);
-        final WaypointAction rideEndAction = WaypointAction(ride, isStart: false);
+        final WaypointAction rideDestinationAction = WaypointAction(ride, isStart: false);
         for (final Waypoint stop in stops) {
           if (ride.start == stop.place) {
             startSaved = true;
             stop.actions.add(rideStartAction);
-          } else if (ride.end == stop.place) {
-            endSaved = true;
-            stop.actions.add(rideEndAction);
+          } else if (ride.destination == stop.place) {
+            destinationSaved = true;
+            stop.actions.add(rideDestinationAction);
           }
         }
 
@@ -125,12 +125,12 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
           );
         }
 
-        if (!endSaved) {
+        if (!destinationSaved) {
           stops.add(
             Waypoint(
-              actions: <WaypointAction>[rideEndAction],
-              place: ride.end,
-              time: ride.endDateTime,
+              actions: <WaypointAction>[rideDestinationAction],
+              place: ride.destination,
+              time: ride.destinationDateTime,
             ),
           );
         }
@@ -139,8 +139,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
       stops.sort((Waypoint a, Waypoint b) {
         final int timeDiff = a.time.compareTo(b.time);
         if (timeDiff != 0) return timeDiff;
-        if (a.place == drive.start || b.place == drive.end) return -1;
-        if (a.place == drive.end || b.place == drive.start) return 1;
+        if (a.place == drive.start || b.place == drive.destination) return -1;
+        if (a.place == drive.destination || b.place == drive.start) return 1;
 
         return 0;
       });
@@ -334,8 +334,8 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
               Flexible(child: Text(waypoint.place, style: Theme.of(context).textTheme.titleMedium)),
               if (waypoint.place == _drive!.start)
                 Semantics(label: S.of(context).pageDriveDetailLabelStartDrive)
-              else if (waypoint.place == _drive!.end)
-                Semantics(label: S.of(context).pageDriveDetailLabelEndDrive),
+              else if (waypoint.place == _drive!.destination)
+                Semantics(label: S.of(context).pageDriveDetailLabelDestinationDrive),
             ],
           ),
         ),
@@ -343,11 +343,11 @@ class _DriveDetailPageState extends State<DriveDetailPage> {
     );
 
     final Icon startIcon = Icon(Icons.north_east_rounded, color: Theme.of(context).own().success);
-    final Icon endIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
+    final Icon destinationIcon = Icon(Icons.south_west_rounded, color: Theme.of(context).colorScheme.error);
     final int actionsLength = waypoint.actions.length;
     for (int index = 0; index < actionsLength; index++) {
       final WaypointAction action = waypoint.actions[index];
-      final Icon icon = action.isStart ? startIcon : endIcon;
+      final Icon icon = action.isStart ? startIcon : destinationIcon;
       final Profile profile = action.ride.rider!;
       final Widget container = Semantics(
         button: true,

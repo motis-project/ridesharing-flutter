@@ -123,14 +123,14 @@ abstract class TripCardState<T extends TripLike, U extends TripCard<T>> extends 
             child: Row(
               children: <Widget>[
                 Text(
-                  localeManager.formatTimeOfDay(trip.endTime),
+                  localeManager.formatTimeOfDay(trip.destinationTime),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: Text(
-                    key: const Key('end'),
-                    trip.end,
+                    key: const Key('destination'),
+                    trip.destination,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 )

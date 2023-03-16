@@ -53,8 +53,8 @@ void main() {
 
     ride = RideFactory().generateFake(
       start: 'Start',
-      end: 'End',
-      endDateTime: DateTime.now().add(const Duration(hours: 1)),
+      destination: 'Destination',
+      destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
       status: RideStatus.approved,
       drive: NullableParameter(drive),
     );
@@ -156,7 +156,7 @@ void main() {
       testWidgets('it shows the rating button when ride is finished', (WidgetTester tester) async {
         ride = RideFactory().generateFake(
           status: RideStatus.approved,
-          endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
+          destinationDateTime: DateTime.now().subtract(const Duration(hours: 1)),
           drive: NullableParameter(drive),
         );
 
@@ -245,31 +245,31 @@ void main() {
             .map(
               (status) => RideFactory().generateFake(
                 status: status,
-                endDateTime: now.add(const Duration(hours: 1)),
+                destinationDateTime: now.add(const Duration(hours: 1)),
               ),
             )
             .toList();
 
         final Ride approvedRide = RideFactory().generateFake(
           status: RideStatus.approved,
-          endDateTime: now.add(const Duration(hours: 1)),
+          destinationDateTime: now.add(const Duration(hours: 1)),
         );
 
         final Ride approvedRideWithoutOverlap = RideFactory().generateFake(
           status: RideStatus.approved,
           startDateTime: now.add(const Duration(hours: 2)),
-          endDateTime: now.add(const Duration(hours: 3)),
+          destinationDateTime: now.add(const Duration(hours: 3)),
         );
 
         final Ride cancelledByDriverRide = RideFactory().generateFake(
           status: RideStatus.cancelledByDriver,
-          endDateTime: DateTime.now().add(const Duration(hours: 1)),
+          destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
         );
 
         final Ride cancelledByDriverRideWithoutOverlap = RideFactory().generateFake(
           status: RideStatus.cancelledByDriver,
           startDateTime: now.add(const Duration(hours: 2)),
-          endDateTime: now.add(const Duration(hours: 3)),
+          destinationDateTime: now.add(const Duration(hours: 3)),
         );
 
         // The drive has "the" ride, but we redefine that ride later to avoid StackOverflow
@@ -287,7 +287,7 @@ void main() {
           rider: NullableParameter(ride.rider),
           status: RideStatus.approved,
           drive: NullableParameter(drive),
-          endDateTime: now.add(const Duration(hours: 1)),
+          destinationDateTime: now.add(const Duration(hours: 1)),
         );
 
         whenRequest(processor).thenReturnJson(ride.toJsonForApi());
@@ -550,7 +550,7 @@ void main() {
     testWidgets('Can navigate to rate page', (WidgetTester tester) async {
       ride = RideFactory().generateFake(
         status: RideStatus.approved,
-        endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 1)),
         drive: NullableParameter(drive),
       );
 
@@ -580,7 +580,7 @@ void main() {
     setUp(() {
       ride = RideFactory().generateFake(
         status: RideStatus.approved,
-        endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 1)),
         drive: NullableParameter(drive),
         chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
       );
@@ -605,7 +605,7 @@ void main() {
     testWidgets('active = true when ride has active chat', (WidgetTester tester) async {
       ride = RideFactory().generateFake(
         status: RideStatus.approved,
-        endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 1)),
         drive: NullableParameter(drive),
         chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
       );
@@ -622,7 +622,7 @@ void main() {
     testWidgets('active = false when ride has inactive chat', (WidgetTester tester) async {
       ride = RideFactory().generateFake(
         status: RideStatus.pending,
-        endDateTime: DateTime.now().subtract(const Duration(hours: 1)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 1)),
         drive: NullableParameter(drive),
         chat: NullableParameter(ChatFactory().generateFake(id: 1, messages: NullableParameter([]))),
       );
