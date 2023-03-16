@@ -520,7 +520,7 @@ class HomePageState extends State<HomePage> {
       semanticsLabel: S.of(context).openDetails,
       leading: Avatar(message.sender!),
       title: Text(message.sender!.username),
-      subtitle: Text(message.content, maxLines: 1),
+      subtitle: Text(message.content, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Text(
         localeManager.formatTime(message.createdAt!),
         style: Theme.of(context).textTheme.bodySmall,

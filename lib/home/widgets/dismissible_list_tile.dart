@@ -28,7 +28,8 @@ class DismissibleListTile extends StatelessWidget {
     return Dismissible(
       key: key!,
       onDismissed: onDismissed,
-      background: Card(color: Theme.of(context).own().success),
+      background: buildBackground(context: context),
+      secondaryBackground: buildBackground(context: context, secondary: true),
       child: Card(
         child: Semantics(
           label: semanticsLabel,
@@ -42,6 +43,18 @@ class DismissibleListTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildBackground({required BuildContext context, bool secondary = false}) {
+    final Icon icon = Icon(Icons.check, size: 32, color: Theme.of(context).own().onSuccess);
+    return Card(
+      color: Theme.of(context).own().success,
+      child: ListTile(
+        subtitle: Container(),
+        leading: secondary ? null : icon,
+        trailing: secondary ? icon : null,
       ),
     );
   }
