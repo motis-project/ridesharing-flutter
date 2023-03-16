@@ -40,13 +40,13 @@ class Drive extends Trip {
   factory Drive.fromJson(Map<String, dynamic> json) {
     return Drive(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startDateTime: DateTime.parse(json['start_date_time'] as String),
+      startDateTime: DateTime.parse(json['start_date_time'] as String).toLocal(),
       destination: json['destination'] as String,
       destinationPosition: Position.fromDynamicValues(json['destination_lat'], json['destination_lng']),
-      destinationDateTime: DateTime.parse(json['destination_date_time'] as String),
+      destinationDateTime: DateTime.parse(json['destination_date_time'] as String).toLocal(),
       seats: json['seats'] as int,
       status: DriveStatus.values[json['status'] as int],
       hideInListView: json['hide_in_list_view'] as bool,

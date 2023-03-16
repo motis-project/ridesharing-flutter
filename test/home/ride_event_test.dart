@@ -162,14 +162,14 @@ void main() {
     test('parses a message from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'category': RideEventCategory.approved.index,
         'ride_id': 2,
         'read': false,
       };
       final rideEvent = RideEvent.fromJson(json);
       expect(rideEvent.id, 1);
-      expect(rideEvent.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(rideEvent.createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(rideEvent.rideId, 2);
       expect(rideEvent.category, RideEventCategory.approved);
       expect(rideEvent.read, false);
@@ -178,7 +178,7 @@ void main() {
     test('can handle ride', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'category': RideEventCategory.approved.index,
         'ride_id': 2,
         'read': false,
@@ -193,14 +193,14 @@ void main() {
       final List<Map<String, dynamic>> json = [
         {
           'id': 1,
-          'created_at': '2021-01-01T00:00:00.000Z',
+          'created_at': '2021-01-01T00:00:00.000',
           'ride_id': 2,
           'category': RideEventCategory.approved.index,
           'read': true,
         },
         {
           'id': 2,
-          'created_at': '2021-01-01T00:00:00.000Z',
+          'created_at': '2021-01-01T00:00:00.000',
           'ride_id': 3,
           'category': RideEventCategory.pending.index,
           'read': true,
@@ -209,12 +209,12 @@ void main() {
       final rideEvent = RideEvent.fromJsonList(json);
       expect(rideEvent.length, 2);
       expect(rideEvent[0].id, 1);
-      expect(rideEvent[0].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(rideEvent[0].createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(rideEvent[0].rideId, 2);
       expect(rideEvent[0].category, RideEventCategory.approved);
       expect(rideEvent[0].read, true);
       expect(rideEvent[1].id, 2);
-      expect(rideEvent[1].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(rideEvent[1].createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(rideEvent[1].rideId, 3);
       expect(rideEvent[1].category, RideEventCategory.pending);
       expect(rideEvent[1].read, true);

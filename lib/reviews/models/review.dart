@@ -39,8 +39,8 @@ class Review extends Model implements Comparable<Review> {
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
+      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String).toLocal(),
       rating: json['rating'] as int,
       comfortRating: json['comfort_rating'] as int?,
       safetyRating: json['safety_rating'] as int?,
@@ -61,7 +61,7 @@ class Review extends Model implements Comparable<Review> {
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'updated_at': updatedAt?.toIso8601String(),
+      'updated_at': updatedAt?.toUtc().toString(),
       'rating': rating,
       'comfort_rating': comfortRating,
       'safety_rating': safetyRating,

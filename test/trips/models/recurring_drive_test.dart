@@ -23,7 +23,7 @@ void main() {
     test('parses a Chat from json', () {
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
@@ -53,7 +53,7 @@ void main() {
     test('can handle associated models', () {
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
@@ -81,7 +81,7 @@ void main() {
     test('parses a List of recurring drives from json', () {
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
@@ -242,7 +242,7 @@ void main() {
         urlMatcher: equals('/rest/v1/recurring_drives?id=eq.${recurringDrive.id}'),
         methodMatcher: equals('PATCH'),
         bodyMatcher: equals({
-          'stopped_at': stoppedAt.toString(),
+          'stopped_at': stoppedAt.toUtc().toString(),
         }),
       );
       expect(recurringDrive.stoppedAt, stoppedAt);

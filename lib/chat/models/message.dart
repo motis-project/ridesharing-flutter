@@ -29,7 +29,7 @@ class Message extends Model {
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
       id: json['id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       chatId: json['chat_id'] as int,
       senderId: json['sender_id'] as int,
       content: json['content'] as String,

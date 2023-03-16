@@ -359,7 +359,7 @@ void main() {
             urlMatcher: equals('/rest/v1/recurring_drives?id=eq.${recurringDrive.id}'),
             methodMatcher: equals('PATCH'),
             bodyMatcher: equals({
-              'stopped_at': mockTime.now().toString(),
+              'stopped_at': mockTime.now().toUtc().toString(),
             }));
       });
     });

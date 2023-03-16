@@ -92,7 +92,7 @@ void main() {
     test('parses a Chat from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
       };
       final Chat chat = Chat.fromJson(json);
       expect(chat.id, json['id']);
@@ -102,7 +102,7 @@ void main() {
     test('can handle associated models', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'messages': [
           MessageFactory().generateFake().toJsonForApi(),
           MessageFactory().generateFake().toJsonForApi(),
@@ -118,7 +118,7 @@ void main() {
     test('parses a List of Chats from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
       };
       final List<Chat> chats = Chat.fromJsonList([json, json, json]);
       expect(chats.length, 3);

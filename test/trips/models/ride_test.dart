@@ -54,15 +54,15 @@ void main() {
     test('parses a drive from json with no driver and no rides', () {
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000',
         'destination': 'Berlin',
         'destination_lat': 4.0,
         'destination_lng': 3.0,
-        'destination_date_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -95,15 +95,15 @@ void main() {
       RideFactory().generateFakeJsonList(length: 3);
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000',
         'destination': 'Berlin',
         'destination_lat': 4.0,
         'destination_lng': 3.0,
-        'destination_date_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000',
         'seats': 2,
         'price': 3.5,
         'status': 3,
@@ -140,15 +140,15 @@ void main() {
     test('parses a list of drives from json', () {
       final Map<String, dynamic> json = {
         'id': 43,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'start': 'London',
         'start_lat': 2,
         'start_lng': 3,
-        'start_date_time': '2022-01-01T00:00:00.000Z',
+        'start_date_time': '2022-01-01T00:00:00.000',
         'destination': 'Berlin',
         'destination_lat': 4.0,
         'destination_lng': 3.0,
-        'destination_date_time': '2023-01-01T00:00:00.000Z',
+        'destination_date_time': '2023-01-01T00:00:00.000',
         'seats': 2,
         'price': 3.5,
         'hide_in_list_view': false,
@@ -176,11 +176,11 @@ void main() {
       expect(json['start'], ride.start);
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
-      expect(json['start_date_time'], ride.startDateTime.toString());
+      expect(json['start_date_time'], ride.startDateTime.toUtc().toString());
       expect(json['destination'], ride.destination);
       expect(json['destination_lat'], ride.destinationPosition.lat);
       expect(json['destination_lng'], ride.destinationPosition.lng);
-      expect(json['destination_date_time'], ride.destinationDateTime.toString());
+      expect(json['destination_date_time'], ride.destinationDateTime.toUtc().toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -198,11 +198,11 @@ void main() {
       expect(json['start'], ride.start);
       expect(json['start_lat'], ride.startPosition.lat);
       expect(json['start_lng'], ride.startPosition.lng);
-      expect(json['start_date_time'], ride.startDateTime.toString());
+      expect(json['start_date_time'], ride.startDateTime.toUtc().toString());
       expect(json['destination'], ride.destination);
       expect(json['destination_lat'], ride.destinationPosition.lat);
       expect(json['destination_lng'], ride.destinationPosition.lng);
-      expect(json['destination_date_time'], ride.destinationDateTime.toString());
+      expect(json['destination_date_time'], ride.destinationDateTime.toUtc().toString());
       expect(json['status'], ride.status.index);
       expect(json['seats'], ride.seats);
       expect(json['price'], ride.price);
@@ -423,9 +423,9 @@ void main() {
       final Ride ride = RideFactory().generateFake(
         id: 1,
         start: 'start',
-        startDateTime: DateTime.parse('2022-02-02T00:00:00.000Z'),
+        startDateTime: DateTime.parse('2022-02-02T00:00:00.000'),
         destination: 'destination',
-        destinationDateTime: DateTime.parse('2023-03-03T00:00:00.000Z'),
+        destinationDateTime: DateTime.parse('2023-03-03T00:00:00.000'),
         driveId: 7,
         riderId: 5,
         chatId: 6,
@@ -433,7 +433,7 @@ void main() {
       );
       expect(
         ride.toString(),
-        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000Z, to: destination at 2023-03-03 00:00:00.000Z, by: 5}',
+        'Ride{id: 1, in: 7, from: start at 2022-02-02 00:00:00.000, to: destination at 2023-03-03 00:00:00.000, by: 5}',
       );
     });
   });

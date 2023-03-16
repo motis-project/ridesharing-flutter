@@ -68,7 +68,7 @@ void main() {
     test('parses a message from json', () async {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'chat_id': 1,
         'content': 'content',
         'sender_id': 1,
@@ -76,7 +76,7 @@ void main() {
       };
       final message = Message.fromJson(json);
       expect(message.id, 1);
-      expect(message.createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(message.createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(message.chatId, 1);
       expect(message.content, 'content');
       expect(message.senderId, 1);
@@ -88,7 +88,7 @@ void main() {
       final Profile profile = ProfileFactory().generateFake();
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'chat_id': 1,
         'chat': chat.toJsonForApi(),
         'content': 'content',
@@ -107,7 +107,7 @@ void main() {
       final List<Map<String, dynamic>> json = [
         {
           'id': 1,
-          'created_at': '2021-01-01T00:00:00.000Z',
+          'created_at': '2021-01-01T00:00:00.000',
           'chat_id': 1,
           'content': 'content',
           'sender_id': 1,
@@ -115,7 +115,7 @@ void main() {
         },
         {
           'id': 2,
-          'created_at': '2021-01-01T00:00:00.000Z',
+          'created_at': '2021-01-01T00:00:00.000',
           'chat_id': 1,
           'content': 'content',
           'sender_id': 1,
@@ -125,13 +125,13 @@ void main() {
       final messages = Message.fromJsonList(json);
       expect(messages.length, 2);
       expect(messages[0].id, 1);
-      expect(messages[0].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(messages[0].createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(messages[0].chatId, 1);
       expect(messages[0].content, 'content');
       expect(messages[0].senderId, 1);
       expect(messages[0].read, true);
       expect(messages[1].id, 2);
-      expect(messages[1].createdAt, DateTime.parse('2021-01-01T00:00:00.000Z'));
+      expect(messages[1].createdAt, DateTime.parse('2021-01-01T00:00:00.000'));
       expect(messages[1].chatId, 1);
       expect(messages[1].content, 'content');
       expect(messages[1].senderId, 1);

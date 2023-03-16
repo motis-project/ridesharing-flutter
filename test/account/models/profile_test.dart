@@ -89,11 +89,11 @@ void main() {
     test('parses a profile from json', () async {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'username': 'username',
         'email': 'email',
         'description': 'description',
-        'birth_date': '2021-01-01T00:00:00.000Z',
+        'birth_date': '2021-01-01T00:00:00.000',
         'first_name': 'first_name',
         'last_name': 'last_name',
         'gender': 0,
@@ -115,7 +115,7 @@ void main() {
     test('can handle associated models', () async {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'username': 'username',
         'email': 'email',
         'reviews_received': ReviewFactory().generateFakeJsonList(length: 3),
@@ -131,11 +131,11 @@ void main() {
     test('throws error if gender is not in enum', () {
       final Map<String, dynamic> json1 = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'username': 'username',
         'email': 'email',
         'description': 'description',
-        'birth_date': '2021-01-01T00:00:00.000Z',
+        'birth_date': '2021-01-01T00:00:00.000',
         'first_name': 'first_name',
         'last_name': 'last_name',
         'gender': -1,
@@ -143,11 +143,11 @@ void main() {
       };
       final Map<String, dynamic> json2 = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'username': 'username',
         'email': 'email',
         'description': 'description',
-        'birth_date': '2021-01-01T00:00:00.000Z',
+        'birth_date': '2021-01-01T00:00:00.000',
         'first_name': 'first_name',
         'last_name': 'last_name',
         'gender': 5,
@@ -162,7 +162,7 @@ void main() {
     test('parses a list of profiles from json', () {
       final Map<String, dynamic> json = {
         'id': 1,
-        'created_at': '2021-01-01T00:00:00.000Z',
+        'created_at': '2021-01-01T00:00:00.000',
         'username': 'username',
         'email': 'email',
       };
@@ -187,7 +187,7 @@ void main() {
       expect(json['username'], profile.username);
       expect(json['email'], profile.email);
       expect(json['description'], profile.description);
-      expect(json['birth_date'], profile.birthDate!.toString());
+      expect(json['birth_date'], profile.birthDate!.toUtc().toString());
       expect(json['first_name'], profile.firstName);
       expect(json['last_name'], profile.lastName);
       expect(json['gender'], profile.gender?.index);
@@ -202,11 +202,11 @@ void main() {
         id: 1,
         username: 'username',
         email: 'email',
-        createdAt: DateTime.parse('2021-01-01T00:00:00.000Z'),
+        createdAt: DateTime.parse('2021-01-01T00:00:00.000'),
       );
       expect(
         profile.toString(),
-        'Profile{id: 1, username: username, email: email, createdAt: 2021-01-01 00:00:00.000Z}',
+        'Profile{id: 1, username: username, email: email, createdAt: 2021-01-01 00:00:00.000}',
       );
     });
   });
