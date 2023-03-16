@@ -32,7 +32,8 @@ A ride-sharing app by the Motis team.
 ### Automatically generate necessary files on checkout
 
 When switching to another branch, there may be translations missing because Flutter still has them generated for the old branch. To automate that, run
-```
+
+```bash
 cat >.git/hooks/post-checkout <<EOL
 #!/bin/bash 
 
@@ -54,6 +55,7 @@ chmod +x .git/hooks/post-checkout
 ### Pages with supabase calls
 
 Pages where we have to fetch data from supabase, such as the `ProfilePage` or the `DriveDetailPage`, typically follow the following pattern:
+
 - There is a constructor with the necessary parameters to fetch the data from supabase, i.e. `id`. In some cases, we also pass the data directly, e.g. `DriveDetailPage.fromDrive(Drive drive)`.
 - In the `initState` method, an `async` function (typically `load...`) is called that calls supabase and stores the data in a state variable.
 - The `fullyLoaded` variable signifies if that data has been loaded. If `fullyLoaded` is `false`, a `CircularProgressIndicator` is shown instead of the page content.
@@ -64,7 +66,7 @@ All methods that are called from such pages will assume that the necessary data 
 
 #### Factories
 
-For our tests, we wrote some helper methods in order to mock objects quickly. For example, a `Profile` can be created with `ProfileFactory().generateFake()`. With some exceptions, this creates a fully fledged Profile object with all fields filled with random data. 
+For our tests, we wrote some helper methods in order to mock objects quickly. For example, a `Profile` can be created with `ProfileFactory().generateFake()`. With some exceptions, this creates a fully fledged Profile object with all fields filled with random data.
 
 We also allowed developers to pass parameters to overwrite specific fields. However, dart can't differentiate between parameters that aren't given at all (where we need to generate random data, as seen above) and parameters that are explicitly `null` (e.g. `ProfileFactory().generateFake(name: null)`). Therefore, the parameters can be given as `NullableParameter(value)`, where `value` can be set explicitly to `null`. This way, we can differentiate between the scenarios.
 
@@ -82,7 +84,7 @@ On the other hand, to intercept a request made by the app to the supabase server
 
 #### Generating models from and to JSON
 
-For our communication with supabase, we created one model class per table. When we receive data from supabase, we convert it to a model class using the `fromJson` methods of the models. When we send data to supabase, we convert it to JSON using the `toJson` methods of the models. 
+For our communication with supabase, we created one model class per table. When we receive data from supabase, we convert it to a model class using the `fromJson` methods of the models. When we send data to supabase, we convert it to JSON using the `toJson` methods of the models.
 
 In order to generate valid JSON "as the backend" in our tests, we created `toJsonForApi` methods. It will serialize related objects, which is needed for foreign relations and join queries. Futhermore, it will also include the `id` and `created_at` fields (Those are not needed in our communication with the database otherwise, as they are always generated on creation and never updated).
 
@@ -96,7 +98,6 @@ For example, if a driver cancels their drive (`UPDATE` operation on `drives`), a
 For example, `rejectRide` is calling a Postgres function, which will update the ride. This is needed because the driver doesn't have update access to the rider's ride.
 - Cronjobs: A cronjob is a Postgres function that is called periodically.\
 For example, there is a cronjob that creates drives according to the recurrence rule of a recurring drive 30 days in advance server-side.
-
 
 As such, there is quite a lot of logic performed on our data that is not visible in the app. We try to comment this every time it happens.
 
