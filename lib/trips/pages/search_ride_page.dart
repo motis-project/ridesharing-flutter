@@ -123,7 +123,7 @@ class SearchRidePageState extends State<SearchRidePage> {
         ''')
         .eq('start', startController.text)
         .eq('status', DriveStatus.plannedOrFinished.index)
-        .neq('driver_id', supabaseManager.currentProfile?.id)
+        .neq('driver_id', supabaseManager.currentProfile?.id ?? -1)
         .gt('start_date_time', DateTime.now().toUtc());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
