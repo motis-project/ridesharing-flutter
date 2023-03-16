@@ -72,13 +72,23 @@ class WeekDayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: onPressed,
-      fillColor: selected ? Theme.of(context).colorScheme.primary : Colors.grey,
-      shape: const CircleBorder(),
-      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-      key: Key('weekDayButton${weekDay.name}'),
-      child: Text(weekDay.getAbbreviation(context), style: const TextStyle(color: Colors.white)),
+    return Semantics(
+      button: true,
+      tooltip: weekDay.getName(context),
+      child: RawMaterialButton(
+        onPressed: onPressed,
+        fillColor:
+            selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+        shape: const CircleBorder(),
+        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        key: Key('weekDayButton${weekDay.name}'),
+        child: Text(
+          weekDay.getAbbreviation(context),
+          style: TextStyle(
+            color: selected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -86,6 +96,25 @@ class WeekDayButton extends StatelessWidget {
 enum WeekDay { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 
 extension WeekDayExtension on WeekDay {
+  String getName(BuildContext context) {
+    switch (this) {
+      case WeekDay.monday:
+        return S.of(context).weekDayMonday;
+      case WeekDay.tuesday:
+        return S.of(context).weekDayTuesday;
+      case WeekDay.wednesday:
+        return S.of(context).weekDayWednesday;
+      case WeekDay.thursday:
+        return S.of(context).weekDayThursday;
+      case WeekDay.friday:
+        return S.of(context).weekDayFriday;
+      case WeekDay.saturday:
+        return S.of(context).weekDaySaturday;
+      case WeekDay.sunday:
+        return S.of(context).weekDaySunday;
+    }
+  }
+
   String getAbbreviation(BuildContext context) {
     switch (this) {
       case WeekDay.monday:

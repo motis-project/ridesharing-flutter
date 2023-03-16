@@ -211,6 +211,7 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
 
     return <Widget>[
       IconButton(
+        tooltip: S.of(context).edit,
         icon: const Icon(Icons.edit),
         onPressed: () {
           Navigator.of(context)

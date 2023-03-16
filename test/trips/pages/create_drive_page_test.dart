@@ -413,5 +413,9 @@ void main() {
             }));
       });
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, const CreateDrivePage());
+    });
   });
 }
