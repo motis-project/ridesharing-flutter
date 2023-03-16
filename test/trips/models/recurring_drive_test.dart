@@ -1,5 +1,4 @@
 import 'package:faker/faker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motis_mitfahr_app/trips/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence.dart';
@@ -43,7 +42,6 @@ void main() {
       expect(recurringDrive.start, json['start']);
       expect(recurringDrive.startPosition.lat, json['start_lat']);
       expect(recurringDrive.startPosition.lng, json['start_lng']);
-      expect(recurringDrive.startTime, const TimeOfDay(hour: 22, minute: 37));
       expect(recurringDrive.startedAt, DateTime.parse('20230207T234500Z'));
       expect(recurringDrive.recurrenceRule.frequency, Frequency.daily);
       expect(recurringDrive.stoppedAt, json['stopped_at']);

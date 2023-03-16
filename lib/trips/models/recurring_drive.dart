@@ -61,11 +61,11 @@ class RecurringDrive extends TripLike {
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
-      startTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['start_time'] as String).toLocal()),
+      startTime: TimeOfDay.fromDateTime(DateFormat('HH:mm:ss').parse(json['start_time'] as String, true).toLocal()),
       destination: json['destination'] as String,
       destinationPosition: Position.fromDynamicValues(json['destination_lat'], json['destination_lng']),
       destinationTime:
-          TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['destination_time'] as String).toLocal()),
+          TimeOfDay.fromDateTime(DateFormat('HH:mm:ss').parse(json['destination_time'] as String, true).toLocal()),
       seats: json['seats'] as int,
       startedAt: postgresRecurrenceRule.dtStart,
       recurrenceRule: postgresRecurrenceRule.rule,
