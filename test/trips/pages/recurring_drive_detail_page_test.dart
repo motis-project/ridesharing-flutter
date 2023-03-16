@@ -134,5 +134,9 @@ void main() {
 
       expect(find.byType(RecurringDriveEditPage), findsOneWidget);
     });
+
+    testWidgets('Accessibility', (WidgetTester tester) async {
+      await expectMeetsAccessibilityGuidelines(tester, RecurringDriveDetailPage.fromRecurringDrive(recurringDrive));
+    });
   });
 }
