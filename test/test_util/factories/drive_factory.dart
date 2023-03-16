@@ -19,9 +19,9 @@ class DriveFactory extends TripFactory<Drive> {
     String? start,
     Position? startPosition,
     DateTime? startDateTime,
-    String? end,
-    Position? endPosition,
-    DateTime? endDateTime,
+    String? destination,
+    Position? destinationPosition,
+    DateTime? destinationDateTime,
     int? seats,
     DriveStatus? status,
     bool? hideInListView,
@@ -58,7 +58,7 @@ class DriveFactory extends TripFactory<Drive> {
               )
             : null);
 
-    final TripTimes tripTimes = generateTimes(startDateTime, endDateTime);
+    final TripTimes tripTimes = generateTimes(startDateTime, destinationDateTime);
 
     return Drive(
       id: id ?? randomId,
@@ -66,9 +66,9 @@ class DriveFactory extends TripFactory<Drive> {
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
       startDateTime: tripTimes.start,
-      end: end ?? faker.address.city(),
-      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endDateTime: tripTimes.end,
+      destination: destination ?? faker.address.city(),
+      destinationPosition: destinationPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      destinationDateTime: tripTimes.destination,
       seats: seats ?? random.nextInt(5) + 1,
       status: status ?? DriveStatus.plannedOrFinished,
       hideInListView: hideInListView ?? false,

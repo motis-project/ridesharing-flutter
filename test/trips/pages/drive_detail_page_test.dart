@@ -29,8 +29,8 @@ void main() {
 
     drive = DriveFactory().generateFake(
       start: 'Start',
-      end: 'End',
-      endDateTime: DateTime.now().add(const Duration(hours: 1)),
+      destination: 'End',
+      destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
       rides: [RideFactory().generateFake(status: RideStatus.pending)],
     );
     whenRequest(processor).thenReturnJson(drive.toJsonForApi());
@@ -51,8 +51,8 @@ void main() {
       testWidgets('Works with object parameter', (WidgetTester tester) async {
         drive = DriveFactory().generateFake(
           start: 'Start',
-          end: 'End',
-          endDateTime: DateTime.now().add(const Duration(hours: 1)),
+          destination: 'End',
+          destinationDateTime: DateTime.now().add(const Duration(hours: 1)),
           rides: [RideFactory().generateFake(status: RideStatus.approved)],
         );
         whenRequest(processor).thenReturnJson(drive.toJsonForApi());
@@ -115,7 +115,7 @@ void main() {
       testWidgets('Shows hide button when drive is finished', (WidgetTester tester) async {
         final Drive finishedDrive = DriveFactory().generateFake(
           startDateTime: DateTime.now().subtract(const Duration(days: 1, hours: 1)),
-          endDateTime: DateTime.now().subtract(const Duration(days: 1)),
+          destinationDateTime: DateTime.now().subtract(const Duration(days: 1)),
         );
         whenRequest(processor).thenReturnJson(finishedDrive.toJsonForApi());
 
@@ -157,16 +157,16 @@ void main() {
       final Ride approvedRide = RideFactory().generateFake(
         start: 'WaypointStart',
         startDateTime: now.add(const Duration(hours: 1)),
-        end: 'WaypointConnecting',
-        endDateTime: now.add(const Duration(hours: 2)),
+        destination: 'WaypointConnecting',
+        destinationDateTime: now.add(const Duration(hours: 2)),
         status: RideStatus.approved,
       );
 
       final Ride anotherApprovedRide = RideFactory().generateFake(
         start: 'WaypointConnecting',
         startDateTime: now.add(const Duration(hours: 2)),
-        end: 'WaypointEnd',
-        endDateTime: now.add(const Duration(hours: 3)),
+        destination: 'WaypointEnd',
+        destinationDateTime: now.add(const Duration(hours: 3)),
         status: RideStatus.approved,
       );
 
@@ -177,14 +177,14 @@ void main() {
 
       final Ride cancelledByDriverRide = RideFactory().generateFake(
         status: RideStatus.cancelledByDriver,
-        end: 'UnusedWaypointEnd',
+        destination: 'UnusedWaypointEnd',
       );
 
       drive = DriveFactory().generateFake(
         start: 'DriveStart',
         startDateTime: now,
-        end: 'DriveEnd',
-        endDateTime: now.add(const Duration(hours: 3)),
+        destination: 'DriveEnd',
+        destinationDateTime: now.add(const Duration(hours: 3)),
         rides: [
           approvedRide,
           anotherApprovedRide,
@@ -259,7 +259,7 @@ void main() {
         3,
         (index) => RideFactory().generateFake(
           start: index.isEven ? waypoint : null,
-          end: index.isEven ? null : waypoint,
+          destination: index.isEven ? null : waypoint,
           status: RideStatus.approved,
         ),
       ));

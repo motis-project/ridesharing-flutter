@@ -458,10 +458,12 @@ void main() {
 
         final List<Map<String, dynamic>> drives = [
           DriveFactory()
-              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startDateTime: farAwayTime)
+              .generateFake(
+                  startPosition: Position(0, 0), destinationPosition: Position(0, 0), startDateTime: farAwayTime)
               .toJsonForApi(),
           DriveFactory()
-              .generateFake(startPosition: Position(0, 0), endPosition: Position(0, 0), startDateTime: rightTime)
+              .generateFake(
+                  startPosition: Position(0, 0), destinationPosition: Position(0, 0), startDateTime: rightTime)
               .toJsonForApi(),
         ];
 
@@ -693,9 +695,9 @@ void main() {
             drivers
                 .map((Profile driver) => DriveFactory().generateFake(
                     startDateTime: startDateTime,
-                    endDateTime: startDateTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
+                    destinationDateTime: startDateTime.add(Duration(minutes: drivers.indexOf(driver) + 1)),
                     startPosition: Position(0, 0),
-                    endPosition: Position(0, 0),
+                    destinationPosition: Position(0, 0),
                     driver: NullableParameter(driver)))
                 .toList());
         final List<Map<String, dynamic>> driveJsons = drives.values.map((Drive drive) => drive.toJsonForApi()).toList();
@@ -762,22 +764,22 @@ void main() {
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
                 startDateTime: startDateTime.add(const Duration(hours: 1)),
-                endDateTime: startDateTime.add(const Duration(hours: 2)),
+                destinationDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
-                endPosition: Position(latDiffForKm(10), 0)),
+                destinationPosition: Position(latDiffForKm(10), 0)),
             //Time proximity and duration are weighted equally, so this is better by 9 minutes
             DriveFactory().generateFake(
                 startDateTime: startDateTime.add(const Duration(minutes: 50)),
-                endDateTime: startDateTime.add(const Duration(minutes: 111)),
+                destinationDateTime: startDateTime.add(const Duration(minutes: 111)),
                 startPosition: Position(0, 0),
-                endPosition: Position(latDiffForKm(10), 0)),
+                destinationPosition: Position(latDiffForKm(10), 0)),
             //The price of this will be approx. 9.95€ because the price of rides is equal to the distance in km right now
             //Every cent is worth one minute of time proximity/duration, so this is better than the base by 5 minutes but worse than the previous by 4 minutes
             DriveFactory().generateFake(
                 startDateTime: startDateTime.add(const Duration(hours: 1)),
-                endDateTime: startDateTime.add(const Duration(hours: 2)),
+                destinationDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
-                endPosition: Position(latDiffForKm(9.95), 0)),
+                destinationPosition: Position(latDiffForKm(9.95), 0)),
           ];
 
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
@@ -811,15 +813,15 @@ void main() {
             //This is the base case, I will compare everything to this
             DriveFactory().generateFake(
                 startDateTime: startDateTime.add(const Duration(hours: 1)),
-                endDateTime: startDateTime.add(const Duration(hours: 2)),
+                destinationDateTime: startDateTime.add(const Duration(hours: 2)),
                 startPosition: Position(0, 0),
-                endPosition: Position(latDiffForKm(10), 0)),
+                destinationPosition: Position(latDiffForKm(10), 0)),
             //Time proximity is ignored in wholeDay, so this is worse because it's longer
             DriveFactory().generateFake(
                 startDateTime: startDateTime.add(const Duration(minutes: 50)),
-                endDateTime: startDateTime.add(const Duration(minutes: 111)),
+                destinationDateTime: startDateTime.add(const Duration(minutes: 111)),
                 startPosition: Position(0, 0),
-                endPosition: Position(latDiffForKm(10), 0)),
+                destinationPosition: Position(latDiffForKm(10), 0)),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
 
@@ -848,12 +850,12 @@ void main() {
           final DateTime startDateTime = DateTime.now();
 
           final List<Drive> drives = [
-            DriveFactory()
-                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 2))),
-            DriveFactory()
-                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 3))),
-            DriveFactory()
-                .generateFake(startDateTime: startDateTime, endDateTime: startDateTime.add(const Duration(hours: 1))),
+            DriveFactory().generateFake(
+                startDateTime: startDateTime, destinationDateTime: startDateTime.add(const Duration(hours: 2))),
+            DriveFactory().generateFake(
+                startDateTime: startDateTime, destinationDateTime: startDateTime.add(const Duration(hours: 3))),
+            DriveFactory().generateFake(
+                startDateTime: startDateTime, destinationDateTime: startDateTime.add(const Duration(hours: 1))),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
 
@@ -880,9 +882,12 @@ void main() {
 
         testWidgets('Price', (WidgetTester tester) async {
           final List<Drive> drives = [
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(10), 0)),
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(5), 0)),
-            DriveFactory().generateFake(startPosition: Position(0, 0), endPosition: Position(latDiffForKm(8), 0)),
+            DriveFactory()
+                .generateFake(startPosition: Position(0, 0), destinationPosition: Position(latDiffForKm(10), 0)),
+            DriveFactory()
+                .generateFake(startPosition: Position(0, 0), destinationPosition: Position(latDiffForKm(5), 0)),
+            DriveFactory()
+                .generateFake(startPosition: Position(0, 0), destinationPosition: Position(latDiffForKm(8), 0)),
           ];
           final List<Map<String, dynamic>> driveJsons = drives.map((Drive drive) => drive.toJsonForApi()).toList();
 

@@ -121,7 +121,7 @@ void main() {
 
   test('RecurringDrive.duration', () {
     final RecurringDrive recurringDrive = RecurringDriveFactory().generateFake();
-    expect(recurringDrive.duration, recurringDrive.startTime.getDurationUntil(recurringDrive.endTime));
+    expect(recurringDrive.duration, recurringDrive.startTime.getDurationUntil(recurringDrive.destinationTime));
   });
 
   group('RecurringDrive.recurrenceEndChoice', () {
@@ -255,7 +255,7 @@ void main() {
       final String string = recurringDrive.toString();
       expect(
         string,
-        'RecurringDrive{id: ${recurringDrive.id}, from: ${recurringDrive.start} at ${recurringDrive.startTime}, to: ${recurringDrive.end} at ${recurringDrive.endTime}, by: ${recurringDrive.driverId}, rule: ${recurringDrive.recurrenceRule}}',
+        'RecurringDrive{id: ${recurringDrive.id}, from: ${recurringDrive.start} at ${recurringDrive.startTime}, to: ${recurringDrive.destination} at ${recurringDrive.destinationTime}, by: ${recurringDrive.driverId}, rule: ${recurringDrive.recurrenceRule}}',
       );
     });
   });

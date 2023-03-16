@@ -149,7 +149,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final DateTime endDateTime = DateTime(
+        final DateTime destinationDateTime = DateTime(
           selectedDate.year,
           selectedDate.month,
           selectedDate.day,
@@ -163,11 +163,11 @@ class CreateDriveFormState extends State<CreateDriveForm> {
             driverId: driver.id!,
             start: startSuggestion.name,
             startPosition: startSuggestion.position,
-            end: destinationSuggestion.name,
-            endPosition: destinationSuggestion.position,
+            destination: destinationSuggestion.name,
+            destinationPosition: destinationSuggestion.position,
             seats: seats,
             startTime: TimeOfDay.fromDateTime(selectedDate),
-            endTime: TimeOfDay.fromDateTime(endDateTime),
+            destinationTime: TimeOfDay.fromDateTime(destinationDateTime),
             startedAt: recurrenceOptions.startedAt,
             recurrenceRule: recurrenceOptions.recurrenceRule,
             recurrenceEndType: recurrenceOptions.endChoice.type,
@@ -192,11 +192,11 @@ class CreateDriveFormState extends State<CreateDriveForm> {
             driverId: driver.id!,
             start: startSuggestion.name,
             startPosition: startSuggestion.position,
-            end: destinationSuggestion.name,
-            endPosition: destinationSuggestion.position,
+            destination: destinationSuggestion.name,
+            destinationPosition: destinationSuggestion.position,
             seats: seats,
             startDateTime: selectedDate,
-            endDateTime: endDateTime,
+            destinationDateTime: destinationDateTime,
           );
           final Map<String, dynamic> data = await supabaseManager.supabaseClient
               .from('drives')

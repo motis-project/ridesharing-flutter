@@ -11,14 +11,14 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
     String? start,
     Position? startPosition,
     DateTime? startDateTime,
-    String? end,
-    Position? endPosition,
-    DateTime? endDateTime,
+    String? destination,
+    Position? destinationPosition,
+    DateTime? destinationDateTime,
     int? seats,
     bool hideInListView = false,
     bool createDependencies = true,
   }) {
-    final TripTimes times = generateTimes(startDateTime, endDateTime);
+    final TripTimes times = generateTimes(startDateTime, destinationDateTime);
 
     return Trip(
       id: id ?? randomId,
@@ -26,30 +26,30 @@ class TripFactory<T extends Trip> extends ModelFactory<T> {
       start: start ?? faker.address.city(),
       startPosition: startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
       startDateTime: times.start,
-      end: end ?? faker.address.city(),
-      endPosition: endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
-      endDateTime: times.end,
+      destination: destination ?? faker.address.city(),
+      destinationPosition: destinationPosition ?? Position(faker.geo.latitude(), faker.geo.longitude()),
+      destinationDateTime: times.destination,
       seats: seats ?? random.nextInt(5) + 1,
       hideInListView: hideInListView,
     ) as T;
   }
 
-  TripTimes generateTimes(DateTime? startTime, DateTime? endTime) {
-    // Only applied if startTime or endTime are null
+  TripTimes generateTimes(DateTime? startTime, DateTime? destinationTime) {
+    // Only applied if startTime or destinationTime are null
     final Duration randomDuration = Duration(hours: random.nextInt(5) + 1);
 
-    startTime ??= endTime == null ? DateTime.now() : endTime.subtract(randomDuration);
-    endTime ??= startTime.add(randomDuration);
+    startTime ??= destinationTime == null ? DateTime.now() : destinationTime.subtract(randomDuration);
+    destinationTime ??= startTime.add(randomDuration);
 
-    assert(startTime.isBefore(endTime));
+    assert(startTime.isBefore(destinationTime));
 
-    return TripTimes(startTime, endTime);
+    return TripTimes(startTime, destinationTime);
   }
 }
 
 class TripTimes {
   final DateTime start;
-  final DateTime end;
+  final DateTime destination;
 
-  TripTimes(this.start, this.end);
+  TripTimes(this.start, this.destination);
 }

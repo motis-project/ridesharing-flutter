@@ -287,11 +287,11 @@ void main() {
                 driverId: driver.id,
                 start: startName,
                 startPosition: startPosition,
-                end: destinationName,
-                endPosition: destinationPosition,
+                destination: destinationName,
+                destinationPosition: destinationPosition,
                 seats: seats,
                 startDateTime: dateTime,
-                endDateTime: dateTime.add(const Duration(hours: 2)),
+                destinationDateTime: dateTime.add(const Duration(hours: 2)),
               )
               .toJsonForApi());
 
@@ -362,8 +362,8 @@ void main() {
                 driverId: driver.id,
                 start: startName,
                 startPosition: startPosition,
-                end: destinationName,
-                endPosition: destinationPosition,
+                destination: destinationName,
+                destinationPosition: destinationPosition,
                 seats: seats,
                 startedAt: dateTime,
                 startTime: TimeOfDay.fromDateTime(dateTime),

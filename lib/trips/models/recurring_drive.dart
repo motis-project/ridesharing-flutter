@@ -26,7 +26,7 @@ class RecurringDrive extends TripLike {
   @override
   final TimeOfDay startTime;
   @override
-  final TimeOfDay endTime;
+  final TimeOfDay destinationTime;
 
   final List<Drive>? drives;
 
@@ -36,9 +36,9 @@ class RecurringDrive extends TripLike {
     required super.start,
     required super.startPosition,
     required this.startTime,
-    required super.end,
-    required super.endPosition,
-    required this.endTime,
+    required super.destination,
+    required super.destinationPosition,
+    required this.destinationTime,
     required super.seats,
     required this.startedAt,
     required this.recurrenceRule,
@@ -62,9 +62,9 @@ class RecurringDrive extends TripLike {
       start: json['start'] as String,
       startPosition: Position.fromDynamicValues(json['start_lat'], json['start_lng']),
       startTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['start_time'] as String)),
-      end: json['end'] as String,
-      endPosition: Position.fromDynamicValues(json['end_lat'], json['end_lng']),
-      endTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['end_time'] as String)),
+      destination: json['destination'] as String,
+      destinationPosition: Position.fromDynamicValues(json['destination_lat'], json['destination_lng']),
+      destinationTime: TimeOfDay.fromDateTime(DateFormat('hh:mm:ss').parse(json['destination_time'] as String)),
       seats: json['seats'] as int,
       startedAt: postgresRecurrenceRule.dtStart,
       recurrenceRule: postgresRecurrenceRule.rule,
@@ -77,7 +77,7 @@ class RecurringDrive extends TripLike {
   }
 
   @override
-  Duration get duration => startTime.getDurationUntil(endTime);
+  Duration get duration => startTime.getDurationUntil(destinationTime);
 
   List<WeekDay> get weekDays => recurrenceRule.byWeekDays.map((ByWeekDayEntry day) => day.toWeekDay()).toList();
 
@@ -129,7 +129,7 @@ class RecurringDrive extends TripLike {
     return super.toJson()
       ..addAll(<String, dynamic>{
         'start_time': startTime.formatted,
-        'end_time': endTime.formatted,
+        'destination_time': destinationTime.formatted,
         'recurrence_rule': PostgresRecurrenceRule(recurrenceRule, startedAt).toString(),
         'until_field_entered_as_date': recurrenceEndType == RecurrenceEndType.date,
         'stopped_at': stoppedAt?.toString(),
@@ -148,7 +148,7 @@ class RecurringDrive extends TripLike {
 
   @override
   String toString() {
-    return 'RecurringDrive{id: $id, from: $start at $startTime, to: $end at $endTime, by: $driverId, rule: $recurrenceRule}';
+    return 'RecurringDrive{id: $id, from: $start at $startTime, to: $destination at $destinationTime, by: $driverId, rule: $recurrenceRule}';
   }
 
   /// Returns the upcoming drive instances of this recurring drive which should be shown in the ListView.

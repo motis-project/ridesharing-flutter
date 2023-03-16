@@ -29,7 +29,7 @@ void main() {
 
     recurringDrive = RecurringDriveFactory().generateFake(
       start: 'Start',
-      end: 'End',
+      destination: 'End',
       recurrenceRule: RecurrenceRule(
         frequency: Frequency.weekly,
         interval: 1,
@@ -104,7 +104,7 @@ void main() {
     testWidgets('Can show previews of further upcoming drives', (WidgetTester tester) async {
       recurringDrive = RecurringDriveFactory().generateFake(
         start: 'Start',
-        end: 'End',
+        destination: 'End',
         recurrenceRule: RecurrenceRule(
           frequency: Frequency.weekly,
           interval: 1,

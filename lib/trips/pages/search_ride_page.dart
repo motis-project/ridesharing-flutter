@@ -130,8 +130,8 @@ class SearchRidePageState extends State<SearchRidePage> {
             drive,
             start: _startSuggestion!.name,
             startPosition: _startSuggestion!.position,
-            end: _destinationSuggestion!.name,
-            endPosition: _destinationSuggestion!.position,
+            destination: _destinationSuggestion!.name,
+            destinationPosition: _destinationSuggestion!.position,
             seats: seats,
             riderId: supabaseManager.currentProfile?.id ?? -1,
           ),
@@ -411,12 +411,12 @@ class SearchRidePageState extends State<SearchRidePage> {
   List<Ride> applyTimeConstraints(List<Ride> rides) {
     if (_wholeDay) {
       return rides.where((Ride ride) {
-        return selectedDate.isSameDayAs(ride.startDateTime) || selectedDate.isSameDayAs(ride.endDateTime);
+        return selectedDate.isSameDayAs(ride.startDateTime) || selectedDate.isSameDayAs(ride.destinationDateTime);
       }).toList();
     }
     return rides.where((Ride ride) {
       return selectedDate.difference(ride.startDateTime).inDays.abs() < 1 ||
-          selectedDate.difference(ride.endDateTime).inDays.abs() < 1;
+          selectedDate.difference(ride.destinationDateTime).inDays.abs() < 1;
     }).toList();
   }
 }

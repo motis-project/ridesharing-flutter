@@ -18,7 +18,7 @@ void main() {
       final DateTime now = DateTime.now();
       final Trip trip = TripFactory().generateFake(
         startDateTime: now,
-        endDateTime: now.add(const Duration(hours: 2)),
+        destinationDateTime: now.add(const Duration(hours: 2)),
       );
       expect(trip.duration, const Duration(hours: 2));
     });
@@ -27,14 +27,14 @@ void main() {
     test('trip is finished', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.isFinished, true);
     });
     test('trip is not finished', () {
       final Trip ride = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(ride.isFinished, false);
     });
@@ -43,21 +43,21 @@ void main() {
     test('trip is on going', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 1)),
-        endDateTime: DateTime.now().add(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 2)),
       );
       expect(trip.isOngoing, true);
     });
     test('trip is in the past', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 6)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.isOngoing, false);
     });
     test('trip is upcoming', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 6)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 6)),
       );
       expect(trip.isOngoing, false);
     });
@@ -66,33 +66,33 @@ void main() {
     test('trip is before other', () {
       final Trip trip1 = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 6)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       final Trip trip2 = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 6)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 6)),
       );
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip is after other', () {
       final Trip trip1 = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 6)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 6)),
       );
       final Trip trip2 = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 6)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip1.overlapsWith(trip2), false);
     });
     test('trip overlaps the other', () {
       final Trip trip1 = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 6)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       final Trip trip2 = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 3)),
-        endDateTime: DateTime.now().add(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 2)),
       );
       expect(trip1.overlapsWith(trip2), true);
     });
@@ -105,7 +105,7 @@ void main() {
       );
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(trip.overlapsWithTimeRange(range), false);
     });
@@ -116,7 +116,7 @@ void main() {
       );
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.overlapsWithTimeRange(range), false);
     });
@@ -127,7 +127,7 @@ void main() {
       );
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(trip.overlapsWithTimeRange(range), true);
     });
@@ -136,14 +136,14 @@ void main() {
     test('this trip should show in ListView when built', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 4)),
       );
       expect(trip.shouldShowInListView(past: false), true);
     });
     test('this trip will not show in ListView when built because of hideInListView', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().add(const Duration(hours: 2)),
-        endDateTime: DateTime.now().add(const Duration(hours: 4)),
+        destinationDateTime: DateTime.now().add(const Duration(hours: 4)),
         hideInListView: true,
       );
       expect(trip.shouldShowInListView(past: false), false);
@@ -151,14 +151,14 @@ void main() {
     test('this trip will  show in past ListView when built', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.shouldShowInListView(past: true), true);
     });
     test('this trip will not show in past ListView when built', () {
       final Trip trip = TripFactory().generateFake(
         startDateTime: DateTime.now().subtract(const Duration(hours: 4)),
-        endDateTime: DateTime.now().subtract(const Duration(hours: 2)),
+        destinationDateTime: DateTime.now().subtract(const Duration(hours: 2)),
       );
       expect(trip.shouldShowInListView(past: false), false);
     });
@@ -171,9 +171,9 @@ void main() {
       start: 'Berlin',
       startPosition: Position(1, 1),
       startDateTime: now.add(const Duration(hours: 1)),
-      end: 'Frankfurt',
-      endPosition: Position(2, 2),
-      endDateTime: now.add(const Duration(hours: 2)),
+      destination: 'Frankfurt',
+      destinationPosition: Position(2, 2),
+      destinationDateTime: now.add(const Duration(hours: 2)),
       seats: 1,
       createDependencies: false,
     );
@@ -184,9 +184,9 @@ void main() {
         start: 'Berlin',
         startPosition: Position(1, 1),
         startDateTime: now.add(const Duration(hours: 1)),
-        end: 'Frankfurt',
-        endPosition: Position(2, 2),
-        endDateTime: now.add(const Duration(hours: 2)),
+        destination: 'Frankfurt',
+        destinationPosition: Position(2, 2),
+        destinationDateTime: now.add(const Duration(hours: 2)),
         seats: 1,
         createDependencies: false,
       );
@@ -201,9 +201,9 @@ void main() {
           start: i == 2 ? 'Hamburg' : 'Berlin',
           startPosition: i == 3 ? Position(1, 2) : Position(1, 1),
           startDateTime: i == 4 ? now : now.add(const Duration(hours: 1)),
-          end: i == 5 ? 'Hamburg' : 'Frankfurt',
-          endPosition: i == 6 ? Position(2, 3) : Position(2, 2),
-          endDateTime: i == 7 ? now.add(const Duration(hours: 3)) : now.add(const Duration(hours: 2)),
+          destination: i == 5 ? 'Hamburg' : 'Frankfurt',
+          destinationPosition: i == 6 ? Position(2, 3) : Position(2, 2),
+          destinationDateTime: i == 7 ? now.add(const Duration(hours: 3)) : now.add(const Duration(hours: 2)),
           seats: i == 8 ? 3 : 1,
           hideInListView: i == 9,
           createDependencies: false,

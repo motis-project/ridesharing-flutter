@@ -312,8 +312,8 @@
 
   "pageDriveDetailTitle": "Drive Detail",
   "pageDriveDetailRoute": "Route",
-  "pageDriveDetailLabelStartDrive": "Start of drive",
-  "pageDriveDetailLabelEndDrive": "End of drive",
+  "pageDriveDetailLabelStartDrive": "Drive start",
+  "pageDriveDetailLabelDestinationDrive": "Drive destination",
   "pageDriveDetailLabelPickup": "{seats, plural, one{Pick up {user}} other{Pick up {seats} people associated with {user}}}",
   "pageDriveDetailLabelDropoff": "{seats, plural, one{Drop off {user}} other{Drop off {seats} people associated with {user}}}",
   "pageDriveDetailButtonCancel": "Cancel Drive",

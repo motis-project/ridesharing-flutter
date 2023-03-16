@@ -314,7 +314,7 @@
   "pageDriveDetailTitle": "Fahrt Info",
   "pageDriveDetailRoute": "Fahrtverlauf",
   "pageDriveDetailLabelStartDrive": "Start der Fahrt",
-  "pageDriveDetailLabelEndDrive": "Ende der Fahrt",
+  "pageDriveDetailLabelDestinationDrive": "Ziel der Fahrt",
   "pageDriveDetailLabelPickup": "{seats, plural, one{{user} abholen} other{{seats} Personen abholen, die mit {user} fahren}}",
   "pageDriveDetailLabelDropoff": "{seats, plural, one{{user} absetzen} other{{seats} Personen absetzen, die mit {user} fahren}}",
   "pageDriveDetailButtonCancel": "Fahrt absagen",

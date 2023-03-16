@@ -466,7 +466,7 @@ class HomePageState extends State<HomePage> {
               ),
               subtitle: Text(
                 S.of(context).pageHomeUpcomingTripMessage(
-                      trip.end,
+                      trip.destination,
                       trip.start,
                       localeManager.formatTime(trip.startDateTime),
                     ),

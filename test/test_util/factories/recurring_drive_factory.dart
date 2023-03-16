@@ -20,8 +20,8 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
     String? start,
     Position? startPosition,
     TimeOfDay? startTime,
-    String? end,
-    Position? endPosition,
+    String? destination,
+    Position? destinationPosition,
     TimeOfDay? endTime,
     int? seats,
     DateTime? startedAt,
@@ -48,7 +48,7 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
 
     final generatedCreatedAt = createdAt ?? DateTime.now();
     final generatedStartPosition = startPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
-    final generatedEndPosition = endPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
+    final generatedEndPosition = destinationPosition ?? Position(faker.geo.latitude(), faker.geo.longitude());
     final generatedStartedAt = startedAt ?? generatedCreatedAt;
     final generatedStartTime = startTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
     final generatedEndTime = endTime ?? TimeOfDay.fromDateTime(faker.date.dateTime());
@@ -87,9 +87,9 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
                         generatedStartTime.hour,
                         generatedStartTime.minute,
                       ),
-                      end: end,
-                      endPosition: generatedEndPosition,
-                      endDateTime: DateTime(
+                      destination: destination,
+                      destinationPosition: generatedEndPosition,
+                      destinationDateTime: DateTime(
                         startDate.year,
                         startDate.month,
                         generatedStartTime.isBefore(generatedEndTime) ? startDate.day : startDate.day + 1,
@@ -113,9 +113,9 @@ class RecurringDriveFactory extends ModelFactory<RecurringDrive> {
       start: start ?? faker.address.city(),
       startPosition: generatedStartPosition,
       startTime: generatedStartTime,
-      end: end ?? faker.address.city(),
-      endPosition: generatedEndPosition,
-      endTime: generatedEndTime,
+      destination: destination ?? faker.address.city(),
+      destinationPosition: generatedEndPosition,
+      destinationTime: generatedEndTime,
       seats: seats ?? random.nextInt(5) + 1,
       startedAt: generatedStartedAt,
       recurrenceRule: generatedRecurrenceRule,
