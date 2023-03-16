@@ -98,20 +98,32 @@ class RecurringDriveDetailPageState extends State<RecurringDriveDetailPage> {
       final List<Drive> upcomingDrives = recurringDrive.upcomingDrives
         ..sort((Drive a, Drive b) => a.startDateTime.compareTo(b.startDateTime));
 
+      final DateTime now = DateTime.now();
+      final DateTime baseDate = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        recurringDrive.startTime.hour,
+        recurringDrive.startTime.minute,
+      ).toUtc();
+
       final List<Drive> previewedDrives = recurringDrive.recurrenceRule
           .getAllInstances(
         start: recurringDrive.startedAt.toUtc(),
-        after: DateTime.now().add(Trip.creationInterval).toUtc(),
+        after: now.add(Trip.creationInterval).toUtc(),
       )
           .map(
         (DateTime date) {
-          final DateTime startDateTime = DateTime(
+          // This is emulating the way the server creates the drive
+          // The date is given by the recurrence rule, the base time is given in UTC
+          // Afterwards we need to convert it to the local time of the user
+          final DateTime startDateTime = DateTime.utc(
             date.year,
             date.month,
             date.day,
-            recurringDrive.startTime.hour,
-            recurringDrive.startTime.minute,
-          );
+            baseDate.hour,
+            baseDate.minute,
+          ).toLocal();
 
           return Drive(
             start: recurringDrive.start,
