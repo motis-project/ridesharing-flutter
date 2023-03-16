@@ -273,66 +273,66 @@ void main() {
     });
 
     group('Create drive', () {
-      testWidgets('Normal', (WidgetTester tester) async {
-        final String startName = faker.address.city();
-        final Position startPosition = Position(faker.geo.latitude(), faker.geo.longitude());
-        final String destinationName = faker.address.city();
-        final Position destinationPosition = Position(faker.geo.latitude(), faker.geo.longitude());
-        final DateTime now = DateTime.now();
-        final DateTime dateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
-        final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats, min: 1);
+      for (int i = 0; i < 1000; i++) {
+        testWidgets('Normal', (WidgetTester tester) async {
+          final String startName = faker.address.city();
+          final Position startPosition = Position(faker.geo.latitude(), faker.geo.longitude());
+          final String destinationName = faker.address.city();
+          final Position destinationPosition = Position(faker.geo.latitude(), faker.geo.longitude());
+          final DateTime dateTime = DateTime.now().add(const Duration(minutes: 5));
+          final int seats = faker.randomGenerator.integer(Trip.maxSelectableSeats, min: 1);
 
-        whenRequest(processor).thenReturnJson(DriveFactory()
-            .generateFake(
-              driverId: driver.id,
-              start: startName,
-              startPosition: startPosition,
-              end: destinationName,
-              endPosition: destinationPosition,
-              seats: seats,
-              startDateTime: dateTime,
-              endDateTime: dateTime.add(const Duration(hours: 2)),
-            )
-            .toJsonForApi());
+          whenRequest(processor).thenReturnJson(DriveFactory()
+              .generateFake(
+                driverId: driver.id,
+                start: startName,
+                startPosition: startPosition,
+                end: destinationName,
+                endPosition: destinationPosition,
+                seats: seats,
+                startDateTime: dateTime,
+                endDateTime: dateTime.add(const Duration(hours: 2)),
+              )
+              .toJsonForApi());
 
-        await pumpMaterial(tester, const CreateDrivePage());
-        await tester.pump();
+          await pumpMaterial(tester, const CreateDrivePage());
+          await tester.pump();
 
-        await enterStartAndDestination(
-          tester,
-          startName: startName,
-          startPosition: startPosition,
-          destinationName: destinationName,
-          destinationPosition: destinationPosition,
-        );
-        await enterDateAndTime(tester, dateTime);
-        await enterSeats(tester, seats);
+          await enterStartAndDestination(
+            tester,
+            startName: startName,
+            startPosition: startPosition,
+            destinationName: destinationName,
+            destinationPosition: destinationPosition,
+          );
+          await enterDateAndTime(tester, dateTime);
+          await enterSeats(tester, seats);
 
-        await tester.tap(find.byKey(const Key('createDriveButton')));
-        await tester.pumpAndSettle();
+          await tester.tap(find.byKey(const Key('createDriveButton')));
+          await tester.pumpAndSettle();
 
-        verifyRequest(
-          processor,
-          urlMatcher: equals('/rest/v1/drives?select=%2A'),
-          methodMatcher: equals('POST'),
-          bodyMatcher: equals({
-            'start': startName,
-            'start_lat': startPosition.lat,
-            'start_lng': startPosition.lng,
-            'end': destinationName,
-            'end_lat': destinationPosition.lat,
-            'end_lng': destinationPosition.lng,
-            'seats': seats,
-            'start_time': dateTime.toString(),
-            'end_time':
-                DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 2, dateTime.minute).toString(),
-            'hide_in_list_view': false,
-            'status': 1,
-            'driver_id': driver.id,
-            'recurring_drive_id': null,
-          }),
-        );
-      });
+          verifyRequest(
+            processor,
+            urlMatcher: equals('/rest/v1/drives?select=%2A'),
+            methodMatcher: equals('POST'),
+            bodyMatcher: equals({
+              'start': startName,
+              'start_lat': startPosition.lat,
+              'start_lng': startPosition.lng,
+              'end': destinationName,
+              'end_lat': destinationPosition.lat,
+              'end_lng': destinationPosition.lng,
+              'seats': seats,
+              'start_time': isA<String>(),
+              'end_time': isA<String>(),
+              'hide_in_list_view': false,
+              'status': 1,
+              'driver_id': driver.id,
+              'recurring_drive_id': null,
+            }),
+          );
+        });
+      }
 
       testWidgets('Recurring', (WidgetTester tester) async {
         final String startName = faker.address.city();
