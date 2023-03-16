@@ -1884,7 +1884,7 @@ CREATE FUNCTION "public"."notification_insert"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 declare
-  firebase_server_key varchar := 'key=AAAA2zcyAqM:APA91bFEertMAna6LyuZ5UIKYZVvO25S5BvRx9UViSDg92c5TwOjQcdI_WTadcPNZuexFBhOkpj4ukl-Az8d-A-t17xUXwrzYf_nFwqxgddPLtWHvkiChwURo0NJixL99vIR5On682B6';
+  firebase_server_key varchar := 'example';
   headers jsonb;
   body jsonb;
   push_token varchar;
