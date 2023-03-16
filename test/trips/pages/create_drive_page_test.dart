@@ -6,13 +6,13 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/managers/supabase_manager.dart';
 import 'package:motis_mitfahr_app/search/position.dart';
-import 'package:motis_mitfahr_app/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/trips/models/recurring_drive.dart';
 import 'package:motis_mitfahr_app/trips/models/trip.dart';
 import 'package:motis_mitfahr_app/trips/pages/create_drive_page.dart';
+import 'package:motis_mitfahr_app/trips/util/recurrence/edit_recurrence_options.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence.dart';
-import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/week_day.dart';
+import 'package:motis_mitfahr_app/trips/util/trip_timeline.dart';
 import 'package:motis_mitfahr_app/util/extensions/time_of_day_extension.dart';
 import 'package:rrule/rrule.dart';
 
@@ -57,8 +57,7 @@ void main() {
     Position? destinationPosition,
   }) async {
     final CreateDriveFormState formState = tester.state(formFinder);
-    final StartDestinationTimeline timeline =
-        find.byType(StartDestinationTimeline).evaluate().first.widget as StartDestinationTimeline;
+    final TripTimeline timeline = find.byType(TripTimeline).evaluate().first.widget as TripTimeline;
 
     if (startName != null || startPosition != null) {
       startName ??= faker.address.city();
@@ -225,7 +224,7 @@ void main() {
         });
       });
 
-      testWidgets('RecurrenceOptionsEdit', (WidgetTester tester) async {
+      testWidgets('EditRecurrenceOptions', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
         final int intervalSize = random.integer(10, min: 1);
@@ -234,11 +233,11 @@ void main() {
         await pumpMaterial(tester, const CreateDrivePage());
         await tester.pump();
 
-        expect(find.byType(RecurrenceOptionsEdit), findsNothing);
+        expect(find.byType(EditRecurrenceOptions), findsNothing);
 
         await tapRecurring(tester);
 
-        expect(find.byType(RecurrenceOptionsEdit), findsOneWidget);
+        expect(find.byType(EditRecurrenceOptions), findsOneWidget);
 
         await selectWeekdays(tester, weekdays, selectedDate: DateTime.now());
         await enterInterval(tester, intervalSize);

@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/trips/models/trip.dart';
 import 'package:motis_mitfahr_app/trips/pages/create_drive_page.dart';
+import 'package:motis_mitfahr_app/trips/util/recurrence/edit_recurrence_options.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence.dart';
-import 'package:motis_mitfahr_app/trips/util/recurrence/recurrence_options_edit.dart';
 import 'package:motis_mitfahr_app/trips/util/recurrence/week_day.dart';
 
 import '../../test_util/mocks/mock_server.dart';
@@ -15,7 +15,7 @@ import '../../test_util/pump_material.dart';
 void main() {
   final MockRequestProcessor processor = MockRequestProcessor();
 
-  final Finder widgetFinder = find.byType(RecurrenceOptionsEdit);
+  final Finder widgetFinder = find.byType(EditRecurrenceOptions);
 
   final List<RecurrenceEndChoice> predefinedEndChoices = <RecurrenceEndChoice>[
     RecurrenceEndChoiceInterval(1, RecurrenceIntervalType.months),
@@ -75,17 +75,17 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  group('RecurrenceOptionsEdit', () {
+  group('EditRecurrenceOptions', () {
     group('Input', () {
       testWidgets('Week Days', (WidgetTester tester) async {
         final List<WeekDay> shuffledWeekdays = [...WeekDay.values]..shuffle();
         final List<WeekDay> weekdays = shuffledWeekdays.take(random.integer(WeekDay.values.length, min: 1)).toList();
 
         await pumpScaffold(tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
+            EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices));
         await tester.pump();
 
-        final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+        final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
         await selectWeekdays(tester, weekdays);
 
@@ -95,11 +95,11 @@ void main() {
       testWidgets('Interval', (WidgetTester tester) async {
         await pumpScaffold(
           tester,
-          RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+          EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
         );
         await tester.pump();
 
-        final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+        final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
         final int intervalSize = random.integer(10, min: 1);
         await enterInterval(tester, intervalSize);
@@ -112,11 +112,11 @@ void main() {
         testWidgets('Predefined End Choices', (WidgetTester tester) async {
           await pumpScaffold(
             tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+            EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
           );
           await tester.pump();
 
-          final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+          final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
           final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
 
@@ -139,11 +139,11 @@ void main() {
         testWidgets('Date', (WidgetTester tester) async {
           await pumpScaffold(
             tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+            EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
           );
           await tester.pump();
 
-          final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+          final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
           final DateTime dateTime =
               faker.date.dateTimeBetween(DateTime.now(), DateTime.now().add(Trip.creationInterval));
@@ -159,11 +159,11 @@ void main() {
         testWidgets('Interval', (WidgetTester tester) async {
           await pumpScaffold(
             tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+            EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
           );
           await tester.pump();
 
-          final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+          final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
           final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
 
@@ -192,11 +192,11 @@ void main() {
         testWidgets('Occurences', (WidgetTester tester) async {
           await pumpScaffold(
             tester,
-            RecurrenceOptionsEdit(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
+            EditRecurrenceOptions(recurrenceOptions: recurrenceOptions, predefinedEndChoices: predefinedEndChoices),
           );
           await tester.pump();
 
-          final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+          final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
           final Finder scrollable = find.descendant(of: find.byType(Dialog), matching: find.byType(Scrollable));
 
@@ -217,14 +217,14 @@ void main() {
           testWidgets('Nothing entered', (WidgetTester tester) async {
             await pumpScaffold(
               tester,
-              RecurrenceOptionsEdit(
+              EditRecurrenceOptions(
                 recurrenceOptions: recurrenceOptions,
                 predefinedEndChoices: const <RecurrenceEndChoice>[],
               ),
             );
             await tester.pump();
 
-            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+            final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
             await tester.tap(find.byKey(const Key('untilField')));
             await tester.pumpAndSettle();
@@ -249,14 +249,14 @@ void main() {
           testWidgets('Interval too large', (WidgetTester tester) async {
             await pumpScaffold(
               tester,
-              RecurrenceOptionsEdit(
+              EditRecurrenceOptions(
                 recurrenceOptions: recurrenceOptions,
                 predefinedEndChoices: const <RecurrenceEndChoice>[],
               ),
             );
             await tester.pump();
 
-            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+            final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
             await tester.tap(find.byKey(const Key('untilField')));
             await tester.pumpAndSettle();
@@ -279,14 +279,14 @@ void main() {
           testWidgets('Too many occurences', (WidgetTester tester) async {
             await pumpScaffold(
               tester,
-              RecurrenceOptionsEdit(
+              EditRecurrenceOptions(
                 recurrenceOptions: recurrenceOptions,
                 predefinedEndChoices: const <RecurrenceEndChoice>[],
               ),
             );
             await tester.pump();
 
-            final RecurrenceOptionsEditState pageState = tester.state(widgetFinder);
+            final EditRecurrenceOptionsState pageState = tester.state(widgetFinder);
 
             await tester.tap(find.byKey(const Key('untilField')));
             await tester.pumpAndSettle();

@@ -2558,9 +2558,9 @@ CREATE TABLE "public"."reports" (
     "created_at" timestamp with time zone DEFAULT "now"(),
     "offender_id" bigint NOT NULL,
     "reporter_id" bigint NOT NULL,
-    "category" smallint NOT NULL,
+    "reason" smallint NOT NULL,
     "text" "text",
-    CONSTRAINT "category_validator" CHECK ((("category" >= 0) AND ("category" <= 5)))
+    CONSTRAINT "reason_validator" CHECK ((("reason" >= 0) AND ("reason" <= 5)))
 );
 
 

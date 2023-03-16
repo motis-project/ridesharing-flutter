@@ -9,14 +9,14 @@ import 'recurrence.dart';
 import 'recurrence_options_indicator.dart';
 import 'week_day.dart';
 
-class RecurrenceOptionsEdit extends StatefulWidget {
+class EditRecurrenceOptions extends StatefulWidget {
   final RecurrenceOptions recurrenceOptions;
   final List<RecurrenceEndChoice> predefinedEndChoices;
   final RecurrenceRule? originalRecurrenceRule;
   final bool showPreview;
   final void Function(bool expanded)? expansionCallback;
 
-  const RecurrenceOptionsEdit({
+  const EditRecurrenceOptions({
     super.key,
     required this.recurrenceOptions,
     required this.predefinedEndChoices,
@@ -26,10 +26,10 @@ class RecurrenceOptionsEdit extends StatefulWidget {
   });
 
   @override
-  State<RecurrenceOptionsEdit> createState() => RecurrenceOptionsEditState();
+  State<EditRecurrenceOptions> createState() => EditRecurrenceOptionsState();
 }
 
-class RecurrenceOptionsEditState extends State<RecurrenceOptionsEdit> {
+class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
   late final RecurrenceOptions recurrenceOptions;
   late final RecurrenceRule originalRecurrenceRule;
   late List<RecurrenceEndChoice> predefinedEndChoices;

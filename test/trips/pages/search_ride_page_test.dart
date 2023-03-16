@@ -7,12 +7,12 @@ import 'package:mockito/mockito.dart';
 import 'package:motis_mitfahr_app/account/models/profile.dart';
 import 'package:motis_mitfahr_app/account/models/profile_feature.dart';
 import 'package:motis_mitfahr_app/search/position.dart';
-import 'package:motis_mitfahr_app/search/start_destination_timeline.dart';
 import 'package:motis_mitfahr_app/trips/cards/ride_card.dart';
 import 'package:motis_mitfahr_app/trips/models/drive.dart';
 import 'package:motis_mitfahr_app/trips/models/ride.dart';
 import 'package:motis_mitfahr_app/trips/pages/search_ride_page.dart';
 import 'package:motis_mitfahr_app/trips/util/search_ride_filter.dart';
+import 'package:motis_mitfahr_app/trips/util/trip_timeline.dart';
 
 import '../../test_util/factories/address_suggestion_factory.dart';
 import '../../test_util/factories/drive_factory.dart';
@@ -40,8 +40,7 @@ void main() {
 
   Future<void> enterStartAndDestination(WidgetTester tester, String? start, String? destination) async {
     final SearchRidePageState pageState = tester.state(pageFinder);
-    final StartDestinationTimeline timeline =
-        find.byType(StartDestinationTimeline).evaluate().first.widget as StartDestinationTimeline;
+    final TripTimeline timeline = find.byType(TripTimeline).evaluate().first.widget as TripTimeline;
 
     if (start != null) {
       pageState.startController.text = start;

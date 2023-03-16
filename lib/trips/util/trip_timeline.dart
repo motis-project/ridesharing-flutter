@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
 
-import '../trips/util/custom_timeline_theme.dart';
-import 'address_search_field.dart';
-import 'address_suggestion.dart';
+import '../../search/address_search_field.dart';
+import '../../search/address_suggestion.dart';
+import 'custom_timeline_theme.dart';
 
-class StartDestinationTimeline extends StatelessWidget {
+class TripTimeline extends StatelessWidget {
   final TextEditingController startController;
   final TextEditingController destinationController;
   final void Function(AddressSuggestion) onStartSelected;
   final void Function(AddressSuggestion) onDestinationSelected;
   final VoidCallback? onSwap;
 
-  const StartDestinationTimeline({
+  const TripTimeline({
     super.key,
     required this.startController,
     required this.destinationController,

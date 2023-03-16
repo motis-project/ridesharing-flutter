@@ -9,7 +9,6 @@ import '../../managers/locale_manager.dart';
 import '../../managers/storage_manager.dart';
 import '../../managers/supabase_manager.dart';
 import '../../search/address_suggestion.dart';
-import '../../search/start_destination_timeline.dart';
 import '../../trips/models/trip.dart';
 import '../../util/buttons/button.dart';
 import '../../util/fields/increment_field.dart';
@@ -18,9 +17,10 @@ import '../../util/snackbar.dart';
 import '../models/drive.dart';
 import '../models/recurring_drive.dart';
 import '../pages/drive_detail_page.dart';
+import '../util/recurrence/edit_recurrence_options.dart';
 import '../util/recurrence/recurrence.dart';
-import '../util/recurrence/recurrence_options_edit.dart';
 import '../util/recurrence/week_day.dart';
+import '../util/trip_timeline.dart';
 import 'recurring_drive_detail_page.dart';
 
 class CreateDrivePage extends StatefulWidget {
@@ -246,7 +246,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: StartDestinationTimeline(
+            child: TripTimeline(
               startController: startController,
               destinationController: destinationController,
               onStartSelected: (AddressSuggestion suggestion) => setState(() => startSuggestion = suggestion),
@@ -323,7 +323,7 @@ class CreateDriveFormState extends State<CreateDriveForm> {
           ),
           if (recurringEnabled) ...<Widget>[
             const SizedBox(height: 10),
-            RecurrenceOptionsEdit(
+            EditRecurrenceOptions(
               recurrenceOptions: recurrenceOptions,
               predefinedEndChoices: predefinedRecurrenceEndChoices,
               // Empty RecurrenceRule so that every day in the indicator is "new"

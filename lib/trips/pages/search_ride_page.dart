@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../../search/address_suggestion.dart';
-import '../../../search/start_destination_timeline.dart';
 import '../../../util/empty_search_results.dart';
 import '../../../util/fields/increment_field.dart';
 import '../../../util/fields/labeled_checkbox.dart';
@@ -15,6 +14,7 @@ import '../models/drive.dart';
 import '../models/ride.dart';
 import '../models/trip.dart';
 import '../util/search_ride_filter.dart';
+import '../util/trip_timeline.dart';
 
 class SearchRidePage extends StatefulWidget {
   //This is needed in order to mock the time in tests
@@ -146,7 +146,7 @@ class SearchRidePageState extends State<SearchRidePage> {
   Widget buildSearchFieldViewer() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: StartDestinationTimeline(
+      child: TripTimeline(
         startController: startController,
         destinationController: destinationController,
         onStartSelected: (AddressSuggestion suggestion) => setState(() {
