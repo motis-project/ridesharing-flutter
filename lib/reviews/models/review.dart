@@ -110,8 +110,8 @@ class Review extends Model implements Comparable<Review> {
     );
   }
 
-  /// Returns a -1 if this review is "more relevant" than [other], i.e. it has text and [other] doesn't OR it was created more recently.
-  /// Returns a 1 if this review is "less relevant" than [other], i.e. it doesn't have text and [other] does OR it was created less recently.
+  /// Returns a -1 if this review is "more relevant" than [other], i.e. it has text and [other] doesn't OR it was changed more recently.
+  /// Returns a 1 if this review is "less relevant" than [other], i.e. it doesn't have text and [other] does OR it was changed less recently.
   @override
   int compareTo(Review other) {
     final bool thisHasText = text?.isNotEmpty ?? false;
@@ -121,7 +121,7 @@ class Review extends Model implements Comparable<Review> {
     } else if (!thisHasText && otherHasText) {
       return 1;
     } else {
-      return other.createdAt!.compareTo(createdAt!);
+      return other.lastChangedAt.compareTo(lastChangedAt);
     }
   }
 
@@ -129,6 +129,8 @@ class Review extends Model implements Comparable<Review> {
   String toString() {
     return 'Review{id: $id, rating: $rating, text: $text, writerId: $writerId, receiverId: $receiverId, updatedAt: $updatedAt}';
   }
+
+  DateTime get lastChangedAt => updatedAt ?? createdAt!;
 }
 
 class AggregateReview {

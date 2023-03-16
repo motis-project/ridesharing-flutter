@@ -203,6 +203,18 @@ void main() {
       expect(review2.compareTo(review), -1);
     });
 
+    test('updatedAt is prioritized over createdAt', () {
+      final Review review = ReviewFactory().generateFake(
+        createdAt: DateTime.parse('2021-01-01T00:00:00.000'),
+        updatedAt: NullableParameter(DateTime.parse('2021-01-03T00:00:00.000')),
+      );
+      final Review review2 = ReviewFactory().generateFake(
+        createdAt: DateTime.parse('2021-01-02T00:00:00.000'),
+      );
+      expect(review.compareTo(review2), -1);
+      expect(review2.compareTo(review), 1);
+    });
+
     test('text is prioritized over created at', () {
       final Review review = ReviewFactory().generateFake(
         createdAt: DateTime.parse('2021-01-01T00:00:00.000'),
@@ -226,6 +238,21 @@ void main() {
         review.toString(),
         'Review{id: ${review.id}, rating: ${review.rating}, text: ${review.text}, writerId: ${review.writerId}, receiverId: ${review.receiverId}, updatedAt: ${review.updatedAt}}',
       );
+    });
+  });
+
+  group('Review.lastChangedAt', () {
+    test('Not updated', () {
+      final Review review = ReviewFactory().generateFake(
+        updatedAt: NullableParameter(null),
+      );
+      expect(review.lastChangedAt, review.createdAt);
+    });
+    test('Updated', () {
+      final Review review = ReviewFactory().generateFake(
+        updatedAt: NullableParameter(DateTime.now()),
+      );
+      expect(review.lastChangedAt, review.updatedAt);
     });
   });
 
