@@ -202,16 +202,16 @@ enum RecurrenceEndType { date, interval, occurrence }
 enum RecurrenceIntervalType { days, weeks, months, years }
 
 extension RecurrenceIntervalTypeExtension on RecurrenceIntervalType {
-  String getName(BuildContext context) {
+  String getName(BuildContext context, int count) {
     switch (this) {
       case RecurrenceIntervalType.days:
-        return S.of(context).recurrenceIntervalDays;
+        return S.of(context).recurrenceIntervalDays(count);
       case RecurrenceIntervalType.weeks:
-        return S.of(context).recurrenceIntervalWeeks;
+        return S.of(context).recurrenceIntervalWeeks(count);
       case RecurrenceIntervalType.months:
-        return S.of(context).recurrenceIntervalMonths;
+        return S.of(context).recurrenceIntervalMonths(count);
       case RecurrenceIntervalType.years:
-        return S.of(context).recurrenceIntervalYears;
+        return S.of(context).recurrenceIntervalYears(count);
     }
   }
 }

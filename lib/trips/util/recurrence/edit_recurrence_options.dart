@@ -70,6 +70,9 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
   void didChangeDependencies() {
     // This is here instead of initState because of the context
     recurrenceIntervalSizeController.text = recurrenceOptions.recurrenceIntervalSize.toString();
+    // We prefill this field when it's not selected yet
+    customEndIntervalTypeController.text =
+        customEndIntervalChoice.intervalType?.getName(context, customEndIntervalChoice.intervalSize ?? 2) ?? '';
     setEndChoice(_endChoice);
     rebuildEndChoiceController();
 
@@ -106,7 +109,12 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
       } else if (value is RecurrenceEndChoiceInterval) {
         customEndIntervalChoice = value;
         if (value.intervalSize != null) customEndIntervalSizeController.text = value.intervalSize.toString();
-        if (value.intervalType != null) customEndIntervalTypeController.text = value.intervalType!.getName(context);
+        if (value.intervalType != null) {
+          customEndIntervalTypeController.text = value.intervalType!.getName(
+            context,
+            value.intervalSize ?? 2,
+          );
+        }
       } else if (value is RecurrenceEndChoiceOccurrence) {
         customEndOccurrenceChoice = value;
         if (value.occurrences != null) customEndOccurrenceController.text = value.occurrences.toString();
@@ -173,7 +181,10 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
     );
 
     return TextWithFields(
-      S.of(context).recurrenceIntervalEveryWeeksPlaceholder(TextWithFields.placeholder),
+      S.of(context).recurrenceIntervalEveryWeeksPlaceholder(
+            recurrenceOptions.recurrenceIntervalSize ?? 2,
+            TextWithFields.placeholder,
+          ),
       fields: <Widget>[SizedBox(width: 80, child: intervalSizeField)],
       separator: const SizedBox(width: 5),
       textStyle: Theme.of(context).textTheme.titleMedium,
@@ -286,6 +297,10 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
                               onChanged: (String value) {
                                 innerSetState(() {
                                   customEndIntervalChoice.intervalSize = int.tryParse(value);
+                                  customEndIntervalTypeController.text = customEndIntervalChoice.intervalType!.getName(
+                                    context,
+                                    customEndIntervalChoice.intervalSize ?? 2,
+                                  );
                                 });
                               },
                               key: const Key('customEndIntervalSizeField'),
@@ -295,7 +310,8 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
                               initialValue: customEndIntervalChoice.intervalType,
                               onSelected: (RecurrenceIntervalType value) => innerSetState(() {
                                 customEndIntervalChoice.intervalType = value;
-                                customEndIntervalTypeController.text = value.getName(context);
+                                customEndIntervalTypeController.text =
+                                    value.getName(context, customEndIntervalChoice.intervalSize ?? 2);
                               }),
                               enabled: currentlySelected,
                               itemBuilder: (BuildContext context) => RecurrenceIntervalType.values
@@ -303,19 +319,20 @@ class EditRecurrenceOptionsState extends State<EditRecurrenceOptions> {
                                     (RecurrenceIntervalType intervalType) => PopupMenuItem<RecurrenceIntervalType>(
                                       value: intervalType,
                                       key: Key('customEndIntervalType${intervalType.name}'),
-                                      child: Text(intervalType.getName(context)),
+                                      child: Text(
+                                        intervalType.getName(context, customEndIntervalChoice.intervalSize ?? 2),
+                                      ),
                                     ),
                                   )
                                   .toList(),
                               key: const Key('customEndIntervalTypeField'),
                               child: AbsorbPointer(
                                 child: TextFormField(
-                                  decoration: InputDecoration(
-                                    border: const OutlineInputBorder(),
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
                                     // Default padding is EdgeInsets.fromLTRB(12, 24, 12, 16)
-                                    contentPadding: const EdgeInsets.fromLTRB(6, 24, 12, 6),
+                                    contentPadding: EdgeInsets.fromLTRB(6, 24, 12, 6),
                                     isDense: true,
-                                    hintText: RecurrenceIntervalType.weeks.getName(context),
                                   ),
                                   enabled: currentlySelected,
                                   readOnly: true,
