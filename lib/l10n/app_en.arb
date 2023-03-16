@@ -237,12 +237,12 @@
   "modelProfileGenderFemale": "Female",
   "modelProfileGenderDiverse": "Diverse",
 
-  "modelReportCategoryDidNotShowUp": "Did not show up",
-  "modelReportCategoryDidNotPay": "Did not pay the agreed amount",
-  "modelReportCategoryDidNotFollowRules": "Did not follow rules",
-  "modelReportCategoryWasAggressive": "Was aggressive",
-  "modelReportCategoryUsedBadLanguage": "Used bad language",
-  "modelReportCategoryOther": "Other reason",
+  "modelReportReasonDidNotShowUp": "Did not show up",
+  "modelReportReasonDidNotPay": "Did not pay the agreed amount",
+  "modelReportReasonDidNotFollowRules": "Did not follow rules",
+  "modelReportReasonWasAggressive": "Was aggressive",
+  "modelReportReasonUsedBadLanguage": "Used bad language",
+  "modelReportReasonOther": "Other reason",
 
   "modelProfileFeatureNoSmoking": "No Smoking",
   "modelProfileFeatureSmoking": "Smoking",

@@ -111,7 +111,7 @@ void main() {
           RideEventFactory().generateFake(
             read: false,
             ride: NullableParameter(ride),
-            category: category,
+            reason: category,
           )
       ];
 
@@ -155,7 +155,7 @@ void main() {
           RideEventFactory().generateFake(
             read: false,
             ride: NullableParameter(ride),
-            category: category,
+            reason: category,
           )
       ];
 
@@ -196,7 +196,7 @@ void main() {
       final RideEvent rideEvent = RideEventFactory().generateFake(
         read: false,
         ride: NullableParameter(ride),
-        category: RideEventCategory.approved,
+        reason: RideEventCategory.approved,
       );
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
@@ -232,7 +232,7 @@ void main() {
       final RideEvent rideEvent = RideEventFactory().generateFake(
         read: false,
         ride: NullableParameter(ride),
-        category: RideEventCategory.pending,
+        reason: RideEventCategory.pending,
       );
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
@@ -266,7 +266,7 @@ void main() {
       final RideEvent rideEvent = RideEventFactory().generateFake(
         read: false,
         ride: NullableParameter(ride),
-        category: RideEventCategory.approved,
+        reason: RideEventCategory.approved,
       );
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
@@ -293,7 +293,7 @@ void main() {
     testWidgets('insertRideEvent', (WidgetTester tester) async {
       final Ride ride = RideFactory().generateFake(rider: NullableParameter(profile));
       final RideEvent rideEvent =
-          RideEventFactory().generateFake(ride: NullableParameter(ride), category: RideEventCategory.approved);
+          RideEventFactory().generateFake(ride: NullableParameter(ride), reason: RideEventCategory.approved);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/messages')).thenReturnJson([]);
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/rides')).thenReturnJson([]);
@@ -321,7 +321,7 @@ void main() {
       final RideEvent rideEvent = RideEventFactory().generateFake(
         ride: NullableParameter(ride),
         read: false,
-        category: RideEventCategory.approved,
+        reason: RideEventCategory.approved,
       );
 
       whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([]);
@@ -713,7 +713,7 @@ void main() {
     final RideEvent rideEvent = RideEventFactory().generateFake(
       createdAt: DateTime.now().subtract(const Duration(hours: 1)),
       ride: NullableParameter(rideToday),
-      category: RideEventCategory.approved,
+      reason: RideEventCategory.approved,
     );
 
     whenRequest(processor, urlMatcher: startsWith('/rest/v1/drives')).thenReturnJson([driveToday.toJsonForApi()]);

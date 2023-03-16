@@ -9,7 +9,7 @@ class ReportFactory extends ModelFactory<Report> {
   Report generateFake({
     int? id,
     DateTime? createdAt,
-    ReportCategory? category,
+    ReportReason? reason,
     NullableParameter<String>? text,
     int? reporterId,
     NullableParameter<Profile>? reporter,
@@ -28,7 +28,7 @@ class ReportFactory extends ModelFactory<Report> {
     return Report(
       id: id ?? randomId,
       createdAt: createdAt ?? DateTime.now(),
-      category: category ?? ReportCategory.values[random.nextInt(ReportCategory.values.length)],
+      reason: reason ?? ReportReason.values[random.nextInt(ReportReason.values.length)],
       text: getNullableParameterOr(text, faker.lorem.sentences(random.nextInt(2) + 1).join(' ')),
       offenderId: generatedOffender?.id ?? offenderId ?? randomId,
       offender: generatedOffender,

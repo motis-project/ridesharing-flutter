@@ -58,42 +58,42 @@ void main() {
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
         )),
-        category: RideEventCategory.approved,
+        reason: RideEventCategory.approved,
       );
 
       final RideEvent rideEventRejected = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
         )),
-        category: RideEventCategory.rejected,
+        reason: RideEventCategory.rejected,
       );
 
       final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           riderId: user.id,
         )),
-        category: RideEventCategory.cancelledByDriver,
+        reason: RideEventCategory.cancelledByDriver,
       );
 
       final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.cancelledByRider,
+        reason: RideEventCategory.cancelledByRider,
       );
 
       final RideEvent rideEventPending = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.pending,
+        reason: RideEventCategory.pending,
       );
 
       final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.withdrawn,
+        reason: RideEventCategory.withdrawn,
       );
 
       expect(rideEventApproved.isForCurrentUser(), true);
@@ -109,21 +109,21 @@ void main() {
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.approved,
+        reason: RideEventCategory.approved,
       );
 
       final RideEvent rideEventRejected = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.rejected,
+        reason: RideEventCategory.rejected,
       );
 
       final RideEvent rideEventCancelledByDriver = RideEventFactory().generateFake(
         ride: NullableParameter(RideFactory().generateFake(
           drive: NullableParameter(driveWithUserAsDriver),
         )),
-        category: RideEventCategory.cancelledByDriver,
+        reason: RideEventCategory.cancelledByDriver,
       );
 
       final RideEvent rideEventCancelledByRider = RideEventFactory().generateFake(
@@ -131,7 +131,7 @@ void main() {
           riderId: user.id,
           drive: NullableParameter(driveWithUserNotDriver),
         )),
-        category: RideEventCategory.cancelledByRider,
+        reason: RideEventCategory.cancelledByRider,
       );
 
       final RideEvent rideEventPending = RideEventFactory().generateFake(
@@ -139,7 +139,7 @@ void main() {
           riderId: user.id,
           drive: NullableParameter(driveWithUserNotDriver),
         )),
-        category: RideEventCategory.pending,
+        reason: RideEventCategory.pending,
       );
 
       final RideEvent rideEventWithdrawn = RideEventFactory().generateFake(
@@ -147,7 +147,7 @@ void main() {
           riderId: user.id,
           drive: NullableParameter(driveWithUserNotDriver),
         )),
-        category: RideEventCategory.withdrawn,
+        reason: RideEventCategory.withdrawn,
       );
       expect(rideEventApproved.isForCurrentUser(), false);
       expect(rideEventRejected.isForCurrentUser(), false);

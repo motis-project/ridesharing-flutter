@@ -238,12 +238,12 @@
   "modelProfileGenderFemale": "Weiblich",
   "modelProfileGenderDiverse": "Divers",
 
-  "modelReportCategoryDidNotShowUp": "Ist nicht erschienen",
-  "modelReportCategoryDidNotPay": "Hat nicht bezahlt",
-  "modelReportCategoryDidNotFollowRules": "Hat die Regeln nicht befolgt",
-  "modelReportCategoryWasAggressive": "War aggressiv",
-  "modelReportCategoryUsedBadLanguage": "Hat Schimpfwörter verwendet",
-  "modelReportCategoryOther": "Anderer Grund",
+  "modelReportReasonDidNotShowUp": "Ist nicht erschienen",
+  "modelReportReasonDidNotPay": "Hat nicht bezahlt",
+  "modelReportReasonDidNotFollowRules": "Hat die Regeln nicht befolgt",
+  "modelReportReasonWasAggressive": "War aggressiv",
+  "modelReportReasonUsedBadLanguage": "Hat Schimpfwörter verwendet",
+  "modelReportReasonOther": "Anderer Grund",
 
   "modelProfileFeatureNoSmoking": "Rauchen verboten",
   "modelProfileFeatureSmoking": "Rauchen erlaubt",
