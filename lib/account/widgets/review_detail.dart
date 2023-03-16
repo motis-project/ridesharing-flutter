@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../managers/locale_manager.dart';
+import '../../reviews/models/review.dart';
+import '../../reviews/util/custom_rating_bar_indicator.dart';
 import '../../util/fade_out.dart';
-import '../../util/locale_manager.dart';
-import '../../util/profiles/profile_chip.dart';
-import '../../util/profiles/reviews/custom_rating_bar_indicator.dart';
-import '../models/review.dart';
+import 'profile_chip.dart';
 
 class ReviewDetail extends StatefulWidget {
   final Review review;

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:motis_mitfahr_app/util/storage_manager.dart';
+import 'package:motis_mitfahr_app/managers/storage_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../reviews/models/review.dart';
+import '../../reviews/pages/reviews_page.dart';
+import '../../reviews/util/aggregate_review_widget.dart';
 import '../../util/fade_out.dart';
-import '../../util/profiles/reviews/aggregate_review_widget.dart';
 import '../models/profile.dart';
-import '../models/review.dart';
-import '../pages/reviews_page.dart';
 import 'review_detail.dart';
 
 class ReviewsPreview extends StatelessWidget {

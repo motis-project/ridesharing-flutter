@@ -6,11 +6,11 @@ import 'package:progress_state_button/progress_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../account/models/profile.dart';
+import '../../managers/supabase_manager.dart';
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
 import '../../util/fields/password_field.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase_manager.dart';
 import 'after_registration_page.dart';
 
 class RegisterPage extends StatefulWidget {

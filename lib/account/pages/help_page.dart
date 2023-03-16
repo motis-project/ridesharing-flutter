@@ -3,8 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../config.dart';
+import '../../managers/supabase_manager.dart';
 import '../../util/buttons/button.dart';
-import '../../util/supabase_manager.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});

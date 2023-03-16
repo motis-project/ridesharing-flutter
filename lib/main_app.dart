@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'account/pages/account_page.dart';
-import 'drives/pages/drives_page.dart';
-import 'home_page.dart';
-import 'rides/pages/rides_page.dart';
+import 'home/pages/home_page.dart';
+import 'trips/pages/drives_page.dart';
+import 'trips/pages/rides_page.dart';
 
 enum TabItem { home, drives, rides, account }
 

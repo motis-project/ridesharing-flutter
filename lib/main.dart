@@ -6,11 +6,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'main_app.dart';
-import 'util/firebase.dart';
-import 'util/locale_manager.dart';
+import 'managers/firebase_manager.dart';
+import 'managers/locale_manager.dart';
+import 'managers/supabase_manager.dart';
+import 'managers/theme_manager.dart';
 import 'util/snackbar.dart';
-import 'util/supabase_manager.dart';
-import 'util/theme_manager.dart';
 import 'welcome/pages/reset_password_page.dart';
 import 'welcome/pages/welcome_page.dart';
 

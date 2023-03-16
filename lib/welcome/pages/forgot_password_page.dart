@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:progress_state_button/progress_button.dart';
 
+import '../../managers/supabase_manager.dart';
 import '../../util/buttons/loading_button.dart';
 import '../../util/fields/email_field.dart';
-import '../../util/supabase_manager.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   final String? initialEmail;

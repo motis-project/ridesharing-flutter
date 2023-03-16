@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../util/model.dart';
+import '../../managers/supabase_manager.dart';
+import '../../model.dart';
+import '../../reviews/models/report.dart';
+import '../../reviews/models/review.dart';
 import '../../util/parse_helper.dart';
-import '../../util/supabase_manager.dart';
 import 'profile_feature.dart';
-import 'report.dart';
-import 'review.dart';
 
 class Profile extends Model {
   static const int maxUsernameLength = 15;

@@ -6,22 +6,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../managers/supabase_manager.dart';
+import '../../reviews/models/report.dart';
+import '../../reviews/pages/write_report_page.dart';
 import '../../util/buttons/button.dart';
 import '../../util/snackbar.dart';
-import '../../util/supabase_manager.dart';
 import '../models/profile.dart';
-import '../models/report.dart';
 import '../widgets/avatar.dart';
 import '../widgets/editable_row.dart';
 import '../widgets/features_column.dart';
 import '../widgets/reviews_preview.dart';
-import 'edit_account/edit_birth_date_page.dart';
-import 'edit_account/edit_description_page.dart';
-import 'edit_account/edit_full_name_page.dart';
-import 'edit_account/edit_gender_page.dart';
-import 'edit_account/edit_profile_features_page.dart';
-import 'edit_account/edit_username_page.dart';
-import 'write_report_page.dart';
+import 'edit_profile/edit_birth_date_page.dart';
+import 'edit_profile/edit_description_page.dart';
+import 'edit_profile/edit_full_name_page.dart';
+import 'edit_profile/edit_gender_page.dart';
+import 'edit_profile/edit_profile_features_page.dart';
+import 'edit_profile/edit_username_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final int profileId;
