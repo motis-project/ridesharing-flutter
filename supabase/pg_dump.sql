@@ -1897,6 +1897,8 @@ begin
 		    	'body', new.body
 		    ),
 		    'data', jsonb_build_object(
+		    	'click_action', 'FLUTTER_NOTIFICATION_CLICK',
+		    	'sound', 'default',
 		    	'dl', new.deep_link
 		    )
 	    );
@@ -2560,7 +2562,7 @@ CREATE TABLE "public"."reports" (
     "reporter_id" bigint NOT NULL,
     "reason" smallint NOT NULL,
     "text" "text",
-    CONSTRAINT "reason_validator" CHECK ((("reason" >= 0) AND ("reason" <= 5)))
+    CONSTRAINT "reports_reason_check" CHECK ((("reason" >= 0) AND ("reason" <= 5)))
 );
 
 
