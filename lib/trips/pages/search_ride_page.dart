@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -127,24 +128,33 @@ class SearchRidePageState extends State<SearchRidePage> {
         .gt('start_date_time', DateTime.now().toUtc());
     final List<Drive> drives = data.map((Map<String, dynamic> drive) => Drive.fromJson(drive)).toList();
     final List<Ride> rides = drives
-        // Filter out drives that already have a pending ride from the current user
+        // Filter out drives where the user has already been rejected
         .where(
           (Drive drive) => drive.rides!
               .where(
-                (Ride ride) => ride.status == RideStatus.pending && ride.riderId == supabaseManager.currentProfile?.id,
+                (Ride ride) => ride.riderId == supabaseManager.currentProfile?.id && ride.status == RideStatus.rejected,
               )
               .isEmpty,
         )
         .map(
-          (Drive drive) => Ride.previewFromDrive(
-            drive,
-            start: _startSuggestion!.name,
-            startPosition: _startSuggestion!.position,
-            destination: _destinationSuggestion!.name,
-            destinationPosition: _destinationSuggestion!.position,
-            seats: seats,
-            riderId: supabaseManager.currentProfile?.id ?? -1,
-          ),
+          (Drive drive) =>
+              drive.rides!
+                  // If the user already has a ride for this drive, show that one
+                  .firstWhereOrNull(
+                    (Ride ride) =>
+                        ride.riderId == supabaseManager.currentProfile!.id && ride.status == RideStatus.approved ||
+                        ride.status == RideStatus.pending,
+                  )
+                  ?.copyWith(drive: drive) ??
+              Ride.previewFromDrive(
+                drive,
+                start: _startSuggestion!.name,
+                startPosition: _startSuggestion!.position,
+                destination: _destinationSuggestion!.name,
+                destinationPosition: _destinationSuggestion!.position,
+                seats: seats,
+                riderId: supabaseManager.currentProfile?.id ?? -1,
+              ),
         )
         .toList();
     setState(() {
