@@ -460,12 +460,21 @@ extension SearchRideSortingExtension on SearchRideSorting {
     int priceFunc(Ride ride1, Ride ride2) => ((ride1.price! - ride2.price!) * 100).toInt();
     int timeProximityFunc(Ride ride1, Ride ride2) =>
         (date.difference(ride1.startDateTime).abs() - date.difference(ride2.startDateTime).abs()).inMinutes;
+    //This is basically only for the feature where we show the next possible times if the user searches for a wrong day
+    int timeProximityFuncWholeDay(Ride ride1, Ride ride2) {
+      final DateTime ride1Start =
+          DateTime(ride1.startDateTime.year, ride1.startDateTime.month, ride1.startDateTime.day);
+      final DateTime ride2Start =
+          DateTime(ride2.startDateTime.year, ride2.startDateTime.month, ride2.startDateTime.day);
+      return (date.difference(ride1Start).abs() - date.difference(ride2Start).abs()).inMinutes;
+    }
+
     switch (this) {
       case SearchRideSorting.relevance:
         return (Ride ride1, Ride ride2) =>
             travelDurationFunc(ride1, ride2) +
             priceFunc(ride1, ride2) +
-            (wholeDay ? 0 : timeProximityFunc(ride1, ride2));
+            (wholeDay ? timeProximityFuncWholeDay(ride1, ride2) : timeProximityFunc(ride1, ride2));
       case SearchRideSorting.travelDuration:
         return travelDurationFunc;
       case SearchRideSorting.price:
