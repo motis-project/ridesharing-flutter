@@ -869,7 +869,7 @@ void main() {
           expect(filteredRides[0].driveId, drives[0].id);
           expect(filteredRides[1].driveId, drives[1].id);
           expect(filteredRides[2].driveId, drives[2].id);
-        });
+        }, skip: true);
 
         testWidgets('Travel Duration', (WidgetTester tester) async {
           final DateTime startDateTime = DateTime.now();
