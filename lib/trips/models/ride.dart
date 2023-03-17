@@ -176,7 +176,7 @@ class Ride extends Trip {
     return 'Ride{id: $id, in: $driveId, from: $start at $startDateTime, to: $destination at $destinationDateTime, by: $riderId}';
   }
 
-  Ride copyWith({int? id, RideStatus? status}) {
+  Ride copyWith({int? id, RideStatus? status, Drive? drive}) {
     return Ride(
       id: id ?? this.id,
       createdAt: createdAt,
@@ -193,7 +193,7 @@ class Ride extends Trip {
       riderId: riderId,
       rider: rider,
       driveId: driveId,
-      drive: drive,
+      drive: drive ?? this.drive,
       chatId: chatId,
       chat: chat,
     );
